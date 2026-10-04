@@ -1,5 +1,11 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.58 (index.html seulement ; server.js inchangé depuis la 0.0.56 ; wiki.html régénéré)
+- **Boss qui disparaissaient** en plein combat (Dévoreur d'Étoiles, Pharaon, Gardiens célestes…) : corrigé. Le boss ne disparaît plus de l'écran tant que le serveur le voit en vie, et sa barre de vie se recale sur la vraie valeur.
+- **Carquois relique de l'Archer** : ses dégâts en pourcentage de la vie sont maintenant bien comptés sur les boss.
+- **Portraits** : la barre de vie, les listes de joueurs et le choix du héros affichent les nouveaux dessins, avec le skin choisi dans la barre de vie.
+- (interne) L'hôte n'annonce plus jamais un monstre vivant à 0 point de vie (arrondi), envoie les boss en premier dans ses messages, et un boss absent d'un message a 3 secondes de grâce avant d'être retiré.
+
 ## ver.0.0.57 (index.html seulement ; server.js inchangé depuis la 0.0.56 ; wiki.html régénéré)
 - **Liaison Discord** : la fenêtre affiche maintenant le code seul, avec un bouton « Copier ». Sur Discord, on tape la commande `/lier` puis on colle le code.
 

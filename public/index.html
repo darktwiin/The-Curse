@@ -453,7 +453,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.57"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.58"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -469,7 +469,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp"><i id="xpF"></i><span><em>XP</em><b id="xpT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.57</div>
+    <div class="verTag" id="verTag">ver.0.0.58</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -644,7 +644,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.57</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.58</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -686,7 +686,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.57</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.58</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -3173,7 +3173,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000057;let newerWarned=false;
+const NETV=2,BUILD=2600000058;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -3288,12 +3288,14 @@ function parseHits(s){const out=[];for(const e of s.split(';')){const [a,b]=e.sp
 // Gardien des Plaines (serveur) : dégâts d'un joueur plafonnés selon son équipement, et seulement sur les monstres proches de lui
 const G_CAPS=new Map(),G_SEAU=new Map(),G_SUIVI=new Map();window.__gcap=(p,c)=>{G_CAPS.set(p,c);};
 const gSuivi=p=>{let v=G_SUIVI.get(p);if(!v){v={clip:0,loin:0,invul:0};G_SUIVI.set(p,v);}return v;};
+const G_PCT=new Map(); // joueur|boss -> réserve pour les dégâts en « % de la vie » (se remplit de 16 % de la vie du boss toutes les 3 s, 32 % au plus)
 const G_VU=new Map(); // joueur -> (monstre -> dernier total annoncé) : pour ne compter qu'une fois un dépassement
 function gardienFiltre(peer,m,d,id,tot){const r=remotes.get(peer);let vu=G_VU.get(peer);if(!vu){vu=new Map();G_VU.set(peer,vu);}const neuf=tot>(vu.get(id)||0);vu.set(id,tot);if(vu.size>400)vu.clear();
   if(r&&Math.hypot(m.x-r.x,m.y-r.y)>18){if(neuf)gSuivi(peer).loin++;return 0;}
   const cap=G_CAPS.get(peer)||25000;let b=G_SEAU.get(peer);if(!b){b={v:cap*4,t:time};G_SEAU.set(peer,b);}b.v=Math.min(cap*4,b.v+cap*Math.max(0,time-b.t));b.t=time;
-  const libre=m.d.boss?0:m.max*0.6; // capacités en « % de la vie » sur les monstres ordinaires
-  const ok=Math.min(d,Math.max(0,b.v)+libre);b.v=Math.max(0,b.v-ok);if(d-ok>0&&neuf)gSuivi(peer).clip+=d-ok;return ok;}
+  let q=null,libre=m.max*0.6; // capacités en « % de la vie »
+  if(m.d.boss){const kq=peer+'|'+id;q=G_PCT.get(kq);if(!q){q={v:m.max*0.32,t:time};if(G_PCT.size>300)G_PCT.clear();G_PCT.set(kq,q);}q.v=Math.min(m.max*0.32,q.v+m.max*0.16*Math.max(0,time-q.t)/3);q.t=time;libre=q.v;}
+  const dispo=Math.max(0,b.v),ok=Math.min(d,dispo+libre),pris=Math.min(ok,dispo);b.v=Math.max(0,b.v-pris);if(q)q.v=Math.max(0,q.v-(ok-pris));if(d-ok>0&&neuf)gSuivi(peer).clip+=d-ok;return ok;}
 function applyHits(peer,s){
   let mp=applied.get(peer);if(!mp){mp=new Map();applied.set(peer,mp);}
   for(const [id,tot] of parseHits(s)){const prev=mp.get(id)||0;if(tot<=prev)continue;const m=monsters.find(q=>q.id===id);if(!m||m.hp<=0){mp.set(id,tot);continue;}let dd=Math.min(tot-prev,200000);
@@ -3319,12 +3321,12 @@ function syncFromHost(){
     for(const e of p.M.split(';')){
       const f=e.split(',');if(f.length<5)continue;
       const id=parseInt(f[0],36),k=MKEYS[+f[1]];if(!(id>0)||!k)continue;
-      const mx0=f.length>5?clamp(parseInt(f[5],36)||MON[k].hp,1,1e8):MON[k].hp;const x=(+f[2])/10,y=(+f[3])/10,hp=mx0*clamp(+f[4],0,1000)/1000;if(!isFinite(x)||!isFinite(y))continue;
+      const mx0=f.length>5?clamp(parseInt(f[5],36)||MON[k].hp,1,1e8):MON[k].hp;const x=(+f[2])/10,y=(+f[3])/10,hp=Math.max(1,mx0*clamp(+f[4],0,1000)/1000);if(!isFinite(x)||!isFinite(y))continue;
       keep.add(id);let m=monsters.find(q=>q.id===id);
       if(!m){if(handled.has(id))continue;m=addMon(k,x,y,regionAt(x,y),id,hp);}
-      const grew=mx0!==m.max;m.max=mx0;m.inv=f[6]==='1'?1:0;m.sf=f[7]||'';m.tx=x;m.ty=y;if(!m.pend||time-m.pend>1.2){const dt0=dmgTot.get(id);m.hp=(!grew&&dt0&&time-dt0.t<4)?Math.min(m.hp,hp):hp;m.pend=0;}
+      const grew=mx0!==m.max;m.max=mx0;m.inv=f[6]==='1'?1:0;m.sf=f[7]||'';m.tx=x;m.ty=y;m.hh=hp;m.vuT=time;if(!m.pend||time-m.pend>1.2){const dt0=dmgTot.get(id);m.hp=(!m.pend&&!grew&&dt0&&time-dt0.t<4&&hp-m.hp<m.max*0.08)?Math.min(m.hp,hp):hp;m.pend=0;}
     }
-    monsters=monsters.filter(m=>keep.has(m.id)||(m.hp>0&&(Math.hypot(m.x-P.x,m.y-P.y)>=10||P.invis>0||admInv)));
+    monsters=monsters.filter(m=>keep.has(m.id)||(m.hp>0&&(Math.hypot(m.x-P.x,m.y-P.y)>=10||P.invis>0||admInv||(m.d.boss&&time-(m.vuT==null?(m.vuT=time):m.vuT)<3))));
   }
   if(p.D!==lastHostD&&typeof p.D==='string'){
     lastHostD=p.D;
@@ -3345,8 +3347,8 @@ function syncFromHost(){
 function encMonsters(budget){
   const pl=sceneAll();const list=[];
   for(const m of monsters){if(m.hp<=0)continue;let d=1e9;for(const p of pl)d=Math.min(d,Math.hypot(m.x-p.x,m.y-p.y));if(d<22||(m.d.boss&&d<40))list.push([d,m]);}
-  list.sort((a,b)=>a[0]-b[0]);
-  let s='';for(const [,m] of list){const e=m.id.toString(36)+','+MKEYS.indexOf(m.key)+','+Math.round(m.x*10)+','+Math.round(m.y*10)+','+Math.round(clamp(m.hp/m.max,0,1)*1000)+(m.max!==m.d.hp||m.inv||m.parT>time||m.abT>time||m.miniT>time?','+Math.round(m.max).toString(36)+','+(m.inv?1:0)+(m.parT>time||m.abT>time||m.miniT>time?','+(m.parT>time?'P':'')+(m.abT>time?'B':'')+(m.miniT>time?'M':''):''):'');if(s.length+e.length+1>budget)break;s+=(s?';':'')+e;}
+  list.sort((a,b)=>(b[1].d.boss?1:0)-(a[1].d.boss?1:0)||a[0]-b[0]);
+  let s='';for(const [,m] of list){const e=m.id.toString(36)+','+MKEYS.indexOf(m.key)+','+Math.round(m.x*10)+','+Math.round(m.y*10)+','+Math.max(1,Math.round(clamp(m.hp/m.max,0,1)*1000))+(m.max!==m.d.hp||m.inv||m.parT>time||m.abT>time||m.miniT>time?','+Math.round(m.max).toString(36)+','+(m.inv?1:0)+(m.parT>time||m.abT>time||m.miniT>time?','+(m.parT>time?'P':'')+(m.abT>time?'B':'')+(m.miniT>time?'M':''):''):'');if(s.length+e.length+1>budget)break;s+=(s?';':'')+e;}
   return s;
 }
 function encHits(){const out=[];for(const [id,v] of dmgTot){if(time-v.t>30){dmgTot.delete(id);continue;}if(time-v.t<20)out.push(id.toString(36)+':'+Math.round(v.tot).toString(36));}return out.slice(-50).join(';');}
@@ -4327,7 +4329,7 @@ function hitMon(m,dmg,col){
   if(m.hp<=0||m.pend)return;if(m.vuln>time)dmg=Math.round(dmg*1.5);dmg=Math.max(1,Math.round(dmg*armK(m)));
   m.hp-=dmg;if(m.key==='dragon'){raidAcc+=dmg;m.hp=m.max;}m.flash=0.1;ft(m.x+rnd(-.2,.2),m.y-m.d.sz*0.5,String(dmg),col||'#ffffff');if(m.key==='mannequin'){m.lastHit=time;if(m.hp<1)m.hp=1;dpsHit(dmg);}
   const rec=dmgTot.get(m.id)||{tot:0,t:0};rec.tot+=dmg;rec.t=time;dmgTot.set(m.id,rec);
-  if(m.hp<=0){if(amHost)hostKill(m);else m.pend=time;}
+  if(m.hp<=0){if(amHost)hostKill(m);else if(m.hh>m.max*0.12)m.hp=1;else m.pend=time;}
 }
 function sendEv(t,x,y){myEv=(++evSeq)+'|'+t+'|'+Math.round(x*10)+'|'+Math.round(y*10);sendPresence();}
 function markVuln(x,y){const rx=W/TS/2+2,ry=H/TS/2+2;let n=0;for(const m of monsters)if(m.hp>0&&Math.abs(m.x-x)<rx&&Math.abs(m.y-y)<ry){m.vuln=time+6;n++;}return n;}
@@ -6337,7 +6339,7 @@ function update(dt){
         m.hp-=dg;if(b.par&&!b.cosm)paralyze(m,b.par);if(b.poi)poisonMon(m,b.poi);if(m.key==='dragon'){raidAcc+=dg;m.hp=m.max;}m.flash=0.1;sfx('hit');ft(m.x+rnd(-.2,.2),m.y-m.d.sz*0.5,String(dg),m.vuln>time||b.pct?'#ffd23f':'#ffffff');
         const rec=dmgTot.get(m.id)||{tot:0,t:0};rec.tot+=dg;rec.t=time;dmgTot.set(m.id,rec);
         if(m.key==='mannequin'){m.lastHit=time;TU.hit=1;if(m.hp<1)m.hp=1;dpsHit(dg);}
-        if(m.hp<=0){if(amHost)hostKill(m);else m.pend=time;}
+        if(m.hp<=0){if(amHost)hostKill(m);else if(m.hh>m.max*0.12)m.hp=1;else m.pend=time;}
         if(b.pierce){b.hit.add(m);}else{b.life=0;break;}
       }
     }
@@ -7401,6 +7403,10 @@ function heroSprite(cls,skin,wk,tier,frame){
   Object.assign(pal,{F:'#ff9a3c',R:'#e8382a',Q:'#f4f1e8',N:'#b8ff8a',O:'#fff1a0',K:'#0b0a12',B:'#5a3a22',V:'#8a1a2a'});
   return heroCache[key]=makeSprite(hd.map(r=>r.join('')),pal,3);
 }
+// portrait carré d'un héros (sans arme), à partir du nouveau dessin : sert à la barre de vie, aux listes et au choix du héros
+const portCache={};function heroPort(cls,skin){if(!CLASSES[cls])cls='guerrier';if(skin&&!(SKINS[cls]&&SKINS[cls][skin]))skin=null;const k=cls+'|'+(skin||'');if(portCache[k])return portCache[k];
+  const src=heroSprite(cls,skin,null,0,'idle'),w=Math.min(src.width,54),h=src.height,S=Math.max(w,h),c=document.createElement('canvas');c.width=c.height=S;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(src,0,0,w,h,Math.floor((S-w)/2),S-h,w,h);return portCache[k]=c;}
+for(const k in CLASSES){HERO_SPR[k]=heroPort(k,null);heroURL[k]=HERO_SPR[k].toDataURL();}
 const PX=()=>TS*0.95/52; // taille d'un pixel de sprite à l'écran (même échelle qu'avant)
 // Aura personnalisée (admin) : taille et couleur au choix
 let AUR={sc:1,pal:null};
@@ -7661,7 +7667,7 @@ function render(){
     if(e.hb){if(e.hb.bubble)bubble(e.hb.bubble.t,e.hb.x,e.hb.y);return;}
     if(e.p){
       {const pe=eqPet();if(pe&&P.px!=null&&!(P.invis>0||admInv))drawPet(pe.k,P.px,P.py,0,pe.t||0,P.pmv?(P.pf||P.face||1):(P.face||1),P.pmv);}
-      const spr=HERO_SPR[save.current];const hit=time-P.hitT<0.12;
+      const spr=heroPort(save.current,mySkin());const hit=time-P.hitT<0.12;
       if(P.berserk>0){ctx.fillStyle='rgba(255,120,40,.25)';ctx.beginPath();ctx.arc(sx(P.x),sy(P.y),TS*0.7,0,TAU);ctx.fill();}
       {const w=C().equip[0],bob=P.moving?Math.abs(Math.sin(P.walk))*TS*0.05:Math.sin(time*2.4)*TS*0.015;if(P.invul>0){ctx.strokeStyle='#ffd23f';ctx.globalAlpha=0.5+0.4*Math.sin(time*12);ctx.lineWidth=3;ctx.beginPath();ctx.arc(sx(P.x),sy(P.y),TS*0.62,0,TAU);ctx.stroke();ctx.globalAlpha=1;}
       if(P.ghosts)for(const g of P.ghosts)drawHero(save.current,mySkin(),g.x,g.y,P.face,0,0,w?w.kind:null,w?w.tier:0,null,0,false,0,Math.max(0.05,g.l*1.6),null,morphKey);
