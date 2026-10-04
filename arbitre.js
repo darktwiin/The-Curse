@@ -81,7 +81,7 @@ function objetValide(it) {
     const tE = K.t7 ? 7 : it.tier, amt = k => (k === 'vie' || k === 'mana') ? 15 + 15 * tE : 1 + tE;
     for (const k of Object.keys(it.stats || {})) {
       if (!R.SK.includes(k)) return 'anneau : statistique inconnue';
-      const max = amt(k) + (it.tier >= 7 ? ((k === 'vie' || k === 'mana') ? 40 : 3) : 0);
+      const max = (amt(k) + (it.tier >= 7 ? ((k === 'vie' || k === 'mana') ? 40 : 3) : 0)) * (K.pal || 1) + 1; // pal : anneaux de Chronos (+20 %) et de la Tour (+40 %)
       if (!estNombre(it.stats[k], 0, max + 0.01)) return 'anneau trop puissant';
     }
     return null;
@@ -313,6 +313,13 @@ function verifier(ancien, nouveau, ctx) {
           for (const q of groupe) { while (pris.length < 2 && perdu(q) >= 1) { fondre(q, 1); pris.push(q); } }
           if (pris.length < 2) { fondre(prec, -1); for (const q of pris) fondre(q, -1); break; }
           plus--; nouveaux--; }
+        if (!plus) continue; } }
+    // formule d'un objet changée par une mise à jour (le jeu recalcule ses capacités au chargement) : l'ancien exemplaire — même type, même tier,
+    // même niveau de forge — a disparu, et le nouveau est conforme à la formule actuelle (déjà vérifié plus haut). Jamais pour les anneaux (bonus au hasard).
+    { const pp = k.split('|'), K0 = R.KINDS[pp[0]];
+      if (K0 && K0.slot !== 'conso' && K0.slot !== 'anneau' && K0.slot !== 'meuble') {
+        const fin = q => /\|\+\d$/.test(q) ? q.slice(q.lastIndexOf('|')) : '', pre = pp[0] + '|' + pp[1] + '|', upS = fin(k);
+        for (const q of c0.keys()) { if (plus <= 0) break; if (q === k || !q.startsWith(pre) || fin(q) !== upS) continue; while (plus > 0 && perdu(q) >= 1) { fondre(q, 1); plus--; nouveaux--; } }
         if (!plus) continue; } }
     const kind = k.split('|')[0], t = +k.split('|')[1], conso = R.KINDS[kind] && R.KINDS[kind].slot === 'conso';
     for (; plus > 0; plus--) {

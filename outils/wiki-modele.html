@@ -105,13 +105,13 @@ function bulle(e,h){tip.innerHTML=h;tip.hidden=false;const r=e.currentTarget.get
   s.append(el('p','intro','Tout le détail est dans les autres rubriques : <b>Monstres</b> pour savoir ce que chaque créature donne, <b>Donjons</b> pour savoir où trouver les portails, <b>Butin et taux</b> pour les pourcentages.'));}
 
 // ---------- objets ----------
-{const s=S.objets;s.append(el('h2',null,'Objets'),el('p','intro','Passe la souris (ou le doigt) sur une icône pour voir ses caractéristiques. Les objets vont du Tier 0 au Tier 6, puis viennent le Tier 7 d’obsidienne, les Reliques (turquoise) et les Reliques de Chronos (or).'));
+{const s=S.objets;s.append(el('h2',null,'Objets'),el('p','intro','Passe la souris (ou le doigt) sur une icône pour voir ses caractéristiques. Les objets vont du Tier 0 au Tier 6, puis viennent le Tier 7 d’obsidienne, les Reliques (turquoise), les Reliques de Chronos (or) et les Reliques de la Tour (violet).'));
   const ligne=(o,l)=>{const r=el('div','rowi');r.dataset.f=(o.type+' '+o.cls.join(' ')+' '+l.map(x=>x.n).join(' ')).toLowerCase();const n=el('div','n');n.innerHTML='<b>'+esc(o.type)+'</b><span>'+esc(o.cls.join(', ')||(o.slot==='anneau'?'Tous les héros':''))+'</span>';const ics=el('div','ics');
-    for(const x of l){const d=el('div','ic');d.tabIndex=0;d.style.borderColor=x.tag[0]==='T'&&x.tag!=='T7'?'':x.col;const im=el('img');im.src=x.ic;im.alt=x.n;const i=el('i',null,x.tag==='Relique'?'UT':x.tag==='Chronos'?'⌛':x.tag);d.append(im,i);const h=x.tip;d.addEventListener('mouseenter',e=>bulle(e,h));d.addEventListener('focus',e=>bulle(e,h));d.addEventListener('mouseleave',()=>tip.hidden=true);d.addEventListener('blur',()=>tip.hidden=true);ics.append(d);}
+    for(const x of l){const d=el('div','ic');d.tabIndex=0;d.style.borderColor=x.tag[0]==='T'&&x.tag!=='T7'?'':x.col;const im=el('img');im.src=x.ic;im.alt=x.n;const i=el('i',null,x.tag==='Relique'?'UT':x.tag==='Chronos'?'⌛':x.tag==='Tour'?'◈':x.tag);d.append(im,i);const h=x.tip;d.addEventListener('mouseenter',e=>bulle(e,h));d.addEventListener('focus',e=>bulle(e,h));d.addEventListener('mouseleave',()=>tip.hidden=true);d.addEventListener('blur',()=>tip.hidden=true);ics.append(d);}
     r.append(n,ics);return r;};
   const base=D.objets.filter(o=>o.fam==='base');
   for(const [slot,titre] of [['arme','Armes'],['capa','Spéciaux'],['armure','Armures'],['anneau','Anneaux']]){s.append(el('h3',null,titre));
-    for(const o of base.filter(x=>x.slot===slot)){const l=o.l.slice();for(const a of D.objets)if((a.fam==='t7'||a.fam==='alt')&&a.base===o.k)l.splice(a.fam==='t7'?7:l.length,0,...a.l);s.append(ligne(o,l));}}
+    for(const o of base.filter(x=>x.slot===slot)){const l=o.l.slice();for(const a of D.objets)if((a.fam==='t7'||a.fam==='alt'||a.fam==='tour')&&a.base===o.k)l.splice(a.fam==='t7'?7:l.length,0,...a.l);s.append(ligne(o,l));}}
   s.append(el('h3',null,'Consommables'));const c=D.objets.filter(o=>o.fam==='conso');if(c.length)s.append(ligne({type:'Potions, œufs, clefs',cls:[],slot:'conso'},c.flatMap(o=>o.l)));}
 
 // ---------- monstres ----------
@@ -121,7 +121,7 @@ function butinDe(m){const L=[],B=D.butin,p=v=>pct(v),don=D.donjons.find(d=>d.bk=
   if(m.loot&&m.drop){const n=m.boss?m.n:1,ti='T'+m.loot[0]+(m.loot[1]>m.loot[0]?' à T'+m.loot[1]:'');L.push(['Équipement '+ti+(n>1?' ('+n+' objets)':''),p(m.drop)]);
     for(const [nom,k] of [['Arme',0.4],['Spécial',0.2],['Armure',0.25],['Anneau',0.15]])L.push(['· '+nom+' '+ti,p(m.drop*k)]);L.push(['· chance de gagner un tier (max T6)',p(D.taux.plus1)]);}
   if(m.rel)L.push(['Relique (turquoise)',m.k==='devoreur'?'100 %':p(m.rel)]);
-  if(m.k==='chronos')L.push(['Relique de Chronos (or)','100 %']);
+  if(m.k==='chronos'){L.push(['Relique de Chronos (or)','100 %']);L.push(['Clef de la Tour','50 %']);}
   if(dans.some(d=>B.T7.includes(d.t)))L.push(['Objet Tier 7 d’obsidienne',p(D.taux.t7)]);
   if((don&&m.boss)||m.ou.includes('Centre des Plaines (boss)'))L.push(['Ressource de talisman','20 %']);
   if(m.mid||B.GARANTIS.includes(m.k))L.push(['Potion de caractéristique (garantie)','100 %']);
@@ -170,6 +170,9 @@ function carteMon(m){const c=el('div','card mon'+(m.boss?' boss':''));c.tabIndex
     ['Œuf de familier','Sur tous les monstres et boss, selon la difficulté de l’endroit : 0,15 % sur la Plage, dans les Plaines d’Émeraude et au Terrier des Gobelins · 0,25 % dans le Marais Putride, la Forêt des Murmures et les donjons intermédiaires · 0,35 % dans le Canyon de Rouille, les Terres Brûlées et les grands donjons · 0,4 % dans les Terres Désolées · 0,5 % dans l’Observatoire Céleste, l’Horloge Brisée et sur les deux boss du centre des Plaines.'],
     ['Relique (turquoise)','Uniquement sur le Dévoreur d’Étoiles, le boss de l’Observatoire Céleste : une à chaque victoire. Aucun autre monstre ni boss n’en donne.'],
     ['Relique de Chronos (or)','Uniquement sur Chronos, le boss de l’Horloge Brisée : une à chaque victoire, avec une chance sur deux qu’elle soit pour ton héros.'],
+    ['Relique de la Tour (violet)','Uniquement aux paliers de la Tour des Chevaliers : 20 % de chance en sortant au palier 15, garantie à partir du palier 20. Une chance sur deux qu’elle soit pour ton héros. Dix-huit reliques : armes, capacités, armures et anneau.'],
+    ['Clef de la Tour','Une chance sur deux sur Chronos. Elle ouvre la Tour des Chevaliers, au Village.'],
+    ['Armures et anneaux de relique','Chaque famille est plus forte que la précédente : les armures et l’anneau de Chronos ont 20 % de caractéristiques de plus que les reliques turquoise, ceux de la Tour 40 % de plus.'],
     ['Échanger une relique','Les reliques ne s’échangent pas entre joueurs. Elles se vendent à l’hôtel des ventes.'],
     ['Ressource de talisman','20 % sur le boss d’un donjon et sur les deux boss du centre des Plaines. Dix ressources d’un même boss donnent son talisman.'],
     ['Couleur des sacs au sol','Brun : objets de tier 0 à 6. Violet : Tier 7. Orange : potion de caractéristique. Noir : relique. Survole un sac avec la souris pour voir son contenu.'],

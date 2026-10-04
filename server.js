@@ -893,25 +893,34 @@ function packs(moi, m) {
 // ---------- Tour des Chevaliers (phase de test) : les récompenses d'un palier partent au coffre de livraison ----------
 // entrée : il faut une Clef de la Tour dans la sauvegarde connue du serveur (les admins entrent sans clef) ; sortie : une seule récompense par entrée
 PACK.insTour = db.prepare("INSERT INTO packs (compte, pack, etat, quand, contenu) VALUES (?, 'tour', 1, ?, ?)");
+// course en cours : gardée en base, pour qu'une déconnexion ou un redémarrage du serveur ne fasse pas perdre les récompenses
+db.exec('CREATE TABLE IF NOT EXISTS tours (compte INTEGER PRIMARY KEY, quand INTEGER NOT NULL)');
+const TOURS = { get: db.prepare('SELECT quand FROM tours WHERE compte = ?'), set: db.prepare('INSERT INTO tours (compte, quand) VALUES (?, ?) ON CONFLICT(compte) DO UPDATE SET quand = excluded.quand'), del: db.prepare('DELETE FROM tours WHERE compte = ?') };
 function tour(moi, m) {
-  if (!moi.compte) return; const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id));
+  if (!moi.compte) return;
   if (m.a === 'entrer') {
     let ok = !!moi.compte.admin; if (!ok) { try { const r = sql.parId.get(moi.compte.id); ok = !!(r && r.save && r.save.includes('"cle_tour"')); } catch {} }
-    cpt.tour = ok ? { t: Date.now() } : null; return;
+    if (ok) TOURS.set.run(moi.compte.id, Date.now()); else TOURS.del.run(moi.compte.id); return;
   }
-  if (m.a === 'fin') { cpt.tour = null; return; }
-  if (m.a !== 'sortir' || !cpt.tour) return;
-  const n = m.n | 0, duree = (Date.now() - cpt.tour.t) / 1000; cpt.tour = null;
+  if (m.a === 'fin') { TOURS.del.run(moi.compte.id); return; }
+  if (m.a !== 'sortir') return;
+  const course = TOURS.get.get(moi.compte.id); if (!course) return; TOURS.del.run(moi.compte.id);
+  const n = m.n | 0, duree = (Date.now() - course.quand) / 1000;
   if (![5, 10, 15, 20, 25].includes(n) || duree < n * 5) { console.log(`[tour] sortie refusée pour ${moi.compte.nom} (palier ${n}, ${Math.round(duree)} s)`); return; }
   const R = arbitre.regles(); if (!R) return; const items = [], sp = Object.keys(R.SP_DEF);
   if (n >= 5) items.push(R.mkItem('pvie', 0), R.mkItem('pmana', 0));
   if (n >= 10) for (const k of sp) items.push(R.mkItem('sp_' + k, 0));
   if (n >= 15) { items.push(R.mkItem('cle', 0)); for (const k of sp) items.push(R.mkItem('sp_' + k, 0)); }
   if (n >= 20) items.push(R.mkItem('cle_tour', 0), R.mkItem('sp_' + sp[Math.floor(Math.random() * sp.length)], 0));
-  // Relique de la Tour : 20 % au palier 15, garantie à partir du palier 20 — la liste des reliques reste à définir, rien n'est encore donné
-  const relique = n >= 20 || (n >= 15 && Math.random() < 0.2);
+  // Relique de la Tour : 20 % au palier 15, garantie à partir du palier 20 ; une chance sur deux qu'elle soit pour le héros qui a fait la Tour
+  let relique = null;
+  if (n >= 20 || (n >= 15 && Math.random() < 0.2)) {
+    const cls = String(m.c || ''), tous = Object.keys(R.KINDS).filter(k => R.KINDS[k].art), miens = tous.filter(k => R.KINDS[k].slot === 'anneau' || (R.KINDS[k].cls || []).includes(cls));
+    const lot = miens.length && Math.random() < 0.5 ? miens : tous; if (lot.length) { relique = R.mkItem(lot[Math.floor(Math.random() * lot.length)], 7); items.push(relique); }
+  }
   const id = PACK.insTour.run(moi.compte.id, Date.now(), JSON.stringify({ items, cursite: 0, boost: 0 })).lastInsertRowid;
-  console.log(`[tour] ${moi.compte.nom} sort au palier ${n} (${Math.round(duree)} s)${relique ? ' · relique de la Tour gagnée (à venir)' : ''}`);
+  console.log(`[tour] ${moi.compte.nom} sort au palier ${n} (${Math.round(duree)} s)${relique ? ' · relique : ' + relique.name : ''}`);
+  if (relique) { try { discord.annoncer('🏰 **' + nomDiscord(moi) + '** sort vivant de la Tour des Chevaliers (palier ' + n + ') avec une Relique de la Tour : **' + relique.name + '** !', null, 0, process.env.DISCORD_SALON_RELIQUES); } catch {} }
   packEnvoyer(moi, PACK.un.get(Number(id)));
 }
 // le jeu confirme la réception ; la livraison n'est close que si la sauvegarde enregistrée la contient bien

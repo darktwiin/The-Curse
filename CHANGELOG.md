@@ -1,5 +1,29 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.65 (index.html seulement ; server.js inchangé depuis la 0.0.64 ; wiki.html régénéré)
+- **Heaume aux Épines** (Relique de la Tour) : les dégâts renvoyés passent de 100 % à 2000 % des dégâts subis.
+
+## ver.0.0.64 (index.html, server.js, arbitre.js, butin.js ; wiki.html, wiki-modele.html et generer-wiki.js mis à jour)
+- **Miroir des Mille Reflets** (relique du Mystificateur) refait : il ne laisse plus de bombe. Il ne donne plus aucune caractéristique, mais ne coûte que 10 de mana et n'a plus aucun temps de recharge : la téléportation se relance aussitôt.
+- **Carquois des Comètes** (relique de l'Archer) : sur un boss, chaque flèche retire 5 % de la vie qu'il lui reste (au lieu de 15 % de sa vie totale).
+- **Clef de la Tour** : Chronos en lâche une, une fois sur deux. Elle ouvre la Tour des Chevaliers, au Village.
+- **Nouvelle famille : les Reliques de la Tour** (violettes), gagnées aux paliers de la Tour des Chevaliers. Une par arme et par capacité, et chacune change la façon de jouer :
+  - **Lame de l'Aura** (épée) : ne tire pas, blesse tout ce qui t'entoure.
+  - **Arc du Guetteur** : une seule flèche, très lente à tirer, qui inflige 800 % des dégâts et porte à 15 cases.
+  - **Bâton des Brasiers Lointains** : chaque attaque fait éclater une gerbe de projectiles là où tu vises, comme le sort du Mage.
+  - **Baguette de l'Étoile Filante** : fait tomber une étoile sous ton curseur, lente mais très puissante, qui frappe en zone.
+  - **Dard du Lointain** (dague) : un seul projectile, qui porte à 12 cases, dégâts réduits.
+  - **Gemme de la Nova** : le démon tire tout autour de lui à chaque attaque, dégâts faibles.
+  - **Égide du Dernier Souffle** (bouclier) : consomme tout ton mana et te rend 50 % de ta vie.
+  - **Pacte de Hâte** : un démon immobile (un seul à la fois) qui augmente la vitesse d'attaque de tous les joueurs autour de lui.
+  - **Heaume aux Épines** : pendant 10 secondes, chaque coup que tu subis renvoie 2000 % de ses dégâts à l'ennemi.
+  - **Sort du Rocher** : un rocher tombe du plafond, lentement — beaucoup de mana, longue recharge, énormes dégâts de zone.
+  - **Carquois des Mille Maux** : une seule flèche qui applique tous les effets négatifs (poison, paralysie, armure brisée, vulnérabilité).
+  - **Grimoire de l'Instant Sacré** : rend invulnérables 0,5 seconde tous les joueurs autour de toi.
+  - **Miroir de Fureur** : ne téléporte plus, mais augmente fortement les dégâts et la vitesse d'attaque pendant 5 secondes.
+  - **Voile du Carnage** : ne rend plus invisible, mais augmente fortement les dégâts et la vitesse d'attaque pendant 5 secondes.
+- **Armures et anneaux de relique** : Chronos peut maintenant lâcher une armure ou un anneau de Chronos (20 % de caractéristiques de plus que les reliques turquoise), et la Tour une armure ou un anneau du Chevalier Noir (40 % de plus).
+
 ## ver.0.0.63 (index.html, server.js, butin.js ; wiki.html et wiki-modele.html mis à jour)
 - **L'Horloge Brisée devient un vrai labyrinthe** : une cinquantaine de salles qui partent dans tous les sens, avec des embranchements, quelques boucles et de vrais culs-de-sac. La salle de Chronos peut se trouver n'importe où, parfois tout près de l'entrée, mais le chemin pour y arriver est long.
 - **Carte de l'Horloge Brisée** : le donjon est caché. La carte ne dévoile que la salle ou le couloir où l'on se trouve, jamais les salles voisines.

@@ -69,8 +69,10 @@ function tirer(R, key, cls, scene, sc) {
   }
   if (typeof sc === 'string' && sc[0] === 'd' && DONJONS_T7.includes(sc[1]) && Math.random() < TAUX_T7) { const o7 = objetT7(R, cls); if (o7) { out.t7 = 1; out.it.push(o7); } }
   // Chronos : une Relique de Chronos à chaque fois (une chance sur deux qu'elle soit pour la classe du joueur)
-  if (key === 'chronos') { const tous = Object.keys(R.KINDS).filter(k => R.KINDS[k].alt), miens = tous.filter(k => (R.KINDS[k].cls || []).includes(cls));
+  if (key === 'chronos') { const tous = Object.keys(R.KINDS).filter(k => R.KINDS[k].alt && !R.KINDS[k].art), miens = tous.filter(k => (R.KINDS[k].cls || []).includes(cls));
     if (tous.length) out.it.push(R.mkItem(pick(miens.length && Math.random() < 0.5 ? miens : tous), 7)); }
+  // Chronos : une chance sur deux de lâcher une Clef de la Tour
+  if (key === 'chronos' && R.KINDS.cle_tour && Math.random() < 0.5) { out.cleTour = 1; out.it.push(R.mkItem('cle_tour', 0)); }
   // ressource de boss (talismans) : 20 % sur le boss du donjon où l'on se trouve
   if (d.boss && typeof sc === 'string' && sc[0] === 'd' && R.TALIS && R.TALIS[sc[1]]) { const T = R.DTYPES[sc[1]]; if (T && (T.bk === key || T.bk2 === key) && Math.random() < TAUX_RESSOURCE) out.res = sc[1]; }
   if ((key === 'dieu_fou' || key === 'colosse') && R.TALIS && Math.random() < TAUX_RESSOURCE) out.res = key === 'dieu_fou' ? 'j' : 'x'; // ressource des deux boss du centre de l'île
