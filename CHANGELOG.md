@@ -1,5 +1,22 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.53 (index.html, server.js, arbitre.js ; wiki.html régénéré)
+- **Pack de démarrage** : caché aux joueurs tant que la boutique payante n'est pas ouverte (seuls les admins le voient, et un joueur à qui un admin a ouvert le droit). Toujours un seul par compte. Il contient maintenant aussi 1 boost d'expérience, gardé en réserve et activable gratuitement à l'Échoppe (onglet Cursite).
+- **Coffre de livraison** déplacé dans une petite alcôve, juste sous le portail d'arrivée de la maison.
+- **Pêche** : plus un poisson est rare, plus il a de chances d'être gros (donc de gagner le tournoi). La Carpe koï d'or maudite pèse maintenant de 60 à 220 kg, pour qu'un légendaire du lac puisse battre un Esturgeon.
+- **Métier de pêcheur** jusqu'au niveau 20 : chaque prise donne des points (10 à 80 selon la rareté). Les chances passent de 58 / 27 / 10 / 4 / 1 % au niveau 1 à 30 / 30 / 22 / 13 / 5 % au niveau 20 (commun, peu commun, rare, épique, légendaire). Niveau et chances affichés dans le tableau de pêche.
+- **Anti-triche** : la Cursite donnée par le serveur reste due tant que le jeu ne l'a pas ajoutée (une sauvegarde partie au mauvais moment pouvait faire refuser une livraison).
+
+## ver.0.0.52 (index.html, server.js, arbitre.js, butin.js ; wiki.html régénéré)
+- **Coffre de livraison** : un coffre bleu cerclé d'or dans la maison, près de l'entrée. Fermé quand il est vide, il s'ouvre dès qu'il contient quelque chose. On ne peut rien y déposer. Les cadeaux du jour et les achats de la boutique Cursite (œuf, pack) y arrivent ; un message dans le chat et au milieu de l'écran le rappelle à chaque livraison. Bouton « Tout prendre ».
+- **Pack de démarrage (5 €)** dans la boutique Cursite : 1000 Cursite, un équipement Tier 6 complet pour le héros de son choix, 2 potions de chaque caractéristique, 3 œufs. Un seul par compte. Le paiement en jeu n'est pas encore branché : un admin ouvre le droit au pack (panneau admin, bouton « 📦 Pack de démarrage » sur le joueur), puis le joueur le récupère à l'Échoppe en choisissant son héros.
+- **Monstres plus grands** : +30 % dans les Terres Brûlées, +50 % dans les Terres Désolées.
+- **Tous les monstres** se tiennent 20 % plus près du joueur.
+- **Spectre du Vide** : à chaque attaque, 1 chance sur 5 de rapetisser (petite animation) et de gagner 30 % de vitesse pendant 6 secondes.
+- **Chimère** redessinée (ailes de dragon, tête de bouc, queue-serpent). Ses projectiles donnent le nouvel état **Halluciné** : pendant 3 secondes, les monstres, les boss et les autres joueurs changent d'apparence au hasard, seulement sur l'écran du joueur touché.
+- **Sentinelle** : ses tirs aveuglent 1 seconde. **Démon** : ses tirs brûlent 2 secondes.
+- **Nouveau monstre** des Terres Désolées : la Vipère des Désolations, un serpent vert dont le venin empoisonne (dessin animé, attaque et projectile à elle).
+
 ## ver.0.0.51 (index.html seulement ; server.js inchangé depuis la 0.0.49 ; wiki.html régénéré)
 - **Mage** : le héros de base et le Pyromancien sont redessinés (grand chapeau à pointe courbée pour le Mage ; capuche, visage dans l'ombre et crête de flammes pour le Pyromancien).
 - **Mystificateur** : le bonnet à pointes est remplacé par des oreilles de renard, sur le héros de base et sur ses deux skins.

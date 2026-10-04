@@ -106,6 +106,7 @@ function objets(s) {
   const out = [];
   for (const ch of Object.values(s.chars || {})) for (const it of [...(ch.equip || []), ...(ch.inv || [])]) if (it) out.push(it);
   for (const c of ((s.vault && s.vault.c) || [])) for (const it of c || []) if (it) out.push(it);
+  for (const it of (Array.isArray(s.colis) ? s.colis : [])) if (it) out.push(it); // coffre de livraison de la maison
   return out;
 }
 const compter = list => { const m = new Map(); for (const it of list) { const k = signature(it); m.set(k, (m.get(k) || 0) + 1); } return m; };
@@ -153,6 +154,7 @@ function verifier(ancien, nouveau, ctx) {
     if (!estEntier(nouveau.vault.n, 1, 10) || !Array.isArray(nouveau.vault.c) || nouveau.vault.c.length > 10) pb.push('coffres illisibles');
     else for (const c of nouveau.vault.c) { if (!Array.isArray(c) || c.length > 8) { pb.push('coffre illisible'); continue; } for (const it of c) { const e = ctrl(it); if (e) pb.push(e); } }
   }
+  if (nouveau.colis != null) { if (!Array.isArray(nouveau.colis) || nouveau.colis.length > 200) pb.push('coffre de livraison illisible'); else for (const it of nouveau.colis) { const e = ctrl(it); if (e) pb.push(e); } }
   for (const k of ['gold', 'cursite', 'prestige']) if (!estNombre(nouveau[k] ?? 0, 0, 1e9)) pb.push(k + ' impossible');
   if (nouveau.capLvl != null && !estEntier(nouveau.capLvl, 20, 25)) pb.push('niveau maximum impossible');
   for (const p of (nouveau.pets || [])) if (!p || !R.PET_KEYS.includes(p.k) || !estEntier(p.t | 0, 0, 3)) pb.push('familier impossible');
@@ -213,8 +215,12 @@ function verifier(ancien, nouveau, ctx) {
   const skins0 = Object.keys(ancien.skins || {}).length, skins1 = Object.keys(nouveau.skins || {}).length;
   let cursiteDepenseMin = Math.max(0, skins1 - skins0) * 100;
   // boost d'expérience acheté en Cursite (1 h)
+  // boosts en réserve (offerts par un pack) : ils viennent du serveur, et en utiliser un ne coûte rien
+  const bs0 = ancien.boostStock | 0, bs1 = nouveau.boostStock | 0; let boostsRestants = dons.boosts | 0;
+  if (!estEntier(nouveau.boostStock ?? 0, 0, 99)) pb.push('boosts en réserve impossibles');
+  else if (bs1 > bs0) { if (bs1 - bs0 > boostsRestants) pb.push('boost d\'XP non donné par le serveur'); else boostsRestants -= bs1 - bs0; }
   if ((+nouveau.boostXP || 0) > (+ancien.boostXP || 0) + 1000) {
-    cursiteDepenseMin += R.BOOST_PRIX;
+    if (!(bs1 < bs0)) cursiteDepenseMin += R.BOOST_PRIX;
     if (!(+nouveau.boostXP <= Date.now() + 3600000 + 10 * 60000)) pb.push('boost d\'XP trafiqué');
   }
   // --- herboriste : cinq plantes cueillies dans les Plaines (rythme limité). Potion de vie = Sanguine + Racine vermeille + Trèfle doré ; potion de mana = Azurine + Lunaire + Trèfle doré ---
@@ -237,6 +243,8 @@ function verifier(ancien, nouveau, ctx) {
   { const cj0 = (ancien.house && ancien.house.cj) | 0, cj1 = (nouveau.house && nouveau.house.cj) | 0;
     if (cj1 !== cj0) { if (cj1 < cj0 || Math.abs(cj1 - today) > 1) pb.push('production de cristal trafiquée');
       else bonusCursite += 10 * Math.min(crH1, ((nouveau.house && Array.isArray(nouveau.house.m) && nouveau.house.m) || []).filter(e => Array.isArray(e) && e[0] === 'cristal').length); } }
+  { const nbP = sv => Object.values(sv.fish || {}).reduce((a, r) => a + Math.max(0, (r && r.n) | 0), 0), x0 = (ancien.pecheur && ancien.pecheur.xp) | 0, x1 = (nouveau.pecheur && nouveau.pecheur.xp) | 0;
+    if (!estEntier((nouveau.pecheur && nouveau.pecheur.xp) ?? 0, 0, 1000000)) pb.push('métier de pêcheur impossible'); else if (x1 - x0 > 80 * Math.max(0, nbP(nouveau) - nbP(ancien))) pb.push('expérience de pêcheur injustifiée'); }
   if ((nouveau.titles || []).includes('beta') && !(ancien.titles || []).includes('beta') && (L1.n | 0) < 7 && !(L1.day !== L0.day)) pb.push('titre bêta injustifié');
 
   // --- or : achats obligatoires (coffres, sacs), pièces tirées par le serveur, ventes, quêtes ---
@@ -399,8 +407,9 @@ function verifier(ancien, nouveau, ctx) {
       for (let i = 0; i < Math.min(moins, 8); i++) sol.push({ sig: k, t: Date.now() }); }
     if (sol.length > 40) sol.splice(0, sol.length - 40); }
   // cadeaux pas encore dans le sac (sac plein : l'objet attend au sol) : le crédit reste valable
-  const reste = { sol, cursite: 0, prestige: 0, objets: Math.min(12, donsObj + libT6 + libRel), or: Math.max(0, (dons.or || 0) - orServeur),
-    xp: Math.max(0, (dons.xp || 0) - gainXP), kills: Math.max(0, (dons.kills || 0) - gainKills), boss: Math.max(0, (dons.boss || 0) - gainBoss), liste, res: resReste };
+  // la Cursite donnée par le serveur mais pas encore ajoutée par le jeu (livraison en cours) reste due
+  const reste = { sol, cursite: Math.max(0, (dons.cursite || 0) - Math.max(0, d('cursite') + cursiteDepenseMin - bonusCursite)), prestige: 0, objets: Math.min(12, donsObj + libT6 + libRel), or: Math.max(0, (dons.or || 0) - orServeur),
+    xp: Math.max(0, (dons.xp || 0) - gainXP), kills: Math.max(0, (dons.kills || 0) - gainKills), boss: Math.max(0, (dons.boss || 0) - gainBoss), liste, res: resReste, boosts: boostsRestants };
   return { ok: true, reste, aPerdre: [] };
 }
 

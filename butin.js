@@ -186,6 +186,6 @@ function preparerEchange(saveDonneur, items) {
   }
   return out;
 }
-function compterSig(save, sig) { let n = 0; for (const ch of Object.values(save.chars || {})) for (const it of [...(ch.equip || []), ...(ch.inv || [])]) if (it && signature(it) === sig) n++; for (const c of ((save.vault && save.vault.c) || [])) for (const it of c || []) if (it && signature(it) === sig) n++; return n; }
+function compterSig(save, sig) { let n = 0; for (const ch of Object.values(save.chars || {})) for (const it of [...(ch.equip || []), ...(ch.inv || [])]) if (it && signature(it) === sig) n++; for (const c of ((save.vault && save.vault.c) || [])) for (const it of c || []) if (it && signature(it) === sig) n++; for (const it of (Array.isArray(save.colis) ? save.colis : [])) if (it && signature(it) === sig) n++; return n; }
 
 module.exports = { reclamer, observer, tirer, preparerEchange, compterSig, noter, signature };

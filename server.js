@@ -141,13 +141,13 @@ sql.cguDernier = db.prepare('SELECT version FROM consentements WHERE compte = ? 
 sql.anoIns = db.prepare('INSERT INTO anomalies (compte, nom, quand, raisons) VALUES (?, ?, ?, ?)');
 sql.anoListe = db.prepare('SELECT nom, quand, raisons FROM anomalies ORDER BY id DESC LIMIT 60');
 for (const r of db.prepare('SELECT save FROM comptes WHERE save IS NOT NULL').all()) { try { arbitre.apprendre(JSON.parse(r.save)); } catch {} }
-const DONS0 = () => ({ cursite: 0, or: 0, prestige: 0, objets: 0, xp: 0, kills: 0, boss: 0, liste: {}, sol: [], res: {} });
+const DONS0 = () => ({ cursite: 0, or: 0, prestige: 0, objets: 0, xp: 0, kills: 0, boss: 0, liste: {}, sol: [], res: {}, boosts: 0 });
 // état anti-triche par compte (survit aux reconnexions tant que le serveur tourne)
 const etatsComptes = new Map();
 function etatCompte(id) { let e = etatsComptes.get(id); if (!e) { e = { dons: DONS0(), seaux: arbitre.nouveauxSeaux(), rythme: {}, aPerdre: [] }; etatsComptes.set(id, e); } return e; }
 // retire n exemplaires d'un objet (sac d'abord, puis coffres, puis équipement)
 function retirerObjets(save, sig, n) {
-  const zones = []; for (const ch of Object.values(save.chars || {})) zones.push(ch.inv || []); for (const c of ((save.vault && save.vault.c) || [])) zones.push(c || []); for (const ch of Object.values(save.chars || {})) zones.push(ch.equip || []);
+  const zones = []; for (const ch of Object.values(save.chars || {})) zones.push(ch.inv || []); for (const c of ((save.vault && save.vault.c) || [])) zones.push(c || []); if (Array.isArray(save.colis)) zones.push(save.colis); for (const ch of Object.values(save.chars || {})) zones.push(ch.equip || []);
   for (const z of zones) for (let i = 0; i < z.length && n > 0; i++) if (z[i] && butin.signature(z[i]) === sig) { z[i] = null; n--; }
 }
 const hacher = (mdp, sel) => crypto.scryptSync(String(mdp), sel, 64).toString('hex');
@@ -215,7 +215,7 @@ function sauverCompte(moi, m) {
     }
     // ce qui n'a pas encore servi reste disponible (butin pas encore ramassé…), modifié sur place
     const D = cpt.dons, r = v.reste || DONS0();
-    D.or = r.or; D.cursite = r.cursite; D.prestige = r.prestige; D.objets = r.objets; D.xp = r.xp; D.kills = r.kills; D.boss = r.boss; D.liste = r.liste || {}; D.sol = r.sol || []; D.res = r.res || {};
+    D.or = r.or; D.cursite = r.cursite; D.prestige = r.prestige; D.objets = r.objets; D.xp = r.xp; D.kills = r.kills; D.boss = r.boss; D.liste = r.liste || {}; D.sol = r.sol || []; D.res = r.res || {}; D.boosts = r.boosts || 0;
     cpt.aPerdre = cpt.aPerdre.filter(e => Date.now() - e.t < 3000); // les plus récents seront vérifiés à la sauvegarde suivante
     if (cpt.achats) cpt.achats = cpt.achats.filter(a => !a.vu); if (cpt.frais) cpt.frais = cpt.frais.filter(f => !f.vu && Date.now() - f.t < 600000);                // achats de l'hôtel des ventes payés
   } else { Object.assign(cpt.dons, DONS0()); cpt.aPerdre = []; }
@@ -449,6 +449,8 @@ wss.on('connection', (ws, req) => {
     if (m && (m.t === 'dessin' || m.t === 'px')) { dessiner(moi, m); return; }
     if (m && m.t === 'tournoi') { tournoiPrise(moi, m); return; }
     if (m && m.t === 'hv') { hotelDesVentes(moi, m); return; }
+    if (m && m.t === 'pack') { packs(moi, m); return; }
+    if (m && m.t === 'colis') { colisRecu(moi, m); return; }
     if (m && m.t === 'parr') { parrainage(moi, m); return; }
     if (m && m.t === 'maison') { maison(moi, m, salle); return; }
     if (m && m.t === 'cgu') { const v = String(m.v || ''); if (moi.compte && /^\d{4}-\d{2}-\d{2}$/.test(v)) { try { sql.cguIns.run(moi.compte.id, v, Date.now()); console.log(`[cgu] ${moi.compte.nom} accepte la version ${v}`); } catch (e) { console.error('[cgu]', e.message); } } return; }
@@ -512,6 +514,13 @@ wss.on('connection', (ws, req) => {
         const arg = { s: String(a.s || '').slice(0, 40), x: Number(a.x) || 0, y: Number(a.y) || 0, hs: Math.floor(Number(a.hs) || 0) };
         cible.tpT = Date.now(); envoyer(cible.ws, { t: 'dev', cmd: 'summon', arg });
         res(true, nom + ' est téléporté vers toi');
+      } else if (cmd === 'pack') {
+        // pack de démarrage (5 €) : l'admin ouvre le droit après paiement, le joueur le récupère à l'Échoppe en choisissant son héros
+        if (!cible.compte) { res(false, 'Ce joueur n\'est pas connecté à un compte'); return; }
+        if (PACK.de.all(cible.compte.id).length && m.arg !== 'force') { res(false, nom + ' a déjà eu le pack de démarrage (un seul par compte)'); return; }
+        PACK.ins.run(cible.compte.id, Date.now()); envoyer(cible.ws, etatPack(cible, true));
+        console.log(`[pack] ${(moi.etat && moi.etat.n) || '?'} ouvre le pack de démarrage pour ${cible.compte.nom}`);
+        res(true, 'Pack de démarrage ouvert pour ' + nom + ' : il le récupère à l\'Échoppe, onglet Cursite');
       } else if (cmd === 'item') {
         const it = m.arg;
         if (!it || typeof it !== 'object' || JSON.stringify(it).length > 2000) { res(false, 'Objet invalide'); return; }
@@ -525,7 +534,7 @@ wss.on('connection', (ws, req) => {
         res(true, cmd === 'god' ? (arg ? 'GOD donné à ' : 'GOD retiré à ') + nom : arg + (cmd === 'gold' ? ' pièces envoyées à ' : ' Cursite envoyée à ') + nom);
       } else if (cmd === 'eff') {
         const a = m.arg || {}, e = String(a.e || ''), t = Math.max(0.5, Math.min(60, Number(a.t) || 5));
-        if (!['par', 'poi', 'slow', 'blind', 'burn', 'rage', 'invul', 'sonic', 'clear'].includes(e)) { res(false, 'État inconnu'); return; }
+        if (!['par', 'poi', 'slow', 'blind', 'hallu', 'burn', 'rage', 'invul', 'sonic', 'clear'].includes(e)) { res(false, 'État inconnu'); return; }
         envoyer(cible.ws, { t: 'dev', cmd: 'eff', arg: { e, t } });
         res(true, 'État appliqué à ' + nom);
       } else if (cmd === 'fp') {
@@ -785,9 +794,54 @@ function hvConnexion(moi) {
     if (or > 0) { cpt.dons.or += or; envoyer(moi.ws, { t: 'hv', a: 'paye', or, n }); }
     for (const v of HV.de.all(moi.compte.id)) if (Date.now() - v.quand > HV.DUREE) { HV.del.run(v.id); try { hvRendre(moi, JSON.parse(v.objet)); } catch {} }
   } catch (e) { console.error('[ventes] connexion', e.message); } }
+// ---------- pack de démarrage et livraisons au coffre de la maison ----------
+// etat : 0 = droit ouvert (payé, pas encore récupéré) · 1 = envoyé, en attente de confirmation · 2 = bien reçu
+db.exec(`CREATE TABLE IF NOT EXISTS packs (id INTEGER PRIMARY KEY AUTOINCREMENT, compte INTEGER NOT NULL, pack TEXT NOT NULL, etat INTEGER NOT NULL DEFAULT 0, quand INTEGER NOT NULL, contenu TEXT)`);
+const PACK = { CURSITE: 1000, MOTIF: 'Pack de démarrage',
+  de: db.prepare('SELECT * FROM packs WHERE compte = ? ORDER BY id'), un: db.prepare('SELECT * FROM packs WHERE id = ?'),
+  ins: db.prepare("INSERT INTO packs (compte, pack, etat, quand) VALUES (?, 'depart', 0, ?)"),
+  livre: db.prepare('UPDATE packs SET etat = 1, contenu = ?, quand = ? WHERE id = ?'), fini: db.prepare('UPDATE packs SET etat = 2 WHERE id = ?') };
+const etatPack = (moi, neuf) => { const l = PACK.de.all(moi.compte.id); return { t: 'pack', a: 'etat', credit: l.filter(r => r.etat === 0).length, pris: l.filter(r => r.etat > 0).length, neuf: neuf ? 1 : 0 }; };
+const contenuPack = row => { try { const c = JSON.parse(row.contenu); return { items: Array.isArray(c.items) ? c.items : [], cursite: c.cursite | 0, boost: c.boost | 0 }; } catch { return { items: [], cursite: 0, boost: 0 }; } };
+// envoie une livraison : l'arbitre est prévenu (Cursite et objets attendus), puis le jeu range tout dans le coffre de livraison
+function packEnvoyer(moi, row) {
+  const c = contenuPack(row), cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id));
+  cpt.dons.cursite += c.cursite; cpt.dons.boosts = (cpt.dons.boosts || 0) + c.boost; for (const it of c.items) butin.noter(cpt.dons, it);
+  envoyer(moi.ws, { t: 'colis', id: row.id, items: c.items, cursite: c.cursite, boost: c.boost, motif: PACK.MOTIF });
+}
+function packs(moi, m) {
+  if (!moi.compte) return;
+  if (m.a === 'etat') { if (Date.now() - (moi.packE || 0) < 800) return; moi.packE = Date.now(); return envoyer(moi.ws, etatPack(moi)); }
+  if (m.a !== 'prendre') return;
+  if (Date.now() - (moi.packT || 0) < 2000) return; moi.packT = Date.now();
+  const refus = msg => envoyer(moi.ws, { t: 'pack', a: 'refus', msg });
+  const R = arbitre.regles(), C = R && R.CLASSES && R.CLASSES[String(m.cls || '')];
+  if (!C) return refus('Héros inconnu');
+  const row = PACK.de.all(moi.compte.id).find(r => r.etat === 0); if (!row) return refus('Aucun pack à récupérer');
+  // 1000 Cursite, l'équipement Tier 6 complet du héros choisi, 2 potions de chaque caractéristique, 3 œufs, 1 boost d'expérience en réserve
+  const items = [R.mkItem(C.arme, 6), R.mkItem(C.capa, 6), R.mkItem(C.armure, 6), R.mkItem('anneau', 6)];
+  for (const k of Object.keys(R.SP_DEF)) for (let i = 0; i < 2; i++) items.push(R.mkItem('sp_' + k, 0));
+  for (let i = 0; i < 3; i++) items.push(R.mkItem('egg', 0));
+  PACK.livre.run(JSON.stringify({ items, cursite: PACK.CURSITE, boost: 1 }), Date.now(), row.id);
+  console.log(`[pack] ${moi.compte.nom} récupère son pack de démarrage (${String(m.cls)})`);
+  packEnvoyer(moi, PACK.un.get(row.id));
+}
+// le jeu confirme la réception ; la livraison n'est close que si la sauvegarde enregistrée la contient bien
+function colisRecu(moi, m) {
+  if (!moi.compte || m.a !== 'recu') return;
+  const row = PACK.un.get(m.id | 0); if (!row || row.compte !== moi.compte.id || row.etat !== 1) return;
+  if (m.deja) { // déjà reçue lors d'un envoi précédent : on retire ce qui vient d'être noté une deuxième fois
+    const c = contenuPack(row), cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id));
+    cpt.dons.cursite = Math.max(0, cpt.dons.cursite - c.cursite); cpt.dons.boosts = Math.max(0, (cpt.dons.boosts || 0) - c.boost);
+    for (const it of c.items) { const L = cpt.dons.liste[butin.signature(it)]; if (L && L.length) L.pop(); } }
+  let sv = null; try { const r = sql.parId.get(moi.compte.id); sv = r && r.save ? JSON.parse(r.save) : null; } catch {}
+  if (sv && Array.isArray(sv.colisVus) && sv.colisVus.includes(row.id)) { PACK.fini.run(row.id); envoyer(moi.ws, etatPack(moi)); }
+}
+// à la connexion : on renvoie les livraisons qui n'ont pas été confirmées
+function colisConnexion(moi) { try { for (const row of PACK.de.all(moi.compte.id)) if (row.etat === 1) packEnvoyer(moi, row); envoyer(moi.ws, etatPack(moi)); } catch (e) { console.error('[pack] connexion', e.message); } }
 function hotelDesVentes(moi, m) {
   if (!moi.compte) return; const rep = o => envoyer(moi.ws, Object.assign({ t: 'hv' }, o)), R = arbitre.regles();
-  if (m.a === 'dus') { if (Date.now() - (moi.dusT || 0) < 3000) return; moi.dusT = Date.now(); hvConnexion(moi); return parrConnexion(moi); } // demandé par le jeu une fois le héros chargé
+  if (m.a === 'dus') { if (Date.now() - (moi.dusT || 0) < 3000) return; moi.dusT = Date.now(); hvConnexion(moi); colisConnexion(moi); return parrConnexion(moi); } // demandé par le jeu une fois le héros chargé
   if (Date.now() - (moi.hvT || 0) < 400) return; moi.hvT = Date.now();
   const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id));
   try {
