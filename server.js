@@ -453,6 +453,7 @@ wss.on('connection', (ws, req) => {
     if (m && m.t === 'tournoi') { tournoiPrise(moi, m); return; }
     if (m && m.t === 'hv') { hotelDesVentes(moi, m); return; }
     if (m && m.t === 'pack') { packs(moi, m); return; }
+    if (m && m.t === 'tour') { try { tour(moi, m); } catch (e) { console.error('[tour]', e.message); } return; }
     if (m && m.t === 'discord') { liaisonDiscord(moi, m); return; }
     if (m && m.t === 'colis') { colisRecu(moi, m); return; }
     if (m && m.t === 'parr') { parrainage(moi, m); return; }
@@ -863,13 +864,13 @@ const PACK = { CURSITE: 1000, MOTIF: 'Pack de démarrage',
   de: db.prepare('SELECT * FROM packs WHERE compte = ? ORDER BY id'), un: db.prepare('SELECT * FROM packs WHERE id = ?'),
   ins: db.prepare("INSERT INTO packs (compte, pack, etat, quand) VALUES (?, 'depart', 0, ?)"),
   livre: db.prepare('UPDATE packs SET etat = 1, contenu = ?, quand = ? WHERE id = ?'), fini: db.prepare('UPDATE packs SET etat = 2 WHERE id = ?') };
-const etatPack = (moi, neuf) => { const l = PACK.de.all(moi.compte.id); return { t: 'pack', a: 'etat', credit: l.filter(r => r.etat === 0).length, pris: l.filter(r => r.etat > 0).length, neuf: neuf ? 1 : 0 }; };
+const etatPack = (moi, neuf) => { const l = PACK.de.all(moi.compte.id); return { t: 'pack', a: 'etat', credit: l.filter(r => r.pack === 'depart' && r.etat === 0).length, pris: l.filter(r => r.pack === 'depart' && r.etat > 0).length, neuf: neuf ? 1 : 0 }; };
 const contenuPack = row => { try { const c = JSON.parse(row.contenu); return { items: Array.isArray(c.items) ? c.items : [], cursite: c.cursite | 0, boost: c.boost | 0 }; } catch { return { items: [], cursite: 0, boost: 0 }; } };
 // envoie une livraison : l'arbitre est prévenu (Cursite et objets attendus), puis le jeu range tout dans le coffre de livraison
 function packEnvoyer(moi, row) {
   const c = contenuPack(row), cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id));
   cpt.dons.cursite += c.cursite; cpt.dons.boosts = (cpt.dons.boosts || 0) + c.boost; for (const it of c.items) butin.noter(cpt.dons, it);
-  envoyer(moi.ws, { t: 'colis', id: row.id, items: c.items, cursite: c.cursite, boost: c.boost, motif: PACK.MOTIF });
+  envoyer(moi.ws, { t: 'colis', id: row.id, items: c.items, cursite: c.cursite, boost: c.boost, motif: row.pack === 'tour' ? 'Tour des Chevaliers' : PACK.MOTIF });
 }
 function packs(moi, m) {
   if (!moi.compte) return;
@@ -879,7 +880,7 @@ function packs(moi, m) {
   const refus = msg => envoyer(moi.ws, { t: 'pack', a: 'refus', msg });
   const R = arbitre.regles(), C = R && R.CLASSES && R.CLASSES[String(m.cls || '')];
   if (!C) return refus('Héros inconnu');
-  const row = PACK.de.all(moi.compte.id).find(r => r.etat === 0); if (!row) return refus('Aucun pack à récupérer');
+  const row = PACK.de.all(moi.compte.id).find(r => r.pack === 'depart' && r.etat === 0); if (!row) return refus('Aucun pack à récupérer');
   // 1000 Cursite, l'équipement Tier 6 complet du héros choisi, 2 potions de chaque caractéristique, 3 œufs, 1 boost d'expérience en réserve
   const items = [R.mkItem(C.arme, 6), R.mkItem(C.capa, 6), R.mkItem(C.armure, 6), R.mkItem('anneau', 6)];
   for (const k of Object.keys(R.SP_DEF)) for (let i = 0; i < 2; i++) items.push(R.mkItem('sp_' + k, 0));
@@ -887,6 +888,30 @@ function packs(moi, m) {
   PACK.livre.run(JSON.stringify({ items, cursite: PACK.CURSITE, boost: 1 }), Date.now(), row.id);
   console.log(`[pack] ${moi.compte.nom} récupère son pack de démarrage (${String(m.cls)})`);
   packEnvoyer(moi, PACK.un.get(row.id));
+}
+// ---------- Tour des Chevaliers (phase de test) : les récompenses d'un palier partent au coffre de livraison ----------
+// entrée : il faut une Clef de la Tour dans la sauvegarde connue du serveur (les admins entrent sans clef) ; sortie : une seule récompense par entrée
+PACK.insTour = db.prepare("INSERT INTO packs (compte, pack, etat, quand, contenu) VALUES (?, 'tour', 1, ?, ?)");
+function tour(moi, m) {
+  if (!moi.compte) return; const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id));
+  if (m.a === 'entrer') {
+    let ok = !!moi.compte.admin; if (!ok) { try { const r = sql.parId.get(moi.compte.id); ok = !!(r && r.save && r.save.includes('"cle_tour"')); } catch {} }
+    cpt.tour = ok ? { t: Date.now() } : null; return;
+  }
+  if (m.a === 'fin') { cpt.tour = null; return; }
+  if (m.a !== 'sortir' || !cpt.tour) return;
+  const n = m.n | 0, duree = (Date.now() - cpt.tour.t) / 1000; cpt.tour = null;
+  if (![5, 10, 15, 20, 25].includes(n) || duree < n * 5) { console.log(`[tour] sortie refusée pour ${moi.compte.nom} (palier ${n}, ${Math.round(duree)} s)`); return; }
+  const R = arbitre.regles(); if (!R) return; const items = [], sp = Object.keys(R.SP_DEF);
+  if (n >= 5) items.push(R.mkItem('pvie', 0), R.mkItem('pmana', 0));
+  if (n >= 10) for (const k of sp) items.push(R.mkItem('sp_' + k, 0));
+  if (n >= 15) { items.push(R.mkItem('cle', 0)); for (const k of sp) items.push(R.mkItem('sp_' + k, 0)); }
+  if (n >= 20) items.push(R.mkItem('cle_tour', 0), R.mkItem('sp_' + sp[Math.floor(Math.random() * sp.length)], 0));
+  // Relique de la Tour : 20 % au palier 15, garantie à partir du palier 20 — la liste des reliques reste à définir, rien n'est encore donné
+  const relique = n >= 20 || (n >= 15 && Math.random() < 0.2);
+  const id = PACK.insTour.run(moi.compte.id, Date.now(), JSON.stringify({ items, cursite: 0, boost: 0 })).lastInsertRowid;
+  console.log(`[tour] ${moi.compte.nom} sort au palier ${n} (${Math.round(duree)} s)${relique ? ' · relique de la Tour gagnée (à venir)' : ''}`);
+  packEnvoyer(moi, PACK.un.get(Number(id)));
 }
 // le jeu confirme la réception ; la livraison n'est close que si la sauvegarde enregistrée la contient bien
 function colisRecu(moi, m) {

@@ -1,5 +1,10 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.62 (index.html, server.js, arbitre.js ; wiki.html régénéré)
+- **Mystificateur** : la téléportation se recharge beaucoup plus vite — 2 s au Tier 0, puis 0,3 s de moins à chaque tier, jusqu'à 0,2 s au Tier 6 et 0,1 s pour le Tier 7, la relique et le Miroir de Frénésie.
+- **Mystificateur** : ses miroirs renforcent maintenant l'attaque tant qu'ils sont équipés — +2 puissance et +1 vitesse d'attaque par tier (Tier 6 : +14 / +7 ; Tier 7 et reliques : +16 / +8). Les miroirs déjà possédés en profitent aussi.
+- **Wiki** : la fiche de chaque capacité décrit maintenant son effet (soin, explosion, invocation…), et chaque relique indique ce qu'elle apporte en plus — par exemple le Pacte des Abysses, qui invoque un démon gardien.
+
 ## ver.0.0.61 (index.html seulement ; server.js inchangé depuis la 0.0.56 ; wiki.html régénéré)
 - **Zones qui se vidaient** (Canyon de Rouille surtout) : un monstre entraîné hors de sa zone par un joueur y restait pour toujours et comptait encore pour sa zone d'origine, qui ne se repeuplait plus. Il est maintenant retiré dès que plus personne ne le voit, et sa zone le remplace.
 
