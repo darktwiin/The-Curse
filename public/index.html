@@ -454,7 +454,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.65"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.66"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -470,7 +470,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp"><i id="xpF"></i><span><em>XP</em><b id="xpT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.65</div>
+    <div class="verTag" id="verTag">ver.0.0.66</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -645,7 +645,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.65</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.66</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -687,7 +687,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.65</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.66</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -3240,7 +3240,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000065;let newerWarned=false;
+const NETV=2,BUILD=2600000066;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -4191,8 +4191,11 @@ function useKey(){if(scene==='dungeon'||scene==='raid'||scene==='arena'||scene==
 // pêche dans les Plaines : très rarement, les poissons se vengent et un portail s'ouvre (tirage fait par le serveur)
 const VENG_RATE=1/250;
 function fishVengeance(force){if(scene!=='realm')return;if(ONLINE&&AUTH.ok&&room&&room.raw)room.raw({t:'peche',force:force?1:0});else if(force||Math.random()<VENG_RATE)openFishPortal(1+Math.floor(Math.random()*2e9));}
-function openFishPortal(id){if(scene!=='realm'||!(id>0))return;let x=P.x,y=P.y-1.4;if(solidAt(x,y)){x=P.x;y=P.y+1.4;}if(solidAt(x,y)){x=P.x;y=P.y;}
-  KP={s:sceneKey(),x,y,id,fin:Date.now()+60000,ty:'v'};sfx('relic');burst(x,y,'#ffd23f',40,5);showBanner('Les poissons se vengent !','Un portail vers La Vengeance sous-marine s\'ouvre · 60 secondes','#ffd23f');sendChat('🐟 a réveillé la colère des poissons : un portail vers La Vengeance sous-marine est ouvert !');sendPresence();}
+function openFishPortal(id){if(scene!=='realm'||!(id>0))return;
+  // le portail s'ouvre à quelques pas du pêcheur, sur la terre ferme : personne n'y entre sans le vouloir (la touche de pêche est aussi celle des portails)
+  let x=P.x,y=P.y,ok=false;for(const d of [3.4,2.8,4.2,2.2]){let bx=0,by=0,bs=-1;for(let i=0;i<16;i++){const a=i*TAU/16,px=P.x+Math.cos(a)*d,py=P.y+Math.sin(a)*d;if(solidAt(px,py)||blocked(px,py,0.45))continue;let libre=0;for(let j=0;j<8;j++){const b=j*TAU/8;if(!solidAt(px+Math.cos(b)*1.2,py+Math.sin(b)*1.2))libre++;}if(libre>bs){bs=libre;bx=px;by=py;}}if(bs>=0){x=bx;y=by;ok=true;break;}}
+  if(!ok){x=P.x;y=P.y-1.4;if(solidAt(x,y)){x=P.x;y=P.y+1.4;}if(solidAt(x,y)){x=P.x;y=P.y;}}
+  KP={s:sceneKey(),x,y,id,fin:Date.now()+120000,ty:'v'};sfx('relic');burst(x,y,'#ffd23f',40,5);showBanner('Les poissons se vengent !','Un portail vers La Vengeance sous-marine s\'ouvre à côté de toi · 2 minutes · tout le monde peut le prendre','#ffd23f');sendChat('🐟 a réveillé la colère des poissons : un portail vers La Vengeance sous-marine est ouvert !');sendPresence();}
 // ---------- table à dessin du Village : toile commune de 100 × 100, un pixel par minute (le serveur tient le compte) ----------
 const PIX_N=100,PIX_PAL=['#ffffff','#c8c8d0','#8a8794','#3a3650','#0b0a12','#6a4424','#a8743e','#f0c8a0','#e8443a','#b3363a','#ff7a2a','#ffd23f','#fff1a0','#7ed957','#3f8a3a','#1f4f2a','#7df0e0','#3f8fff','#2f4fbf','#1a2a6a','#c8a0ff','#8a4ae0','#ff9ac8','#e04a9a'];
 const pixEl=document.getElementById('pixWin'),pixCv=document.getElementById('pixCv'),pixG=pixCv.getContext('2d'),pixView=document.getElementById('pixView');
@@ -7354,7 +7357,11 @@ const CHEST_OPEN_ROWS=['.BBBBBB.','BWWWWWWB','BBBBBBBB','BKKGKKGB','BDDYYDDB','B
 const CHEST=makeSprite(CHEST_ROWS,{B:'#4a2e18',W:'#b87a42',D:'#8a5a2b',Y:'#f2c14e'},6);
 const CHEST_OPEN=makeSprite(CHEST_OPEN_ROWS,{B:'#4a2e18',W:'#b87a42',D:'#8a5a2b',Y:'#f2c14e',K:'#1a1008',G:'#ffd96a'},6);
 const COLIS_PAL={B:'#14233f',W:'#3f7fe0',D:'#24468f',Y:'#ffd23f',K:'#0b1020',G:'#7df0e0'};
-const COLIS_IMG=makeSprite(['...YY...','.BBYYBB.','BWWYYWWB','BBBYYBBB','BDDYYDDB','BDYDDYDB','BDDDDDDB','.BBBBBB.'],COLIS_PAL,6),COLIS_OPEN=makeSprite(['.BBBBBB.','BWWYYWWB','BBBBBBBB','BKGGGGKB','BDDYYDDB','BDYDDYDB','BDDDDDDB','.BBBBBB.'],COLIS_PAL,6);
+// coffre de livraison : un colis de carton ficelé d'un ruban rouge ; ouvert, les rabats sont relevés et le contenu brille
+const COLIS_P2={K:'#2a1608',C:'#c8955a',c:'#a8743e',L:'#e6bd84',R:'#e8443a',r:'#b3363a',Y:'#ffd23f',G:'#7df0e0',I:'#1a1008'};
+const COLIS_BAS=['.KCCCCCRRCCCCCK.','.KRRRRRRRRRRRRK.','.KrrrrrRRrrrrrK.','.KCCCCCRRCCCCCK.','.KcccccRRcccccK.','.KKKKKKKKKKKKKK.','................'];
+const COLIS_IMG=makeSprite(['................','.....RR..RR.....','....RrrRRrrR....','.....RRYYRR.....','..KKKKKRRKKKKK..','.KLLLLLRRLLLLLK.','.KCCCCCRRCCCCCK.','.KKKKKKRRKKKKKK.','.KCCCCCRRCCCCCK.',...COLIS_BAS],COLIS_P2,3),
+  COLIS_OPEN=makeSprite(['................','..K..........K..','.KLK..G..G..KLK.','.KLLK.GGGG.KLLK.','.KcLLKGYYGKLLcK.','..KKKKIIIIKKKK..','.KIIIIGGGGIIIIK.','.KKKKKKKKKKKKKK.','.KCCCCCRRCCCCCK.',...COLIS_BAS],COLIS_P2,3);
 const CHEST_LOCK=makeSprite(CHEST_ROWS,{B:'#2a2630',W:'#5a5462',D:'#403a48',Y:'#8a8494'},6);
 const inPark=(x,y)=>x>=PARK.x0&&x<=PARK.x1&&y>=PARK.y0&&y<=PARK.y1;
 const grassTex=v=>mkTex('pg'+v,(x,y)=>{const n=hx(x,y,300+v);if(n>0.93)return '#9fd06a';if(n<0.06)return '#2f5a2a';return ['#4f8a3a','#4a8436','#548f3e','#46803a'][(x+y*3+v)%4];});

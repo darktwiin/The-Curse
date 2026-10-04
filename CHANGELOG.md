@@ -1,5 +1,9 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.66 (index.html seulement ; server.js inchangé depuis la 0.0.64 ; wiki.html régénéré)
+- **La Vengeance sous-marine** (donjon caché de la pêche, 1 chance sur 250) : le portail s'ouvre maintenant à quelques pas du pêcheur, sur la terre ferme, au lieu de l'aspirer dedans à la prise suivante. Il reste ouvert 2 minutes et tout le monde peut le prendre.
+- **Coffre de livraison** de la maison : nouvelle apparence, un colis ficelé d'un ruban rouge.
+
 ## ver.0.0.65 (index.html seulement ; server.js inchangé depuis la 0.0.64 ; wiki.html régénéré)
 - **Heaume aux Épines** (Relique de la Tour) : les dégâts renvoyés passent de 100 % à 2000 % des dégâts subis.
 
