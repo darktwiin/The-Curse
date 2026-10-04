@@ -45,13 +45,23 @@ function potionsCarac(R, key, d, scene) {
   if (scene === 'realm') { if (R.ZONES[5].pool.includes(key) && Math.random() < 0.008) return [pick(R.SK)]; if (R.ZONES[6].pool.includes(key) && Math.random() < 0.011) return [pick(R.SK)]; }
   return [];
 }
+// œuf de familier : la chance suit la difficulté de l'endroit (monstres et boss confondus)
+// 0,15 % zones 1-2 et Terrier des Gobelins · 0,25 % zones 3-4 et donjons intermédiaires · 0,35 % zones 5-6 et grands donjons
+// 0,4 % Terres Désolées · 0,5 % Observatoire Céleste, Horloge Brisée et les deux boss du centre des Plaines
+const OEUF_ZONES = [0.0015, 0.0015, 0.0025, 0.0025, 0.0035, 0.0035, 0.004], OEUF_DONJON = { b: 0.0015, r: 0.0025, k: 0.0025, m: 0.0025, f: 0.0025, a: 0.005, h: 0.005 }, OEUF_GRAND = 0.0035, OEUF_BOSS = 0.005;
+function tauxOeuf(R, key, sc) {
+  if (key === 'dieu_fou' || key === 'colosse') return OEUF_BOSS;
+  if (typeof sc === 'string' && sc[0] === 'd') return OEUF_DONJON[sc[1]] || OEUF_GRAND;
+  const z = R.ZONES ? R.ZONES.findIndex(q => (q.pool || []).includes(key)) : -1;
+  return z >= 0 ? OEUF_ZONES[Math.min(z, OEUF_ZONES.length - 1)] : OEUF_ZONES[0];
+}
 function tirer(R, key, cls, scene, sc) {
   const d = R.MON[key], out = { xp: d.xp | 0, b: d.boss ? 1 : 0, it: [], rel: -1, oeuf: 0, spg: [], sp: [], or: 0 };
   if (d.tuto) { out.xp *= 2; out.tuto = 1; return out; }
   if (Math.random() < d.drop) { const n = d.n && d.boss ? d.n : 1; for (let i = 0; i < n; i++) { let t = ri(d.loot[0], d.loot[1]); if (Math.random() < 0.08) t = Math.min(6, t + 1); out.it.push(objetAuHasard(R, t, cls)); } }
   if (d.rel && (key === 'devoreur' || Math.random() < d.rel)) { out.rel = out.it.length; out.it.push(objetAuHasard(R, 7, cls)); }
   // les potions de vie et de mana ne tombent plus : elles se fabriquent à l'atelier de l'herboriste avec les plantes des Plaines
-  if (Math.random() < 0.005) { out.oeuf = 1; out.it.push(R.mkItem('egg', 0)); }
+  if (Math.random() < tauxOeuf(R, key, sc)) { out.oeuf = 1; out.it.push(R.mkItem('egg', 0)); }
   // Clef du Temps : 1 % sur le boss des 6 grands donjons, 10 % sur chacun des 4 gardiens de l'Observatoire (jamais sur le Dévoreur)
   if (R.KINDS.cle && typeof sc === 'string' && sc[0] === 'd') {
     const t = sc[1], grand = DONJONS_A_CLEF.includes(t) && R.DTYPES[t] && R.DTYPES[t].bk === key;

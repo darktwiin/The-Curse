@@ -1,5 +1,16 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.63 (index.html, server.js, butin.js ; wiki.html et wiki-modele.html mis à jour)
+- **L'Horloge Brisée devient un vrai labyrinthe** : une cinquantaine de salles qui partent dans tous les sens, avec des embranchements, quelques boucles et de vrais culs-de-sac. La salle de Chronos peut se trouver n'importe où, parfois tout près de l'entrée, mais le chemin pour y arriver est long.
+- **Carte de l'Horloge Brisée** : le donjon est caché. La carte ne dévoile que la salle ou le couloir où l'on se trouve, jamais les salles voisines.
+- **Œufs de familier** : la chance dépend maintenant de la difficulté de l'endroit, monstres et boss confondus — 0,15 % sur la Plage, dans les Plaines d'Émeraude et au Terrier des Gobelins · 0,25 % dans le Marais Putride, la Forêt des Murmures et les donjons intermédiaires · 0,35 % dans le Canyon de Rouille, les Terres Brûlées et les grands donjons · 0,4 % dans les Terres Désolées · 0,5 % dans l'Observatoire Céleste, l'Horloge Brisée et sur les deux boss du centre des Plaines.
+- **Boss** : +20 % de vie pour chaque joueur différent venu se battre contre lui. C'était déjà le cas pour les boss d'arène ; les gardiens de l'Observatoire et les boss hors arène sont maintenant comptés de la même façon, et un joueur qui repart ne fait pas redescendre la vie du boss.
+- **Carquois des Comètes** (relique de l'Archer) : sur Chronos, chaque flèche retire 5 % de sa vie au lieu de 15 %.
+- **Baguette de Miséricorde** : la zone de soin rend 5 % de la vie au lieu de 3 %.
+- **Dagues** : dégâts +15 % (Mystificateur et Assassin, toutes les dagues, celles déjà possédées comprises).
+- **Mage** : dégâts des bâtons −10 % et dégâts de l'explosion du sort −20 %.
+- (interne) Titre Alpha testeur : le compte « Laturne 19 » est ajouté ; les noms de compte sont comparés sans majuscules ni espaces.
+
 ## ver.0.0.62 (index.html, server.js, arbitre.js ; wiki.html régénéré)
 - **Mystificateur** : la téléportation se recharge beaucoup plus vite — 2 s au Tier 0, puis 0,3 s de moins à chaque tier, jusqu'à 0,2 s au Tier 6 et 0,1 s pour le Tier 7, la relique et le Miroir de Frénésie.
 - **Mystificateur** : ses miroirs renforcent maintenant l'attaque tant qu'ils sont équipés — +2 puissance et +1 vitesse d'attaque par tier (Tier 6 : +14 / +7 ; Tier 7 et reliques : +16 / +8). Les miroirs déjà possédés en profitent aussi.

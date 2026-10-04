@@ -118,7 +118,8 @@ const db = new DatabaseSync(path.join(DATA_DIR, 'jeu.db'));
 db.exec(`PRAGMA journal_mode=WAL;
 CREATE TABLE IF NOT EXISTS comptes (id INTEGER PRIMARY KEY AUTOINCREMENT, nom TEXT NOT NULL UNIQUE COLLATE NOCASE, sel TEXT NOT NULL, hash TEXT NOT NULL, cree INTEGER NOT NULL, vu INTEGER, save TEXT, maj INTEGER);
 CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, compte INTEGER NOT NULL, cree INTEGER NOT NULL);`);
-const ALPHAS = new Set(String(process.env.ALPHA_COMPTES || 'Heartless,Foxy').split(',').map(x => x.trim().toLowerCase()).filter(Boolean)); // titre « Alpha testeur »
+const cleAlpha = n => String(n == null ? '' : n).toLowerCase().replace(/\s+/g, ''); // sans majuscules ni espaces : « Laturne 19 » = « laturne19 »
+const ALPHAS = new Set((String(process.env.ALPHA_COMPTES || '') + ',Heartless,Foxy,Laturne 19').split(',').map(cleAlpha).filter(Boolean)); // titre « Alpha testeur »
 const ADMINS = new Set(String(process.env.ADMIN_COMPTES || '').split(',').map(x => x.trim().toLowerCase()).filter(Boolean));
 const sql = {
   parNom: db.prepare('SELECT * FROM comptes WHERE nom = ?'),
@@ -168,7 +169,7 @@ function connecter(moi, c, ws) {
   envoyer(ws, { t: 'authres', ok: true, token, nom: c.nom, id: c.id, admin: moi.compte.admin, save, cgu });
   if (save) { envoyerCapGardien(moi, save); moi.cpt.boost = +save.boostXP || 0; }
   if (concoursVisible()) envoyer(ws, etatConcours());
-  envoyer(ws, etatObjectif()); tournoiCloture(); envoyer(ws, etatTournoi(moi)); envoyer(ws, etatGuerre()); if (ALPHAS.has(String(c.nom).toLowerCase())) envoyer(ws, { t: 'titres', l: ['alpha'] }); try { envoyer(ws, etatDiscord(moi)); } catch {}
+  envoyer(ws, etatObjectif()); tournoiCloture(); envoyer(ws, etatTournoi(moi)); envoyer(ws, etatGuerre()); if (ALPHAS.has(cleAlpha(c.nom))) envoyer(ws, { t: 'titres', l: ['alpha'] }); try { envoyer(ws, etatDiscord(moi)); } catch {}
   console.log(`[compte] ${c.nom} connecté${moi.compte.admin ? ' (admin)' : ''}`);
 }
 function actionCompte(moi, ws, m) {
@@ -584,7 +585,7 @@ wss.on('connection', (ws, req) => {
       let v = m.patch[k];
       if (k === 'ti' && v === 'admin' && !(moi.compte && moi.compte.admin)) v = null; // titre ADMIN réservé aux comptes admin
       if (k === 'gd' && !moi.gardien) v = null; // seul le vrai Gardien peut s'annoncer
-      if (k === 'ti' && v === 'alpha' && !(moi.compte && ALPHAS.has(String(moi.compte.nom).toLowerCase()))) v = null; // titre réservé aux premiers testeurs
+      if (k === 'ti' && v === 'alpha' && !(moi.compte && ALPHAS.has(cleAlpha(moi.compte.nom)))) v = null; // titre réservé aux premiers testeurs
       if (k === 'ti' && v === 'roipeche' && !(moi.compte && roiPeche() && roiPeche().compte === moi.compte.nom)) v = null; // titre du vainqueur du tournoi de pêche
       if (k === 'm' && typeof v === 'string') { if (modo.mutes[moi.ip]) { if (!moi.averti) { moi.averti = true; envoyer(ws, { t: 'dev', cmd: 'mute', arg: 0 }); } continue; } v = filtrer(v).slice(0, 140); }
       if (k === 'n' && typeof v === 'string') v = filtrer(v).slice(0, 16);
@@ -855,7 +856,7 @@ function lierDiscord(code, idDiscord, nomDiscordU) {
   try { LIEN.ins.run(e.compte, String(idDiscord), String(nomDiscordU || '').slice(0, 40), Date.now()); } catch (err) { console.error('[discord] liaison', err.message); return { ok: false, msg: 'Liaison impossible pour le moment, réessaie.' }; }
   LIEN.codes.delete(code); console.log(`[discord] ${e.nom} lié au compte Discord ${nomDiscordU}`);
   const j = enLigne.get(e.compte); if (j && j.ws.readyState === 1) envoyer(j.ws, { t: 'discord', lie: 1, nom: String(nomDiscordU || '').slice(0, 24) });
-  return { ok: true, msg: 'Ton compte de jeu **' + e.nom + '** est maintenant lié à ton Discord. Bon jeu !', alpha: ALPHAS.has(String(e.nom).toLowerCase()) };
+  return { ok: true, msg: 'Ton compte de jeu **' + e.nom + '** est maintenant lié à ton Discord. Bon jeu !', alpha: ALPHAS.has(cleAlpha(e.nom)) };
 }
 // ---------- pack de démarrage et livraisons au coffre de la maison ----------
 // etat : 0 = droit ouvert (payé, pas encore récupéré) · 1 = envoyé, en attente de confirmation · 2 = bien reçu

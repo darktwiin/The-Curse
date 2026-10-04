@@ -69,7 +69,7 @@ footer{color:var(--muted);text-align:center;font-size:13px;padding:0 16px 30px}
 <script>
 const D="__DONNEES__";
 const $=s=>document.querySelector(s),el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
-const pct=v=>(v*100>=10?Math.round(v*100):Math.round(v*1000)/10).toString().replace('.',',')+' %',sur=v=>'1 sur '+Math.round(1/v);
+const pct=v=>(v*100>=10?Math.round(v*100):v*100>=1?Math.round(v*1000)/10:Math.round(v*10000)/100).toString().replace('.',',')+' %',sur=v=>'1 sur '+Math.round(1/v);
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const nomMon=k=>(D.monstres.find(m=>m.k===k)||{nom:k}).nom;
 $('#sous').textContent='Tout sur les objets, les monstres, les zones et les donjons · '+D.ver+' · mis à jour le '+D.date.split('-').reverse().join('/');
@@ -130,7 +130,7 @@ function butinDe(m){const L=[],B=D.butin,p=v=>pct(v),don=D.donjons.find(d=>d.bk=
   if(m.ou.includes('Centre des Plaines (boss)'))L.push(['Potion de caractéristique','20 %']);
   if(m.z===5&&!m.boss)L.push(['Potion de caractéristique','0,8 %']);if(m.z===6&&!m.boss)L.push(['Potion de caractéristique','1,1 %']);
   if(don&&B.CLEF.includes(don.t))L.push(['Clef du Temps','1 %']);if(m.star)L.push(['Clef du Temps','10 %']);
-  L.push(['Œuf de familier',p(D.taux.oeuf)]);
+  L.push(['Œuf de familier',p(m.ou.includes('Centre des Plaines (boss)')?0.005:don?('ah'.includes(don.t)?0.005:don.t==='b'?0.0015:D.MID_DUN.includes(don.t)?0.0025:0.0035):m.z>=0?[0.0015,0.0015,0.0025,0.0025,0.0035,0.0035,0.004][m.z]:0.0015)]);
   if(m.or)L.push(['Pièces ('+Math.round(m.or[1]*1.3)+(m.or[2]>m.or[1]?' à '+Math.round(m.or[2]*1.3):'')+')',p(m.or[0])]);
   if(m.dun2)L.push(['Portail doré (Observatoire Céleste)',p(m.dun2)]);
   if(!m.boss&&m.z>=0){if(m.z<=1)L.push(['Portail : Terrier des Gobelins','3,6 %']);if(m.z===3||m.z===4)L.push(['Portail : donjon intermédiaire','1,5 %']);if(D.zones[m.z].dun)L.push(['Portail : grand donjon',p(D.zones[m.z].dun)]);}
@@ -167,7 +167,7 @@ function carteMon(m){const c=el('div','card mon'+(m.boss?' boss':''));c.tabIndex
   const t=el('table');const L=[['Équipement','Selon le monstre. Le tier est tiré dans sa fourchette, avec '+pct(D.taux.plus1)+' de chance de gagner un tier (maximum T6).'],
     ['Type d’objet','40 % arme, 20 % spécial, 25 % armure, 15 % anneau. 55 % de chance que l’arme, le spécial ou l’armure soit pour ton héros.'],
     ['Potion de vie ou de mana','Elles ne tombent plus des monstres. On les fabrique chez l’herboriste avec les plantes des Plaines d’Émeraude et de la Forêt des Murmures, ou on les achète au marchand.'],
-    ['Œuf de familier',pct(D.taux.oeuf)+' ('+sur(D.taux.oeuf)+') sur tous les monstres du jeu.'],
+    ['Œuf de familier','Sur tous les monstres et boss, selon la difficulté de l’endroit : 0,15 % sur la Plage, dans les Plaines d’Émeraude et au Terrier des Gobelins · 0,25 % dans le Marais Putride, la Forêt des Murmures et les donjons intermédiaires · 0,35 % dans le Canyon de Rouille, les Terres Brûlées et les grands donjons · 0,4 % dans les Terres Désolées · 0,5 % dans l’Observatoire Céleste, l’Horloge Brisée et sur les deux boss du centre des Plaines.'],
     ['Relique (turquoise)','Uniquement sur le Dévoreur d’Étoiles, le boss de l’Observatoire Céleste : une à chaque victoire. Aucun autre monstre ni boss n’en donne.'],
     ['Relique de Chronos (or)','Uniquement sur Chronos, le boss de l’Horloge Brisée : une à chaque victoire, avec une chance sur deux qu’elle soit pour ton héros.'],
     ['Échanger une relique','Les reliques ne s’échangent pas entre joueurs. Elles se vendent à l’hôtel des ventes.'],
