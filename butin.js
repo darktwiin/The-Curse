@@ -161,7 +161,7 @@ function reclamer(moi, m, ctx) {
   if (r.res) { dons.res = dons.res || {}; dons.res[r.res] = (dons.res[r.res] || 0) + 1; }
   const x = Math.round((Number(m.x) || 0) * 10) / 10, y = Math.round((Number(m.y) || 0) * 10) / 10;
   ctx.envoyer(moi.ws, Object.assign({ t: 'butin', id, k: key, x, y }, r));
-  if (ctx.onTue) try { ctx.onTue(key, s); } catch (e) { console.error('[butin] onTue', e.message); }
+  if (ctx.onTue) try { ctx.onTue(key, s, r); } catch (e) { console.error('[butin] onTue', e.message); }
 }
 
 // ---------- échanges : ce qui change de main est noté (et doit disparaître chez celui qui donne) ----------
@@ -173,12 +173,13 @@ function sigEchange(R, o) {
   return it;
 }
 // donneur : sauvegarde du donneur (en base), objets offerts → [{ recu (objet tel que le receveur le fabrique), sigDonneur }]
-function preparerEchange(saveDonneur, items) {
+function preparerEchange(saveDonneur, items, opt) {
   const R = arbitre.regles(); if (!R || !saveDonneur) return [];
   const possede = []; for (const ch of Object.values(saveDonneur.chars || {})) for (const it of [...(ch.equip || []), ...(ch.inv || [])]) if (it) possede.push(it);
   const out = [], pris = new Set();
   for (const o of (items || []).slice(0, 8)) {
     const recu = sigEchange(R, o); if (!recu) continue;
+    if (opt && opt.sansReliques && recu.slot !== 'conso' && recu.tier >= 7) continue; // les reliques ne s'échangent pas entre joueurs (hôtel des ventes seulement)
     // le donneur doit vraiment posséder un objet de ce type et de ce tier (mêmes stats pour un anneau)
     const i = possede.findIndex((it, j) => !pris.has(j) && it.kind === recu.kind && it.tier === recu.tier && (it.up | 0) === (recu.up | 0) && (recu.slot !== 'anneau' || signature(it) === signature(recu)));
     if (i < 0) continue;

@@ -168,7 +168,7 @@ function connecter(moi, c, ws) {
   envoyer(ws, { t: 'authres', ok: true, token, nom: c.nom, id: c.id, admin: moi.compte.admin, save, cgu });
   if (save) { envoyerCapGardien(moi, save); moi.cpt.boost = +save.boostXP || 0; }
   if (concoursVisible()) envoyer(ws, etatConcours());
-  envoyer(ws, etatObjectif()); tournoiCloture(); envoyer(ws, etatTournoi(moi)); envoyer(ws, etatGuerre()); if (ALPHAS.has(String(c.nom).toLowerCase())) envoyer(ws, { t: 'titres', l: ['alpha'] });
+  envoyer(ws, etatObjectif()); tournoiCloture(); envoyer(ws, etatTournoi(moi)); envoyer(ws, etatGuerre()); if (ALPHAS.has(String(c.nom).toLowerCase())) envoyer(ws, { t: 'titres', l: ['alpha'] }); try { envoyer(ws, etatDiscord(moi)); } catch {}
   console.log(`[compte] ${c.nom} connecté${moi.compte.admin ? ' (admin)' : ''}`);
 }
 function actionCompte(moi, ws, m) {
@@ -232,7 +232,7 @@ function conclureEchange(A, B) {
     if (!X.compte || !Y.compte || !X.offre || X.offre.to !== Y.peer) continue;
     let sx = null; try { const row = sql.parId.get(X.compte.id); sx = row && row.save ? JSON.parse(row.save) : null; } catch { sx = null; }
     if (!sx) continue;
-    const prep = butin.preparerEchange(sx, X.offre.items), parSig = new Map();
+    const prep = butin.preparerEchange(sx, X.offre.items, { sansReliques: true }), parSig = new Map();
     const YC = Y.cpt || (Y.cpt = etatCompte(Y.compte.id)), XC = X.cpt || (X.cpt = etatCompte(X.compte.id));
     for (const p of prep) { butin.noter(YC.dons, p.recu); parSig.set(p.sigDonneur, (parSig.get(p.sigDonneur) || 0) + 1); notes.push({ YC, sig: butin.signature(p.recu) }); }
     for (const [sig, n] of parSig) { const e = { sig, max: butin.compterSig(sx, sig) - n, t: Date.now() }; XC.aPerdre.push(e); notes.push({ XC, e }); }
@@ -453,6 +453,7 @@ wss.on('connection', (ws, req) => {
     if (m && m.t === 'tournoi') { tournoiPrise(moi, m); return; }
     if (m && m.t === 'hv') { hotelDesVentes(moi, m); return; }
     if (m && m.t === 'pack') { packs(moi, m); return; }
+    if (m && m.t === 'discord') { liaisonDiscord(moi, m); return; }
     if (m && m.t === 'colis') { colisRecu(moi, m); return; }
     if (m && m.t === 'parr') { parrainage(moi, m); return; }
     if (m && m.t === 'maison') { maison(moi, m, salle); return; }
@@ -487,6 +488,7 @@ wss.on('connection', (ws, req) => {
       if (cmd === 'bye') { moi.admin = 0; res(true, ''); console.log(`[admin] ${(moi.etat && moi.etat.n) || '?'} quitte le mode admin`); return; }
       if (!moi.admin) { moi.admin = Date.now(); console.log(`[admin] ${(moi.etat && moi.etat.n) || '?'} (${masquer(moi.ip)}) passe admin`); }
       if (cmd === 'hello') { res(true, ''); return; }
+      if (cmd === 'discordtest') { if (!discord.actif()) { res(false, 'Le bot Discord est éteint (pas de DISCORD_TOKEN sur le serveur)'); return; } discord.annoncer('🤖 Message d\'essai envoyé depuis le jeu par ' + nomDiscord(moi) + '.'); res(true, 'Message d\'essai envoyé dans le salon des annonces'); return; }
       if (cmd === 'annonce') { const sec = Math.max(5, Math.min(300, Math.floor(Number(m.arg) || 30))); annoncerMaj(sec); res(true, 'Annonce envoyée : compte à rebours de ' + sec + ' s (le serveur ne redémarre pas tout seul)'); return; }
       // concours : « etat », « reset » (efface le vainqueur), ou un nombre = départ dans N minutes (0 = tout de suite)
       if (cmd === 'concours') { const a = String(m.arg == null ? 'etat' : m.arg);
@@ -622,6 +624,10 @@ try { fs.writeFileSync(path.join(DATA_DIR, 'annonce.json'), JSON.stringify({ por
 // boss du monde vaincu dans les Plaines : annoncé sur Discord (une fois par boss, même si plusieurs joueurs le réclament)
 function bossTue(moi, key, sc) { if (sc !== 'r' || (key !== 'dieu_fou' && key !== 'colosse')) return; const R = arbitre.regles(), d = R && R.MON && R.MON[key]; if (!d) return;
   discord.annoncer('💀 **' + d.nom + '** vient de tomber dans les Plaines Sauvages, vaincu par le groupe de ' + String((moi.etat && moi.etat.n) || 'un héros').replace(/[`*_~|>@#\\]/g, '').slice(0, 16) + ' !', 'boss:' + key, 90000); }
+const nomDiscord = moi => String((moi.etat && moi.etat.n) || (moi.compte && moi.compte.nom) || 'Un héros').replace(/[`*_~|>@#\\]/g, '').slice(0, 16);
+// relique trouvée sur un monstre : annoncée dans le salon des reliques
+function reliqueTrouvee(moi, key, r) { if (!r || !Array.isArray(r.it)) return; const R = arbitre.regles(), d = R && R.MON && R.MON[key];
+  for (const it of r.it) if (it && it.slot !== 'conso' && it.tier >= 7) discord.annoncer('✨ **' + nomDiscord(moi) + '** vient de trouver une relique : **' + String(it.name || 'Relique').slice(0, 60) + '**' + (d ? ' (sur ' + d.nom + ')' : '') + ' !', null, 0, 'reliques'); }
 function annoncerMaj(sec) {
   console.log(`[annonce] mise à jour dans ${sec} s`);
   discord.annoncer('🛠️ Mise à jour du jeu dans ' + sec + ' secondes : le serveur va redémarrer, mettez-vous à l\'abri !', 'maj', 120000);
@@ -638,11 +644,19 @@ server.listen(PORT, () => {
       version: () => VERSION,
       enLigne: () => tousLesSockets().filter(j => !j.gardien && !j.bot && j.compte && j.etat && j.etat.n).map(j => String(j.etat.n)),
       classement: () => top(null, null),
+      lier: lierDiscord,
       guerre: () => { const R = arbitre.regles(); return etatGuerre().zones.map((z, i) => ({ zone: R && R.ZONES && R.ZONES[i] ? R.ZONES[i].nom : 'Zone ' + (i + 1), tenant: z.t ? z.t.nom : null, tag: z.t ? z.t.tag : '' })); },
     });
     // nouvelle version en ligne : une ligne sur Discord, une seule fois par version
     if (actif) { const f = path.join(DATA_DIR, 'discord.json'); let vu = ''; try { vu = JSON.parse(fs.readFileSync(f, 'utf8')).version || ''; } catch {}
-      if (vu !== VERSION) { try { fs.writeFileSync(f, JSON.stringify({ version: VERSION })); } catch {} if (vu) setTimeout(() => discord.annoncer('✅ **The Curse ' + VERSION + '** est en ligne. Rechargez la page pour jouer sur la nouvelle version.'), 8000).unref(); } }
+      if (vu !== VERSION) { try { fs.writeFileSync(f, JSON.stringify({ version: VERSION })); } catch {}
+        if (vu) setTimeout(() => {
+          discord.annoncer('✅ **The Curse ' + VERSION + '** est en ligne. Rechargez la page pour jouer sur la nouvelle version.');
+          // notes de mise à jour : toutes les versions sorties depuis la dernière annoncée (5 au plus), de la plus ancienne à la plus récente
+          try { const cl = fs.readFileSync(path.join(__dirname, 'CHANGELOG.md'), 'utf8'), num = v => (String(v).match(/\d+/g) || []).map(Number).reduce((a, x) => a * 1000 + x, 0);
+            const toutes = [...cl.matchAll(/^## (ver\.\d+\.\d+\.\d+)/gm)].map(m => m[1]).filter(v => num(v) > num(vu) && num(v) <= num(VERSION)).sort((a, b) => num(a) - num(b)).slice(-5);
+            discord.publierNotes(cl, toutes); } catch (e) { console.error('[discord] notes de version', e.message); }
+        }, 8000).unref(); } }
   } catch (e) { console.error('[discord] démarrage', e.message); }
 });
 
@@ -815,6 +829,33 @@ function hvConnexion(moi) {
     if (or > 0) { cpt.dons.or += or; envoyer(moi.ws, { t: 'hv', a: 'paye', or, n }); }
     for (const v of HV.de.all(moi.compte.id)) if (Date.now() - v.quand > HV.DUREE) { HV.del.run(v.id); try { hvRendre(moi, JSON.parse(v.objet)); } catch {} }
   } catch (e) { console.error('[ventes] connexion', e.message); } }
+// ---------- liaison compte de jeu ↔ compte Discord ----------
+// Le joueur demande un code en jeu, puis tape « /lier CODE » sur Discord : le bot nous donne son identifiant Discord.
+db.exec(`CREATE TABLE IF NOT EXISTS discord_liens (compte INTEGER PRIMARY KEY, discord TEXT NOT NULL UNIQUE, nom TEXT, quand INTEGER NOT NULL)`);
+const LIEN = { de: db.prepare('SELECT * FROM discord_liens WHERE compte = ?'), par: db.prepare('SELECT * FROM discord_liens WHERE discord = ?'), ins: db.prepare('INSERT INTO discord_liens (compte, discord, nom, quand) VALUES (?, ?, ?, ?)'), codes: new Map() };
+const etatDiscord = moi => ({ t: 'discord', lie: moi.compte && LIEN.de.get(moi.compte.id) ? 1 : 0 });
+function liaisonDiscord(moi, m) {
+  if (!moi.compte) return;
+  if (m.a !== 'code') return envoyer(moi.ws, etatDiscord(moi));
+  if (LIEN.de.get(moi.compte.id)) return envoyer(moi.ws, etatDiscord(moi));
+  if (!discord.actif()) return envoyer(moi.ws, { t: 'discord', a: 'code', ok: 0, msg: 'La liaison Discord n\'est pas disponible pour le moment' });
+  if (Date.now() - (moi.discT || 0) < 5000) return; moi.discT = Date.now();
+  for (const [c, e] of LIEN.codes) if (e.compte === moi.compte.id || Date.now() - e.t > 600000) LIEN.codes.delete(c);
+  let code; do { code = crypto.randomBytes(4).toString('hex').slice(0, 6).toUpperCase(); } while (LIEN.codes.has(code));
+  LIEN.codes.set(code, { compte: moi.compte.id, nom: moi.compte.nom, t: Date.now() });
+  envoyer(moi.ws, { t: 'discord', a: 'code', ok: 1, code });
+}
+// appelé par le bot quand quelqu'un tape /lier CODE ; renvoie { ok, msg, alpha }
+function lierDiscord(code, idDiscord, nomDiscordU) {
+  code = String(code || '').trim().toUpperCase().replace(/[^0-9A-F]/g, ''); const e = LIEN.codes.get(code);
+  if (!e || Date.now() - e.t > 600000) return { ok: false, msg: 'Code inconnu ou expiré. Demande-en un nouveau en jeu : bouton Discord, au Village.' };
+  if (LIEN.par.get(String(idDiscord))) return { ok: false, msg: 'Ton compte Discord est déjà lié à un compte de jeu.' };
+  if (LIEN.de.get(e.compte)) { LIEN.codes.delete(code); return { ok: false, msg: 'Ce compte de jeu est déjà lié à un compte Discord.' }; }
+  try { LIEN.ins.run(e.compte, String(idDiscord), String(nomDiscordU || '').slice(0, 40), Date.now()); } catch (err) { console.error('[discord] liaison', err.message); return { ok: false, msg: 'Liaison impossible pour le moment, réessaie.' }; }
+  LIEN.codes.delete(code); console.log(`[discord] ${e.nom} lié au compte Discord ${nomDiscordU}`);
+  const j = enLigne.get(e.compte); if (j && j.ws.readyState === 1) envoyer(j.ws, { t: 'discord', lie: 1, nom: String(nomDiscordU || '').slice(0, 24) });
+  return { ok: true, msg: 'Ton compte de jeu **' + e.nom + '** est maintenant lié à ton Discord. Bon jeu !', alpha: ALPHAS.has(String(e.nom).toLowerCase()) };
+}
 // ---------- pack de démarrage et livraisons au coffre de la maison ----------
 // etat : 0 = droit ouvert (payé, pas encore récupéré) · 1 = envoyé, en attente de confirmation · 2 = bien reçu
 db.exec(`CREATE TABLE IF NOT EXISTS packs (id INTEGER PRIMARY KEY AUTOINCREMENT, compte INTEGER NOT NULL, pack TEXT NOT NULL, etat INTEGER NOT NULL DEFAULT 0, quand INTEGER NOT NULL, contenu TEXT)`);
@@ -1047,8 +1088,11 @@ function tournoiCloture() { // le dimanche est passé : on couronne le vainqueur
 const roiPeche = () => TOURNOI.roi && (Date.now() - Date.parse(TOURNOI.roi.jour + 'T00:00:00Z') < 8 * 86400000) ? TOURNOI.roi : null;
 const etatTournoi = moi => { const r = roiPeche(); return { t: 'tournoi', actif: tournoiActif() ? 1 : 0, top: Object.values(TOURNOI.best).sort((a, b) => b.w - a.w).slice(0, 10).map(e => ({ n: e.n, w: e.w, f: e.f })), roi: r ? { n: r.n, w: r.w, f: r.f } : null, roiMoi: !!(moi && moi.compte && r && r.compte === moi.compte.nom) }; };
 function tournoiPrise(moi, m) {
-  if (!moi.compte) return; tournoiCloture(); if (!tournoiActif()) return;
+  if (!moi.compte) return; tournoiCloture();
   const f = POISSONS[String(m.f || '')], w = Math.round((+m.w || 0) * 1000) / 1000; if (!f || !(w >= f.min && w <= f.max)) return;
+  if (f.r >= 4 && Date.now() - (moi.legT || 0) > 60000) { moi.legT = Date.now(); const nomF = (INDEX.toString('utf8').match(new RegExp("\\['(?:lac|mer)','" + String(m.f).replace(/\W/g, '') + "','((?:[^'\\\\]|\\\\.)*)'")) || [])[1];
+    discord.annoncer('🎣 **' + nomDiscord(moi) + '** a pêché un poisson légendaire : **' + String(nomF || 'un légendaire').replace(/\\'/g, "'") + '** de ' + w.toLocaleString('fr-FR') + ' kg !', null, 0, 'peche'); }
+  if (!tournoiActif()) return;
   const now = Date.now(); if (now - (moi.tournoiT || 0) < 4000 || (f.r >= 3 && now - (moi.tournoiR || 0) < 45000)) return; moi.tournoiT = now; if (f.r >= 3) moi.tournoiR = now;
   const P = paris(); if (TOURNOI.jour !== P.jour) { TOURNOI.jour = P.jour; TOURNOI.best = {}; }
   const cur = TOURNOI.best[moi.compte.nom]; if (cur && cur.w >= w) return;
@@ -1098,5 +1142,5 @@ function reclamerKill(moi, m, nom, salle, essai) {
   const sc = String(m.s || ''), d = donjonsGardes.get(nom + '|' + sc);
   const G = gardienDe(salle, sc || 'r');
   if (!G && d && Date.now() - d.t < 8000 && essai < 25) { setTimeout(() => { if (moi.ws.readyState === 1) reclamerKill(moi, m, nom, salle, essai + 1); }, 400); return; }
-  butin.reclamer(moi, m, { salle: nom, membres: salle, gardien: G, sansClef: sc[0] === 'd' && !ticketOk(nom, sc) && !moi.compte.admin, boost: moi.cpt.boost || 0, onRefus: r => noterSuspect(moi, 'kill', 1, 'Monstre refusé : ' + r), dons: moi.dons, rythme: moi.cpt.rythme, envoyer, boostServeur: bonusObjectif(), guerre: guerreBonus(moi, String(m.k || ''), sc), onTue: (key, s) => { concoursTue(moi, key, s); objectifTue(); guerreTue(moi, key, s); bossTue(moi, key, s); }, signaler: r => { try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(r)); } catch {} } });
+  butin.reclamer(moi, m, { salle: nom, membres: salle, gardien: G, sansClef: sc[0] === 'd' && !ticketOk(nom, sc) && !moi.compte.admin, boost: moi.cpt.boost || 0, onRefus: r => noterSuspect(moi, 'kill', 1, 'Monstre refusé : ' + r), dons: moi.dons, rythme: moi.cpt.rythme, envoyer, boostServeur: bonusObjectif(), guerre: guerreBonus(moi, String(m.k || ''), sc), onTue: (key, s, r) => { concoursTue(moi, key, s); objectifTue(); guerreTue(moi, key, s); bossTue(moi, key, s); reliqueTrouvee(moi, key, r); }, signaler: r => { try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(r)); } catch {} } });
 }

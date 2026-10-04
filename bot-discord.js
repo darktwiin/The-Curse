@@ -6,6 +6,15 @@
 //   DISCORD_TOKEN    la clé secrète du bot (à ne jamais partager ni mettre sur GitHub)
 //   DISCORD_SERVEUR  l'identifiant du serveur Discord (pour y installer les commandes /…)
 //   DISCORD_SALON    l'identifiant du salon où le bot poste ses annonces
+// Facultatifs :
+//   DISCORD_SALON_RELIQUES  salon des reliques trouvées (sinon : DISCORD_SALON)
+//   DISCORD_SALON_PECHE     salon des poissons légendaires (sinon : DISCORD_SALON)
+//   DISCORD_SALON_TICKETS   salon où le bot ouvre les tickets (fils privés) ; sans lui, /ticket est désactivé
+//   DISCORD_SALON_COMMANDES salon réservé aux commandes du bot (/lier, /classement…) ; ailleurs, le bot renvoie vers ce salon
+//   DISCORD_SALON_PATCH     salon des notes de mise à jour, rempli tout seul à chaque nouvelle version
+//   DISCORD_ROLE_JOUEUR     rôle donné quand un joueur lie son compte de jeu
+//   DISCORD_ROLE_ALPHA      rôle donné en plus aux alpha testeurs
+//   DISCORD_ROLE_MODO       rôle prévenu à l'ouverture d'un ticket
 //
 // Aucune dépendance en plus : il parle à Discord avec « ws » (déjà utilisé par le jeu) et fetch (fourni par Node).
 'use strict';
@@ -14,6 +23,9 @@ const WebSocket = require('ws');
 const TOKEN = process.env.DISCORD_TOKEN || '';
 const SERVEUR = process.env.DISCORD_SERVEUR || '';
 const SALON = process.env.DISCORD_SALON || '';
+const SALON_COMMANDES = process.env.DISCORD_SALON_COMMANDES || '', SALON_PATCH = process.env.DISCORD_SALON_PATCH || '';
+const SALONS = { reliques: process.env.DISCORD_SALON_RELIQUES || SALON, peche: process.env.DISCORD_SALON_PECHE || SALON, patch: SALON_PATCH };
+const SALON_TICKETS = process.env.DISCORD_SALON_TICKETS || '', ROLE_JOUEUR = process.env.DISCORD_ROLE_JOUEUR || '', ROLE_ALPHA = process.env.DISCORD_ROLE_ALPHA || '', ROLE_MODO = process.env.DISCORD_ROLE_MODO || '';
 const API = (process.env.DISCORD_API || 'https://discord.com/api/v10').replace(/\/$/, '');
 const journal = (...a) => console.log('[discord]', ...a);
 
@@ -43,10 +55,11 @@ async function vider() {
 // ---------- annonces dans le salon ----------
 // « cle » évite les doublons : la même annonce n'est pas répétée avant « delai » millisecondes
 const vues = new Map();
-function annoncer(texte, cle, delai) {
-  if (!TOKEN || !SALON || !texte) return;
+function annoncer(texte, cle, delai, salon) {
+  const ou = salon === 'patch' ? SALON_PATCH : (salon && SALONS[salon]) || SALON;
+  if (!TOKEN || !ou || !texte) return;
   if (cle) { const t = vues.get(cle) || 0; if (Date.now() - t < (delai || 60000)) return; vues.set(cle, Date.now()); }
-  appel('POST', '/channels/' + SALON + '/messages', { content: String(texte).slice(0, 1900), allowed_mentions: { parse: [] } });
+  appel('POST', '/channels/' + ou + '/messages', { content: String(texte).slice(0, 1900), allowed_mentions: { parse: [] } });
 }
 
 // ---------- commandes /… ----------
@@ -56,6 +69,9 @@ const COMMANDES = [
   { name: 'guerre', description: 'Quelle guilde tient quelle zone en ce moment' },
   { name: 'classement', description: 'Les 10 premiers du classement', options: [{ type: 3, name: 'type', description: 'Quel classement', required: false,
     choices: [{ name: 'Prestige', value: 'prestige' }, { name: 'Monstres tués', value: 'kills' }, { name: 'Pièces', value: 'or' }, { name: 'Maisons (cœurs)', value: 'maisons' }] }] },
+  { name: 'lier', description: 'Lier ton compte de jeu à ton Discord (code donné en jeu, bouton Discord au Village)', options: [{ type: 3, name: 'code', description: 'Le code à 6 caractères affiché en jeu', required: true }] },
+  { name: 'ticket', description: 'Ouvrir un ticket privé avec l\'équipe (problème, achat, signalement)', options: [{ type: 3, name: 'sujet', description: 'En quelques mots, de quoi s\'agit-il ?', required: true }] },
+  { name: 'fermer', description: 'Fermer le ticket dans lequel tu écris' },
 ];
 const propre = s => String(s == null ? '' : s).replace(/[`*_~|>@#\\]/g, '').slice(0, 24);
 const nombre = n => Math.round(+n || 0).toLocaleString('fr-FR');
@@ -72,9 +88,45 @@ function repondre(nom, options) {
   } catch (e) { journal('commande', nom, e.message); }
   return 'Commande indisponible pour le moment.';
 }
+// commandes privées (réponse visible seulement par celui qui tape) : on accuse réception tout de suite, puis on complète la réponse
+async function prive(d, travail) {
+  await appel('POST', '/interactions/' + d.id + '/' + d.token + '/callback', { type: 5, data: { flags: 64 } });
+  let texte = 'Commande indisponible pour le moment.'; try { texte = await travail(); } catch (e) { journal('commande', d.data.name, e.message); }
+  appel('PATCH', '/webhooks/' + appId + '/' + d.token + '/messages/@original', { content: String(texte).slice(0, 1900), allowed_mentions: { parse: [] } });
+}
+const option = (d, nom) => { const o = (d.data.options || []).find(x => x.name === nom); return o ? String(o.value) : ''; };
+async function cmdLier(d, qui) {
+  const r = jeu.lier(option(d, 'code'), qui.id, qui.global_name || qui.username); if (!r.ok) return '❌ ' + r.msg;
+  let roles = '';
+  for (const role of [ROLE_JOUEUR, r.alpha ? ROLE_ALPHA : '']) if (role && SERVEUR) { const ok = await appel('PUT', '/guilds/' + SERVEUR + '/members/' + qui.id + '/roles/' + role); if (!ok) roles = '\n(Je n\'ai pas pu te donner ton rôle : préviens un administrateur.)'; }
+  return '✅ ' + r.msg + roles;
+}
+async function cmdTicket(d, qui) {
+  if (!SALON_TICKETS) return 'Les tickets ne sont pas encore ouverts sur ce serveur.';
+  const sujet = option(d, 'sujet').replace(/[`@#]/g, '').slice(0, 200), nom = ('ticket-' + (qui.global_name || qui.username || 'joueur')).toLowerCase().replace(/[^a-z0-9àâäéèêëîïôöùûüç-]/g, '-').slice(0, 40);
+  const fil = await appel('POST', '/channels/' + SALON_TICKETS + '/threads', { name: nom, type: 12, invitable: false, auto_archive_duration: 10080 });
+  if (!fil || !fil.id) return '❌ Impossible d\'ouvrir le ticket (il me manque peut-être la permission de créer des fils privés dans ce salon).';
+  await appel('PUT', '/channels/' + fil.id + '/thread-members/' + qui.id);
+  await appel('POST', '/channels/' + fil.id + '/messages', { content: '🎫 Ticket ouvert par <@' + qui.id + '>' + (ROLE_MODO ? ' · <@&' + ROLE_MODO + '>' : '') + '\n**Sujet :** ' + sujet + '\nExplique ton problème ici, l\'équipe te répondra dès que possible. Tape `/fermer` quand c\'est réglé.', allowed_mentions: { users: [qui.id], roles: ROLE_MODO ? [ROLE_MODO] : [] } });
+  return '🎫 Ton ticket est ouvert : <#' + fil.id + '>';
+}
+async function cmdFermer(d) {
+  const c = await appel('GET', '/channels/' + d.channel_id);
+  if (!c || c.type !== 12 || c.parent_id !== SALON_TICKETS || !SALON_TICKETS) return 'Cette commande ne s\'utilise que dans un ticket.';
+  await appel('POST', '/channels/' + d.channel_id + '/messages', { content: '🔒 Ticket fermé. Merci !', allowed_mentions: { parse: [] } });
+  setTimeout(() => appel('PATCH', '/channels/' + d.channel_id, { archived: true, locked: true }), 1500).unref();
+  return 'Ticket fermé.';
+}
 function interaction(d) {
   if (!d || d.type !== 2 || !d.data) return;
-  const texte = repondre(d.data.name, d.data.options);
+  const qui = (d.member && d.member.user) || d.user || {}, nom = d.data.name;
+  // les commandes du bot se tapent dans leur salon (sauf les tickets, qu'on peut ouvrir et fermer de partout)
+  if (SALON_COMMANDES && d.channel_id !== SALON_COMMANDES && nom !== 'ticket' && nom !== 'fermer')
+    return void appel('POST', '/interactions/' + d.id + '/' + d.token + '/callback', { type: 4, data: { flags: 64, content: 'Les commandes du bot se tapent dans <#' + SALON_COMMANDES + '>.' } });
+  if (nom === 'lier') return void prive(d, () => cmdLier(d, qui));
+  if (nom === 'ticket') return void prive(d, () => cmdTicket(d, qui));
+  if (nom === 'fermer') return void prive(d, () => cmdFermer(d));
+  const texte = repondre(nom, d.data.options);
   appel('POST', '/interactions/' + d.id + '/' + d.token + '/callback', { type: 4, data: { content: texte.slice(0, 1900), allowed_mentions: { parse: [] } } });
 }
 
@@ -126,6 +178,24 @@ function recevoir(m) {
   }
 }
 
+// Transforme une section du CHANGELOG (« ## ver.X … » puis des puces) en messages Discord.
+// Les lignes qui commencent par « - (interne) » ne sont pas publiées.
+function notesDeVersion(changelog, version) {
+  const lignes = String(changelog || '').split('\n'), debut = lignes.findIndex(l => l.startsWith('## ' + version + ' ') || l.trim() === '## ' + version);
+  if (debut < 0) return [];
+  const corps = []; let saute = false;
+  for (let i = debut + 1; i < lignes.length && !lignes[i].startsWith('## '); i++) { const l = lignes[i];
+    if (/^- /.test(l)) saute = /^- \(interne\)/i.test(l);
+    if (!saute && l.trim()) corps.push(l.replace(/^- /, '• ').replace(/^  - /, '   ◦ ')); }
+  if (!corps.length) return [];
+  const messages = []; let cur = '# 🛠️ The Curse ' + version + '\n';
+  for (const l of corps) { if (cur.length + l.length + 1 > 1800) { messages.push(cur); cur = ''; } cur += l + '\n'; }
+  messages.push(cur); return messages;
+}
+function publierNotes(changelog, versions) { if (!TOKEN || !SALON_PATCH) return 0; let n = 0;
+  for (const v of versions) for (const m of notesDeVersion(changelog, v)) { appel('POST', '/channels/' + SALON_PATCH + '/messages', { content: m, allowed_mentions: { parse: [] } }); n++; }
+  return n; }
+
 function demarrer(acces) {
   jeu = acces;
   if (!TOKEN) { journal('pas de DISCORD_TOKEN : le bot Discord reste éteint'); return false; }
@@ -136,4 +206,4 @@ function demarrer(acces) {
   return true;
 }
 
-module.exports = { demarrer, annoncer, actif: () => !!TOKEN };
+module.exports = { demarrer, annoncer, publierNotes, notesDeVersion, actif: () => !!TOKEN };

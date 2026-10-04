@@ -1,5 +1,19 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.56 (index.html, server.js, bot-discord.js ; wiki.html régénéré)
+- **Gardiens célestes** redessinés : le Bélier, le Scorpion, le Serpent et le Lion du donjon céleste ont un nouveau dessin animé, avec une pose d'attaque.
+- **Potions de caractéristique** redessinées une nouvelle fois : un orbe cerclé d'or sur son socle, mêmes couleurs qu'avant.
+- **Reliques** : les monstres n'en donnent plus. Les reliques bleues tombent uniquement sur le Dévoreur d'Étoiles, les reliques dorées uniquement sur Chronos.
+- **Discord** : les commandes du bot se tapent dans leur salon dédié, et un salon de notes de mise à jour se remplit tout seul à chaque nouvelle version.
+
+## ver.0.0.55 (index.html, server.js, butin.js, bot-discord.js ; wiki.html régénéré)
+- **Bouton Discord** au Village (en bas à droite) : lien d'invitation et liaison du compte de jeu avec Discord (code donné en jeu, commande `/lier` sur Discord). Le bouton disparaît une fois le compte lié.
+- **Bot Discord** : commandes `/lier`, `/ticket` (fil privé avec l'équipe) et `/fermer` ; rôle donné automatiquement à la liaison ; annonces des reliques trouvées et des poissons légendaires, dans leurs propres salons.
+- (interne) Bouton admin « 🤖 Tester le bot Discord ».
+- **Reliques** : elles ne s'échangent plus entre joueurs, mais se vendent toujours à l'hôtel des ventes.
+- **Sacs au sol** : brun pour les objets de tier 0 à 6, violet pour le Tier 7, orange pour les potions de caractéristique, noir pour les reliques (plus de sac blanc).
+- **Infobulle** : survoler un sac avec la souris affiche son contenu.
+
 ## ver.0.0.54 (server.js + nouveau fichier bot-discord.js ; index.html : numéro de version seulement ; wiki.html régénéré)
 - **Bot Discord du jeu** (éteint tant que DISCORD_TOKEN n'est pas renseigné sur le serveur) :
   - affiche le nombre de joueurs en ligne sous son nom ;
@@ -8,15 +22,15 @@
 - Aucune dépendance en plus.
 
 ## ver.0.0.53 (index.html, server.js, arbitre.js ; wiki.html régénéré)
-- **Pack de démarrage** : caché aux joueurs tant que la boutique payante n'est pas ouverte (seuls les admins le voient, et un joueur à qui un admin a ouvert le droit). Toujours un seul par compte. Il contient maintenant aussi 1 boost d'expérience, gardé en réserve et activable gratuitement à l'Échoppe (onglet Cursite).
+- (interne) **Pack de démarrage** : caché aux joueurs tant que la boutique payante n'est pas ouverte (seuls les admins le voient, et un joueur à qui un admin a ouvert le droit). Toujours un seul par compte. Il contient maintenant aussi 1 boost d'expérience, gardé en réserve et activable gratuitement à l'Échoppe (onglet Cursite).
 - **Coffre de livraison** déplacé dans une petite alcôve, juste sous le portail d'arrivée de la maison.
 - **Pêche** : plus un poisson est rare, plus il a de chances d'être gros (donc de gagner le tournoi). La Carpe koï d'or maudite pèse maintenant de 60 à 220 kg, pour qu'un légendaire du lac puisse battre un Esturgeon.
 - **Métier de pêcheur** jusqu'au niveau 20 : chaque prise donne des points (10 à 80 selon la rareté). Les chances passent de 58 / 27 / 10 / 4 / 1 % au niveau 1 à 30 / 30 / 22 / 13 / 5 % au niveau 20 (commun, peu commun, rare, épique, légendaire). Niveau et chances affichés dans le tableau de pêche.
-- **Anti-triche** : la Cursite donnée par le serveur reste due tant que le jeu ne l'a pas ajoutée (une sauvegarde partie au mauvais moment pouvait faire refuser une livraison).
+- (interne) **Anti-triche** : la Cursite donnée par le serveur reste due tant que le jeu ne l'a pas ajoutée (une sauvegarde partie au mauvais moment pouvait faire refuser une livraison).
 
 ## ver.0.0.52 (index.html, server.js, arbitre.js, butin.js ; wiki.html régénéré)
 - **Coffre de livraison** : un coffre bleu cerclé d'or dans la maison, près de l'entrée. Fermé quand il est vide, il s'ouvre dès qu'il contient quelque chose. On ne peut rien y déposer. Les cadeaux du jour et les achats de la boutique Cursite (œuf, pack) y arrivent ; un message dans le chat et au milieu de l'écran le rappelle à chaque livraison. Bouton « Tout prendre ».
-- **Pack de démarrage (5 €)** dans la boutique Cursite : 1000 Cursite, un équipement Tier 6 complet pour le héros de son choix, 2 potions de chaque caractéristique, 3 œufs. Un seul par compte. Le paiement en jeu n'est pas encore branché : un admin ouvre le droit au pack (panneau admin, bouton « 📦 Pack de démarrage » sur le joueur), puis le joueur le récupère à l'Échoppe en choisissant son héros.
+- (interne) **Pack de démarrage (5 €)** dans la boutique Cursite : 1000 Cursite, un équipement Tier 6 complet pour le héros de son choix, 2 potions de chaque caractéristique, 3 œufs. Un seul par compte. Le paiement en jeu n'est pas encore branché : un admin ouvre le droit au pack (panneau admin, bouton « 📦 Pack de démarrage » sur le joueur), puis le joueur le récupère à l'Échoppe en choisissant son héros.
 - **Monstres plus grands** : +30 % dans les Terres Brûlées, +50 % dans les Terres Désolées.
 - **Tous les monstres** se tiennent 20 % plus près du joueur.
 - **Spectre du Vide** : à chaque attaque, 1 chance sur 5 de rapetisser (petite animation) et de gagner 30 % de vitesse pendant 6 secondes.
