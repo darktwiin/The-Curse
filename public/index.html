@@ -453,7 +453,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.56"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.57"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -469,7 +469,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp"><i id="xpF"></i><span><em>XP</em><b id="xpT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.56</div>
+    <div class="verTag" id="verTag">ver.0.0.57</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -644,7 +644,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.56</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.57</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -686,7 +686,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.56</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.57</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -3173,7 +3173,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000056;let newerWarned=false;
+const NETV=2,BUILD=2600000057;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -5252,10 +5252,10 @@ $('#dailyBtn').addEventListener('click',()=>{if(scene==='nexus')openDaily();});
 // Discord : lie = null tant que le serveur n'a rien dit (bouton caché), 0 = pas lié (bouton visible au Village), 1 = lié (bouton caché pour de bon)
 let DISC={lie:null,code:null};const discEl=$('#discWin');
 $('#discordImg').src=makeSprite(['........','.BB..BB.','BBBBBBBB','BWWBBWWB','BWWBBWWB','BBBBBBBB','BB.BB.BB','........'],{B:'#5865f2',W:'#ffffff'},4).toDataURL();
-function renderDisc(){const box=$('#discCode');if(DISC.code)box.innerHTML='<p>Sur le Discord, tape cette commande dans le salon des commandes du bot :</p><div class="disc-code">/lier '+DISC.code+'</div><p class="hint">Le code est valable 10 minutes. Cette fenêtre se fermera toute seule dès que le compte sera lié.</p>';else box.innerHTML='<button type="button" class="act" id="discGo">Obtenir mon code</button>';}
+function renderDisc(){const box=$('#discCode');if(DISC.code)box.innerHTML='<p>Ton code :</p><div class="disc-code" id="discCodeTxt">'+DISC.code+'</div> <button type="button" class="act" id="discCopie">Copier</button><p>Sur le Discord, dans le salon des commandes du bot, tape la commande <b>/lier</b> puis colle ce code.</p><p class="hint">Le code est valable 10 minutes. Cette fenêtre se fermera toute seule dès que le compte sera lié.</p>';else box.innerHTML='<button type="button" class="act" id="discGo">Obtenir mon code</button>';}
 function openDisc(){discEl.hidden=false;paused=true;keys.clear();mouse.down=false;renderDisc();sfx('item');}
 function closeDisc(){discEl.hidden=true;paused=false;cv.focus();}
-$('#discordBtn').addEventListener('click',()=>{if(scene==='nexus')openDisc();});$('#discClose').addEventListener('click',closeDisc);discEl.addEventListener('click',e=>{if(e.target===discEl)closeDisc();else if(e.target.closest('#discGo')){if(!room||!room.raw||!AUTH.ok){note('Connecte-toi à ton compte pour lier Discord');return;}room.raw({t:'discord',a:'code'});}});
+$('#discordBtn').addEventListener('click',()=>{if(scene==='nexus')openDisc();});$('#discClose').addEventListener('click',closeDisc);discEl.addEventListener('click',e=>{if(e.target===discEl)closeDisc();else if(e.target.closest('#discCopie')){try{navigator.clipboard.writeText(DISC.code||'').then(()=>note('Code copié'),()=>note('Sélectionne le code et copie-le à la main'));}catch(err){note('Sélectionne le code et copie-le à la main');}}else if(e.target.closest('#discGo')){if(!room||!room.raw||!AUTH.ok){note('Connecte-toi à ton compte pour lier Discord');return;}room.raw({t:'discord',a:'code'});}});
 function onDiscord(m){if(m.a==='code'){if(!m.ok){note(m.msg||'Code indisponible');sfx('deny');return;}DISC.code=String(m.code||'');renderDisc();return;}
   const avant=DISC.lie;DISC.lie=m.lie?1:0;if(DISC.lie&&avant===0){DISC.code=null;if(!discEl.hidden)closeDisc();showBanner('Compte lié à Discord !',m.nom?'Bienvenue, '+clean(String(m.nom)).slice(0,24):'Ton rôle de joueur t\'attend sur le serveur','#5865f2');sfx('relic');try{pushChat({n:'Serveur',t:'🔗 Ton compte de jeu est maintenant lié à Discord.',life:14,col:'#8ea1ff'});}catch(e){}}}
 let dailyVis=null;

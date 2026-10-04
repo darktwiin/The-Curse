@@ -1,5 +1,8 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.57 (index.html seulement ; server.js inchangé depuis la 0.0.56 ; wiki.html régénéré)
+- **Liaison Discord** : la fenêtre affiche maintenant le code seul, avec un bouton « Copier ». Sur Discord, on tape la commande `/lier` puis on colle le code.
+
 ## ver.0.0.56 (index.html, server.js, bot-discord.js ; wiki.html régénéré)
 - **Gardiens célestes** redessinés : le Bélier, le Scorpion, le Serpent et le Lion du donjon céleste ont un nouveau dessin animé, avec une pose d'attaque.
 - **Potions de caractéristique** redessinées une nouvelle fois : un orbe cerclé d'or sur son socle, mêmes couleurs qu'avant.
