@@ -1,5 +1,14 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.61 (index.html seulement ; server.js inchangé depuis la 0.0.56 ; wiki.html régénéré)
+- **Zones qui se vidaient** (Canyon de Rouille surtout) : un monstre entraîné hors de sa zone par un joueur y restait pour toujours et comptait encore pour sa zone d'origine, qui ne se repeuplait plus. Il est maintenant retiré dès que plus personne ne le voit, et sa zone le remplace.
+
+## ver.0.0.60 (index.html seulement ; server.js inchangé depuis la 0.0.56 ; wiki.html régénéré)
+- **Mort** : fermer puis rouvrir le jeu ne permet plus d'éviter la perte de niveaux. La mort est enregistrée tout de suite, et l'écran de choix revient tant que le joueur n'a pas choisi.
+
+## ver.0.0.59 (index.html : numéro de version seulement ; wiki.html régénéré ; server.js inchangé depuis la 0.0.56)
+- **Wiki remis à jour** : butin (les potions de vie et de mana ne tombent plus, reliques turquoise uniquement sur le Dévoreur d'Étoiles et reliques dorées uniquement sur Chronos, ressources de talisman, couleurs des sacs), règles de la mort et du prestige, frais de l'hôtel des ventes, liaison Discord, et toutes les captures du guide « Bien débuter » refaites avec les nouveaux dessins.
+
 ## ver.0.0.58 (index.html seulement ; server.js inchangé depuis la 0.0.56 ; wiki.html régénéré)
 - **Boss qui disparaissaient** en plein combat (Dévoreur d'Étoiles, Pharaon, Gardiens célestes…) : corrigé. Le boss ne disparaît plus de l'écran tant que le serveur le voit en vie, et sa barre de vie se recale sur la vraie valeur.
 - **Carquois relique de l'Archer** : ses dégâts en pourcentage de la vie sont maintenant bien comptés sur les boss.

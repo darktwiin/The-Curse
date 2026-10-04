@@ -453,7 +453,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.58"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.61"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -469,7 +469,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp"><i id="xpF"></i><span><em>XP</em><b id="xpT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.58</div>
+    <div class="verTag" id="verTag">ver.0.0.61</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -644,7 +644,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.58</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.61</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -686,7 +686,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.58</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.61</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -3173,7 +3173,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000058;let newerWarned=false;
+const NETV=2,BUILD=2600000061;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -4647,14 +4647,21 @@ function die(src){
   if(scene==='tour'){tourDeath(src);return;}
   if(scene!=='tuto'&&scene!=='arena')myEv=(++evSeq)+'|d|'+Math.round(P.x*10)+'|'+Math.round(P.y*10)+'|'+sceneKey(); // une tombe apparaît chez les autres joueurs de la scène
   if(scene==='raid'){raidDeath(src);return;}
-  enterNexus();const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;P.berserk=0;paused=true;keys.clear();mouse.down=false;
-  const ch=C(),g=prestigeGain(ch),sp=ch.sp||{};let spT=0;for(const k in sp)spT+=sp[k];pushSave(true); // l'équipement porté compte pour le prestige : le serveur doit le connaître
+  enterNexus();const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;P.berserk=0;
+  // la mort est notée dans la sauvegarde tout de suite : fermer le jeu ne permet pas d'éviter le choix (et la perte de niveaux)
+  C().mort=String(src||'un monstre').slice(0,60);persist();pushSave(true); // l'équipement porté compte pour le prestige : le serveur doit le connaître
+  showDeath(C().mort);
+}
+function showDeath(src){paused=true;keys.clear();mouse.down=false;
+  const ch=C(),g=prestigeGain(ch),sp=ch.sp||{};let spT=0;for(const k in sp)spT+=sp[k];
   $('#deathWhy').textContent='Tué par '+src+' · '+CLASSES[save.current].nom+' niveau '+ch.lvl;
   {const nl=deathLvl(ch.lvl);$('#dContTxt').textContent=(nl<ch.lvl?'Ton héros perd 20 % de ses niveaux : niveau '+ch.lvl+' → niveau '+nl+'. ':'Ton héros reste au niveau '+ch.lvl+'. ')}$('#dContTxt').textContent+=''+'Tu gardes ton équipement, tes sacs et tes potions de caractéristiques.';
   $('#dPermaTxt').textContent='Ce héros repart de zéro. Tu gagnes '+g+' prestige (niveau '+ch.lvl+' + '+Math.floor((ch.kills||0)/25)+' pour les monstres + '+2*spT+' pour les potions + '+3*(ch.bosses||0)+' pour les boss'+(ch.gp?' + '+GLORY_PRES*ch.gp+' pour '+ch.gp+' point'+(ch.gp>1?'s':'')+' de gloire':'')+(presEquip(ch)?', le tout +'+presEquip(ch)+' % grâce à l\'équipement porté, qui sera perdu':'')+').';
   permaArm=0;$('#dPerma').classList.remove('arm');deathEl.hidden=false;sfx('boss');
 }
-$('#dContinue').addEventListener('click',()=>{const ch=C(),old=ch.lvl;ch.lvl=deathLvl(old);ch.xp=0;ch.gxp=0;persist();statsDirty=true;invDirty=true;const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;deathEl.hidden=true;paused=false;showBanner('Retour au Village',ch.lvl<old?'Niveau '+old+' → niveau '+ch.lvl+' · équipement et potions conservés':'Équipement et potions conservés','#ff5a6a');cv.focus();});
+// une mort en attente (jeu fermé sur l'écran de mort, ou héros repris plus tard) : l'écran revient tant que le choix n'est pas fait
+setInterval(()=>{try{if(!save.current||!C()||!C().mort||!deathEl.hidden||!$('#select').hidden||scene==='tuto'||scene==='raid')return;if(scene!=='nexus')enterNexus();showDeath(C().mort);}catch(e){}},700);
+$('#dContinue').addEventListener('click',()=>{const ch=C(),old=ch.lvl;ch.lvl=deathLvl(old);ch.xp=0;ch.gxp=0;delete ch.mort;persist();pushSave(true);statsDirty=true;invDirty=true;const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;deathEl.hidden=true;paused=false;showBanner('Retour au Village',ch.lvl<old?'Niveau '+old+' → niveau '+ch.lvl+' · équipement et potions conservés':'Équipement et potions conservés','#ff5a6a');cv.focus();});
 $('#dPerma').addEventListener('click',()=>{
   const b=$('#dPerma');if(Date.now()-permaArm>4000){permaArm=Date.now();b.classList.add('arm');b.querySelector('b').textContent='Clique encore pour confirmer';return;}
   const g=prestigeGain(C());save.prestige+=g;save.stats.presTot=(save.stats.presTot||0)+g;save.chars[save.current]=newChar(save.current);persist();
@@ -6402,7 +6409,11 @@ function update(dt){
         if(Math.random()<dt*0.4)m.dir*=-1;
         if(mv==='erratic'){m.wt-=dt;if(m.wt<=0){m.wt=rnd(0.25,0.6);const a=Math.random()*TAU;m.wx=Math.cos(a);m.wy=Math.sin(a);}vx=vx*0.5+m.wx*0.8;vy=vy*0.5+m.wy*0.8;}
         if(mv==='charge'){m.dcd-=dt;if(m.dash>0){m.dash-=dt;vx=m.wx;vy=m.wy;sp*=3.4;}else if(m.dcd<=0&&d<9){m.dash=0.45;m.dcd=rnd(2.5,4);m.wx=dx/d;m.wy=dy/d;}}
+      }else if(scene==='realm'&&!m.d.boss&&m.r>=0&&regionAt(m.x,m.y)!==m.r){
+        // entraîné hors de sa zone par un joueur : il rentre chez lui (sinon sa zone se vide peu à peu) ; s'il n'y arrive pas en 30 s, il est retiré et sa zone le remplace
+        const hx=m.hx-m.x,hy=m.hy-m.y,hd=Math.hypot(hx,hy)||1;vx=hx/hd;vy=hy/hd;m.loinT=(m.loinT||0)+dt;if(m.loinT>30)m.perdu=1;
       }else{
+        m.loinT=0;
         m.wt-=dt;if(m.wt<=0){m.wt=rnd(2,5);const a=Math.random()*TAU;m.wx=Math.cos(a);m.wy=Math.sin(a);if(Math.random()<0.4){m.wx=0;m.wy=0;}}
         vx=m.wx;vy=m.wy;sp*=0.4;
         const nr=regionAt(m.x+vx*0.6,m.y+vy*0.6);if(nr!==m.r){vx=0;vy=0;m.wt=0;}
@@ -6424,7 +6435,8 @@ function update(dt){
     if(amHost){scaleT-=dt;if(scaleT<=0){scaleT=1;const pl2=scenePlayersAll();for(const m of monsters){if(!m.d.boss||m.hp<=0||m.d.tuto)continue;let n=0;for(const p of pl2){if(scene==='dungeon'&&MAP.arena?inArena(p.x,p.y)&&inArena(m.x,m.y):Math.hypot(p.x-m.x,p.y-m.y)<16)n++;}
       const want=Math.round(m.d.hp*(1+0.2*Math.max(0,n-1)));if(want>m.max){m.hp+=want-m.max;m.max=want;if(n>1)ft(m.x,m.y-m.d.sz*0.8,'+20 % de vie ('+n+' joueurs)','#ff9a3c');}}}}
     if(amHost&&scene==='realm'){
-      spawnT-=dt;if(spawnT<=0){spawnT=0.5;const cnt=new Array(ZONES.length).fill(0);for(const m of monsters)if(!m.d.boss)cnt[m.r]++;for(let r=0;r<ZONES.length;r++)if(cnt[r]<zoneCap(r))spawnIn(r);}
+      spawnT-=dt;if(spawnT<=0){spawnT=0.5;{const plz=scenePlayersAll();monsters=monsters.filter(m=>!m.perdu&&(m.d.boss||m.hp<=0||m.r<0||regionAt(m.x,m.y)===m.r||plz.some(p=>Math.hypot(p.x-m.x,p.y-m.y)<26)));} // un monstre sorti de sa zone, que personne ne voit, est retiré : sa zone le remplace
+        const cnt=new Array(ZONES.length).fill(0);for(const m of monsters)if(!m.d.boss)cnt[m.r]++;for(let r=0;r<ZONES.length;r++)if(cnt[r]<zoneCap(r))spawnIn(r);}
       for(const d of dportals)d.life-=dt;dportals=dportals.filter(d=>d.life>0);
     }else if(scene==='realm'){for(const d of dportals)d.life-=dt;dportals=dportals.filter(d=>d.life>0);}
   }
