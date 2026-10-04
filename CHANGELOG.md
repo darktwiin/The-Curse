@@ -1,5 +1,12 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.54 (server.js + nouveau fichier bot-discord.js ; index.html : numéro de version seulement ; wiki.html régénéré)
+- **Bot Discord du jeu** (éteint tant que DISCORD_TOKEN n'est pas renseigné sur le serveur) :
+  - affiche le nombre de joueurs en ligne sous son nom ;
+  - commandes `/enligne`, `/classement`, `/guerre`, `/jouer` ;
+  - annonce dans un salon : raid de guilde lancé et son podium, boss du monde vaincu, objectif de la semaine atteint, Roi de la pêche couronné, redémarrage imminent, nouvelle version en ligne.
+- Aucune dépendance en plus.
+
 ## ver.0.0.53 (index.html, server.js, arbitre.js ; wiki.html régénéré)
 - **Pack de démarrage** : caché aux joueurs tant que la boutique payante n'est pas ouverte (seuls les admins le voient, et un joueur à qui un admin a ouvert le droit). Toujours un seul par compte. Il contient maintenant aussi 1 boost d'expérience, gardé en réserve et activable gratuitement à l'Échoppe (onglet Cursite).
 - **Coffre de livraison** déplacé dans une petite alcôve, juste sous le portail d'arrivée de la maison.

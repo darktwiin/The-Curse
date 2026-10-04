@@ -133,6 +133,7 @@ const sql = {
 };
 const arbitre = require('./arbitre');
 const butin = require('./butin');
+const discord = require('./bot-discord'); // bot Discord du jeu (éteint tant que DISCORD_TOKEN n'est pas renseigné)
 db.exec(`CREATE TABLE IF NOT EXISTS anomalies (id INTEGER PRIMARY KEY AUTOINCREMENT, compte INTEGER, nom TEXT, quand INTEGER, raisons TEXT)`);
 // acceptation des conditions d'utilisation : une ligne par compte et par version du texte
 db.exec(`CREATE TABLE IF NOT EXISTS consentements (compte INTEGER NOT NULL, version TEXT NOT NULL, quand INTEGER NOT NULL, PRIMARY KEY (compte, version))`);
@@ -295,6 +296,7 @@ function lancerRaid() {
   const spawn = Date.now() + RAID_ATTENTE;
   raidEv = { id: Date.now(), actif: true, spawn, fin: spawn + RAID_DUREE, g: {}, res: null, recu: {} }; sauverRaid();
   for (const j of tousLesSockets()) envoyer(j.ws, { t: 'g', a: 'raidstart', reste: RAID_ATTENTE + RAID_DUREE, spawn: RAID_ATTENTE });
+  discord.annoncer('🐉 **Raid de guilde !** Le portail est ouvert dans les halls de guilde : le Dragon arrive dans ' + Math.round(RAID_ATTENTE / 1000) + ' secondes.', 'raid', 60000);
   for (const gid of Object.keys(guildes)) diffuserGuilde(gid, true);
 }
 function finirRaid() {
@@ -304,6 +306,7 @@ function finirRaid() {
   sauverRaid();
   const pub = raidEv.res.slice(0, 10).map(({ tag, nom, dmg, nb }) => ({ tag, nom, dmg, nb }));
   for (const j of tousLesSockets()) envoyer(j.ws, { t: 'g', a: 'raidend', res: pub });
+  if (pub.length) discord.annoncer('🐉 **Raid terminé !**\n' + pub.slice(0, 3).map((r, i) => ['🥇', '🥈', '🥉'][i] + ' [' + r.tag + '] ' + r.nom + ' : ' + Math.round(r.dmg).toLocaleString('fr-FR') + ' dégâts (' + r.nb + ' joueur' + (r.nb > 1 ? 's' : '') + ')').join('\n'), 'raidfin', 60000);
   for (const gid of Object.keys(guildes)) diffuserGuilde(gid, true);
 }
 setInterval(() => { if (raidEv && raidEv.actif && Date.now() >= raidEv.fin) finirRaid(); }, 1000);
@@ -616,13 +619,31 @@ setInterval(() => {
 // ---- Annonce de mise à jour : la clé est écrite dans le dossier des données, lisible seulement sur le serveur ----
 const CLE_ANNONCE = crypto.randomBytes(16).toString('hex');
 try { fs.writeFileSync(path.join(DATA_DIR, 'annonce.json'), JSON.stringify({ port: PORT, cle: CLE_ANNONCE }), { mode: 0o600 }); } catch (e) { console.error('[annonce]', e.message); }
+// boss du monde vaincu dans les Plaines : annoncé sur Discord (une fois par boss, même si plusieurs joueurs le réclament)
+function bossTue(moi, key, sc) { if (sc !== 'r' || (key !== 'dieu_fou' && key !== 'colosse')) return; const R = arbitre.regles(), d = R && R.MON && R.MON[key]; if (!d) return;
+  discord.annoncer('💀 **' + d.nom + '** vient de tomber dans les Plaines Sauvages, vaincu par le groupe de ' + String((moi.etat && moi.etat.n) || 'un héros').replace(/[`*_~|>@#\\]/g, '').slice(0, 16) + ' !', 'boss:' + key, 90000); }
 function annoncerMaj(sec) {
   console.log(`[annonce] mise à jour dans ${sec} s`);
+  discord.annoncer('🛠️ Mise à jour du jeu dans ' + sec + ' secondes : le serveur va redémarrer, mettez-vous à l\'abri !', 'maj', 120000);
   for (const j of tousLesSockets()) if (!j.gardien) envoyer(j.ws, { t: 'maj', s: sec });
 }
 server.listen(PORT, () => {
   console.log(`The Curse en ligne sur http://localhost:${PORT}`);
   lancerGardien();
+  // bot Discord : il lit l'état du jeu directement ici
+  try {
+    const VERSION = (INDEX.toString('utf8').match(/ver\.\d+\.\d+\.\d+/) || ['?'])[0];
+    const actif = discord.demarrer({
+      lien: process.env.LIEN_JEU || 'https://51-210-104-194.sslip.io',
+      version: () => VERSION,
+      enLigne: () => tousLesSockets().filter(j => !j.gardien && !j.bot && j.compte && j.etat && j.etat.n).map(j => String(j.etat.n)),
+      classement: () => top(null, null),
+      guerre: () => { const R = arbitre.regles(); return etatGuerre().zones.map((z, i) => ({ zone: R && R.ZONES && R.ZONES[i] ? R.ZONES[i].nom : 'Zone ' + (i + 1), tenant: z.t ? z.t.nom : null, tag: z.t ? z.t.tag : '' })); },
+    });
+    // nouvelle version en ligne : une ligne sur Discord, une seule fois par version
+    if (actif) { const f = path.join(DATA_DIR, 'discord.json'); let vu = ''; try { vu = JSON.parse(fs.readFileSync(f, 'utf8')).version || ''; } catch {}
+      if (vu !== VERSION) { try { fs.writeFileSync(f, JSON.stringify({ version: VERSION })); } catch {} if (vu) setTimeout(() => discord.annoncer('✅ **The Curse ' + VERSION + '** est en ligne. Rechargez la page pour jouer sur la nouvelle version.'), 8000).unref(); } }
+  } catch (e) { console.error('[discord] démarrage', e.message); }
 });
 
 // ---- Le Gardien des Plaines : une copie du jeu sans affichage, hôte permanent des Plaines Sauvages ----
@@ -1002,7 +1023,7 @@ const etatObjectif = () => ({ t: 'objectif', n: OBJECTIF.n, but: OBJECTIF.but, o
 function objectifTue() {
   const sem = paris().semaine; if (sem !== OBJECTIF.semaine) { OBJECTIF.semaine = sem; OBJECTIF.n = 0; OBJECTIF.atteint = 0; }
   OBJECTIF.n++; objectifSale = true;
-  if (!OBJECTIF.atteint && OBJECTIF.n >= OBJECTIF.but) { OBJECTIF.atteint = Date.now(); console.log('[objectif] atteint : ' + OBJECTIF.n + ' monstres'); diffuserPartout(Object.assign(etatObjectif(), { bravo: 1 })); objectifVu = OBJECTIF.n; }
+  if (!OBJECTIF.atteint && OBJECTIF.n >= OBJECTIF.but) { OBJECTIF.atteint = Date.now(); console.log('[objectif] atteint : ' + OBJECTIF.n + ' monstres'); discord.annoncer('🎯 **Objectif de la semaine atteint !** ' + OBJECTIF.but.toLocaleString('fr-FR') + ' monstres vaincus : +' + Math.round((OBJECTIF_BONUS - 1) * 100) + ' % d\'expérience pour tout le monde jusqu\'à dimanche soir.', 'objectif', 3600000); diffuserPartout(Object.assign(etatObjectif(), { bravo: 1 })); objectifVu = OBJECTIF.n; }
 }
 const bonusObjectif = () => OBJECTIF.atteint && paris().semaine === OBJECTIF.semaine ? OBJECTIF_BONUS : 1;
 setInterval(() => { if (objectifSale) { objectifSale = false; try { fs.writeFileSync(FICHIER_OBJECTIF, JSON.stringify({ semaine: OBJECTIF.semaine, n: OBJECTIF.n, atteint: OBJECTIF.atteint })); } catch (e) { console.error('[objectif]', e.message); } }
@@ -1019,7 +1040,7 @@ const tournoiActif = () => paris().js === 0;
 function tournoiCloture() { // le dimanche est passé : on couronne le vainqueur
   const P = paris(); if (!TOURNOI.jour || TOURNOI.jour === P.jour) return;
   const l = Object.entries(TOURNOI.best).sort((a, b) => b[1].w - a[1].w);
-  if (l.length) { TOURNOI.roi = { compte: l[0][0], n: l[0][1].n, w: l[0][1].w, f: l[0][1].f, jour: TOURNOI.jour }; console.log(`[pêche] roi de la pêche : ${l[0][0]} (${l[0][1].w} kg)`); }
+  if (l.length) { TOURNOI.roi = { compte: l[0][0], n: l[0][1].n, w: l[0][1].w, f: l[0][1].f, jour: TOURNOI.jour }; console.log(`[pêche] roi de la pêche : ${l[0][0]} (${l[0][1].w} kg)`); discord.annoncer('🎣 **Tournoi de pêche terminé !** ' + l[0][1].n + ' devient Roi de la pêche pour la semaine avec une prise de ' + l[0][1].w.toLocaleString('fr-FR') + ' kg.', 'tournoi', 3600000); }
   TOURNOI.jour = ''; TOURNOI.best = {}; sauverTournoi(); diffuserPartout(etatTournoi());
 }
 // le titre ne dure qu'une semaine : il tombe au dimanche suivant
@@ -1077,5 +1098,5 @@ function reclamerKill(moi, m, nom, salle, essai) {
   const sc = String(m.s || ''), d = donjonsGardes.get(nom + '|' + sc);
   const G = gardienDe(salle, sc || 'r');
   if (!G && d && Date.now() - d.t < 8000 && essai < 25) { setTimeout(() => { if (moi.ws.readyState === 1) reclamerKill(moi, m, nom, salle, essai + 1); }, 400); return; }
-  butin.reclamer(moi, m, { salle: nom, membres: salle, gardien: G, sansClef: sc[0] === 'd' && !ticketOk(nom, sc) && !moi.compte.admin, boost: moi.cpt.boost || 0, onRefus: r => noterSuspect(moi, 'kill', 1, 'Monstre refusé : ' + r), dons: moi.dons, rythme: moi.cpt.rythme, envoyer, boostServeur: bonusObjectif(), guerre: guerreBonus(moi, String(m.k || ''), sc), onTue: (key, s) => { concoursTue(moi, key, s); objectifTue(); guerreTue(moi, key, s); }, signaler: r => { try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(r)); } catch {} } });
+  butin.reclamer(moi, m, { salle: nom, membres: salle, gardien: G, sansClef: sc[0] === 'd' && !ticketOk(nom, sc) && !moi.compte.admin, boost: moi.cpt.boost || 0, onRefus: r => noterSuspect(moi, 'kill', 1, 'Monstre refusé : ' + r), dons: moi.dons, rythme: moi.cpt.rythme, envoyer, boostServeur: bonusObjectif(), guerre: guerreBonus(moi, String(m.k || ''), sc), onTue: (key, s) => { concoursTue(moi, key, s); objectifTue(); guerreTue(moi, key, s); bossTue(moi, key, s); }, signaler: r => { try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(r)); } catch {} } });
 }
