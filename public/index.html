@@ -478,7 +478,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.76"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.77"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -495,7 +495,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp mait" id="mxBar" hidden><i id="mxF"></i><span><em>Maîtrise</em><b id="mxT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.76</div>
+    <div class="verTag" id="verTag">ver.0.0.77</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -672,7 +672,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.76</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.77</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -714,7 +714,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.76</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.77</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -2967,6 +2967,8 @@ const AI_LEAD=[0,0.5,0.85],AI_DODGE=[0,0.1,0.1]; // esquive : 20 % des projectil
 /* ================= sauvegarde ================= */
 const SAVE_KEY='royaume-maudit-v1';
 function newChar(cls){const c=CLASSES[cls];return{lvl:1,xp:0,kills:0,sp:{},shots:0,hits:0,bosses:0,equip:[mkItem(c.arme,0),mkItem(c.capa,0),mkItem(c.armure,0),null],inv:[mkItem('pvie',0),mkItem('pvie',0),mkItem('pmana',0),null,null,null,null,null]};}
+// mort définitive : le héros repart de zéro, mais garde les sacs à dos achetés (vides)
+function renaitre(cls){const vieux=save.chars[cls],n=newChar(cls);if(vieux&&Array.isArray(vieux.inv))while(n.inv.length<Math.min(24,vieux.inv.length))n.inv.push(null);return n;}
 let save={current:null,chars:{},gold:0};
 try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(s&&s.chars)save=s;}catch(e){}
 if(typeof save.gold!=='number')save.gold=0;
@@ -3442,7 +3444,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000076;let newerWarned=false;
+const NETV=2,BUILD=2600000077;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -5115,7 +5117,7 @@ function showDeath(src){paused=true;keys.clear();mouse.down=false;
   const ch=C(),g=prestigeGain(ch),sp=ch.sp||{};let spT=0;for(const k in sp)spT+=sp[k];
   $('#deathWhy').textContent='Tué par '+src+' · '+CLASSES[save.current].nom+' niveau '+ch.lvl;
   {const nl=deathLvl(ch.lvl);$('#dContTxt').textContent=(nl<ch.lvl?'Ton héros perd 20 % de ses niveaux : niveau '+ch.lvl+' → niveau '+nl+'. ':'Ton héros reste au niveau '+ch.lvl+'. ')}$('#dContTxt').textContent+=''+'Tu gardes ton équipement, tes sacs et tes potions de caractéristiques.';
-  $('#dPermaTxt').textContent='Ce héros repart de zéro. Tu gagnes '+g+' prestige (niveau '+ch.lvl+' + '+Math.floor((ch.kills||0)/25)+' pour les monstres + '+2*spT+' pour les potions + '+3*(ch.bosses||0)+' pour les boss'+(ch.gp?' + '+GLORY_PRES*ch.gp+' pour '+ch.gp+' point'+(ch.gp>1?'s':'')+' de gloire':'')+(presEquip(ch)?', le tout +'+presEquip(ch)+' % grâce à l\'équipement porté, qui sera perdu':'')+').';
+  $('#dPermaTxt').textContent='Ce héros repart de zéro'+(ch.inv.length>8?' (il garde ses sacs à dos achetés, vides)':'')+'. Tu gagnes '+g+' prestige (niveau '+ch.lvl+' + '+Math.floor((ch.kills||0)/25)+' pour les monstres + '+2*spT+' pour les potions + '+3*(ch.bosses||0)+' pour les boss'+(ch.gp?' + '+GLORY_PRES*ch.gp+' pour '+ch.gp+' point'+(ch.gp>1?'s':'')+' de gloire':'')+(presEquip(ch)?', le tout +'+presEquip(ch)+' % grâce à l\'équipement porté, qui sera perdu':'')+').';
   if(ch.mxpPerdu>0)$('#deathWhy').textContent+=' · maîtrise perdue ('+Math.round(ch.mxpPerdu).toLocaleString('fr-FR')+' points)';
   $('#dContinue').hidden=!!ch.maudit;if(ch.maudit)$('#deathWhy').textContent+=' · héros maudit : la mort est définitive';
   permaArm=0;$('#dPerma').classList.remove('arm');deathEl.hidden=false;sfx('boss');
@@ -5125,7 +5127,7 @@ setInterval(()=>{try{if(!save.current||!C()||!C().mort||!deathEl.hidden||!$('#se
 $('#dContinue').addEventListener('click',()=>{if(C().maudit)return;const ch=C(),old=ch.lvl;ch.lvl=deathLvl(old);ch.xp=0;ch.gxp=0;delete ch.mort;delete ch.mxpPerdu;persist();pushSave(true);statsDirty=true;invDirty=true;const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;deathEl.hidden=true;paused=false;showBanner('Retour au Village',ch.lvl<old?'Niveau '+old+' → niveau '+ch.lvl+' · équipement et potions conservés':'Équipement et potions conservés','#ff5a6a');cv.focus();});
 $('#dPerma').addEventListener('click',()=>{
   const b=$('#dPerma');if(Date.now()-permaArm>4000){permaArm=Date.now();b.classList.add('arm');b.querySelector('b').textContent='Clique encore pour confirmer';return;}
-  const g=prestigeGain(C());save.prestige+=g;save.stats.presTot=(save.stats.presTot||0)+g;save.chars[save.current]=newChar(save.current);persist();
+  const g=prestigeGain(C());save.prestige+=g;save.stats.presTot=(save.stats.presTot||0)+g;save.chars[save.current]=renaitre(save.current);persist();
   SEL=null;bagTab=0;deathEl.hidden=true;paused=false;b.querySelector('b').textContent='Mort définitive';b.classList.remove('arm');
   const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;invDirty=true;statsDirty=true;sfx('relic');
   showBanner('Nouveau départ','+'+g+' prestige · total '+save.prestige,'#e0b8ff');sendScore();cv.focus();
@@ -5547,7 +5549,7 @@ function renderMaudit(){const ch=C(),on=!!ch.maudit,nom=CLASSES[save.current].no
     +'<span>• Reliques : <b>1 %</b> sur chaque monstre de l\'Observatoire Céleste (reliques turquoise) et de l\'Horloge Brisée (Reliques de Chronos).</span>'
     +'<span>• Tu infliges <b>5 % de dégâts en plus</b>… et tu en subis <b>5 % de plus</b>.</span>'
     +'<span style="opacity:.75">Dans la Tour des Chevaliers, rien ne change : la mort y est déjà définitive.</span></div>';
-  h+='<div style="border:3px solid #ff3b4a;background:rgba(120,10,20,.35);padding:12px 14px;margin:8px 0;display:grid;gap:4px"><b style="color:#ff5a6a;font-size:19px">☠ LA MORT SERA DÉFINITIVE, QUOI QU\'IL ARRIVE</b><span style="color:#ffb0b8">Si ce héros meurt, où que ce soit, il est perdu : niveau, équipement porté, sacs et potions de caractéristiques. Il n\'y a plus de bouton « Continuer ». Tu peux rompre le pacte à tout moment en revenant parler au Passeur, ici, au Village — mais jamais une fois mort.</span></div>';
+  h+='<div style="border:3px solid #ff3b4a;background:rgba(120,10,20,.35);padding:12px 14px;margin:8px 0;display:grid;gap:4px"><b style="color:#ff5a6a;font-size:19px">☠ LA MORT SERA DÉFINITIVE, QUOI QU\'IL ARRIVE</b><span style="color:#ffb0b8">Si ce héros meurt, où que ce soit, il est perdu : niveau, équipement porté, contenu des sacs et potions de caractéristiques (les sacs à dos achetés restent). Il n\'y a plus de bouton « Continuer ». Tu peux rompre le pacte à tout moment en revenant parler au Passeur, ici, au Village — mais jamais une fois mort.</span></div>';
   h+=on?'<div class="shop-foot"><button type="button" class="act" data-md="rompre">'+(Date.now()-mauditArm<5000?'Clique encore pour rompre le pacte':'Rompre le pacte')+'</button><span class="hint" style="color:#b45aff">Ce héros est maudit.</span><button type="button" class="act main" data-md="non">Rester maudit</button></div>'
     :'<div class="shop-foot"><button type="button" class="act" data-md="non">Refuser et partir</button><button type="button" class="act main" data-md="oui" style="background:#3a1a6a;border-color:#b45aff;color:#fff">'+(Date.now()-mauditArm<5000?'Clique encore pour sceller le pacte':'Accepter la malédiction')+'</button></div>';
   $('#mauditBody').innerHTML=h;}
@@ -6547,7 +6549,7 @@ function duelDamage(dm){if(!DU||DU.state!=='fight'||P.invul>0)return;dm=armorRed
   if(P.hp<=0)duelLose();}
 function duelLose(){const mode=DU.mode;DU.state='end';DU.won=false;duelSend({k:'dlost'});const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;
   if(mode==='mort'){renderDuel();showBanner('Défaite…','Ton héros est tombé pour de bon','#ff5a6a');sfx('boss');
-    setTimeout(()=>{const g=prestigeGain(C());save.prestige+=g;save.stats.presTot=(save.stats.presTot||0)+g;save.chars[save.current]=newChar(save.current);persist();DU=null;$('#duelBox').hidden=true;enterNexus();invDirty=true;statsDirty=true;const st2=S();P.hp=st2.tot.vie;P.mp=st2.tot.mana;showBanner('Ton héros repart de zéro','+'+g+' prestige pour son sacrifice','#ff5a6a');},3500);}
+    setTimeout(()=>{const g=prestigeGain(C());save.prestige+=g;save.stats.presTot=(save.stats.presTot||0)+g;save.chars[save.current]=renaitre(save.current);persist();DU=null;$('#duelBox').hidden=true;enterNexus();invDirty=true;statsDirty=true;const st2=S();P.hp=st2.tot.vie;P.mp=st2.tot.mana;showBanner('Ton héros repart de zéro','+'+g+' prestige pour son sacrifice','#ff5a6a');},3500);}
   else{renderDuel();showBanner('Défaite','Duel entre amis : personne ne perd rien','#ffb04a');}}
 function duelWin(forfeit){const mode=DU.mode;DU.state='end';DU.won=true;const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;
   if(mode==='mort'){save.sang=(save.sang||0)+1;persist();showBanner('Victoire !',(forfeit?'Ton adversaire a fui · ':'')+'+1 pièce de sang','#ff3b4a');sfx('relic');burst(P.x,P.y,'#c8102e',40,5);}

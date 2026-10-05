@@ -1,5 +1,8 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.77 (index.html seulement ; server.js inchangé depuis la 0.0.72 ; wiki.html régénéré)
+- **Mort définitive : les sacs à dos achetés sont conservés.** Le héros repart toujours de zéro (niveau, équipement, potions de caractéristiques, contenu des sacs), mais il garde son 2e et son 3e sac, vides.
+
 ## ver.0.0.76 (index.html, arbitre.js ; server.js inchangé depuis la 0.0.72 ; wiki.html régénéré)
 - **Prestige : le niveau 25 devient accessible.** Les niveaux 21 à 25 coûtent maintenant 200, 300, 400, 500 et 1 000 points de prestige (2 400 en tout, au lieu de 18 000).
 - En échange, le niveau maximum se débloque **classe par classe** : le prestige dépensé chez le Gardien du Prestige vaut pour la classe que tu joues à ce moment-là. Pour amener une autre classe au niveau 25, il faut repasser ses cinq paliers.
