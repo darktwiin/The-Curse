@@ -214,6 +214,10 @@ function verifier(ancien, nouveau, ctx) {
   // --- Cursite : jamais créée par le joueur ---
   const skins0 = Object.keys(ancien.skins || {}).length, skins1 = Object.keys(nouveau.skins || {}).length;
   let cursiteDepenseMin = Math.max(0, skins1 - skins0) * 100;
+  // apparences du compte (skins de familier, pierres tombales, coffres de livraison, couleur du pseudo) : chaque nouvelle clef se paie en Cursite
+  { const PRIX_COSM = { ps: 1000, tb: 150, cl: 250, nc: 300 }, own0 = (ancien.cosm && ancien.cosm.own) || {}, own1 = (nouveau.cosm && nouveau.cosm.own) || {}, clefs = Object.keys(own1);
+    if (nouveau.cosm != null && (typeof nouveau.cosm !== 'object' || Array.isArray(nouveau.cosm) || clefs.length > 80)) pb.push('apparences impossibles');
+    else for (const k of clefs) { const m = /^(ps|tb|cl):[a-z0-9]{2,14}$/.exec(k) || (k === 'nc' ? ['nc', 'nc'] : null); if (!m) { pb.push('apparence inconnue'); break; } if (!own0[k]) cursiteDepenseMin += PRIX_COSM[m[1]]; } }
   // boost d'expérience acheté en Cursite (1 h)
   // boosts en réserve (offerts par un pack) : ils viennent du serveur, et en utiliser un ne coûte rien
   const bs0 = ancien.boostStock | 0, bs1 = nouveau.boostStock | 0; let boostsRestants = dons.boosts | 0;
@@ -302,7 +306,7 @@ function verifier(ancien, nouveau, ctx) {
   const SOL_MS = 150000, sol = (dons.sol || []).filter(e => Date.now() - e.t < SOL_MS);
   const duSol = k => { const i = sol.findIndex(e => e.sig === k); if (i < 0) return false; sol.splice(i, 1); return true; };
   let donsObj = dons.objets || 0, kitT0 = kits * 3, libT6 = bonusT6, libRel = bonusReliques, libConso = Math.max(0, bonusObjets - bonusT6 - bonusReliques);
-  let nConso = 0, horsListe = 0, nT6 = 0, nRel = 0, nouveaux = 0, oeufsAchetes = 0, kitPot = kits * 3;
+  let nConso = 0, horsListe = 0, nT6 = 0, nRel = 0, nouveaux = 0, oeufsAchetes = 0, croqAchetees = 0, kitPot = kits * 3;
   let spAchat = (nouveau.spDay != null && nouveau.spDay !== ancien.spDay && Math.abs((nouveau.spDay | 0) - today) <= 1) ? 1 : 0; // potion de caractéristique du jour au marchand
   // forge : un objet +N apparaît seulement si l'objet du niveau précédent et 2 objets identiques non améliorés ont disparu
   const fondus = new Map(), perdu = k => Math.max(0, (c0.get(k) || 0) - (c1.get(k) || 0)) - (fondus.get(k) || 0), fondre = (k, n) => fondus.set(k, (fondus.get(k) || 0) + n);
@@ -340,7 +344,7 @@ function verifier(ancien, nouveau, ctx) {
         if (donsObj > 0) { donsObj--; continue; }
         if (!etape2) { nConso++; continue; }
         if (kind === 'pvie' || kind === 'pmana') { orDepenseMin += 5; continue; }
-        if (kind === 'croquette') { orDepenseMin += 500; continue; }
+        if (kind === 'croquette') { croqAchetees++; continue; }
         if (kind === 'egg') { oeufsAchetes++; continue; }
         if (kind.startsWith('sp_') && spAchat > 0) { spAchat--; orDepenseMin += 50; continue; }
         horsListe++; continue; }
@@ -357,6 +361,8 @@ function verifier(ancien, nouveau, ctx) {
   if (nRel > sx.reliques + 0.01) pb.push('trop de reliques (+' + nRel + ')'); else sx.reliques -= nRel;
   // --- Cursite et or : vérifiés ici, une fois connus les consommables achetés au marchand ---
   // œuf acheté : 50 Cursite s'il en reste à justifier, sinon 300 pièces
+  // croquette achetée : 100 Cursite s'il en reste à justifier, sinon 500 pièces
+  for (let i = 0; i < croqAchetees; i++) { if (d('cursite') <= (dons.cursite || 0) + bonusCursite - cursiteDepenseMin - 100 + 0.5) cursiteDepenseMin += 100; else orDepenseMin += 500; }
   for (let i = 0; i < oeufsAchetes; i++) { if (d('cursite') <= (dons.cursite || 0) + bonusCursite - cursiteDepenseMin - 50 + 0.5) cursiteDepenseMin += 50; else orDepenseMin += 300; }
   if (d('cursite') > (dons.cursite || 0) + bonusCursite - cursiteDepenseMin + 0.5) pb.push('Cursite injustifiée (+' + Math.round(d('cursite')) + ')');
   // récompenses en pièces des quêtes : seulement quand une quête passe à « récompense prise », avec le plafond de chaque quête

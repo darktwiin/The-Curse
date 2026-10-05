@@ -266,7 +266,7 @@ details.help dt{color:var(--gold)} details.help dd{margin:0}
 .qlist{display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 290px);overflow-y:auto;padding-right:4px}.qrow{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;background:var(--panel2);border:2px solid var(--line);padding:8px}
 .qrow.done{border-color:#7ed957}.qrow.got{opacity:.55}.qrow img{width:44px;height:44px;image-rendering:pixelated;object-fit:contain}.qrow b{display:block}.qrow .qbar{height:10px;background:#0b0a12;border:1px solid var(--line);margin-top:4px;position:relative}.qrow .qbar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(#9be86d,#4e9e2e)}
 .qrow .qr{font-size:12px;color:var(--muted)}.qicon{width:44px;height:44px;display:grid;place-items:center;font-size:26px}
-.pets-inner{max-width:680px}
+.pets-inner{max-width:760px}.peteq{display:flex;gap:12px;align-items:center;background:var(--panel2);border:2px solid #7df0e0;padding:8px 12px}.peteq img{width:64px;height:64px;image-rendering:pixelated;flex:none}.peteq div{flex:1;display:grid;gap:2px}.peteq b{font-family:var(--display);font-size:16px}.peteq span{font-size:12px;color:var(--muted)}.prow{grid-column:1/3;display:flex;gap:4px;align-items:center}.prow button{flex:1;font-size:12px;padding:3px}.prow .pm{flex:none;width:26px}.prow i{font-style:normal;font-size:12px;min-width:62px;text-align:center;color:var(--muted)}.pskins{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}.pskin{background:var(--panel2);border:2px solid var(--line);padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}.pskin.on{border-color:var(--gold);box-shadow:0 0 10px rgba(255,210,63,.3)}.pskin img{width:96px;height:96px;image-rendering:pixelated;background:#2a2640}.pskin b{font-family:var(--display);font-size:14px}.pskin span{font-size:12px;color:var(--muted);min-height:44px}.pskin button{width:100%}.cosm-sec{margin:10px 0}.cosm-sec h3{margin:0 0 6px}.ncsw{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ncsw button{width:30px;height:30px;border:2px solid #0b0a12;cursor:pointer;padding:0}.ncsw button.on{outline:3px solid #fff}.ncsw input{width:44px;height:34px;padding:0;border:2px solid var(--line);background:none;cursor:pointer}
 .guild-inner{max-width:640px}
 #raidRes{z-index:9}.rrlist{display:flex;flex-direction:column;gap:4px;margin:10px 0}.rrrow{display:grid;grid-template-columns:40px 1fr auto;gap:8px;align-items:center;background:var(--panel2);border:2px solid var(--line);padding:8px}.rrrow.moi{border-color:var(--gold)}.rrrow b{font-size:20px;text-align:center}.rrrow em{color:#ffd23f;font-style:normal}.gform{display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:center;margin:10px 0}.gform input{background:#0b0a12;border:2px solid var(--line2);color:#f4f1e8;font:inherit;padding:6px}
 .graid{background:var(--panel2);border:2px solid var(--line);padding:10px;margin:8px 0}.graid .bar{height:18px;background:#0b0a12;border:1px solid var(--line);position:relative;margin:6px 0}.graid .bar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(#ffe27a,#c9860a)}
@@ -368,7 +368,30 @@ input[type=color]{width:100%;height:34px;border:2px solid var(--line2);backgroun
 .authwin{z-index:60;background:rgba(5,4,10,.92)}.authtabs{display:flex;gap:6px}.authtabs button{flex:1;background:var(--panel2);border:2px solid var(--line);color:var(--muted);padding:6px;cursor:pointer;font-family:var(--display)}.authtabs button.on{border-color:var(--gold);color:var(--gold)}
 .authf{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}.authf input{background:#0b0a12;border:2px solid var(--line);color:var(--text);font:inherit;font-size:16px;padding:6px 8px}.authf input:focus{outline:none;border-color:var(--gold)}#authMsg.err{color:#ff6a6a}
 .gshop{position:absolute;top:10px;left:158px;z-index:6;font-family:var(--display);font-size:20px;letter-spacing:.06em;color:#2a1a04;background:linear-gradient(#ffe48a,#e8a92a 55%,#b8761a);border:3px solid #fff1b0;box-shadow:0 0 0 3px #5a3a08,0 0 18px rgba(255,200,60,.6),4px 4px 0 #000;padding:10px 18px;cursor:pointer;animation:gshine 2.4s ease-in-out infinite}
-.gshop:hover{filter:brightness(1.12)}@keyframes gshine{50%{box-shadow:0 0 0 3px #5a3a08,0 0 30px rgba(255,220,90,.95),4px 4px 0 #000}}
+.gshop:hover{filter:brightness(1.12)}
+#gshopWin{z-index:20}.gs{max-width:900px!important;max-height:94vh;overflow-y:auto;gap:14px!important;border-color:#ffd23f!important;background:radial-gradient(120% 60% at 50% 0,rgba(63,240,255,.10),transparent 60%),var(--panel)!important}
+.gs-head{display:flex;align-items:center;gap:18px;padding:4px 4px 12px;border-bottom:2px solid var(--line)}.gs-big{width:26px!important;height:26px!important;margin:0 6px!important;box-shadow:0 0 0 3px #0b2a28,0 0 22px rgba(63,240,255,.7)!important;animation:gsgem 2.6s ease-in-out infinite}
+@keyframes gsgem{50%{filter:brightness(1.35)}}
+.gs-tt{flex:1}.gs-tt h2{margin:0;font-size:30px;line-height:1}.gs-tt span{color:var(--muted);font-size:13px}
+.gs-bal{display:flex;align-items:center;gap:10px;background:#0f1a22;border:2px solid #2ed8c8;padding:8px 14px;box-shadow:inset 0 0 14px rgba(46,216,200,.25)}.gs-bal b{font-family:var(--display);font-size:22px;color:#bffff6}.gs-bal em{font-style:normal;font-size:12px;color:var(--muted)}
+.gs-note{border:2px dashed #b8862b;background:rgba(255,210,63,.07);padding:8px 12px;font-size:13px;color:#e8dcc0}.gs-note b{color:#ffd23f}
+.gs-h{margin:6px 0 0;display:flex;align-items:center;gap:12px;font-family:var(--display);font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}.gs-h:after{content:'';flex:1;height:2px;background:linear-gradient(90deg,var(--gold),transparent)}
+.gs-hero{position:relative;display:grid;grid-template-columns:120px 1fr auto;gap:16px;align-items:center;padding:14px 16px;border:3px solid #ffd23f;background:linear-gradient(100deg,rgba(255,210,63,.20),rgba(255,154,60,.08) 55%,rgba(63,240,255,.08));box-shadow:0 0 22px rgba(255,210,63,.22)}
+.gs-hero>img{width:112px;height:112px;image-rendering:pixelated;filter:drop-shadow(0 6px 0 rgba(0,0,0,.45));animation:gsbob 2.2s ease-in-out infinite}@keyframes gsbob{50%{transform:translateY(-5px)}}
+.gs-hero h4{margin:0 0 2px;font-family:var(--title);font-size:24px;color:#ffe48a;font-weight:400}.gs-hero p{margin:0 0 8px;font-size:12px;color:var(--muted)}
+.gs-chips{display:flex;flex-wrap:wrap;gap:6px}.gs-chips span{display:flex;align-items:center;gap:6px;background:#17131f;border:2px solid var(--line);padding:3px 8px;font-size:12px}.gs-chips img{width:20px;height:20px;image-rendering:pixelated}.gs-chips b{color:#bffff6}
+.gs-buy{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:120px}.gs-price{font-family:var(--display);font-size:30px;color:#fff;text-shadow:3px 3px 0 #000}.gs-price small{font-size:13px;color:var(--muted);text-shadow:none}
+.gs-rib{position:absolute;top:-11px;left:14px;background:#ff3b4a;color:#fff;font-family:var(--display);font-size:11px;letter-spacing:.08em;padding:2px 10px;box-shadow:2px 2px 0 #000;text-transform:uppercase}.gs-rib.g{background:#7ed957;color:#0b2a0b}.gs-rib.c{background:#3ff0ff;color:#06282a}
+.gs-soon{font-family:var(--display);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#b8b4c6;border:2px solid var(--line);background:#17131f;padding:4px 12px;cursor:pointer}.gs-soon:hover{border-color:var(--gold);color:var(--gold)}
+.gs-packs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding-top:8px}.gs-pack{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px 12px;background:linear-gradient(#221c30,#17131f);border:2px solid var(--line);transition:transform .12s,border-color .12s}.gs-pack:hover{transform:translateY(-3px);border-color:#3ff0ff}
+.gs-pack.best{border-color:#ffd23f;box-shadow:0 0 16px rgba(255,210,63,.25)}.gs-pile{height:58px;width:96px;position:relative}.gs-pile i{position:absolute;margin:0}
+.gs-amt{font-family:var(--display);font-size:24px;color:#bffff6;line-height:1}.gs-amt small{display:block;font-size:11px;color:var(--muted);text-align:center;letter-spacing:.08em}
+.gs-bonus{font-size:12px;color:#7ed957;min-height:16px}
+.gs-abos{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:8px}.gs-abo{position:relative;display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:14px;background:linear-gradient(100deg,rgba(63,240,255,.10),#17131f 60%);border:2px solid #2ed8c8}.gs-abo.or{background:linear-gradient(100deg,rgba(255,210,63,.14),#17131f 60%);border-color:#ffd23f}.gs-abo.on{box-shadow:0 0 16px rgba(126,217,87,.4);border-color:#7ed957}
+.gs-crest{width:56px;height:56px;display:grid;place-items:center;border:3px solid currentColor;transform:rotate(45deg);color:#3ff0ff;background:#0f1a22;margin:6px}.gs-crest b{transform:rotate(-45deg);font-family:var(--display);font-size:17px;color:#fff}.gs-abo.or .gs-crest{color:#ffd23f;background:#221a08}
+.gs-abo h4{margin:0;font-family:var(--title);font-size:20px;font-weight:400;color:#fff}.gs-abo p{margin:2px 0 0;font-size:12px;color:var(--muted)}.gs-abo p b{color:#bffff6;font-size:14px}
+.gs-links{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.gs-link{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:10px 8px;background:var(--panel2);border:2px solid var(--line);color:inherit;font:inherit;cursor:pointer}.gs-link:hover{border-color:var(--gold)}.gs-link img,.gs-link .abc{width:56px;height:56px;image-rendering:pixelated;object-fit:contain}.gs-link .abc{display:grid;place-items:center;font-family:var(--display);font-size:22px}.gs-link b{font-family:var(--display);font-size:13px}.gs-link span{font-size:11px;color:var(--muted)}
+@media(max-width:760px){.gs-packs,.gs-links{grid-template-columns:1fr 1fr}.gs-abos{grid-template-columns:1fr}.gs-hero{grid-template-columns:72px 1fr}.gs-hero>img{width:64px;height:64px}.gs-buy{grid-column:1/3;flex-direction:row;justify-content:space-between}.gs-abo{grid-template-columns:64px 1fr}.gs-abo .gs-buy{grid-column:1/3}}@keyframes gshine{50%{box-shadow:0 0 0 3px #5a3a08,0 0 30px rgba(255,220,90,.95),4px 4px 0 #000}}
 .hudtl{position:absolute;top:10px;left:10px;z-index:5;display:flex;flex-direction:column;gap:3px;width:136px;background:rgba(20,17,30,.28);border:1px solid rgba(90,80,120,.35);padding:6px;pointer-events:none;text-shadow:1px 1px 0 #000}
 .hudtl .brand h1{font-size:16px;text-align:center;width:100%}
 .hudtl #mini{width:122px;height:122px;pointer-events:auto;cursor:pointer;opacity:.92}
@@ -442,19 +465,20 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="shop-foot"><button type="button" class="act" id="cguNon">Refuser et me déconnecter</button><button type="button" class="act main" id="cguOui" disabled>Accepter et jouer</button></div>
       </div>
     </div>
-    <button type="button" class="gshop" id="gshopBtn" hidden><i class="cgem" style="width:14px;height:14px;margin-right:10px;vertical-align:middle"></i>CURSITE</button>
+    <button type="button" class="gshop" id="gshopBtn" hidden><i class="cgem" style="width:14px;height:14px;margin-right:10px;vertical-align:middle"></i>BOUTIQUE</button>
     <div class="overlay" id="gshopWin" hidden>
-      <div class="shop-inner" role="dialog" aria-label="Cursite">
-        <h2><i class="cgem" style="width:16px;height:16px;margin-right:12px;vertical-align:middle"></i>Cursite</h2>
-        <p class="hint" id="gshopHint">Aperçu réservé à l'admin : rien n'est encore payant. Les packs serviront plus tard (paiement à brancher côté serveur).</p>
+      <div class="shop-inner gs" role="dialog" aria-label="Boutique">
+        <div class="gs-head"><i class="cgem gs-big"></i><div class="gs-tt"><h2>Boutique</h2><span>Fais le plein de Cursite et soutiens The Curse</span></div><div class="gs-bal" title="Ta Cursite"><i class="cgem"></i><b id="gshopCur">0</b><em>Cursite</em></div></div>
+        <div class="gs-note" id="gshopHint"><b>Les paiements ne sont pas encore ouverts.</b> Voici ce qui arrive : pour l'instant, rien ne peut être acheté ici. La Cursite se gagne déjà en jeu (quêtes, bonus de connexion, concours, parrainage).</div>
         <div id="gshopPack"></div>
-        <div class="shop-sec" id="gshopSecP"><h3>Packs de Cursite</h3><div class="shop-grid" id="gshopPacks"></div></div>
-        <div class="shop-sec" id="gshopSecS"><h3>Apparences</h3><div class="acts"><button type="button" class="act main" id="gshopSkins">Voir les skins (Cursite)</button></div></div>
-        <div class="shop-foot"><span class="hint">Cursite : <b id="gshopCur">0</b></span><button type="button" class="act" id="gshopClose">Fermer · Échap</button></div>
+        <h3 class="gs-h"><span>Packs de Cursite</span></h3><div class="gs-packs" id="gshopPacks"></div>
+        <h3 class="gs-h"><span>Abonnements</span></h3><div class="gs-abos" id="gshopAbos"></div>
+        <h3 class="gs-h"><span>À dépenser en jeu</span></h3><div class="gs-links" id="gshopLinks"></div>
+        <div class="shop-foot"><span class="hint">La Cursite sert avant tout aux apparences : aucune ne rend ton héros plus fort.</span><button type="button" class="act" id="gshopClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.71"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.73"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -470,7 +494,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp"><i id="xpF"></i><span><em>XP</em><b id="xpT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.71</div>
+    <div class="verTag" id="verTag">ver.0.0.73</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -565,10 +589,12 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="pets" hidden>
       <div class="shop-inner pets-inner" role="dialog" aria-label="Familiers">
         <h2 id="petTitle">Familiers</h2>
-        <p class="hint">Un familier équipé te suit et augmente une statistique <b>au-delà du maximum</b> (niveau, potions et plafonds). Les autres vivent dans le parc de ta maison.</p>
-        <h3>Œufs dans ton sac</h3><div class="plist2" id="petEggs"></div>
-        <h3>Évolutions</h3><div class="plist2" id="petEvo"></div>
-        <h3>Tes familiers</h3><div class="pettools"><label>Classer par <select id="petSort"><option value="type">type</option><option value="rar">rareté</option><option value="nb">nombre</option></select></label><span class="hint" id="petSelTxt"></span><button type="button" class="act" id="petReroll">Relancer 3 familiers → 1 nouveau</button><button type="button" class="act" id="petSell">Vendre</button></div><div class="plist2" id="petList"></div>
+        <div class="peteq" id="petEq"></div>
+        <div class="admtabs" id="petTabs" style="margin:8px 0"></div>
+        <div data-pp="list"><div class="pettools"><label>Classer par <select id="petSort"><option value="type">type</option><option value="rar">rareté</option><option value="nb">nombre</option></select></label><span class="hint" id="petSelTxt"></span><button type="button" class="act" id="petReroll">Relancer 3 familiers → 1 nouveau</button><button type="button" class="act" id="petSell">Vendre</button></div><div class="plist2" id="petList"></div></div>
+        <div data-pp="evo"><div class="pettools" id="petCroq"></div><div class="plist2" id="petEvo"></div></div>
+        <div data-pp="eggs"><div class="plist2" id="petEggs"></div></div>
+        <div data-pp="skins"><p class="hint">Une apparence ne change que l'image du familier qui te suit : son bonus, son rang et son halo restent les mêmes. Elle vaut pour tous tes familiers, et tous les joueurs la voient.</p><div class="pskins" id="petSkins"></div></div>
         <div class="shop-foot"><span class="hint" id="petFoot"></span><button type="button" class="act" id="petClose">Fermer · Échap</button></div>
       </div>
     </div>
@@ -645,7 +671,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.71</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.73</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -687,7 +713,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.71</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.73</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -707,7 +733,7 @@ body.ton #opts{position:fixed;z-index:120}
         <h2>Statue des skins</h2>
         <p>Les skins changent l'apparence de ton héros et de son arme. Ils s'achètent en Cursite et restent acquis pour tous tes héros de cette classe. Les <b>particules</b> s'achètent à part (300 Cursite par classe) et se portent avec n'importe quelle apparence.</p>
         <div class="skinlist" id="skinList"></div>
-        <div class="shop-foot"><span class="gold curs"><i class="cgem"></i><span id="skinCur">0</span> Cursite</span><button type="button" class="act" id="skinClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="gold curs"><i class="cgem"></i><span id="skinCur">0</span> Cursite</span><button type="button" class="act" id="skinCosm">Pseudo, tombe, coffre de livraison…</button><button type="button" class="act" id="skinClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="mapWin" hidden style="background:rgba(11,10,18,.6)"><div class="mapbox"><canvas id="bigMap" width="360" height="360"></canvas><span class="hint" id="mapHint">M ou Échap pour fermer</span></div></div>
@@ -1253,6 +1279,145 @@ const PET_TIERS=[{nom:'Commun',col:'#dcd8e4',m:1,w:65},{nom:'Rare',col:'#4aa3ff'
 function rollPetTier(){const tot=PET_TIERS.reduce((a,t)=>a+t.w,0);let r=Math.random()*tot;for(let i=0;i<PET_TIERS.length;i++){r-=PET_TIERS[i].w;if(r<0)return i;}return 0;}
 const petAmtK=(k,t)=>{const a=PET_DEF[k].amt*PET_TIERS[t||0].m;return PET_DEF[k].amt>=20?Math.round(a/5)*5:Math.round(a);};
 const PET_SPR={};
+// ===== Apparences de familier (Cursite) : 24×24 pixels, 4 images chacune (0-1 : au repos · 2-3 : en mouvement). Elles ne changent que l'image du familier équipé. =====
+function skCanvas(){const N=24,c=document.createElement('canvas');c.width=N;c.height=N;const g=c.getContext('2d');
+  const P=(x,y,col)=>{g.fillStyle=col;g.fillRect(Math.round(x),Math.round(y),1,1);};
+  const rect=(x,y,w,h,col)=>{g.fillStyle=col;g.fillRect(Math.round(x),Math.round(y),w,h);};
+  const disc=(cx,cy,rx,ry,col)=>{g.fillStyle=col;for(let y=0;y<N;y++)for(let x=0;x<N;x++){const dx=(x+.5-cx)/rx,dy=(y+.5-cy)/ry;if(dx*dx+dy*dy<=1)g.fillRect(x,y,1,1);}};
+  const line=(x0,y0,x1,y1,col,w)=>{x0=Math.round(x0);y0=Math.round(y0);x1=Math.round(x1);y1=Math.round(y1);const dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let e=dx+dy;for(;;){if(w>1)rect(x0,y0,w,w,col);else P(x0,y0,col);if(x0===x1&&y0===y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx;}if(e2<=dx){e+=dx;y0+=sy;}}};
+  const tri=(ax,ay,bx,by,cx,cy,col)=>{g.fillStyle=col;const s=(x,y,x0,y0,x1,y1)=>(x-x1)*(y0-y1)-(x0-x1)*(y-y1);for(let y=0;y<N;y++)for(let x=0;x<N;x++){const px=x+.5,py=y+.5,d1=s(px,py,ax,ay,bx,by),d2=s(px,py,bx,by,cx,cy),d3=s(px,py,cx,cy,ax,ay);if(!((d1<0||d2<0||d3<0)&&(d1>0||d2>0||d3>0)))g.fillRect(x,y,1,1);}};
+  const outline=col=>{const id=g.getImageData(0,0,N,N),d=id.data,o=new Uint8ClampedArray(d);const rgb=[parseInt(col.slice(1,3),16),parseInt(col.slice(3,5),16),parseInt(col.slice(5,7),16)];
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=(y*N+x)*4;if(d[i+3])continue;for(const [ax,ay] of [[1,0],[-1,0],[0,1],[0,-1]]){const X=x+ax,Y=y+ay;if(X>=0&&Y>=0&&X<N&&Y<N&&d[(Y*N+X)*4+3]){o[i]=rgb[0];o[i+1]=rgb[1];o[i+2]=rgb[2];o[i+3]=255;break;}}}
+    g.putImageData(new ImageData(o,N,N),0,0);};
+  return {c,g,P,rect,disc,line,tri,outline};}
+const PETSKINS={
+  dragon:{nom:'Dragon de braise',txt:'Un petit dragon rouge qui bat des ailes et crache des étincelles.',col:'#ff6a2a',vol:1,hz:7,fx:'#ffb347',
+    art(f){const {c,P,rect,disc,line,tri,outline}=skCanvas();const R='#d8342a',D='#8f1d1d',L='#ff7a4a',B='#ffd08a',Y='#ffd23f',up=f%2===0,wy=up?-1:5;
+      // aile du fond, queue
+      tri(10,12,3,6+wy,9,5+wy,D);
+      line(7,16,3,18,R,2);line(3,18,1,16,R,2);tri(0,13,3,15,0,17,Y);
+      // corps, ventre
+      disc(11,15.5,5.2,4,R);disc(11.5,17,3.6,2.2,B);for(let i=0;i<3;i++)P(8+i*2,17+(i%2),'#e8b070');
+      // pattes
+      rect(8,19,2,3,D);rect(13,19,2,3,D);P(10,21,D);P(15,21,D);
+      // cou, tête, museau
+      disc(15.5,11.5,2.6,3.2,R);disc(18,8,3.2,2.7,R);rect(19,8,4,2,R);rect(19,10,3,1,D);P(22,8,D);
+      P(18,3,Y);P(17,4,Y);P(17,5,Y);P(15,4,Y);P(15,5,Y);
+      P(19,7,'#fff2a8');P(20,7,'#1a1420');P(18,6,D);P(19,6,D);
+      // crête du dos
+      for(const [x,y] of [[9,10],[12,10],[14,8]])P(x,y,Y);
+      // aile du devant
+      tri(12,12,4,3+wy,13,4+wy,L);line(12,12,4,3+wy,D);line(12,12,9,3+wy+1,D);line(12,12,13,4+wy,D);
+      if(f===1){P(23,8,Y);P(23,9,'#ff7a1a');P(22,10,'#ff7a1a');}
+      outline('#3a0f12');if(f===1){}return c;}},
+  spectre:{nom:'Ombre spectrale',txt:'Une ombre encapuchonnée aux yeux de glace, qui flotte en ondulant.',col:'#8a6aff',vol:1,hz:4,fx:'#8a6aff',
+    art(f){const {c,P,rect,disc,line,outline}=skCanvas();const N='#241a48',M='#33255e',L='#6a4ab8',E='#7ff6ff';
+      const ph=f*1.4;
+      // traîne qui ondule
+      for(let y=11;y<=22;y++){const k=(y-11)/11,w=Math.round(5.2*(1-k*0.82)),sh=Math.round(Math.sin(y*0.75+ph)*(0.4+k*2.2));rect(12-w+sh-2,y,w*2+1,1,y>19?M:N);if(y>13&&y%2===0)P(12-w+sh-2,y,L);}
+      // capuche
+      disc(12,8,5.6,5.4,N);disc(12.6,8.6,3.9,3.6,'#0a0718');disc(10,5.4,2.2,1.4,M);
+      // yeux (ils clignent sur l'image 1)
+      if(f===1){rect(11,8,2,1,E);rect(15,8,2,1,E);}else{rect(11,7,2,2,E);rect(15,7,2,2,E);P(11,7,'#ffffff');P(15,7,'#ffffff');}
+      // petites mains
+      const hy=f%2?13:14;rect(5,hy,2,2,M);P(4,hy+1,L);rect(18,hy+(f%2?1:-1),2,2,M);P(20,hy+(f%2?2:0),L);
+      // lueurs
+      for(const [x,y] of [[3,6+(f%2)],[21,4+((f+1)%2)],[19,19-(f%2)]])P(x,y,L);
+      outline('#5a3fb0');return c;}},
+  dino:{nom:'Bébé tyrannosaure',txt:'Un minuscule tyran vert, toutes dents dehors, qui trottine derrière toi.',col:'#7ed957',hz:8,
+    art(f){const {c,P,rect,disc,line,tri,outline}=skCanvas();const G='#4fae3c',D='#2f7a2c',L='#9be06a',B='#e8e2a0';const bob=f===1?1:0,la=f===2?-1:0,lb=f===3?-1:0;
+      // queue
+      tri(1,12,7,13,7,17,G);line(2,12,6,13,D);P(1,12,D);
+      // corps
+      disc(10.5,15,5,4.4,G);disc(11,16.6,3.2,2.2,B);
+      for(const [x,y] of [[7,12],[9,11],[11,11],[13,12],[5,13]])P(x,y,D);
+      // pattes arrière (épaisses)
+      rect(7,18+la,3,4-la,D);rect(6,21,2,1,D);rect(12,18+lb,3,4-lb,D);rect(15,21,1,1,D);P(8,19+la,G);P(13,19+lb,G);
+      // petits bras
+      P(15,15,D);P(16,16,D);P(16,15,G);
+      // tête énorme
+      disc(16.5,8+bob,5,4,G);rect(16,9+bob,7,3,G);rect(15,12+bob,7,1,D);
+      for(const x of [16,18,20])P(x,12+bob,'#ffffff');for(const x of [17,19,21])P(x,11+bob,'#ffffff');
+      P(17,6+bob,'#ffffff');P(18,6+bob,'#1a1420');P(17,5+bob,D);P(18,5+bob,D);P(22,8+bob,D);
+      for(const [x,y] of [[13,5],[15,4],[12,7]])P(x,y+bob,L);
+      outline('#17361a');return c;}},
+  wyvern:{nom:'Wyverne des tempêtes',txt:'Une wyverne d\'orage aux grandes ailes, traversée d\'éclairs.',col:'#3fb8ff',vol:1,hz:6,fx:'#bff0ff',
+    art(f){const {c,P,rect,disc,line,tri,outline}=skCanvas();const A='#2a6fb8',D='#163e78',L='#6fc8ff',M='#9be8ff',Y='#fff07a',up=f%2===0,wy=up?0:7;
+      // aile du fond
+      tri(11,12,2,3+wy,8,2+wy,D);
+      // queue à dard
+      line(7,15,3,18,A,2);line(3,18,1,15,A,1);tri(0,12,2,14,0,16,Y);
+      // corps fin, ventre
+      disc(10.5,14.5,4.2,3,A);disc(11,15.6,2.8,1.5,M);
+      // deux pattes
+      rect(9,17,2,up?4:3,D);rect(12,17,2,up?3:4,D);P(11,up?20:19,D);P(14,up?19:20,D);
+      // long cou, tête à crête
+      line(14,12,18,7,A,2);disc(19.5,6,2.8,2.1,A);rect(20,6,3,2,A);P(23,6,D);P(21,8,D);
+      tri(15,3,18,4,17,6,L);P(16,2,L);
+      P(20,5,Y);P(21,5,'#1a1420');
+      // grande aile du devant, membrane claire et doigts
+      tri(12,12,3,1+wy,14,2+wy,L);tri(12,12,3,1+wy,8,9+wy*0.4,A);
+      line(12,12,3,1+wy,D);line(12,12,8,1+wy,D);line(12,12,14,2+wy,D);P(3,1+wy,Y);
+      // éclair
+      if(f===1||f===3){P(17,13,Y);P(18,14,Y);P(17,15,Y);P(18,16,'#ffffff');}
+      outline('#0c1f44');return c;}},
+  canard:{nom:'Canard en plastique',txt:'Coin. Il rebondit, il couine, et il te juge.',col:'#ffd23f',hz:5,saut:1,
+    art(f){const {c,P,rect,disc,line,outline}=skCanvas();const Y='#ffd23f',D='#e0a81a',L='#fff3a8',O='#ff8a2a';const sq=f===1?1:0,tilt=f===2?-1:f===3?1:0;
+      // corps (il s'écrase quand il couine)
+      disc(11,16+sq*0.5,6.4,4.6-sq*0.6,Y);disc(8,17,3,2,D);disc(8.6,16.5,2.4,1.4,Y);tri2(P,3,14,6,15,D);
+      disc(11,19.4,4.4,1.2,D);
+      // tête
+      disc(15+tilt,9+sq,4.2,4.2,Y);disc(13.6+tilt,7.2+sq,1.6,1.2,L);
+      // bec
+      rect(18+tilt,9+sq,4,2,O);rect(18+tilt,11+sq,3,1,'#d86a14');P(22+tilt,9+sq,'#d86a14');
+      // œil
+      rect(16+tilt,7+sq,2,2,'#1a1420');P(16+tilt,7+sq,'#ffffff');
+      // reflet et petite houppe
+      P(6,14,L);P(7,13,L);P(14+tilt,4+sq,D);P(15+tilt,4+sq,Y);
+      if(f===1){P(22,5,'#ffffff');P(23,4,'#ffffff');P(21,4,'#ffffff');}
+      outline('#6a4a0a');return c;}},
+  grillepain:{nom:'Grille-pain enchanté',txt:'Personne ne sait qui l\'a ensorcelé. Il te suit, et il fait sauter ses tartines.',col:'#c9c4d6',hz:7,
+    art(f){const {c,P,rect,disc,line,outline}=skCanvas();const S='#c9c4d6',D='#8a8698',L='#f4f2fa',T='#d89a4a',C='#f0c888',K='#3a3448';const ty=f===1?5:f===3?7:f===2?9:10,la=f===2?-1:0,lb=f===3?-1:0;
+      // cordon et prise (la queue)
+      line(5,16,2,18,K);line(2,18,1,15,K);rect(0,13,2,2,D);P(0,12,L);P(1,12,L);
+      // tartines
+      rect(8,ty,4,6,T);rect(9,ty+1,2,4,C);rect(13,ty+1,4,6,T);rect(14,ty+2,2,4,C);
+      // carrosserie
+      rect(5,11,15,9,S);rect(6,10,13,1,S);rect(5,19,15,1,D);rect(6,12,1,6,L);rect(7,11,10,1,L);
+      rect(7,10,11,1,K);
+      // manette
+      rect(20,12+(f===1?0:2),2,2,K);rect(20,11,1,7,D);
+      // visage
+      rect(9,14,2,2,K);rect(14,14,2,2,K);P(9,14,'#ffffff');P(14,14,'#ffffff');if(f===1){rect(11,17,3,2,K);P(12,18,'#ff6a6a');}else{P(10,17,K);rect(11,18,3,1,K);P(14,17,K);}
+      P(8,16,'#ff9ab0');P(16,16,'#ff9ab0');
+      // petits pieds
+      rect(7,20+la,2,2-la,K);rect(15,20+lb,2,2-lb,K);
+      if(f===1){P(10,3,C);P(15,4,C);P(12,2,'#ffffff');}
+      outline('#221c2c');return c;}}};
+function tri2(P,x0,y0,x1,y1,col){P(x0,y0,col);P(x1,y1,col);P(x0+1,y0,col);P(x0+2,y0+1,col);}
+const PETSKIN_KEYS=Object.keys(PETSKINS),PETSKIN_PRIX=1000;
+function skinBase(sk,f){const key='s'+sk+'f'+(f||0);if(PET_SPR[key])return PET_SPR[key];const a=PETSKINS[sk].art(f||0),c=document.createElement('canvas');c.width=48;c.height=48;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(a,0,0,48,48);return PET_SPR[key]=c;}
+
+// ===== Apparences du compte (Cursite) : tout est rangé dans save.cosm — own : ce qui est acheté · pet, tomb, colis, nc : ce qui est porté =====
+const COSM=()=>{if(!save.cosm||typeof save.cosm!=='object'||Array.isArray(save.cosm))save.cosm={own:{}};if(!save.cosm.own||typeof save.cosm.own!=='object')save.cosm.own={};return save.cosm;};
+const cosmA=k=>!!COSM().own[k];
+function cosmBuy(k,prix,nom){if(cosmA(k))return true;if(save.cursite<prix){note('Il te faut '+prix+' Cursite');sfx('deny');return false;}save.cursite-=prix;COSM().own[k]=1;persist();pushSave(true);invDirty=true;sfx('relic');try{burst(P.x,P.y,'#3ff0ff',20,3);}catch(e){}note(nom+' débloqué !');return true;}
+const myPetSkin=()=>{const k=COSM().pet;return typeof k==='string'&&PETSKINS[k]&&cosmA('ps:'+k)?k:null;};
+// couleur du pseudo : n'importe quelle teinte, éclaircie si elle est trop sombre pour rester lisible
+const NC_PRIX=300,NC_CHOIX=['#ff5a6a','#ff9a3c','#ffd23f','#c8f06a','#7ed957','#3fe0a8','#3ff0ff','#4fb8e8','#6a8aff','#b16cff','#ff7bf2','#ff9ab0','#f2f0fa','#c9b98a','#ff3b4a','#8fd0ff'];
+function ncSur(c){if(typeof c!=='string'||!/^#[0-9a-f]{6}$/i.test(c))return null;let r=parseInt(c.slice(1,3),16),g=parseInt(c.slice(3,5),16),b=parseInt(c.slice(5,7),16);const l=0.3*r+0.59*g+0.11*b;if(l<120){const k=(120-l)/(255-l);r=Math.round(r+(255-r)*k);g=Math.round(g+(255-g)*k);b=Math.round(b+(255-b)*k);}return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');}
+const myNameCol=()=>cosmA('nc')?ncSur(COSM().nc):null;
+// pierres tombales
+const TOMBE_PRIX=150,TOMBE_PAL={G:'#8a8f9c',E:'#3a3d48',D:'#4a3a2a',Y:'#ffd23f',R:'#ff3b4a',S:'#dfe6f2',P:'#ff7aa8',L:'#ffd0e0',K:'#1a1420',W:'#f2f0fa'};
+const TOMBES={croix:{nom:'Croix dorée',r:['....GG....','....GG....','..GGGGGG..','..GGYYGG..','....GG....','....GG....','....GG....','...GGGG...','.DGGGGGGD.','DDDDDDDDDD']},
+  crane:{nom:'Crâne',r:['..WWWWWW..','.WWWWWWWW.','.WKKWWKKW.','.WKKWWKKW.','.WWWKKWWW.','..WWWWWW..','..WKWKWK..','...WWWW...','.DGGGGGGD.','DDDDDDDDDD']},
+  epee:{nom:'Épée plantée',r:['....YY....','....YY....','..YYRRYY..','....SS....','....SS....','....SS....','....SS....','....SS....','.DDGSSGDD.','DDDDDDDDDD']},
+  coeur:{nom:'Cœur',r:['.PP....PP.','PPPP..PPPP','PPLPPPPPPP','PPPPPPPPPP','.PPPPPPPP.','..PPPPPP..','...PPPP...','....PP....','.DGGGGGGD.','DDDDDDDDDD']},
+  couronne:{nom:'Stèle royale',r:['.Y..YY..Y.','.YY.YY.YY.','.YYYRRYYY.','..GGGGGG..','.GGEEEEGG.','.GGGEEGGG.','.GGGEEGGG.','.GGGGGGGG.','DGGGGGGGGD','DDDDDDDDDD']},
+  fantome:{nom:'Petit fantôme',r:['...WWWW...','..WWWWWW..','.WWKWWKWW.','.WWKWWKWW.','.WWWWWWWW.','.WWWKKWWW.','.WWWWWWWW.','.WWWWWWWW.','.W.WW.WW.W','..........']}};
+for(const k in TOMBES)TOMBES[k].spr=makeSprite(TOMBES[k].r,TOMBE_PAL,5);
+const myTomb=()=>{const k=COSM().tomb;return typeof k==='string'&&TOMBES[k]&&cosmA('tb:'+k)?k:null;};
+
 const PET_TXT=(k,t)=>'+'+petAmtK(k,t)+' '+(k==='vie'?'PV max':k==='mana'?'mana max':SL[k]||k);
 // armure de base par classe (les armures lourdes en donnent beaucoup)
 const ARM_BASE={guerrier:6,pretre:2,archer:2,trickster:2,assassin:1,mage:0,bouclier:11,invocateur:1};
@@ -3272,14 +3437,14 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000071;let newerWarned=false;
+const NETV=2,BUILD=2600000073;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
 const dmgTot=new Map();
 const handled=new Set();
 let deaths=[],dPrimed=false;
-const chatHist=[];function pushChat(c){chatLog.push(c);const d=new Date();chatHist.push({n:c.n,t:c.t,col:c.col,h:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});if(chatHist.length>200)chatHist.shift();if(typeof chatForm!=='undefined'&&!chatForm.hidden)renderChatHist();}
+const chatHist=[];function pushChat(c){chatLog.push(c);const d=new Date();chatHist.push({n:c.n,t:c.t,col:c.col,nc:c.nc||null,h:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')});if(chatHist.length>200)chatHist.shift();if(typeof chatForm!=='undefined'&&!chatForm.hidden)renderChatHist();}
 let chatLog=[],myMsg=null,msgSeq=0,myHeal=null,healSeq=0,lastHostM=null,lastHostD=null,lastHostG=null,sendT=0,plT=0;
 let pseudo='';
 try{pseudo=localStorage.getItem('royaume-maudit-pseudo')||'';}catch(e){}if(save.pseudo&&typeof save.pseudo==='string')pseudo=save.pseudo;
@@ -3370,7 +3535,7 @@ function onPeers(peers){
       if(r.p&&(r.p.s!==p.s)){r.x=num(p.x,0)/10;r.y=num(p.y,0)/10;}
       {const nx=num(p.x,0)/10,ny=num(p.y,0)/10,now=Date.now();if(r.lx!=null&&now>r.lt){const dts=Math.max(0.05,(now-r.lt)/1000),vx=clamp((nx-r.lx)/dts,-12,12),vy=clamp((ny-r.ly)/dts,-12,12);r.vx=(r.vx||0)*0.5+vx*0.5;r.vy=(r.vy||0)*0.5+vy*0.5;}r.lx=nx;r.ly=ny;r.lt=now;}
       r.p=p;
-      if(typeof p.m==='string'&&p.m!==r.lastMsg){r.lastMsg=p.m;const t=filtrer(clean(p.m.slice(p.m.indexOf('|')+1)).slice(0,100));if(t){pushChat({n:clean(p.n).slice(0,16)||'?',t,life:14,col:t.startsWith('✦')?'#3ff0ff':'#ebe6f6'});r.bubble={t,life:5};}}
+      if(typeof p.m==='string'&&p.m!==r.lastMsg){r.lastMsg=p.m;const t=filtrer(clean(p.m.slice(p.m.indexOf('|')+1)).slice(0,100));if(t){pushChat({n:clean(p.n).slice(0,16)||'?',t,life:14,col:t.startsWith('✦')?'#3ff0ff':'#ebe6f6',nc:ncSur(p.nc)});r.bubble={t,life:5};}}
       if(typeof p.ev==='string'&&p.ev!==r.lastEv){r.lastEv=p.ev;if(p.s===sceneKey()||p.ev.split('|')[1]==='d')remoteEv(p.ev,r);}
       if(typeof p.hl==='string'&&p.hl!==r.lastHl){r.lastHl=p.hl;const hf=p.hl.split('|'),pcH=hf[1]&&hf[1][0]==='p',a=pcH?Math.round(S().tot.vie*clamp(parseInt(hf[1].slice(1),10)||0,0,60)/100):clamp(parseInt(hf[1],10)||0,0,800),hr=clamp(parseFloat(hf[2])||4.5,1,12);
         let hx=r.x,hy=r.y;if(hf[4]){const c=hf[4].split(',');const cx=(+c[0]||0)/10,cy=(+c[1]||0)/10;if(Math.hypot(cx-r.x,cy-r.y)<16){hx=cx;hy=cy;}} // centre du soin (démon soigneur), jamais loin du lanceur
@@ -3461,7 +3626,7 @@ function sendPresence(){
   if(!room||!save.current)return;
   const st=S(),ch=C(),w=ch.equip[0];
   const sh=(canFight()&&(mouse.down||P.auto||aimTouch)&&w)?(()=>{const a=aimWorld();return Math.round(Math.atan2(a.y-P.y,a.x-P.x)*100);})():null;
-  const o={v:NETV,n:pseudo,c:save.current,l:ch.lvl,s:sceneKey(),rt:sceneT,tk:Math.floor(Date.now()/500),x:Math.round(P.x*10),y:Math.round(P.y*10),hp:Math.round(clamp(P.hp/st.tot.vie,0,1)*100),sh,w:w?w.kind:null,wt:w?w.tier:0,sk:mySkin(),au:shownAura()?(a=>[a.k,a.s,a.c,a.o?1:0].join('|'))(shownAura()):null,r:Math.round(st.rate*10),f:P.face,b:P.berserk>0?1:0,mv:P.moving?1:0,m:myMsg,hl:myHeal,ev:myEv,dd:scene==='arena'?Math.round((st.dmg[0]+st.dmg[1])/2*0.6):null,su:SUM.length?SUM.slice(0,8).map(z=>Math.round(z.x*10)+','+Math.round(z.y*10)+','+(z.def?'d':z.haste?'a':z.heal?'h':z.main?'m':'e')+','+((C().equip[0]||{}).tier|0)).join(';'):null,kp:KP&&KP.fin>Date.now()?[KP.s,Math.round(KP.x*10),Math.round(KP.y*10),KP.id.toString(36),Math.ceil((KP.fin-Date.now())/1000),KP.ty||'h'].join('|'):null,iv:P.invis>0||admInv?1:0,hid:admInv?1:0,gd:window.GARDIEN_MODE?1:null,bv:BUILD,gi:myGid,gt:GUILD?GUILD.tag:null,md:ch.maudit?1:null,pe:eqPet()?eqPet().k:null,pt:eqPet()?(eqPet().t||0):0,ti:myTitle(),mo:morphKey,as:P.invis>0&&!admInv?1:0,sf:myStates()||null,fi:FISH?Math.round(FISH.bx*10)+','+Math.round(FISH.by*10):null,pz:parQ.length?parSeq+'|'+parQ.join(';'):null,h:!safe()&&!amHost?encHits():null,M:null,D:null,G:null,F:scene==='dungeon'&&amHost?fight:null,S:scene==='dungeon'&&amHost?stars:null,B:amHost&&bossBoardT>time?bossBoardStr:null,bq:scene==='dungeon'?bossReq:null,RB:scene==='realm'&&amHost?(()=>{const l=monsters.filter(q=>CENTRAL.includes(q.key)&&q.hp>0).map(b=>b.key+','+Math.round(b.x*10)+','+Math.round(b.y*10));return l.length?l.join(';'):null;})():null,RK:scene==='realm'&&amHost?realmKills:null,X:scene==='dungeon'&&amHost&&MAP.nInit?deadBits():null};
+  const o={v:NETV,n:pseudo,c:save.current,l:ch.lvl,s:sceneKey(),rt:sceneT,tk:Math.floor(Date.now()/500),x:Math.round(P.x*10),y:Math.round(P.y*10),hp:Math.round(clamp(P.hp/st.tot.vie,0,1)*100),sh,w:w?w.kind:null,wt:w?w.tier:0,sk:mySkin(),au:shownAura()?(a=>[a.k,a.s,a.c,a.o?1:0].join('|'))(shownAura()):null,r:Math.round(st.rate*10),f:P.face,b:P.berserk>0?1:0,mv:P.moving?1:0,m:myMsg,hl:myHeal,ev:myEv,dd:scene==='arena'?Math.round((st.dmg[0]+st.dmg[1])/2*0.6):null,su:SUM.length?SUM.slice(0,8).map(z=>Math.round(z.x*10)+','+Math.round(z.y*10)+','+(z.def?'d':z.haste?'a':z.heal?'h':z.main?'m':'e')+','+((C().equip[0]||{}).tier|0)).join(';'):null,kp:KP&&KP.fin>Date.now()?[KP.s,Math.round(KP.x*10),Math.round(KP.y*10),KP.id.toString(36),Math.ceil((KP.fin-Date.now())/1000),KP.ty||'h'].join('|'):null,iv:P.invis>0||admInv?1:0,hid:admInv?1:0,gd:window.GARDIEN_MODE?1:null,bv:BUILD,gi:myGid,gt:GUILD?GUILD.tag:null,md:ch.maudit?1:null,pe:eqPet()?eqPet().k:null,ps:eqPet()?myPetSkin():null,nc:myNameCol(),pt:eqPet()?(eqPet().t||0):0,ti:myTitle(),mo:morphKey,as:P.invis>0&&!admInv?1:0,sf:myStates()||null,fi:FISH?Math.round(FISH.bx*10)+','+Math.round(FISH.by*10):null,pz:parQ.length?parSeq+'|'+parQ.join(';'):null,h:!safe()&&!amHost?encHits():null,M:null,D:null,G:null,F:scene==='dungeon'&&amHost?fight:null,S:scene==='dungeon'&&amHost?stars:null,B:amHost&&bossBoardT>time?bossBoardStr:null,bq:scene==='dungeon'?bossReq:null,RB:scene==='realm'&&amHost?(()=>{const l=monsters.filter(q=>CENTRAL.includes(q.key)&&q.hp>0).map(b=>b.key+','+Math.round(b.x*10)+','+Math.round(b.y*10));return l.length?l.join(';'):null;})():null,RK:scene==='realm'&&amHost?realmKills:null,X:scene==='dungeon'&&amHost&&MAP.nInit?deadBits():null};
   if(!safe()&&amHost&&othersInScene()){
     o.D=deaths.slice(window.GARDIEN_MODE?-60:-20).join(';');
     if(scene==='realm')o.G=dportals.map(d=>d.id.toString(36)+','+Math.round(d.x*10)+','+Math.round(d.y*10)+','+Math.ceil(d.life)+','+(d.t||'c')).join(';');
@@ -3489,7 +3654,7 @@ function normMot(m){return m.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'
 const RAC_N=MOTS_RACINES.map(normMot),EXA_N=MOTS_EXACTS.map(normMot);
 function filtrer(t){return String(t).replace(/[^\s.,;:!?'"()|\-_/]+/g,w=>{const n=normMot(w);return n&&(EXA_N.includes(n)||RAC_N.some(r=>n.includes(r)))?'*'.repeat(w.length):w;});}
 let muted=false;
-function sendChat(t){t=clean(t).slice(0,100);if(!t)return;if(t[0]==='/'){chatCommand(t);return;}if(muted){note('Un modérateur t\'a retiré la parole');sfx('deny');return;}t=filtrer(t);myMsg=(++msgSeq)+'|'+t;pushChat({n:pseudo,t,life:14,col:t.startsWith('✦')?'#3ff0ff':'#e8b04a'});P.bubble={t,life:5};sendPresence();}
+function sendChat(t){t=clean(t).slice(0,100);if(!t)return;if(t[0]==='/'){chatCommand(t);return;}if(muted){note('Un modérateur t\'a retiré la parole');sfx('deny');return;}t=filtrer(t);myMsg=(++msgSeq)+'|'+t;pushChat({n:pseudo,t,life:14,col:t.startsWith('✦')?'#3ff0ff':'#e8b04a',nc:myNameCol()});P.bubble={t,life:5};sendPresence();}
 
 /* ================= stats ================= */
 function armorRed(dm){const a=S().tot.armure||0,k=save.current&&C()&&C().maudit?1.05:1; // héros maudit : 5 % de dégâts subis en plus
@@ -3797,7 +3962,7 @@ function visitHouse(o){if(!AUTH.ok||!room||!room.raw){note('Connecte-toi à ton 
 function enterVisit(m){document.querySelectorAll('.overlay').forEach(e=>{if(!e.hidden&&e.id!=='titleScr')e.hidden=true;});paused=false;
   const plan=(Array.isArray(m.m)?m.m:[]).filter(e=>Array.isArray(e)&&MEUBLES[e[0]]&&meubleZone(e[1]|0,e[2]|0,!!m.salle)).map(e=>[e[0],e[1]|0,e[2]|0,e[3]&3]);
   scene='vault';MAP=genVault(plan,!!m.salle);P.x=VSPAWN.x;P.y=VSPAWN.y;resetScene();curZone=-2;openChest=null;amHost=false;parkPets=[];
-  VIS={id:m.id|0,n:String(m.n||'?'),salle:!!m.salle,m:plan,skin:String(m.skin||'bois'),coffres:m.coffres|0||1,pets:Array.isArray(m.pets)?m.pets.filter(q=>q&&PET_DEF[q.k]):[],coeurs:m.coeurs|0,aime:!!m.aime};
+  VIS={id:m.id|0,n:String(m.n||'?'),salle:!!m.salle,m:plan,skin:String(m.skin||'bois'),coffres:m.coffres|0||1,colis:String(m.colis||''),pets:Array.isArray(m.pets)?m.pets.filter(q=>q&&PET_DEF[q.k]):[],coeurs:m.coeurs|0,aime:!!m.aime};
   updZone();showBanner('Maison de '+VIS.n,'♥ '+VIS.coeurs+' cœur'+(VIS.coeurs>1?'s':'')+' · '+plan.length+' meuble'+(plan.length>1?'s':''),'#ff7ab0');sfx('portal');sendPresence();}
 let HTOP=null;
 function onMaison(m){
@@ -4355,7 +4520,7 @@ function renderHV(){if(hvEl.hidden)return;document.getElementById('hvGold').text
 }
 // pack de démarrage : payé hors du jeu (5 €), le serveur ouvre un droit ; le joueur choisit son héros et tout arrive dans le coffre de livraison
 let PACK={credit:0,pris:0},packPick=false;
-function onPack(m){if(m.a==='etat'){PACK={credit:m.credit|0,pris:m.pris|0};if(m.neuf){showBanner('Pack de démarrage disponible !','Au Village, clique sur le bouton CURSITE pour le récupérer','#7df0e0');try{pushChat({n:'Serveur',t:'📦 Ton pack de démarrage est disponible : au Village, clique sur le bouton CURSITE pour le récupérer.',life:14,col:'#7df0e0'});}catch(e){}sfx('relic');}if(!$('#gshopWin').hidden)renderGPack();return;}
+function onPack(m){if(m.a==='etat'){PACK={credit:m.credit|0,pris:m.pris|0,abo:m.abo&&typeof m.abo==='object'?{p:m.abo.p|0,fin:+m.abo.fin||0}:null};if(m.neuf){showBanner('Pack de démarrage disponible !','Au Village, clique sur le bouton BOUTIQUE pour le récupérer','#7df0e0');try{pushChat({n:'Serveur',t:'📦 Ton pack de démarrage est disponible : au Village, clique sur le bouton BOUTIQUE pour le récupérer.',life:14,col:'#7df0e0'});}catch(e){}sfx('relic');}if(!$('#gshopWin').hidden)renderGPack();return;}
   if(m.a==='refus'){note(m.msg||'Pack indisponible');sfx('deny');return;}}
 // livraison envoyée par le serveur : objets au coffre, Cursite au compte ; « colisVus » évite de recevoir deux fois la même
 function onColis(m){const id=m.id|0;save.colisVus=Array.isArray(save.colisVus)?save.colisVus:[];
@@ -4364,13 +4529,15 @@ function onColis(m){const id=m.id|0;save.colisVus=Array.isArray(save.colisVus)?s
   const nb=clamp(m.boost|0,0,5);save.colisVus.push(id);if(save.colisVus.length>30)save.colisVus.shift();if(cu)save.cursite+=cu;if(nb){save.boostStock=(save.boostStock|0)+nb;try{pushChat({n:'Serveur',t:'✨ +'+nb+' boost d\'expérience en réserve : active-le à l\'Échoppe, onglet Cursite.',life:14,col:'#7ed957'});}catch(e){}}
   livrer(items,String(m.motif||'Livraison').slice(0,40));if(cu){try{pushChat({n:'Serveur',t:'◆ +'+cu+' Cursite ('+String(m.motif||'Livraison').slice(0,40)+').',life:14,col:'#3ff0ff'});}catch(e){}}
   PACK.credit=Math.max(0,PACK.credit-1);PACK.pris++;packPick=false;pushSave(true);statsDirty=true;if(!shopEl.hidden)renderShop();setTimeout(()=>{try{room.raw({t:'colis',a:'recu',id});}catch(e){}},1500);}
-function packHTML(){if(!(PACK.credit>0)&&!devMode)return ''; // boutique payante pas encore ouverte : seuls les admins et les joueurs qui ont un pack à récupérer le voient
-  const lot='1000 Cursite · un équipement Tier 6 complet pour le héros de ton choix (arme, capacité, armure, anneau) · 2 potions de chaque caractéristique · 3 œufs de familier · 1 boost d\'expérience (+30 % pendant 1 h, à activer quand tu veux)';
-  let act;if(PACK.credit>0)act=packPick?'':'<button type="button" class="act main" data-pack="ouvrir">Récupérer</button>';else if(PACK.pris>0)act='<button type="button" class="act" disabled>Déjà acheté</button>';else act='<button type="button" class="act main" data-pack="acheter">5 €</button>';
-  let h='<div class="shop-item daily" style="border-color:#ffd23f"><img src="'+COLIS_OPEN.toDataURL()+'" alt="" style="width:48px;height:48px;image-rendering:pixelated"><div><b>Pack de démarrage'+(PACK.credit>0?'':' · visible des admins seulement')+'</b><span>'+lot+'. Tout arrive dans le coffre de livraison de ta maison. Un seul pack par compte.</span></div><div>'+act+'</div></div>';
+function packHTML(){
+  let act;if(PACK.credit>0)act=packPick?'':'<button type="button" class="act main" data-pack="ouvrir" style="font-size:16px;padding:6px 16px">Récupérer</button>';else if(PACK.pris>0)act='<button type="button" class="act" disabled>Déjà à toi</button>';else act='<button type="button" class="gs-soon" data-pack="acheter">Bientôt disponible</button>';
+  const ic=(k,t)=>'<img src="'+icon(mkItem(k,t||0))+'" alt="">',cls=CLASSES[save.current]||CLASSES.guerrier;
+  let h='<div class="gs-hero"><i class="gs-rib">Une seule fois par compte</i><img src="'+COLIS_OPEN.toDataURL()+'" alt=""><div><h4>Pack de démarrage</h4><p>Tout arrive dans le coffre de livraison de ta maison.</p><div class="gs-chips">'
+    +'<span><i class="cgem"></i><b>1 000</b> Cursite</span><span>'+ic(cls.arme,6)+ic(cls.capa,6)+ic(cls.armure,6)+ic('anneau',6)+'Équipement <b>Tier 6</b> complet, pour le héros de ton choix</span><span>'+ic('sp_puissance')+'<b>2</b> potions de chaque caractéristique</span><span>'+ic('egg')+'<b>3</b> œufs de familier</span><span><b style="color:#7ed957">XP</b> 1 boost d\'expérience (+30 % pendant 1 h)</span></div></div>'
+    +'<div class="gs-buy"><div class="gs-price">5 €</div>'+act+'</div></div>';
   if(PACK.credit>0&&packPick)h+='<div class="shop-sec"><h3>Pour quel héros veux-tu l\'équipement Tier 6 ?</h3><div class="pick-list" style="display:flex;flex-wrap:wrap;gap:6px">'+Object.keys(CLASSES).map(k=>'<button type="button" class="act" data-packcls="'+k+'"><img src="'+heroURL[k]+'" alt="" style="width:28px;height:28px;vertical-align:middle;image-rendering:pixelated"> '+CLASSES[k].nom+'</button>').join('')+'</div></div>';
   return h;}
-function packClick(e){const b=e.target.closest('[data-pack]');if(b){if(b.dataset.pack==='ouvrir'){packPick=true;renderGPack();}else{showBanner('Paiement bientôt disponible','Le pack de démarrage (5 €) ne peut pas encore être acheté en jeu','#ffd23f');sfx('deny');}return true;}
+function packClick(e){const b=e.target.closest('[data-pack]');if(b){if(b.dataset.pack==='ouvrir'){packPick=true;renderGPack();}else{gsBientot();}return true;}
   const c=e.target.closest('[data-packcls]');if(c){if(!room||!room.raw||!AUTH.ok){note('Connecte-toi à ton compte pour récupérer le pack');return true;}room.raw({t:'pack',a:'prendre',cls:c.dataset.packcls});c.disabled=true;return true;}return false;}
 document.getElementById('devPack').addEventListener('click',()=>devSend(myPeer,'pack','force'));
 // admin : équipement Tier 7 +2 complet, toutes les potions de caractéristique, niveau 25
@@ -4519,10 +4686,10 @@ function markVuln(x,y){const rx=W/TS/2+2,ry=H/TS/2+2;let n=0;for(const m of mons
 function boomFx(x,y,r){vfx.push({k:'boom',x,y,r,t:0,life:0.5,col:'#ff4fd8'});burst(x,y,'#ff4fd8',30,6);burst(x,y,'#3ff0ff',18,4);sfx('boss',0.5);}
 // Tombes : là où un joueur vient de mourir, une pierre tombale à son nom reste 2 minutes pour les autres joueurs de la scène
 let TOMBS=[];const TOMB_SPR=makeSprite(['..GGGG..','.GGGGGG.','.GWWWWG.','.GGWWGG.','.GGWWGG.','.GGGGGG.','DGGGGGGD','DDDDDDDD'],{G:'#8a8f9c',W:'#3a3d48',D:'#4a3a2a'},6);
-function addTomb(x,y,n){if(solidAt(x,y))return;TOMBS.push({x,y,n:clean(String(n||'?')).slice(0,16),fin:time+120,ne:time});if(TOMBS.length>30)TOMBS.shift();burst(x,y,'#8a8f9c',14,2);}
-function drawTombs(){if(!TOMBS.length)return;TOMBS=TOMBS.filter(t=>time<t.fin);for(const t of TOMBS)up(t.x,t.y,()=>{const s=TS*0.85,a=Math.min(1,(t.fin-time)/4),pop=Math.min(1,(time-t.ne)/0.25);ctx.globalAlpha=a;ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(sx(t.x),sy(t.y)+s*0.42,s*0.42,s*0.12,0,0,TAU);ctx.fill();ctx.drawImage(TOMB_SPR,sx(t.x)-s/2,sy(t.y)-s*0.55+s*(1-pop)*0.5,s,s*pop);label(t.n,sx(t.x),sy(t.y)-s*0.7,'#b8b4c6',Math.round(TS*0.24));ctx.globalAlpha=1;});}
+function addTomb(x,y,n,st){if(solidAt(x,y))return;TOMBS.push({x,y,n:clean(String(n||'?')).slice(0,16),fin:time+120,ne:time,spr:typeof st==='string'&&TOMBES[st]?TOMBES[st].spr:null});if(TOMBS.length>30)TOMBS.shift();burst(x,y,'#8a8f9c',14,2);}
+function drawTombs(){if(!TOMBS.length)return;TOMBS=TOMBS.filter(t=>time<t.fin);for(const t of TOMBS)up(t.x,t.y,()=>{const s=TS*0.85,a=Math.min(1,(t.fin-time)/4),pop=Math.min(1,(time-t.ne)/0.25);ctx.globalAlpha=a;ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(sx(t.x),sy(t.y)+s*0.42,s*0.42,s*0.12,0,0,TAU);ctx.fill();ctx.drawImage(t.spr||TOMB_SPR,sx(t.x)-s/2,sy(t.y)-s*0.55+s*(1-pop)*0.5,s,s*pop);label(t.n,sx(t.x),sy(t.y)-s*0.7,'#b8b4c6',Math.round(TS*0.24));ctx.globalAlpha=1;});}
 function remoteEv(ev,r){const f=ev.split('|');const x=(+f[2])/10,y=(+f[3])/10;if(!isFinite(x)||!isFinite(y))return;
-  if(f[1]==='d'){if(f[4]===sceneKey())addTomb(x,y,r.p&&r.p.n);return;}
+  if(f[1]==='d'){if(f[4]===sceneKey())addTomb(x,y,r.p&&r.p.n,f[5]);return;}
   if(f[1]==='l'&&MAP&&MAP.switches){let b=null,bd=3;for(const sw of MAP.switches){const dd=Math.hypot(sw.x-x,sw.y-y);if(dd<bd){bd=dd;b=sw;}}if(b)lightSwitch(b,true);}
   if(f[1]==='v'){markVuln(x,y);vfx.push({k:'healring',x,y,r:10,t:0,life:0.8,col:'#ffd23f'});}
   else if(f[1]==='b')bombs.push({x,y,t:0.9,dm:0,own:false});
@@ -4878,7 +5045,7 @@ function themeTick(dt,st,T,mv){
 }
 function die(src){
   if(scene==='tour'){tourDeath(src);return;}
-  if(scene!=='tuto'&&scene!=='arena')myEv=(++evSeq)+'|d|'+Math.round(P.x*10)+'|'+Math.round(P.y*10)+'|'+sceneKey(); // une tombe apparaît chez les autres joueurs de la scène
+  if(scene!=='tuto'&&scene!=='arena')myEv=(++evSeq)+'|d|'+Math.round(P.x*10)+'|'+Math.round(P.y*10)+'|'+sceneKey()+'|'+(myTomb()||''); // une tombe apparaît chez les autres joueurs de la scène
   if(scene==='raid'){raidDeath(src);return;}
   enterNexus();const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;P.berserk=0;
   // la mort est notée dans la sauvegarde tout de suite : fermer le jeu ne permet pas d'éviter le choix (et la perte de niveaux)
@@ -5217,10 +5384,12 @@ const SHOP_ITEMS=[
   {id:'sac3',sec:'sac',nom:'3e sac à dos',desc:'Onglet « Sac 3 » : 8 places de plus (après le 2e sac).',prix:1500,img:backpackURL,owned:()=>C().inv.length>16,buy:()=>{const ch=C();if(ch.inv.length<=8){note('Achète d\'abord le 2e sac');return false;}while(ch.inv.length<24)ch.inv.push(null);bagTab=2;return true;}},
 ];
 // Onglet Cursite : œufs et boost d'expérience (+30 % pour tous les héros du compte pendant 1 h)
+const CROQ_CU=100,EGG_JOUR=5,oeufsJour=()=>{const o=save.oeufJ;return o&&o.j===dayKey()?o.n|0:0;};
 const BOOST_PRIX=100,EGG_CU=50,BOOST_MS=3600000;
 const boostLeft=()=>Math.max(0,(save.boostXP||0)-Date.now());
 const CU_ITEMS=[
-  {id:'cuegg',nom:'Œuf de familier',desc:'Un familier au hasard. Livré dans le coffre de livraison de ta maison.',prix:EGG_CU,img:icon(mkItem('egg',0)),owned:()=>false,buy:()=>{livrer([mkItem('egg',0)],'Achat');return true;}},
+  {id:'cuegg',nom:'Œuf de familier',get desc(){return 'Un familier au hasard. Livré dans le coffre de livraison de ta maison. Aujourd\'hui : '+oeufsJour()+' sur '+EGG_JOUR+'.';},prix:EGG_CU,img:icon(mkItem('egg',0)),owned:()=>oeufsJour()>=EGG_JOUR,get ownTxt(){return EGG_JOUR+' sur '+EGG_JOUR+' aujourd\'hui';},buy:()=>{if(oeufsJour()>=EGG_JOUR)return false;save.oeufJ={j:dayKey(),n:oeufsJour()+1};livrer([mkItem('egg',0)],'Achat');return true;}},
+  {id:'cucroq',nom:'Croquette',desc:'3 familiers identiques + 1 croquette = rang supérieur. Sans limite d\'achat.',prix:CROQ_CU,img:icon(mkItem('croquette',0)),owned:()=>false,buy:()=>buyPotion('croquette')},
   {id:'boost',nom:'Boost d\'expérience',get desc(){const l=boostLeft(),st=save.boostStock|0;return '+30 % d\'XP pour tous les héros du compte pendant 1 h.'+(l?' Actif encore '+Math.ceil(l/60000)+' min.':'')+(st?' En réserve : '+st+' (gratuit).':'');},get prix(){return (save.boostStock|0)>0?0:BOOST_PRIX;},get lib(){return (save.boostStock|0)>0?'Utiliser':null;},img:'',owned:()=>boostLeft()>0,ownTxt:'Actif',buy:()=>{if((save.boostStock|0)>0)save.boostStock--;save.boostXP=Date.now()+BOOST_MS;showBanner('Boost d\'expérience !','+30 % d\'XP pendant 1 heure, pour tous tes héros','#7ed957');return true;}},
 ];
 let shopTab='or';
@@ -5238,7 +5407,7 @@ function renderShop(){
   const daily=`<div class="shop-item daily"><img src="${skinPreview(dc,dk).toDataURL()}" alt="" style="width:64px;height:48px;object-fit:contain"><div><b>Offre du jour · ${dd.nom}</b><span>Skin ${CLASSES[dc].nom} · <s>${dd.prix}</s> → ${dp} Cursite (−50 %). Nouvelle offre dans ${hrs} h.</span></div><div><div class="price"><i class="cur"></i>${dp}</div><button type="button" class="act main" data-daily="1" ${down||save.cursite<dp?'disabled':''}>${down?'Déjà à toi':save.cursite>=dp?'Acheter':'Pas assez'}</button></div></div>`;
   if(shopTab==='cu'){$('#shopList').innerHTML=daily+'<div class="shop-sec"><h3>Boutique Cursite</h3><div class="shop-grid">'+CU_ITEMS.map(s=>{const own=s.owned(),can=save.cursite>=s.prix;
       const img=s.img?'<img src="'+s.img+'" alt="">':'<div style="width:48px;height:48px;display:grid;place-items:center;font-size:26px;color:#7ed957;font-weight:700">XP</div>';
-      return '<div class="shop-card">'+img+'<div class="sc-t"><b>'+s.nom+'</b><span>'+s.desc+'</span></div><button type="button" class="act main" data-cubuy="'+s.id+'" '+(own||!can?'disabled':'')+'><i class="cur" style="display:inline-block;width:10px;height:10px;background:#3ff0ff;transform:rotate(45deg);margin-right:6px"></i>'+(own?(s.ownTxt||'Acheté'):(s.lib||s.prix))+'</button></div>';}).join('')+'</div></div>';return;}
+      return '<div class="shop-card">'+img+'<div class="sc-t"><b>'+s.nom+'</b><span>'+s.desc+'</span></div><button type="button" class="act main" data-cubuy="'+s.id+'" '+(own||!can?'disabled':'')+'><i class="cur" style="display:inline-block;width:10px;height:10px;background:#3ff0ff;transform:rotate(45deg);margin-right:6px"></i>'+(own?(s.ownTxt||'Acheté'):(s.lib||s.prix))+'</button></div>';}).join('')+'</div></div>'+'<div class="shop-sec"><h3>Apparences</h3><div class="shop-grid">'+'<div class="shop-card"><img src="'+petURL('vie',0,'dragon')+'" alt=""><div class="sc-t"><b>Apparences de familier</b><span>Dragon, ombre spectrale, tyrannosaure, wyverne… '+PETSKIN_PRIX+' Cursite chacune.</span></div><button type="button" class="act main" data-cosmo="pets">Voir</button></div>'+'<div class="shop-card"><div style="width:48px;height:48px;display:grid;place-items:center;font-size:22px;font-weight:700;color:'+(myNameCol()||'#ff7bf2')+'">Abc</div><div class="sc-t"><b>Couleur du pseudo</b><span>Au-dessus de ta tête et dans le chat. '+NC_PRIX+' Cursite, puis tu en changes quand tu veux.</span></div><button type="button" class="act main" data-cosmo="compte">Voir</button></div>'+'<div class="shop-card"><img src="'+TOMBES.couronne.spr.toDataURL()+'" alt=""><div class="sc-t"><b>Pierres tombales</b><span>Ce que les autres voient là où tu tombes. '+TOMBE_PRIX+' Cursite chacune.</span></div><button type="button" class="act main" data-cosmo="compte">Voir</button></div>'+'<div class="shop-card"><img src="'+COLIS_SKINS.or.img.toDataURL()+'" alt=""><div class="sc-t"><b>Coffres de livraison</b><span>Le coffre de ta maison, vu aussi par tes visiteurs. '+COLIS_PRIX+' Cursite chacun.</span></div><button type="button" class="act main" data-cosmo="compte">Voir</button></div>'+'</div></div>';return;}
   const ch=C();let sell='';ch.inv.forEach((it,i)=>{if(!it)return;const can=it.slot!=='conso'&&it.slot!=='meuble';const p=can?sellPrice(it):0;
     sell+=`<button type="button" class="tslot sellb ${!can?'empty':''} ${sellArm===i?'arm':''}" ${can?`data-sell="${i}"`:''} title="${it.name.replace(/"/g,'')}${can?' · '+TIER_NOM[it.tier]+' · '+p+' pièce'+(p>1?'s':''):' · invendable'}"><img src="${icon(it)}" alt=""><em>${can?(sellArm===i?'OK ?':p):'✕'}</em></button>`;});
   const sellBox=`<div class="shop-sell"><b>Vendre ton équipement</b><span>Tier 0 à 2 : 0 pièce · Tier 3 : 1 · Tier 4 : 3 · Tier 5 : 5 · Tier 6 : 10 · Tier 7 : 15 · Relique : 25. Les potions ne se vendent pas. Clic sur un objet, puis clic encore pour confirmer.</span><div class="sellgrid">${sell||'<i class="hint">Ton sac est vide.</i>'}</div></div>`;
@@ -5249,6 +5418,7 @@ $('#shopList').addEventListener('click',e=>{const sb=e.target.closest('[data-sel
     if(sellArm!==i||Date.now()-sellT>4000){sellArm=i;sellT=Date.now();renderShop();return;}
     const p=sellPrice(it);C().inv[i]=null;save.gold+=p;sellArm=-1;persist();invDirty=true;if(p>0)coinBurst(SHOP.x,SHOP.y-1.2,p);else sfx('item');note(it.name+' vendu'+(p?' pour '+p+' pièce'+(p>1?'s':''):''));renderShop();return;}
   if(e.target.closest('[data-daily]')){const [dc,dk]=dailySkin(),dp=skinPrice(dc,dk);if(save.skins[dc+':'+dk]||save.cursite<dp){sfx('deny');return;}save.cursite-=dp;save.skins[dc+':'+dk]=true;if(dc===save.current){save.skinSel[dc]=dk;sendPresence();}persist();sfx('relic');burst(P.x,P.y,'#3ff0ff',20,3);note(SKINS[dc][dk].nom+' débloqué ('+CLASSES[dc].nom+') !');renderShop();invDirty=true;return;}
+  {const co=e.target.closest('[data-cosmo]');if(co){closeShop();if(co.dataset.cosmo==='pets')openPets('skins');else openCosm();return;}}
   {const c=e.target.closest('[data-cubuy]');if(c){const s=CU_ITEMS.find(q=>q.id===c.dataset.cubuy);if(!s||s.owned()||save.cursite<s.prix){sfx('deny');return;}const prixCu=s.prix;if(s.buy()===false){sfx('deny');return;}save.cursite-=prixCu;persist();invDirty=true;renderShop();if(s.id!=='cuegg')note(s.nom+' acheté !');sfx('relic');burst(P.x,P.y,'#3ff0ff',16,3);return;}}
   const b=e.target.closest('[data-buy]');if(!b)return;const s=SHOP_ITEMS.find(q=>q.id===b.dataset.buy);if(!s||s.owned()||save.gold<s.prix)return;if(s.buy()===false){sfx('deny');return;}save.gold-=s.prix;persist();invDirty=true;renderShop();note(s.nom+' acheté'+(s.id.startsWith('sac')?' !':'e !'));sfx('buy');burst(P.x,P.y,'#ffd96a',16,3);});
 $('#shopClose').addEventListener('click',closeShop);
@@ -5361,7 +5531,7 @@ const PORTAILS=[{id:'plage',nom:'Plage des Naufragés',niv:'Niveaux 1 à 3',txt:
   {id:'camp',nom:'Avant-poste des Terres Désolées',niv:'Niveaux 18 à 20',txt:'Tu arrives tout au nord, dans une zone sûre tenue par quatre gardes invincibles qui abattent les monstres trop curieux. On n\'y est jamais blessé, mais on ne s\'y bat pas non plus.',col:'#8a7fb8',prix:1000},
   {id:'futur',nom:'Portail scellé',niv:'???',txt:'Futures zones à venir',col:'#5a5668',ferme:1}];
 const portOuvert=p=>!p.ferme&&(!p.prix||!!(save.portails&&save.portails[p.id]));
-const portEl=document.createElement('div');portEl.className='overlay';portEl.id='portWin';portEl.hidden=true;portEl.innerHTML='<div class="shop-inner" role="dialog" aria-label="Portails des Plaines Sauvages" style="max-width:640px;max-height:94vh;overflow:auto;border-color:#a45be8"><div id="portBody"></div></div>';$('#gshopWin').after(portEl);
+const portEl=document.createElement('div');portEl.className='overlay';portEl.id='portWin';portEl.hidden=true;portEl.innerHTML='<div class="shop-inner" role="dialog" aria-label="Portails des Plaines Sauvages" style="max-width:640px;max-height:94vh;overflow:auto;border-color:#a45be8"><div id="portBody"></div></div>';$('#pets').after(portEl);
 let portArm=null,portArmT=0;
 function renderPortails(){let h='<h2 style="color:#c89bff">Portails des Plaines Sauvages</h2><div style="display:grid;gap:10px;margin:10px 0 14px">';
   for(const p of PORTAILS){const ok=portOuvert(p),arme=portArm===p.id&&Date.now()-portArmT<5000;
@@ -5411,7 +5581,28 @@ function renderSkins(){
     else{btn.textContent=save.cursite>=PARTIC_PRIX?'Acheter':'Pas assez de Cursite';btn.disabled=save.cursite<PARTIC_PRIX;btn.onclick=()=>{if(save.cursite<PARTIC_PRIX)return;save.cursite-=PARTIC_PRIX;save.partic=save.partic||{};save.partic[cls]=true;persist();sfx('relic');renderSkins();sendPresence();note('Particules débloquées pour '+CLASSES[cls].nom+' !');};}
     card.append(b,sp,btn);list.append(card);}
 }
-$('#skinClose').addEventListener('click',closeSkins);
+$('#skinClose').addEventListener('click',closeSkins);$('#skinCosm').addEventListener('click',()=>{closeSkins();openCosm();});
+const cosmEl=document.createElement('div');cosmEl.className='overlay';cosmEl.id='cosmWin';cosmEl.hidden=true;cosmEl.innerHTML='<div class="shop-inner" role="dialog" aria-label="Apparences du compte" style="max-width:760px;max-height:94vh;overflow:auto"><div id="cosmBody"></div></div>';$('#pets').after(cosmEl);
+function renderCosm(){const c=COSM(),nc=myNameCol(),esc=t=>String(t).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[ch]);
+  let h='<h2>Apparences du compte</h2><p class="hint">Achetées une fois, pour tous tes héros. Les autres joueurs les voient.</p>';
+  h+='<div class="cosm-sec"><h3>Couleur du pseudo</h3><div class="peteq" style="border-color:var(--line)"><div><b style="font-size:20px;color:'+(nc||'#e8b04a')+'">'+esc(pseudo||'Ton pseudo')+'</b><span>Au-dessus de ta tête, et devant tes messages dans le chat.</span></div>'+(cosmA('nc')?'':'<button type="button" class="act main" data-cs="nc" '+(save.cursite<NC_PRIX?'disabled':'')+'>Débloquer · '+NC_PRIX+' Cursite</button>')+'</div>';
+  if(cosmA('nc'))h+='<div class="ncsw" style="margin-top:8px">'+NC_CHOIX.map(k=>'<button type="button" data-nc="'+k+'" class="'+(nc===k?'on':'')+'" style="background:'+k+'" aria-label="'+k+'"></button>').join('')+'<label class="hint">Autre : <input type="color" id="ncPick" value="'+(nc||'#e8b04a')+'"></label><button type="button" class="act" data-nc="" style="width:auto;height:auto;padding:4px 10px;background:var(--panel2);color:inherit">Couleur d\'origine</button></div>';
+  h+='</div>';
+  const bloc=(titre,pre,prix,liste,cur,defNom,defImg)=>{let o='<div class="cosm-sec"><h3>'+titre+'</h3><div class="pskins">';o+='<div class="pskin'+(!cur?' on':'')+'"><img src="'+defImg+'" alt="" style="width:64px;height:64px"><b>'+defNom+'</b><button type="button" class="act main" data-cs="'+pre+':" '+(!cur?'disabled':'')+'>'+(!cur?'Porté':'Porter')+'</button></div>';
+    for(const [k,nom,img] of liste){const own=cosmA(pre+':'+k),on=cur===k;o+='<div class="pskin'+(on?' on':'')+'"><img src="'+img+'" alt="" style="width:64px;height:64px"><b>'+nom+'</b><button type="button" class="act main" data-cs="'+pre+':'+k+'" '+(on||(!own&&save.cursite<prix)?'disabled':'')+'>'+(on?'Porté':own?'Porter':prix+' Cursite')+'</button></div>';}return o+'</div></div>';};
+  h+=bloc('Pierre tombale','tb',TOMBE_PRIX,Object.keys(TOMBES).map(k=>[k,TOMBES[k].nom,TOMBES[k].spr.toDataURL()]),myTomb(),'Pierre classique',TOMB_SPR.toDataURL());
+  h+=bloc('Coffre de livraison','cl',COLIS_PRIX,Object.keys(COLIS_SKINS).map(k=>[k,COLIS_SKINS[k].nom,COLIS_SKINS[k].img.toDataURL()]),myColis(),'Colis au ruban rouge',COLIS_IMG.toDataURL());
+  h+='<div class="shop-foot"><span class="gold curs"><i class="cgem"></i>'+save.cursite+' Cursite</span><button type="button" class="act" data-cs="pets">Apparences de familier</button><button type="button" class="act" data-cs="non">Fermer · Échap</button></div>';
+  $('#cosmBody').innerHTML=h;const pk=$('#ncPick');if(pk)pk.addEventListener('change',()=>{const v=ncSur(pk.value);if(v){COSM().nc=v;persist();renderCosm();sendPresence();}});}
+function openCosm(){renderCosm();cosmEl.hidden=false;paused=true;keys.clear();mouse.down=false;sfx('item');}
+function closeCosm(){cosmEl.hidden=true;paused=false;cv.focus();}
+cosmEl.addEventListener('click',e=>{if(e.target===cosmEl){closeCosm();return;}const n=e.target.closest('[data-nc]');if(n){if(!cosmA('nc'))return;COSM().nc=n.dataset.nc||null;persist();sfx('item');renderCosm();sendPresence();return;}
+  const b=e.target.closest('[data-cs]');if(!b)return;const v=b.dataset.cs;if(v==='non'){closeCosm();return;}if(v==='pets'){closeCosm();openPets('skins');return;}
+  if(v==='nc'){if(cosmBuy('nc',NC_PRIX,'Couleur du pseudo')){COSM().nc=NC_CHOIX[10];persist();sendPresence();}renderCosm();return;}
+  const [pre,k]=v.split(':'),champ=pre==='tb'?'tomb':'colis',T=pre==='tb'?TOMBES:COLIS_SKINS,prix=pre==='tb'?TOMBE_PRIX:COLIS_PRIX;
+  if(!k){COSM()[champ]=null;persist();sfx('item');renderCosm();return;}if(!T[k])return;
+  if(!cosmA(v)&&!cosmBuy(v,prix,T[k].nom)){renderCosm();return;}COSM()[champ]=k;persist();pushSave(true);sfx('item');renderCosm();});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!cosmEl.hidden)closeCosm();});
 skinsEl.addEventListener('click',e=>{if(e.target===skinsEl)closeSkins();});
 
 const devAmt=()=>Math.max(1,Math.min(1000000,Math.floor(+$('#devSelfAmt').value||0)));
@@ -5609,17 +5800,17 @@ function petFrame(art,k,f){const A=PET_ANIM[k];if(!A||!f)return art;const Wp=art
 function petBase(k,t,f){t=Math.min(2,t||0);f=f||0;const key='b'+k+t+(f?'f'+f:'');if(PET_SPR[key])return PET_SPR[key];let a=PET_ART[k](t);try{a=petFrame(a,k,f);}catch(e){}const c=document.createElement('canvas');c.width=40;c.height=40;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(a,0,0,40,40);return PET_SPR[key]=c;}
 // image du familier selon son tier : plus grand, contour lumineux de la couleur du tier, couronne au tier Épique
 const PET_SIZE=[1.04,1.2,1.35,1.45];
-function petSpr(k,t,f){t=PET_TIERS[t]?t:0;f=f||0;const key=k+t+(f?'f'+f:'');if(PET_SPR[key])return PET_SPR[key];const b=petBase(k,t,f),S=64,c=document.createElement('canvas');c.width=S;c.height=S;const g=c.getContext('2d');g.imageSmoothingEnabled=false;
+function petSpr(k,t,f,sk){t=PET_TIERS[t]?t:0;f=f||0;if(sk&&!PETSKINS[sk])sk=null;const key=(sk?'S'+sk:k)+t+(f?'f'+f:'');if(PET_SPR[key])return PET_SPR[key];const b=sk?skinBase(sk,f):petBase(k,t,f),S=64,c=document.createElement('canvas');c.width=S;c.height=S;const g=c.getContext('2d');g.imageSmoothingEnabled=false;
   const sz=Math.round([36,42,48,54][t]),x0=Math.round((S-sz)/2),y0=S-sz-2;
   if(t>=1){const tt=document.createElement('canvas');tt.width=b.width;tt.height=b.height;const tg=tt.getContext('2d');tg.drawImage(b,0,0);tg.globalCompositeOperation='source-in';tg.fillStyle=PET_TIERS[t].col;tg.fillRect(0,0,tt.width,tt.height);
     const o=t>=2?3:2;for(const [dx,dy] of [[-o,0],[o,0],[0,-o],[0,o],[-o+1,-o+1],[o-1,o-1],[-o+1,o-1],[o-1,-o+1]])g.drawImage(tt,x0+dx,y0+dy,sz,sz);}
   g.drawImage(b,x0,y0,sz,sz);
   if(t>=3){const cx=S/2,cy=y0-1,u=3;g.fillStyle='#0b0a12';g.fillRect(cx-4*u-1,cy-3*u-1,8*u+2,3*u+2);g.fillStyle='#ffd23f';g.fillRect(cx-4*u,cy-u,8*u,u);g.fillRect(cx-4*u,cy-3*u,u,2*u);g.fillRect(cx-u/2,cy-3*u,u,2*u);g.fillRect(cx+3*u,cy-3*u,u,2*u);g.fillStyle=t>=3?'#3ff0ff':'#ff4a6a';g.fillRect(cx-u/2,cy-u,u,u);}
   return PET_SPR[key]=c;}
-function petURL(k,t){const c=petSpr(k,t);return c._u||(c._u=c.toDataURL());}
+function petURL(k,t,sk){const c=petSpr(k,t,0,sk);return c._u||(c._u=c.toDataURL());}
 function eqPet(){if(!save.pets||save.petEq==null)return null;return save.pets.find(p=>p.id===save.petEq)||null;}
 const petsEl=$('#pets');
-function openPets(){petsEl.hidden=false;paused=true;keys.clear();mouse.down=false;renderPets();sfx('item');}
+function openPets(tab){petTab=typeof tab==='string'?tab:(scene!=='vault'&&C().inv.some(it=>it&&KINDS[it.kind]&&KINDS[it.kind].egg)?'eggs':'list');petsEl.hidden=false;paused=true;keys.clear();mouse.down=false;renderPets();sfx('item');}
 function closePets(){petsEl.hidden=true;paused=false;cv.focus();}
 function hatch(i){if(CASE)return;const it=C().inv[i];if(!it||!KINDS[it.kind]||!KINDS[it.kind].egg)return;C().inv[i]=null;save.pets=save.pets||[];
   const p={id:Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36),k:pick(PET_KEYS),t:0};save.pets.push(p);if(save.petEq==null)save.petEq=p.id;
@@ -5643,30 +5834,50 @@ function finishCase(){if(!CASE||CASE.done)return;CASE.done=true;const p=CASE.p,s
   sfx('relic');burst(P.x,P.y,T.col,40,4);sendPresence();}
 function closeCase(){if(CASE&&!CASE.done){finishCase();return;}CASE=null;caseEl.hidden=true;renderPets();if(petsEl.hidden)paused=false;}
 $('#caseOk').addEventListener('click',closeCase);$('#caseSkip').addEventListener('click',finishCase);
-function renderPets(){const eggs=$('#petEggs'),list=$('#petList'),evo=$('#petEvo');eggs.textContent='';list.textContent='';evo.textContent='';const home=scene==='vault',atBreeder=scene==='nexus';
+let petTab='list',petAnimT=0;
+function buyCroqCu(){if(save.cursite<CROQ_CU){note('Il te faut '+CROQ_CU+' Cursite');sfx('deny');return;}if(!buyPotion('croquette')){sfx('deny');return;}save.cursite-=CROQ_CU;persist();pushSave(true);invDirty=true;sfx('relic');note('Croquette achetée');renderPets();}
+function renderPets(){const eggs=$('#petEggs'),list=$('#petList'),evo=$('#petEvo'),skb=$('#petSkins'),eqB=$('#petEq');eggs.textContent='';list.textContent='';evo.textContent='';skb.textContent='';eqB.textContent='';const home=scene==='vault',atBreeder=!home;
   $('#petTitle').textContent=home?'Parc des familiers':'Éleveur de familiers';
-  const card=(k,t,title,sub,btns,on)=>{const c=document.createElement('div');c.className='pcard'+(on?' on':'');if(!on)c.style.borderColor=t?PET_TIERS[t].col:'';const im=document.createElement('img');im.src=petURL(k,t);const b=document.createElement('b');b.textContent=title;
-    if(t!=null){const tg=document.createElement('span');tg.className='tier';tg.style.color=PET_TIERS[t].col;tg.textContent=' · '+PET_TIERS[t].nom;b.append(tg);}const sp=document.createElement('span');sp.textContent=sub;c.append(im,b,sp);
-    for(const [txt,fn,main,dis] of btns){const bt=document.createElement('button');bt.type='button';bt.className='act'+(main?' main':'');bt.textContent=txt;bt.disabled=!!dis;bt.onclick=fn;c.append(bt);}return c;};
-  // œufs
+  const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e;},btn=(txt,fn,main,dis)=>{const bt=el('button','act'+(main?' main':''),txt);bt.type='button';bt.disabled=!!dis;bt.onclick=fn;return bt;};
+  const pets=save.pets||[],cur=eqPet(),sk=myPetSkin(),cro=C().inv.filter(it=>it&&it.kind==='croquette').length;
   const eggIdx=[];C().inv.forEach((it,i)=>{if(it&&KINDS[it.kind]&&KINDS[it.kind].egg)eggIdx.push(i);});
-  if(eggIdx.length){const c=document.createElement('div');c.className='pcard';const im=document.createElement('img');im.src=icon(mkItem('egg',0));const b=document.createElement('b');b.textContent='Œuf de familier ×'+eggIdx.length;const sp=document.createElement('span');sp.textContent=atBreeder?'Un des 6 familiers au hasard':'Fais-les éclore chez l\'éleveur du Village';c.append(im,b,sp);
-    if(atBreeder){const bt=document.createElement('button');bt.type='button';bt.className='act main';bt.textContent='Faire éclore';bt.onclick=()=>hatch(eggIdx[0]);c.append(bt);}eggs.append(c);}
-  else{const p=document.createElement('p');p.className='hint';p.textContent='Aucun œuf. Les œufs tombent rarement (0,5 %) sur tous les monstres du jeu.';eggs.append(p);}
-  // évolutions (3 identiques + 1 croquette)
-  const pets=save.pets||[],groups={};for(const p of pets){const g=p.k+':'+(p.t||0);(groups[g]=groups[g]||[]).push(p);}
-  const cro=C().inv.filter(it=>it&&it.kind==='croquette').length;let ne=0;
-  for(const g in groups){const [k,ts]=g.split(':'),t=+ts,arr=groups[g];if(arr.length<3||t>=2)continue;ne++;
-    evo.append(card(k,t+1,PET_DEF[k].nom,'3 × '+PET_TIERS[t].nom+' ('+arr.length+' en tout) + 1 croquette → '+PET_TIERS[t+1].nom+' · '+PET_TXT(k,t+1),[[home?(cro?'Faire évoluer':'Il faut une croquette (marchand)'):'Dans le parc de ta maison',()=>evolvePet(k,t),true,!home||!cro]],false));}
-  if(!ne){const p=document.createElement('p');p.className='hint';p.textContent='Réunis 3 familiers identiques (même espèce, même tier) et une croquette (marchand, 500 pièces) pour les faire évoluer.';evo.append(p);}
-  // liste
-  {const tri=opts.petSort||'type',nb={};for(const p of pets)nb[p.k]=(nb[p.k]||0)+1;$('#petSort').value=tri;PETSEL=new Set([...PETSEL].filter(id=>pets.some(p=>p.id===id)));
-    const ordre=tri==='rar'?(a,b)=>(b.t||0)-(a.t||0)||a.k.localeCompare(b.k):tri==='nb'?(a,b)=>nb[b.k]-nb[a.k]||a.k.localeCompare(b.k)||(b.t||0)-(a.t||0):(a,b)=>a.k.localeCompare(b.k)||(b.t||0)-(a.t||0);
-    [...pets].sort(ordre).forEach(p=>{const on=p.id===save.petEq,sel=PETSEL.has(p.id);const c=card(p.k,p.t||0,PET_DEF[p.k].nom+(tri==='nb'?' ×'+nb[p.k]:''),PET_TXT(p.k,p.t)+' (au-delà du maximum)'+(on?' · te suit':' · dans le parc'),[[on?'Renvoyer au parc':'Équiper',()=>{save.petEq=on?null:p.id;persist();statsDirty=true;renderPets();sendPresence();note(on?PET_DEF[p.k].nom+' retourne au parc':PET_DEF[p.k].nom+' te suit !');},!on],[sel?'Retirer du choix':'Choisir',()=>{if(sel)PETSEL.delete(p.id);else PETSEL.add(p.id);renderPets();},false,on]],on);if(sel)c.classList.add('sel');list.append(c);});
-    const ch=pets.filter(p=>PETSEL.has(p.id)),val=ch.reduce((a,p)=>a+PET_PRIX[p.t||0],0);$('#petSelTxt').textContent=ch.length?ch.length+' choisi'+(ch.length>1?'s':''):'Choisis des familiers (bouton « Choisir ») pour les relancer ou les vendre';
+  const groups={};for(const p of pets){const g=p.k+':'+(p.t||0);(groups[g]=groups[g]||[]).push(p);}
+  const evos=Object.keys(groups).filter(g=>groups[g].length>=3&&+g.split(':')[1]<2);
+  // le familier qui te suit
+  {const im=el('img');const d=el('div');if(cur){const T=PET_TIERS[cur.t||0];im.src=petURL(cur.k,cur.t||0,sk);im.dataset.anim=cur.k+'|'+(cur.t||0)+'|'+(sk||'');const b=el('b',null,PET_DEF[cur.k].nom+' ');const tg=el('span',null,'· '+T.nom);tg.style.color=T.col;tg.style.fontSize='14px';b.append(tg);d.append(b,el('span',null,'Te suit · '+PET_TXT(cur.k,cur.t)+' (au-delà du maximum)'),el('span',null,sk?'Apparence : '+PETSKINS[sk].nom:'Apparence d\'origine'));eqB.append(im,d,btn('Renvoyer au parc',()=>{save.petEq=null;persist();statsDirty=true;renderPets();sendPresence();}));}
+    else{im.src=icon(mkItem('egg',0));d.append(el('b',null,'Aucun familier ne te suit'),el('span',null,pets.length?'Choisis-en un dans la liste : il te suivra partout et augmentera une caractéristique.':'Fais éclore un œuf chez l\'éleveur du Village pour avoir ton premier familier.'));eqB.append(im,d);}}
+  // onglets
+  {const tabs=$('#petTabs');tabs.textContent='';for(const [k,t] of [['list','Mes familiers ('+pets.length+')'],['evo','Évolutions'+(evos.length?' ('+evos.length+')':'')],['eggs','Œufs'+(eggIdx.length?' ('+eggIdx.length+')':'')],['skins','Apparences']]){const bt=el('button',petTab===k?'on':'',t);bt.type='button';bt.onclick=()=>{petTab=k;renderPets();};tabs.append(bt);}
+    document.querySelectorAll('#pets [data-pp]').forEach(e=>e.hidden=e.dataset.pp!==petTab);}
+  const card=(k,t,title,sub,on)=>{const c=el('div','pcard'+(on?' on':''));if(!on&&t)c.style.borderColor=PET_TIERS[t].col;const im=el('img');im.src=petURL(k,t);const b=el('b',null,title);if(t!=null){const tg=el('span','tier',' · '+PET_TIERS[t].nom);tg.style.color=PET_TIERS[t].col;b.append(tg);}c.append(im,b,el('span',null,sub));return c;};
+  // œufs : seulement chez l'éleveur
+  if(eggIdx.length){const c=el('div','pcard');const im=el('img');im.src=icon(mkItem('egg',0));c.append(im,el('b',null,'Œuf de familier ×'+eggIdx.length),el('span',null,atBreeder?'Un des 6 familiers au hasard, au rang Commun':'Les œufs n\'éclosent que chez l\'éleveur du Village'));
+    if(atBreeder){const r=el('div','prow');r.append(btn('Faire éclore',()=>hatch(eggIdx[0]),true));c.append(r);}eggs.append(c);}
+  else eggs.append(el('p','hint','Aucun œuf dans ton sac. Ils tombent rarement sur les monstres, et s\'achètent au marchand du Village (pense à vider le coffre de livraison de ta maison).'));
+  // évolutions (3 identiques + 1 croquette), ici comme à la maison
+  {const box=$('#petCroq');box.textContent='';box.append(el('span','hint','Croquettes dans ton sac : '+cro+' · 3 familiers identiques + 1 croquette = rang supérieur.'),btn('Acheter une croquette · '+CROQ_CU+' Cursite',buyCroqCu,false,save.cursite<CROQ_CU));}
+  for(const g of evos){const [k,ts]=g.split(':'),t=+ts,arr=groups[g];const c=card(k,t+1,PET_DEF[k].nom,'3 × '+PET_TIERS[t].nom+' ('+arr.length+' en tout) + 1 croquette → '+PET_TXT(k,t+1),false);const r=el('div','prow');r.append(btn(cro?'Faire évoluer':'Il faut une croquette',()=>evolvePet(k,t),true,!cro));c.append(r);evo.append(c);}
+  if(!evos.length)evo.append(el('p','hint','Rien à faire évoluer pour l\'instant : il faut 3 familiers de la même espèce et du même rang.'));
+  // liste : une carte par espèce et par rang
+  {const tri=opts.petSort||'type';$('#petSort').value=tri;PETSEL=new Set([...PETSEL].filter(id=>pets.some(p=>p.id===id)&&id!==save.petEq));
+    const gs=Object.keys(groups).map(g=>({k:g.split(':')[0],t:+g.split(':')[1],arr:groups[g]}));
+    gs.sort(tri==='rar'?(a,b)=>b.t-a.t||a.k.localeCompare(b.k):tri==='nb'?(a,b)=>b.arr.length-a.arr.length||a.k.localeCompare(b.k):(a,b)=>a.k.localeCompare(b.k)||b.t-a.t);
+    for(const G of gs){const on=!!cur&&G.arr.includes(cur),libres=G.arr.filter(p=>p.id!==save.petEq),nsel=libres.filter(p=>PETSEL.has(p.id)).length;
+      const c=card(G.k,G.t,PET_DEF[G.k].nom+(G.arr.length>1?' ×'+G.arr.length:''),PET_TXT(G.k,G.t)+(on?' · te suit':''),on);
+      const r=el('div','prow');r.append(btn(on?'Te suit ✓':'Équiper',()=>{const p=G.arr[0];save.petEq=p.id;PETSEL.delete(p.id);persist();statsDirty=true;renderPets();sendPresence();note(PET_DEF[p.k].nom+' te suit !');},!on,on));
+      if(libres.length){const lab=el('i',null,nsel?nsel+' choisi'+(nsel>1?'s':''):'choisir');r.append(Object.assign(btn('−',()=>{const p=libres.find(q=>PETSEL.has(q.id));if(p)PETSEL.delete(p.id);renderPets();},false,!nsel),{className:'act pm'}),lab,Object.assign(btn('+',()=>{const p=libres.find(q=>!PETSEL.has(q.id));if(p)PETSEL.add(p.id);renderPets();},false,nsel>=libres.length),{className:'act pm'}));}
+      c.append(r);if(nsel)c.classList.add('sel');list.append(c);}
+    const ch=pets.filter(p=>PETSEL.has(p.id)),val=ch.reduce((a,p)=>a+PET_PRIX[p.t||0],0);$('#petSelTxt').textContent=ch.length?ch.length+' choisi'+(ch.length>1?'s':''):'Choisis des familiers avec + et − pour les relancer ou les vendre';
     $('#petReroll').disabled=ch.length!==3;$('#petSell').disabled=!ch.length;$('#petSell').textContent=ch.length?'Vendre ('+val.toLocaleString('fr-FR')+' pièces)':'Vendre';}
-  if(!pets.length){const p=document.createElement('p');p.className='hint';p.textContent='Tu n\'as pas encore de familier.';list.append(p);}
-  $('#petFoot').textContent=pets.length+' familier'+(pets.length>1?'s':'')+' · '+cro+' croquette'+(cro>1?'s':'')+' · 1 seul équipé à la fois';}
+  if(!pets.length)list.append(el('p','hint','Tu n\'as pas encore de familier.'));
+  // apparences
+  {const t=cur?(cur.t||0):0,k=cur?cur.k:'vie';
+    const c0=el('div','pskin'+(!sk?' on':''));const i0=el('img');i0.src=petURL(k,t);c0.append(i0,el('b',null,'Apparence d\'origine'),el('span',null,cur?PET_DEF[k].nom+', tel qu\'il est.':'Le familier tel qu\'il est.'),btn(!sk?'Portée':'Porter',()=>{COSM().pet=null;persist();renderPets();sendPresence();},true,!sk));skb.append(c0);
+    for(const id of PETSKIN_KEYS){const D=PETSKINS[id],own=cosmA('ps:'+id),on=sk===id;const c=el('div','pskin'+(on?' on':''));const im=el('img');im.src=petURL(k,t,id);im.dataset.anim=k+'|'+t+'|'+id;const b=el('b',null,D.nom);b.style.color=D.col;
+      c.append(im,b,el('span',null,D.txt),on?btn('Portée',null,true,true):own?btn('Porter',()=>{COSM().pet=id;persist();sfx('item');renderPets();sendPresence();},true):btn(save.cursite>=PETSKIN_PRIX?'Acheter · '+PETSKIN_PRIX+' Cursite':PETSKIN_PRIX+' Cursite (pas assez)',()=>{if(cosmBuy('ps:'+id,PETSKIN_PRIX,D.nom)){COSM().pet=id;persist();renderPets();sendPresence();}},true,save.cursite<PETSKIN_PRIX));skb.append(c);}}
+  $('#petFoot').textContent=pets.length+' familier'+(pets.length>1?'s':'')+' · '+cro+' croquette'+(cro>1?'s':'')+' · '+save.cursite+' Cursite';}
+// les apparences s'animent dans la fenêtre : on fait défiler leurs images
+setInterval(()=>{if(petsEl.hidden)return;petAnimT++;document.querySelectorAll('#pets img[data-anim]').forEach(im=>{const [k,t,sk]=im.dataset.anim.split('|');if(!sk)return;const c=petSpr(k,+t,petAnimT%4,sk);im.src=c._u||(c._u=c.toDataURL());});},260);
 // relance : 3 familiers au choix (peu importe leur rang) contre 1 nouveau familier commun tiré au hasard · vente : des pièces selon le rang
 let PETSEL=new Set();const PET_PRIX=[40,150,600,2500];
 function petReroll(){if(CASE)return;const pets=save.pets||[],ch=pets.filter(p=>PETSEL.has(p.id)&&p.id!==save.petEq);if(ch.length!==3){note('Choisis exactement 3 familiers (pas celui qui te suit)');sfx('deny');return;}
@@ -5676,7 +5887,7 @@ function petSell(){const pets=save.pets||[],ch=pets.filter(p=>PETSEL.has(p.id)&&
   if(!confirm('Vendre '+ch.length+' familier'+(ch.length>1?'s':'')+' pour '+val+' pièces ?'))return;save.pets=pets.filter(p=>!ch.includes(p));PETSEL.clear();save.gold+=val;persist();statsDirty=true;renderPets();sfx('coin');note('+'+val+' pièces');try{coinBurst(P.x,P.y,Math.min(12,ch.length*3));}catch(e){}}
 document.getElementById('petReroll').addEventListener('click',petReroll);document.getElementById('petSell').addEventListener('click',petSell);
 document.getElementById('petSort').addEventListener('change',e=>{opts.petSort=e.target.value;try{saveOpts();}catch(_){}renderPets();});
-function evolvePet(k,t){if(scene!=='vault'||CASE)return;const pets=save.pets||[],same=pets.filter(p=>p.k===k&&(p.t||0)===t);if(same.length<3||t>=2)return;const ci=C().inv.findIndex(it=>it&&it.kind==='croquette');if(ci<0){note('Il faut une croquette (marchand du Village, 500 pièces)');sfx('deny');return;}
+function evolvePet(k,t){if(CASE)return;const pets=save.pets||[],same=pets.filter(p=>p.k===k&&(p.t||0)===t);if(same.length<3||t>=2)return;const ci=C().inv.findIndex(it=>it&&it.kind==='croquette');if(ci<0){note('Il faut une croquette (marchand du Village : 500 pièces ou '+CROQ_CU+' Cursite)');sfx('deny');return;}
   same.sort((a,b)=>(a.id===save.petEq)-(b.id===save.petEq));const used=same.slice(0,3),wasEq=used.some(p=>p.id===save.petEq);
   save.pets=pets.filter(p=>!used.includes(p));C().inv[ci]=null;const np={id:Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36),k,t:t+1};save.pets.push(np);{const cur=eqPet();if(wasEq||!cur||(cur.k===k&&(cur.t||0)<np.t))save.petEq=np.id;}
   persist();invDirty=true;statsDirty=true;renderPets();sendPresence();
@@ -5691,13 +5902,14 @@ function petFollow(o,tx,ty,dt){if(o.px==null){o.px=tx;o.py=ty;}const k=1-Math.ex
 function petTick(dt){const pe=eqPet();if(pe){const d=0.7+0.25*(pe.t||0);petFollow(P,P.x-(P.face||1)*d,P.y+0.25,dt);}
   for(const r of remotes.values())if(r.p&&typeof r.p.pe==='string'&&PET_DEF[r.p.pe])petFollow(r,r.x-(r.p.f||1)*0.75,r.y+0.2,dt);
   if(scene==='vault')parkTick(dt);if(scene==='tour')tourTick(dt);if(scene==='realm')herbeTick();}
-function drawPet(k,x,y,seed,t,face,mv){t=PET_TIERS[t]?t:0;if(!PET_DEF[k])return;const A=PET_ANIM[k]||{hz:6},vol=A.ailes!=null,s=TS*PET_SIZE[t];
+function drawPet(k,x,y,seed,t,face,mv,sk){t=PET_TIERS[t]?t:0;if(!PET_DEF[k])return;if(sk&&!PETSKINS[sk])sk=null;const A=sk?PETSKINS[sk]:(PET_ANIM[k]||{hz:6}),vol=sk?!!A.vol:A.ailes!=null,s=TS*PET_SIZE[t]*(sk?1.3:1);
   // image : au repos la tête bouge doucement ; en marche les pattes alternent ; le colibri bat toujours des ailes
-  const f=vol?2+(Math.floor(time*A.hz+seed)%2):mv?2+(Math.floor(time*A.hz+seed)%2):(Math.floor(time*1.6+seed)%4===0?1:0);
+  const f=sk&&vol?Math.floor(time*A.hz+seed)%4:vol?2+(Math.floor(time*A.hz+seed)%2):mv?2+(Math.floor(time*A.hz+seed)%2):(Math.floor(time*1.6+seed)%4===0?1:0);
   const b=vol?(Math.sin(time*4+seed)*0.5+0.5)*TS*0.12+TS*0.1:mv?(A.saut?Math.abs(Math.sin(time*A.hz*Math.PI/2+seed))*TS*0.14:Math.abs(Math.sin(time*A.hz*Math.PI+seed))*TS*0.03):0;
   if(t){ctx.fillStyle=PET_TIERS[t].col;ctx.globalAlpha=0.18+0.1*Math.sin(time*4+seed);ctx.beginPath();ctx.arc(sx(x),sy(y)-s*0.3-b,s*0.42,0,TAU);ctx.fill();ctx.globalAlpha=1;if(t>=2&&Math.random()<0.1)parts.push({x:x+rnd(-.25,.25),y:y+rnd(-.3,.1),vx:0,vy:-0.5,life:.6,col:PET_TIERS[t].col,s:.06});}
   ctx.fillStyle='rgba(0,0,0,.28)';ctx.beginPath();ctx.ellipse(sx(x),sy(y)+s*0.18,s*0.24,s*0.06,0,0,TAU);ctx.fill();
-  const img=petSpr(k,t,f),X=sx(x),Y=sy(y)-s*0.78-b;if(face<0){ctx.save();ctx.translate(X,0);ctx.scale(-1,1);ctx.drawImage(img,-s/2,Y,s,s);ctx.restore();}else ctx.drawImage(img,X-s/2,Y,s,s);}
+  if(sk&&A.fx&&Math.random()<0.07)parts.push({x:x+rnd(-.3,.3),y:y-0.35+rnd(-.25,.2),vx:rnd(-.3,.3),vy:-0.6,life:.5,col:A.fx,s:.06});
+  const img=petSpr(k,t,f,sk),X=sx(x),Y=sy(y)-s*0.78-b;if(face<0){ctx.save();ctx.translate(X,0);ctx.scale(-1,1);ctx.drawImage(img,-s/2,Y,s,s);ctx.restore();}else ctx.drawImage(img,X-s/2,Y,s,s);}
 // parc : les familiers non équipés se promènent sans sortir de la clôture
 let parkPets=[];
 function parkTick(dt){const want=VIS?VIS.pets.map((p,i)=>({id:'vis'+i,k:p.k,t:p.t})):(save.pets||[]).filter(p=>p.id!==save.petEq);parkPets=parkPets.filter(q=>want.some(p=>p.id===q.id));
@@ -5715,13 +5927,25 @@ $('#authTabLog').addEventListener('click',()=>setAuthMode('login'));$('#authTabR
 $('#authGo').addEventListener('click',()=>authSend(authMode));
 for(const id of ['authNom','authMdp','authMdp2'])$('#'+id).addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')authSend(authMode);});
 if(ONLINE)showAuth('Connexion au serveur…');
-const GSHOP_PACKS=[[500,'4,99 €'],[1200,'9,99 €'],[2600,'19,99 €'],[5500,'39,99 €']];
+const GSHOP_PACKS=[[200,'1 €',''],[650,'3 €','+8 %'],[1150,'5 €','+15 %'],[2500,'10 €','+25 %']],GSHOP_ABOS=[[2,'Abonnement Aventurier','2 € par mois',50],[9,'Abonnement Héros','9 € par mois',250]];
 function renderGPack(){const b=$('#gshopPack');if(b)b.innerHTML=packHTML();}
-function openGShop(){for(const id of ['gshopHint','gshopSecP','gshopSecS'])$('#'+id).hidden=!devMode;renderGPack();const box=$('#gshopPacks');box.textContent='';for(const [n,p] of GSHOP_PACKS){const c=document.createElement('div');c.className='shop-card';c.innerHTML='<i class="cur" style="display:block;width:22px;height:22px;background:#3ff0ff;transform:rotate(45deg);margin:6px;grid-row:1/3"></i><div class="sc-t"><b>'+n.toLocaleString('fr-FR')+' Cursite</b><span>'+p+'</span></div><button type="button" class="act" disabled>Bientôt</button>';box.append(c);}
+function gsBientot(){showBanner('Paiement bientôt disponible','Les achats ne sont pas encore ouverts : rien ne peut être payé pour l\'instant','#ffd23f');sfx('deny');}
+// un petit tas de gemmes, de plus en plus gros selon le pack
+function gsPile(n){const pos=[[38,22,20],[20,30,16],[58,30,16],[30,8,14],[50,8,14],[8,38,12],[72,38,12],[40,40,12]];let h='<div class="gs-pile">';for(let i=0;i<n;i++){const [x,y,z]=pos[i];h+='<i class="cgem" style="left:'+x+'px;top:'+y+'px;width:'+z+'px;height:'+z+'px"></i>';}return h+'</div>';}
+function openGShop(){renderGPack();
+  $('#gshopHint').hidden=false;
+  $('#gshopPacks').innerHTML=GSHOP_PACKS.map(([n,p,bo],i)=>'<div class="gs-pack'+(i===3?' best':'')+'">'+(i===3?'<i class="gs-rib g" style="left:50%;transform:translateX(-50%);white-space:nowrap">Le plus avantageux</i>':'')+gsPile([1,3,5,8][i])+'<div class="gs-amt">'+n.toLocaleString('fr-FR')+'<small>CURSITE</small></div><div class="gs-bonus">'+(bo?bo+' de Cursite en plus':'')+'</div><div class="gs-price" style="font-size:24px">'+p+'</div><button type="button" class="gs-soon" data-gs="bientot">Bientôt</button></div>').join('');
+  $('#gshopAbos').innerHTML=GSHOP_ABOS.map(([pal,nom,prix,jour])=>{const on=PACK.abo&&PACK.abo.p===pal,p=prix.split(' ');return '<div class="gs-abo'+(pal>2?' or':'')+(on?' on':'')+'">'+(on?'<i class="gs-rib g">Actif jusqu\'au '+new Date(PACK.abo.fin).toLocaleDateString('fr-FR')+'</i>':pal>2?'<i class="gs-rib c">Le meilleur prix par Cursite</i>':'')+'<div class="gs-crest"><b>+'+jour+'</b></div><div><h4>'+nom+'</h4><p><b>'+jour+' Cursite par jour</b></p><p>À recevoir en te connectant chaque jour · '+(jour*30).toLocaleString('fr-FR')+' sur un mois complet.</p></div><div class="gs-buy"><div class="gs-price" style="font-size:24px">'+p[0]+' €<small> / mois</small></div>'+(on?'<button type="button" class="act" disabled>Actif</button>':'<button type="button" class="gs-soon" data-gs="bientot">Bientôt</button>')+'</div></div>';}).join('');
+  {const cl=save.current,sk=cl&&SKINS[cl]?Object.keys(SKINS[cl])[0]:null;let im='';try{im=skinPreview(cl,sk).toDataURL();}catch(e){}
+    $('#gshopLinks').innerHTML='<button type="button" class="gs-link" data-gs="skins">'+(im?'<img src="'+im+'" alt="">':'<div class="abc">★</div>')+'<b>Skins de héros</b><span>à la statue du Village · 500 Cursite</span></button>'
+      +'<button type="button" class="gs-link" data-gs="pets"><img src="'+petURL('vie',0,'dragon')+'" alt=""><b>Apparences de familier</b><span>dragon, wyverne, ombre… · '+PETSKIN_PRIX+' Cursite</span></button>'
+      +'<button type="button" class="gs-link" data-gs="compte"><div class="abc" style="color:'+(myNameCol()||'#ff7bf2')+'">Abc</div><b>Couleur du pseudo</b><span>sur ta tête et dans le chat · '+NC_PRIX+' Cursite</span></button>'
+      +'<button type="button" class="gs-link" data-gs="compte"><img src="'+TOMBES.couronne.spr.toDataURL()+'" alt=""><b>Tombes et coffres</b><span>pierres tombales · coffres de livraison</span></button>';}
   $('#gshopCur').textContent=(save.cursite||0).toLocaleString('fr-FR');$('#gshopWin').hidden=false;paused=true;keys.clear();mouse.down=false;sfx('coin');}
 function closeGShop(){$('#gshopWin').hidden=true;paused=false;cv.focus();}
-$('#gshopBtn').addEventListener('click',openGShop);$('#logoutBtn').addEventListener('click',()=>{closeOpts();logout();});setInterval(()=>{const e=$('#acctName');if(e)e.textContent=AUTH.ok?AUTH.nom:'';},1000);$('#gshopClose').addEventListener('click',closeGShop);$('#gshopPack').addEventListener('click',e=>{packClick(e);});$('#gshopSkins').addEventListener('click',()=>{closeGShop();openSkins();});
-setInterval(()=>{const b=$('#gshopBtn');const on=(devMode||PACK.credit>0)&&scene==='nexus'&&!!save.current;if(b.hidden===on)b.hidden=!on;},400);
+$('#gshopBtn').addEventListener('click',openGShop);$('#logoutBtn').addEventListener('click',()=>{closeOpts();logout();});setInterval(()=>{const e=$('#acctName');if(e)e.textContent=AUTH.ok?AUTH.nom:'';},1000);$('#gshopClose').addEventListener('click',closeGShop);$('#gshopPack').addEventListener('click',e=>{packClick(e);});$('#pets').after($('#gshopWin'));
+$('#gshopWin').addEventListener('click',e=>{if(e.target.id==='gshopWin'){closeGShop();return;}const b=e.target.closest('[data-gs]');if(!b)return;const v=b.dataset.gs;if(v==='bientot'){gsBientot();return;}closeGShop();if(v==='skins')openSkins();else if(v==='pets')openPets('skins');else openCosm();});
+setInterval(()=>{const b=$('#gshopBtn');const on=scene==='nexus'&&!!save.current&&$('#gshopWin').hidden;if(b.hidden===on)b.hidden=!on;},400);
 function openPresWin(){presEl.hidden=false;paused=true;keys.clear();mouse.down=false;$('#presMsg').textContent='';renderPresWin();sfx('item');}
 function closePresWin(){presEl.hidden=true;paused=false;cv.focus();}
 function renderPresWin(){const cap=maxLvl(),box=$('#presList');box.textContent='';$('#presNow').textContent='Niveau maximum : '+cap+' · Prestige : '+(save.prestige||0).toLocaleString('fr-FR');
@@ -6083,7 +6307,7 @@ function renderDevPlayers(){
     const armed=banArm===r.peer;
     acts.append(mk('GOD ✓',()=>devSend(r.peer,'god',1)),mk('GOD ✗',()=>devSend(r.peer,'god',0)),inp,mk('Cursite',()=>devSend(r.peer,'cursite',+inp.value||0)),mk('Pièces',()=>devSend(r.peer,'gold',+inp.value||0)),
       mk(mu?'Rendre la parole':'Muet',()=>{devSend(r.peer,mu?'unmute':'mute');if(mu)muteSet.delete(r.peer);else muteSet.add(r.peer);setTimeout(renderDevPlayers,50);}),
-      mk('✨ Fête',()=>partyFor(r.peer),'gold'),mk('Aller vers',()=>tpToPlayer(r.peer)),mk('1re pers. ✓',()=>devSend(r.peer,'fp',1)),mk('1re pers. ✗',()=>devSend(r.peer,'fp',0)),mk('Amener ici',()=>summonPlayer(r.peer)),mk('Donner un objet',()=>{admGiveTo=r.peer;setAdmTab('objets');}),mk('📦 Pack de démarrage',()=>devSend(r.peer,'pack'),'gold'),
+      mk('✨ Fête',()=>partyFor(r.peer),'gold'),mk('Aller vers',()=>tpToPlayer(r.peer)),mk('1re pers. ✓',()=>devSend(r.peer,'fp',1)),mk('1re pers. ✗',()=>devSend(r.peer,'fp',0)),mk('Amener ici',()=>summonPlayer(r.peer)),mk('Donner un objet',()=>{admGiveTo=r.peer;setAdmTab('objets');}),mk('📦 Pack de démarrage',()=>devSend(r.peer,'pack'),'gold'),mk('◆ 200 (1 €)',()=>devSend(r.peer,'lot',1)),mk('◆ 650 (3 €)',()=>devSend(r.peer,'lot',3)),mk('◆ 1150 (5 €)',()=>devSend(r.peer,'lot',5)),mk('◆ 2500 (10 €)',()=>devSend(r.peer,'lot',10)),mk('Abo 2 € (+30 j)',()=>devSend(r.peer,'abo',2)),mk('Abo 9 € (+30 j)',()=>devSend(r.peer,'abo',9)),mk('Abo ✗',()=>devSend(r.peer,'abo',0)),
       mk('Expulser',()=>devSend(r.peer,'kick'),'danger'),
       mk(armed?'Confirmer le ban':'Bannir IP',()=>{if(banArm!==r.peer){banArm=r.peer;setTimeout(()=>{if(banArm===r.peer){banArm='';renderDevPlayers();}},4000);renderDevPlayers();return;}banArm='';devSend(r.peer,'ban');},'danger'));
     row.append(nm,acts);box.append(row);}
@@ -6560,7 +6784,7 @@ cv.addEventListener('auxclick',e=>e.preventDefault());
 window.addEventListener('blur',()=>{keys.clear();mouse.down=false;});
 const chatForm=$('#chatForm'),chatIn=$('#chatIn');
 function renderChatHist(){const box=$('#chatHist');box.textContent='';if(!chatHist.length){const p=document.createElement('p');p.className='vide';p.textContent='Aucun message pour l\'instant.';box.append(p);return;}
-  for(const c of chatHist){const p=document.createElement('p');const i=document.createElement('i');i.textContent=c.h;const b=document.createElement('b');b.textContent=c.n+' : ';const sp=document.createElement('span');sp.textContent=c.t;p.style.color=c.col;p.append(i,b,sp);box.append(p);}box.scrollTop=box.scrollHeight;}
+  for(const c of chatHist){const p=document.createElement('p');const i=document.createElement('i');i.textContent=c.h;const b=document.createElement('b');b.textContent=c.n+' : ';const sp=document.createElement('span');sp.textContent=c.t;p.style.color=c.col;if(c.nc)b.style.color=c.nc;p.append(i,b,sp);box.append(p);}box.scrollTop=box.scrollHeight;}
 function openChat(){keys.clear();mouse.down=false;chatForm.hidden=false;chatIn.value='';renderChatHist();chatIn.focus();}
 function closeChat(){chatForm.hidden=true;chatIn.blur();cv.focus();}
 chatForm.addEventListener('submit',e=>{e.preventDefault();sendChat(chatIn.value);closeChat();});
@@ -7526,6 +7750,13 @@ const COLIS_P2={K:'#2a1608',C:'#c8955a',c:'#a8743e',L:'#e6bd84',R:'#e8443a',r:'#
 const COLIS_BAS=['.KCCCCCRRCCCCCK.','.KRRRRRRRRRRRRK.','.KrrrrrRRrrrrrK.','.KCCCCCRRCCCCCK.','.KcccccRRcccccK.','.KKKKKKKKKKKKKK.','................'];
 const COLIS_IMG=makeSprite(['................','.....RR..RR.....','....RrrRRrrR....','.....RRYYRR.....','..KKKKKRRKKKKK..','.KLLLLLRRLLLLLK.','.KCCCCCRRCCCCCK.','.KKKKKKRRKKKKKK.','.KCCCCCRRCCCCCK.',...COLIS_BAS],COLIS_P2,3),
   COLIS_OPEN=makeSprite(['................','..K..........K..','.KLK..G..G..KLK.','.KLLK.GGGG.KLLK.','.KcLLKGYYGKLLcK.','..KKKKIIIIKKKK..','.KIIIIGGGGIIIIK.','.KKKKKKKKKKKKKK.','.KCCCCCRRCCCCCK.',...COLIS_BAS],COLIS_P2,3);
+const COLIS_PRIX=250,COLIS_SKINS={or:{nom:'Coffre doré',p:{K:'#3a2a08',C:'#ffd23f',c:'#d8a81a',L:'#fff3a8',R:'#ffffff',r:'#cfc8e0',Y:'#ff5a6a',G:'#7df0e0',I:'#1a1008'}},
+  neant:{nom:'Caisse du Néant',p:{K:'#0a0718',C:'#3a2a6a',c:'#2a1c50',L:'#6a4ab8',R:'#3ff0ff',r:'#1fb0c0',Y:'#ffffff',G:'#b45aff',I:'#050308'}},
+  givre:{nom:'Colis de givre',p:{K:'#16324a',C:'#9fd8f0',c:'#6fb4d8',L:'#e8f8ff',R:'#f2f0fa',r:'#b8c8dc',Y:'#3ff0ff',G:'#ffffff',I:'#0a1a28'}},
+  foret:{nom:'Colis sylvestre',p:{K:'#142a14',C:'#4f8a3c',c:'#3a6a2c',L:'#8fd06a',R:'#ffd23f',r:'#c89a1a',Y:'#ff7aa8',G:'#ffe9a8',I:'#0a140a'}}};
+{const haut=[['................','.....RR..RR.....','....RrrRRrrR....','.....RRYYRR.....','..KKKKKRRKKKKK..','.KLLLLLRRLLLLLK.','.KCCCCCRRCCCCCK.','.KKKKKKRRKKKKKK.','.KCCCCCRRCCCCCK.'],['................','..K..........K..','.KLK..G..G..KLK.','.KLLK.GGGG.KLLK.','.KcLLKGYYGKLLcK.','..KKKKIIIIKKKK..','.KIIIIGGGGIIIIK.','.KKKKKKKKKKKKKK.','.KCCCCCRRCCCCCK.']];
+  for(const k in COLIS_SKINS){COLIS_SKINS[k].img=makeSprite([...haut[0],...COLIS_BAS],COLIS_SKINS[k].p,3);COLIS_SKINS[k].open=makeSprite([...haut[1],...COLIS_BAS],COLIS_SKINS[k].p,3);}}
+const myColis=()=>{const k=COSM().colis;return typeof k==='string'&&COLIS_SKINS[k]&&cosmA('cl:'+k)?k:null;};
 const CHEST_LOCK=makeSprite(CHEST_ROWS,{B:'#2a2630',W:'#5a5462',D:'#403a48',Y:'#8a8494'},6);
 const inPark=(x,y)=>x>=PARK.x0&&x<=PARK.x1&&y>=PARK.y0&&y<=PARK.y1;
 const grassTex=v=>mkTex('pg'+v,(x,y)=>{const n=hx(x,y,300+v);if(n>0.93)return '#9fd06a';if(n<0.06)return '#2f5a2a';return ['#4f8a3a','#4a8436','#548f3e','#46803a'][(x+y*3+v)%4];});
@@ -7570,7 +7801,7 @@ function drawVault(x0,x1,y0,y1){const HS=houseSkin();
   {const n=VIS?0:colis().length,X=sx(COLIS.x+.5),Y=sy(COLIS.y+.5),sz=TS*0.95,bob=n?Math.abs(Math.sin(time*3))*u*1.2:0;
     ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(X,Y+sz*0.42,sz*0.4,sz*0.1,0,0,TAU);ctx.fill();
     if(n){ctx.fillStyle='rgba(125,240,224,'+(0.16+0.12*Math.sin(time*4))+')';ctx.beginPath();ctx.arc(X,Y,TS*0.85,0,TAU);ctx.fill();}
-    ctx.drawImage(n?COLIS_OPEN:COLIS_IMG,X-sz/2,Y-sz/2-bob,sz,sz);
+    {const ck=VIS?(COLIS_SKINS[VIS.colis]?VIS.colis:null):myColis(),CS=ck?COLIS_SKINS[ck]:null;ctx.drawImage(n?(CS?CS.open:COLIS_OPEN):(CS?CS.img:COLIS_IMG),X-sz/2,Y-sz/2-bob,sz,sz);}
     if(n){for(let i=0;i<3;i++){const a=time*2+i*TAU/3;R(X+Math.cos(a)*TS*0.5-u,Y-TS*0.45+Math.sin(a)*TS*0.14-u,2*u,2*u,i%2?'#ffd23f':'#7df0e0');}}
     label(n?'Livraison · '+n:'Livraison',X,Y-TS*0.8,n?'#7df0e0':'#8fa6c8',Math.round(TS*0.28));}
   drawPortal(VBACK.x,VBACK.y,'#3f7fe0','#8fd0ff','Village');
@@ -8026,23 +8257,23 @@ function render(){
   for(const e of ents){const eo=e.o||e.hb,ex=e.p?P.x:eo?eo.x:e.m.x,ey=e.p?P.y:eo?eo.y:e.m.y;up(ex,ey,()=>{
     if(e.hb){if(e.hb.bubble)bubble(e.hb.bubble.t,e.hb.x,e.hb.y);return;}
     if(e.p){
-      {const pe=eqPet();if(pe&&P.px!=null&&!(P.invis>0||admInv))drawPet(pe.k,P.px,P.py,0,pe.t||0,P.pmv?(P.pf||P.face||1):(P.face||1),P.pmv);}
+      {const pe=eqPet();if(pe&&P.px!=null&&!(P.invis>0||admInv))drawPet(pe.k,P.px,P.py,0,pe.t||0,P.pmv?(P.pf||P.face||1):(P.face||1),P.pmv,myPetSkin());}
       const spr=heroPort(save.current,mySkin());const hit=time-P.hitT<0.12;
       if(P.berserk>0){ctx.fillStyle='rgba(255,120,40,.25)';ctx.beginPath();ctx.arc(sx(P.x),sy(P.y),TS*0.7,0,TAU);ctx.fill();}
       {const w=C().equip[0],bob=P.moving?Math.abs(Math.sin(P.walk))*TS*0.05:Math.sin(time*2.4)*TS*0.015;if(P.invul>0){ctx.strokeStyle='#ffd23f';ctx.globalAlpha=0.5+0.4*Math.sin(time*12);ctx.lineWidth=3;ctx.beginPath();ctx.arc(sx(P.x),sy(P.y),TS*0.62,0,TAU);ctx.stroke();ctx.globalAlpha=1;}
       if(P.ghosts)for(const g of P.ghosts)drawHero(save.current,mySkin(),g.x,g.y,P.face,0,0,w?w.kind:null,w?w.tier:0,null,0,false,0,Math.max(0.05,g.l*1.6),null,morphKey);
       swimDraw(P.x,P.y,()=>drawHero(save.current,mySkin(),P.x,P.y,P.face,hit?1:0,bob,w?w.kind:null,w?w.tier:0,heroAim(true,null),P.thrust,P.moving,P.walk,P.invis>0||admInv?0.4:1,shownAura(),morphKey));}
       const st=S();drawBar(P.x,P.y+0.55,TS*0.8,P.hp/st.tot.vie,'#6fd04a');if(P.dashCd>0)drawBar(P.x,P.y+0.68,TS*0.5,1-P.dashCd/DASH_CD,'#c8a0ff');drawStates(myStates(),P.x,P.y-(myTitle()?1.22:0.98));
-      {const ti=myTitle();if(C().maudit&&!(P.invis>0||admInv))mauditSigne(P.x,P.y-(ti?1.55:remotes.size?1.25:0.95));const pn=(GUILD?'['+GUILD.tag+'] ':'')+pseudo;if(ti){label(pn,sx(P.x),sy(P.y-0.98),'#e8b04a',Math.round(TS*0.3));titleLabel(ti,P.x,P.y);}else if(remotes.size)label(pn,sx(P.x),sy(P.y-0.72),'#e8b04a',Math.round(TS*0.3));}
+      {const ti=myTitle();if(C().maudit&&!(P.invis>0||admInv))mauditSigne(P.x,P.y-(ti?1.55:remotes.size?1.25:0.95));const pn=(GUILD?'['+GUILD.tag+'] ':'')+pseudo;if(ti){label(pn,sx(P.x),sy(P.y-0.98),myNameCol()||'#e8b04a',Math.round(TS*0.3));titleLabel(ti,P.x,P.y);}else if(remotes.size)label(pn,sx(P.x),sy(P.y-0.72),myNameCol()||'#e8b04a',Math.round(TS*0.3));}
       if(P.bubble)bubble(P.bubble.t,P.x,P.y);
     }else if(e.o){
       const r=e.o,p=r.p;
-      if(!opts.hidePets&&typeof p.pe==='string'&&PET_DEF[p.pe]&&r.px!=null&&!p.iv)drawPet(p.pe,r.px,r.py,r.peer.charCodeAt(0),clamp(num(p.pt,0)|0,0,3),r.pmv?(r.pf||p.f||1):(p.f||1),r.pmv);
+      if(!opts.hidePets&&typeof p.pe==='string'&&PET_DEF[p.pe]&&r.px!=null&&!p.iv)drawPet(p.pe,r.px,r.py,r.peer.charCodeAt(0),clamp(num(p.pt,0)|0,0,3),r.pmv?(r.pf||p.f||1):(p.f||1),r.pmv,typeof p.ps==='string'&&PETSKINS[p.ps]?p.ps:null);
       if(p.b){ctx.fillStyle='rgba(255,120,40,.25)';ctx.beginPath();ctx.arc(sx(r.x),sy(r.y),TS*0.7,0,TAU);ctx.fill();}
       swimDraw(r.x,r.y,()=>drawHero(p.c,typeof p.sk==='string'&&SKINS[p.c]&&SKINS[p.c][p.sk]?p.sk:null,r.x,r.y,p.f,0,p.mv?Math.abs(Math.sin(r.walk))*TS*0.05:Math.sin(time*2.4+r.x)*TS*0.015,WB[p.w]?p.w:null,num(p.wt,0),typeof p.sh==='number'&&!safe()?p.sh/100:null,r.thrust||0,!!p.mv,r.walk,p.iv?0.3:1,parseAura(p.au),typeof p.mo==='string'&&MON[p.mo]?p.mo:null));
       drawBar(r.x,r.y+0.55,TS*0.8,num(p.hp,100)/100,'#4fb8e8');if(typeof p.fi==='string'){const [fx,fy]=p.fi.split(',').map(v=>(+v||0)/10);if(Math.hypot(fx-r.x,fy-r.y)<4){const u=TS/16,hx=sx(r.x+(fx>r.x?0.35:-0.35)),hy=sy(r.y-0.55),bx=sx(fx),by=sy(fy)+Math.sin(time*3+r.x)*u*0.6;ctx.strokeStyle='#6a4424';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(sx(r.x),sy(r.y-0.2));ctx.lineTo(hx,hy-TS*0.4);ctx.stroke();ctx.strokeStyle='rgba(240,240,240,.7)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(hx,hy-TS*0.4);ctx.quadraticCurveTo((hx+bx)/2,(hy+by)/2,bx,by);ctx.stroke();R(bx-2*u,by-2*u,4*u,2*u,'#ff3b4a');R(bx-2*u,by,4*u,2*u,'#ffffff');}}
       if(typeof p.sf==='string')drawStates(p.sf.slice(0,8),r.x,r.y-(typeof p.ti==='string'&&TITLES[p.ti]?1.22:0.98));
-      {const ti=typeof p.ti==='string'&&TITLES[p.ti]?p.ti:null;label((typeof p.gt==='string'&&p.gt?'['+clean(p.gt).slice(0,4)+'] ':'')+(clean(p.n).slice(0,16)||'Joueur')+' · '+clamp(num(p.l,1)|0,1,25),sx(r.x),sy(r.y-(ti?0.98:0.72)),myGid&&p.gi===myGid?'#9fe07a':'#dff3ff',Math.round(TS*0.3));if(ti)titleLabel(ti,r.x,r.y);if(p.md===1)mauditSigne(r.x,r.y-(ti?1.55:1.25));}
+      {const ti=typeof p.ti==='string'&&TITLES[p.ti]?p.ti:null;label((typeof p.gt==='string'&&p.gt?'['+clean(p.gt).slice(0,4)+'] ':'')+(clean(p.n).slice(0,16)||'Joueur')+' · '+clamp(num(p.l,1)|0,1,25),sx(r.x),sy(r.y-(ti?0.98:0.72)),ncSur(p.nc)||(myGid&&p.gi===myGid?'#9fe07a':'#dff3ff'),Math.round(TS*0.3));if(ti)titleLabel(ti,r.x,r.y);if(p.md===1)mauditSigne(r.x,r.y-(ti?1.55:1.25));}
       if(r.bubble)bubble(r.bubble.t,r.x,r.y);
     }else{
       const m=e.m,t=time+m.seed;
@@ -8154,7 +8385,7 @@ function render(){
   if(banner){const a=clamp(banner.life,0,1);ctx.globalAlpha=a;label(banner.t,W/2,H*0.2,banner.col,Math.round(Math.min(W/14,TS*0.95)),700);label(banner.s,W/2,H*0.2+TS*0.85,'#ebe6f6',Math.round(TS*0.4),400);ctx.globalAlpha=1;}
   if(notice){ctx.globalAlpha=clamp(notice.life*2,0,1);label(notice.t,W/2,H*0.72,'#ffd9a0',Math.round(TS*0.42));ctx.globalAlpha=1;}
   if(chatLog.length){ctx.font=`400 ${Math.round(TS*0.4)}px "DotGothic16", monospace`;ctx.textAlign='left';ctx.textBaseline='top';const lh=Math.round(TS*0.5);const tl=document.getElementById('hudTL');let y=tl.offsetTop+tl.offsetHeight+8;
-    for(const c of chatLog){ctx.globalAlpha=clamp(c.life/2,0,1);const t=c.n+' : '+c.t;const w=Math.min(W-24,ctx.measureText(t).width+12);R(10,y,w,lh,'rgba(11,10,18,.7)');ctx.fillStyle=c.col;ctx.fillText(t,16,y+2,W-36);y+=lh+2;}ctx.globalAlpha=1;}
+    for(const c of chatLog){ctx.globalAlpha=clamp(c.life/2,0,1);const t=c.n+' : '+c.t;const w=Math.min(W-24,ctx.measureText(t).width+12);R(10,y,w,lh,'rgba(11,10,18,.7)');ctx.fillStyle=c.col;ctx.fillText(t,16,y+2,W-36);if(c.nc&&ctx.measureText(t).width<=W-36){ctx.fillStyle=c.nc;ctx.fillText(c.n,16,y+2);}y+=lh+2;}ctx.globalAlpha=1;}
   {const bl=boostLeft();if(bl>0)label('XP +30 % · '+Math.ceil(bl/60000)+' min',W-TS*3.6,TS*(P.auto&&canFight()?1.05:0.6),'#7ed957',Math.round(TS*0.3));}
   if(P.auto&&canFight())label('TIR AUTO',W-TS*1.6,TS*0.6,'#ff9a3c',Math.round(TS*0.32));
   if(joy.id!==null){ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(joy.ox,joy.oy,50,0,TAU);ctx.stroke();ctx.fillStyle='rgba(232,176,74,.6)';const dx=joy.x-joy.ox,dy=joy.y-joy.oy,d=Math.hypot(dx,dy),k=d>50?50/d:1;ctx.beginPath();ctx.arc(joy.ox+dx*k,joy.oy+dy*k,20,0,TAU);ctx.fill();}

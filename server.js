@@ -620,10 +620,29 @@ wss.on('connection', (ws, req) => {
       } else if (cmd === 'pack') {
         // pack de démarrage (5 €) : l'admin ouvre le droit après paiement, le joueur le récupère à l'Échoppe en choisissant son héros
         if (!cible.compte) { res(false, 'Ce joueur n\'est pas connecté à un compte'); return; }
-        if (PACK.de.all(cible.compte.id).length && m.arg !== 'force') { res(false, nom + ' a déjà eu le pack de démarrage (un seul par compte)'); return; }
+        if (PACK.de.all(cible.compte.id).some(r => r.pack === 'depart') && m.arg !== 'force') { res(false, nom + ' a déjà eu le pack de démarrage (un seul par compte)'); return; }
         PACK.ins.run(cible.compte.id, Date.now()); envoyer(cible.ws, etatPack(cible, true));
         console.log(`[pack] ${(moi.etat && moi.etat.n) || '?'} ouvre le pack de démarrage pour ${cible.compte.nom}`);
         res(true, 'Pack de démarrage ouvert pour ' + nom + ' : il le récupère à l\'Échoppe, onglet Cursite');
+      } else if (cmd === 'lot') {
+        // pack de Cursite (1, 3, 5 ou 10 €) : l'admin le livre après paiement
+        if (!cible.compte) { res(false, 'Ce joueur n\'est pas connecté à un compte'); return; }
+        const n = LOTS_CURSITE[m.arg | 0]; if (!n) { res(false, 'Pack inconnu (1, 3, 5 ou 10 €)'); return; }
+        const id = PACK.insLot.run(cible.compte.id, 'cursite', Date.now(), JSON.stringify({ items: [], cursite: n, boost: 0 })).lastInsertRowid;
+        packEnvoyer(cible, PACK.un.get(Number(id)));
+        console.log(`[boutique] ${(moi.etat && moi.etat.n) || '?'} livre ${n} Cursite (pack ${m.arg | 0} €) à ${cible.compte.nom}`);
+        res(true, n + ' Cursite livrées à ' + nom + ' (pack ' + (m.arg | 0) + ' €)');
+      } else if (cmd === 'abo') {
+        // abonnement (2 ou 9 € par mois) : 30 jours de plus à chaque fois ; 0 = arrêt
+        if (!cible.compte) { res(false, 'Ce joueur n\'est pas connecté à un compte'); return; }
+        const p = m.arg | 0;
+        if (!p) { ABO.del.run(cible.compte.id); envoyer(cible.ws, etatPack(cible)); res(true, 'Abonnement de ' + nom + ' arrêté'); return; }
+        if (!ABOS[p]) { res(false, 'Abonnement inconnu (2 ou 9 €)'); return; }
+        const a = ABO.get.get(cible.compte.id), base = a && a.palier === p && a.fin > Date.now() ? a.fin : Date.now(), fin = base + 30 * 86400000;
+        ABO.set.run(cible.compte.id, p, fin, a && a.palier === p ? a.jour : 0);
+        console.log(`[boutique] ${(moi.etat && moi.etat.n) || '?'} ouvre l'abonnement ${p} € pour ${cible.compte.nom} jusqu'au ${new Date(fin).toISOString().slice(0, 10)}`);
+        aboJour(cible); envoyer(cible.ws, etatPack(cible));
+        res(true, ABOS[p].nom + ' actif pour ' + nom + ' jusqu\'au ' + new Date(fin).toLocaleDateString('fr-FR') + ' (' + ABOS[p].jour + ' Cursite par jour)');
       } else if (cmd === 'item') {
         const it = m.arg;
         if (!it || typeof it !== 'object' || JSON.stringify(it).length > 2000) { res(false, 'Objet invalide'); return; }
@@ -963,14 +982,31 @@ const PACK = { CURSITE: 1000, MOTIF: 'Pack de démarrage',
   de: db.prepare('SELECT * FROM packs WHERE compte = ? ORDER BY id'), un: db.prepare('SELECT * FROM packs WHERE id = ?'),
   ins: db.prepare("INSERT INTO packs (compte, pack, etat, quand) VALUES (?, 'depart', 0, ?)"),
   livre: db.prepare('UPDATE packs SET etat = 1, contenu = ?, quand = ? WHERE id = ?'), fini: db.prepare('UPDATE packs SET etat = 2 WHERE id = ?') };
-const etatPack = (moi, neuf) => { const l = PACK.de.all(moi.compte.id); return { t: 'pack', a: 'etat', credit: l.filter(r => r.pack === 'depart' && r.etat === 0).length, pris: l.filter(r => r.pack === 'depart' && r.etat > 0).length, neuf: neuf ? 1 : 0 }; };
+const etatPack = (moi, neuf) => { const l = PACK.de.all(moi.compte.id); let abo = null; try { const a = ABO.get.get(moi.compte.id); if (a && a.fin > Date.now()) abo = { p: a.palier, fin: a.fin }; } catch {} return { t: 'pack', a: 'etat', credit: l.filter(r => r.pack === 'depart' && r.etat === 0).length, pris: l.filter(r => r.pack === 'depart' && r.etat > 0).length, neuf: neuf ? 1 : 0, abo }; };
+// ---------- boutique : packs de Cursite et abonnements (livrés par le coffre de livraison, comme le pack de démarrage) ----------
+const LOTS_CURSITE = { 1: 200, 3: 650, 5: 1150, 10: 2500 };
+const ABOS = { 2: { jour: 50, nom: 'Abonnement Aventurier' }, 9: { jour: 250, nom: 'Abonnement Héros' } };
+const MOTIFS = { tour: 'Tour des Chevaliers', cursite: 'Achat de Cursite', abo: 'Abonnement' };
+PACK.insLot = db.prepare('INSERT INTO packs (compte, pack, etat, quand, contenu) VALUES (?, ?, 1, ?, ?)');
+db.exec('CREATE TABLE IF NOT EXISTS abos (compte INTEGER PRIMARY KEY, palier INTEGER NOT NULL, fin INTEGER NOT NULL, jour INTEGER NOT NULL DEFAULT 0)');
+const ABO = { get: db.prepare('SELECT palier, fin, jour FROM abos WHERE compte = ?'), set: db.prepare('INSERT INTO abos (compte, palier, fin, jour) VALUES (?, ?, ?, ?) ON CONFLICT(compte) DO UPDATE SET palier = excluded.palier, fin = excluded.fin, jour = excluded.jour'),
+  jour: db.prepare('UPDATE abos SET jour = ? WHERE compte = ?'), del: db.prepare('DELETE FROM abos WHERE compte = ?') };
+const jourAbo = () => { const d = new Date(); return d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate(); };
+// la part du jour : une fois par jour, à la connexion (ou au passage de minuit si le joueur est en ligne)
+function aboJour(moi) {
+  try { if (!moi || !moi.compte) return; const a = ABO.get.get(moi.compte.id); if (!a || a.fin < Date.now() || !ABOS[a.palier]) return;
+    const j = jourAbo(); if (a.jour >= j) return; ABO.jour.run(j, moi.compte.id);
+    const id = PACK.insLot.run(moi.compte.id, 'abo', Date.now(), JSON.stringify({ items: [], cursite: ABOS[a.palier].jour, boost: 0 })).lastInsertRowid;
+    packEnvoyer(moi, PACK.un.get(Number(id)));
+  } catch (e) { console.error('[boutique] abonnement', e.message); } }
+setInterval(() => { try { for (const s of salles.values()) for (const j of s.values()) if (j.compte) aboJour(j); } catch {} }, 10 * 60000);
 const contenuPack = row => { try { const c = JSON.parse(row.contenu); return { items: Array.isArray(c.items) ? c.items : [], cursite: c.cursite | 0, boost: c.boost | 0 }; } catch { return { items: [], cursite: 0, boost: 0 }; } };
 // envoie une livraison : l'arbitre est prévenu (Cursite et objets attendus), puis le jeu range tout dans le coffre de livraison
 function packEnvoyer(moi, row) {
   const c = contenuPack(row), cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id));
   cpt.colisNotes = cpt.colisNotes || new Set();
   if (!cpt.colisNotes.has(row.id)) { cpt.colisNotes.add(row.id); cpt.dons.cursite += c.cursite; cpt.dons.boosts = (cpt.dons.boosts || 0) + c.boost; for (const it of c.items) butin.noter(cpt.dons, it); }
-  envoyer(moi.ws, { t: 'colis', id: row.id, items: c.items, cursite: c.cursite, boost: c.boost, motif: row.pack === 'tour' ? 'Tour des Chevaliers' : PACK.MOTIF });
+  envoyer(moi.ws, { t: 'colis', id: row.id, items: c.items, cursite: c.cursite, boost: c.boost, motif: MOTIFS[row.pack] || PACK.MOTIF });
 }
 function packs(moi, m) {
   if (!moi.compte) return;
@@ -1040,7 +1076,7 @@ function colisRecu(moi, m) {
   if (sv && Array.isArray(sv.colisVus) && sv.colisVus.includes(row.id)) { PACK.fini.run(row.id); envoyer(moi.ws, etatPack(moi)); }
 }
 // à la connexion : on renvoie les livraisons qui n'ont pas été confirmées
-function colisConnexion(moi) { try { for (const row of PACK.de.all(moi.compte.id)) if (row.etat === 1) packEnvoyer(moi, row); envoyer(moi.ws, etatPack(moi)); } catch (e) { console.error('[pack] connexion', e.message); } }
+function colisConnexion(moi) { try { aboJour(moi); for (const row of PACK.de.all(moi.compte.id)) if (row.etat === 1) packEnvoyer(moi, row); envoyer(moi.ws, etatPack(moi)); } catch (e) { console.error('[pack] connexion', e.message); } }
 function hotelDesVentes(moi, m) {
   if (!moi.compte) return; const rep = o => envoyer(moi.ws, Object.assign({ t: 'hv' }, o)), R = arbitre.regles();
   if (m.a === 'dus') { if (Date.now() - (moi.dusT || 0) < 3000) return; moi.dusT = Date.now(); hvConnexion(moi); colisConnexion(moi); return parrConnexion(moi); } // demandé par le jeu une fois le héros chargé
@@ -1144,7 +1180,7 @@ function planMaison(c, moi) {
   for (const e of (Array.isArray(h.m) ? h.m : []).slice(0, salle ? 140 : 80)) { if (!Array.isArray(e)) continue; const id = String(e[0] || ''), x = e[1] | 0, y = e[2] | 0; if (!/^[a-zA-Z0-9]{1,12}$/.test(id) || x < (salle ? -15 : 1) || x > 25 || y < 1 || y > 16 || vus.has(x + ',' + y)) continue; vus.add(x + ',' + y); m.push([id, x, y, e[3] & 3]); }
   const pets = (Array.isArray(sv.pets) ? sv.pets : []).filter(q => q && q.id !== sv.petEq).slice(0, 12).map(q => ({ k: String(q.k || '').slice(0, 16), t: Math.max(0, Math.min(3, q.t | 0)) }));
   const lig = enLigne.get(c.id);
-  return { t: 'maison', a: 'plan', ok: 1, id: c.id, n: String((lig && lig.etat && lig.etat.n) || c.nom).slice(0, 16), skin: String(h.skin || 'bois').slice(0, 12), salle, m, coffres: Math.max(1, Math.min(10, (sv.vault && sv.vault.n) | 0 || 1)), pets,
+  return { t: 'maison', a: 'plan', ok: 1, id: c.id, n: String((lig && lig.etat && lig.etat.n) || c.nom).slice(0, 16), skin: String(h.skin || 'bois').slice(0, 12), salle, m, coffres: Math.max(1, Math.min(10, (sv.vault && sv.vault.n) | 0 || 1)), colis: String((sv.cosm && sv.cosm.own && sv.cosm.own['cl:' + sv.cosm.colis] && sv.cosm.colis) || '').slice(0, 14), pets,
     coeurs: MAISON.nb.get(c.id).n, aime: MAISON.a.get(c.id, moi.compte.id) ? 1 : 0, moi: c.id === moi.compte.id ? 1 : 0 };
 }
 function maison(moi, m, salle) {
