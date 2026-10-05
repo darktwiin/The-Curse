@@ -1,5 +1,26 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.76 (index.html, arbitre.js ; server.js inchangé depuis la 0.0.72 ; wiki.html régénéré)
+- **Prestige : le niveau 25 devient accessible.** Les niveaux 21 à 25 coûtent maintenant 200, 300, 400, 500 et 1 000 points de prestige (2 400 en tout, au lieu de 18 000).
+- En échange, le niveau maximum se débloque **classe par classe** : le prestige dépensé chez le Gardien du Prestige vaut pour la classe que tu joues à ce moment-là. Pour amener une autre classe au niveau 25, il faut repasser ses cinq paliers.
+- Les niveaux maximum déjà achetés avec l'ancien système restent acquis, pour toutes tes classes.
+- **Maîtrise de classe.** Au niveau 25, une nouvelle jauge violette apparaît sous la gloire : la maîtrise. Elle se remplit avec l'expérience, en même temps que la gloire, et demande 680 000 points — dix fois le chemin du niveau 1 au niveau 25.
+  - **Mourir vide la jauge.**
+  - Pleine, elle donne le titre **« ⚜ Classe Maîtrisé ⚜ »** (Mage Maîtrisé, Guerrier Maîtrisé…), acquis pour toujours et annoncé à tout le serveur.
+- **Monstre maudit** : il n'apparaît plus que du Marais Putride aux Terres Brûlées (zones 3 à 6), et jamais près d'une route.
+
+## ver.0.0.75 (index.html, butin.js, gardien.js ; server.js inchangé depuis la 0.0.72 ; wiki.html régénéré)
+- **Monstre maudit des Plaines.** Toutes les 10 minutes, un monstre ordinaire est frappé par la malédiction — n'importe où de la Plage des Naufragés aux Terres Brûlées, jamais dans les Terres Désolées. Il n'y en a qu'un à la fois.
+  - Il garde son apparence, mais **double de taille** et s'entoure d'une **aura violette**.
+  - Il prend la force du **Dévoreur d'Étoiles** : mêmes points de vie, mêmes dégâts, même armure.
+  - Il reçoit **3 attaques tirées au hasard parmi 10 nouvelles** (Couronne brisée, Faux tournoyante, Traque, Pluie de malédictions, Éventail, Serpents, Double anneau, Mines, Croix, Déferlante) : deux monstres maudits ne se battent jamais pareil.
+  - Il est **marqué en violet sur la carte**, et son apparition est annoncée à tous les joueurs des Plaines.
+  - Récompense : **1 potion de caractéristique au hasard et 100 pièces** pour chaque joueur qui lui a infligé au moins 5 000 dégâts. Le tableau des dégâts s'affiche à sa mort.
+- **Wiki** : le Dévoreur d'Étoiles apparaît enfin dans la liste des monstres de l'Observatoire Céleste, et le monstre maudit a sa fiche.
+
+## ver.0.0.74 (index.html seulement ; server.js inchangé depuis la 0.0.72 ; wiki.html régénéré)
+- **Portail de l'Avant-poste des Terres Désolées** : il ne s'achète plus. Il s'ouvre pour tous tes héros dès que l'un d'eux atteint le niveau 20, et il le reste ensuite. Chaque passage coûte 20 pièces.
+
 ## ver.0.0.71 (index.html, butin.js, gardien.js ; server.js inchangé depuis la 0.0.69 ; wiki.html régénéré)
 - **Les Plaines Sauvages changent de forme.** L'île n'est plus un disque : c'est une longue terre qui monte du sud au nord. On débarque sur la Plage des Naufragés, tout en bas, et on remonte zone après zone — Plaines d'Émeraude, Marais Putride, Forêt des Murmures, Canyon de Rouille, Terres Brûlées, Terres Désolées — par des passages plus étroits entre chaque région.
 - **Le nord est beaucoup plus grand** : les Terres Brûlées et les Terres Désolées font plus de deux fois leur ancienne surface, avec plus de monstres, pour que les héros de haut niveau ne se marchent plus dessus. Les zones de départ sont plus petites : on y croise plus vite d'autres joueurs.

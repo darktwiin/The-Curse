@@ -60,6 +60,8 @@ function tirer(R, key, cls, scene, sc, opt) {
   const maudit = !!(opt && opt.maudit), donjon = typeof sc === 'string' && sc[0] === 'd';
   const d = R.MON[key], out = { xp: d.xp | 0, b: d.boss ? 1 : 0, it: [], rel: -1, oeuf: 0, spg: [], sp: [], or: 0 };
   if (d.tuto) { out.xp *= 2; out.tuto = 1; return out; }
+  // monstre maudit des Plaines : une potion de caractéristique au hasard et 100 pièces, rien d'autre
+  if (key === 'maudit') { out.sp = [R.mkItem('sp_' + pick(R.SK), 0)]; out.or = 100; return out; }
   if (Math.random() < d.drop) { const n = d.n && d.boss ? d.n : 1; for (let i = 0; i < n; i++) { let t = ri(d.loot[0], d.loot[1]); if (Math.random() < 0.08) t = Math.min(6, t + 1); out.it.push(objetAuHasard(R, t, cls)); } }
   if (d.rel && (key === 'devoreur' || Math.random() < d.rel)) { out.rel = out.it.length; out.it.push(objetAuHasard(R, 7, cls)); }
   // les potions de vie et de mana ne tombent plus : elles se fabriquent à l'atelier de l'herboriste avec les plantes des Plaines
@@ -96,10 +98,13 @@ function tirer(R, key, cls, scene, sc, opt) {
 // ---------- témoins : les morts annoncées par l'hôte de chaque scène ----------
 const temoins = new Map(); // `${salle}|${scene}|${id}` -> { peer, k, t }
 const hotes = new Map();   // `${salle}|${scene}` -> { peer, t }
+const partsMaudit = new Map(); // `${salle}|${scene}|${id}` -> { peer (l'hôte), parts: Map(peer -> dégâts), t } : annoncé par l'hôte à la mort du monstre maudit
+const MAUDIT_MIN = 5000;
 function observer(salle, moi, patch) {
   const s = String((moi.etat && moi.etat.s) || ''); if (!s) return;
   const R = arbitre.regles(); if (!R || !R.MKEYS) return;
   if (typeof patch.M === 'string') hotes.set(salle + '|' + s, { peer: moi.peer, t: Date.now() });
+  if (typeof patch.mp === 'string' && patch.mp.length < 6000) { const [i36, l] = patch.mp.split('|'), id = parseInt(i36, 36); if (id > 0) { const parts = new Map(); for (const e of String(l || '').split(';')) { const k = e.lastIndexOf(':'); if (k > 0) parts.set(e.slice(0, k), Math.max(0, +e.slice(k + 1) || 0)); } partsMaudit.set(salle + '|' + s + '|' + id, { peer: moi.peer, parts, t: Date.now() }); } }
   if (typeof patch.D === 'string') {
     for (const e of patch.D.split(';').slice(-120)) { // les plus récentes sont à la fin ; le Gardien en annonce jusqu'à 60
       const f = e.split(','); if (f.length < 4) continue;
@@ -108,7 +113,7 @@ function observer(salle, moi, patch) {
     }
   }
 }
-setInterval(() => { const lim = Date.now() - 90000; for (const [k, v] of temoins) if (v.t < lim) temoins.delete(k); for (const [k, v] of hotes) if (v.t < lim) hotes.delete(k); }, 30000).unref();
+setInterval(() => { const lim = Date.now() - 90000; for (const [k, v] of temoins) if (v.t < lim) temoins.delete(k); for (const [k, v] of hotes) if (v.t < lim) hotes.delete(k); for (const [k, v] of partsMaudit) if (v.t < lim) partsMaudit.delete(k); }, 30000).unref();
 
 // ---------- zones des Plaines (même calcul que le jeu : distance au centre, zones mises à l'échelle ×3) ----------
 const ZCACHE = {};
@@ -165,6 +170,9 @@ function reclamer(moi, m, ctx) {
     if (w) { if (w.k !== key) return non('mauvais monstre'); }
     else { const h = hotes.get(ctx.salle + '|' + s); if (h && h.peer !== moi.peer && Date.now() - h.t < 4000) return non('mort non annoncée par l\'hôte'); }
   }
+  // monstre maudit : il faut lui avoir infligé 5 000 dégâts (la part de chacun est annoncée par l'hôte ; seule celle du Gardien compte quand il tient la scène)
+  if (key === 'maudit') { const pm = partsMaudit.get(ctx.salle + '|' + cle), fiable = pm && (!G || pm.peer === G.peer);
+    if (G || autres || fiable) { const dg = fiable ? (pm.parts.get(moi.peer) || 0) : 0; if (dg < MAUDIT_MIN) { vus.add(cle); ctx.envoyer(moi.ws, { t: 'butin', id: m.id, refus: 1, peu: 1, dg }); return; } } }
   // rythme humain
   const st = seau(ctx.rythme, 'tues'); if (st.v < 1) return non('trop de monstres d\'un coup');
   if (d.boss) { const sb = seau(ctx.rythme, 'boss'), dern = ctx.rythme.dernierBoss || (ctx.rythme.dernierBoss = {});

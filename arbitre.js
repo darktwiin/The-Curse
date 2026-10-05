@@ -33,7 +33,7 @@ function chargerRegles(html) {
   }
   const nombres = (re, def) => { const m = html.match(re); if (!m) return def; try { return JSON.parse(m[1].replace(/(\d+):/g, '"$1":')); } catch { return def; } };
   R.VAULT_PRICES = nombres(/const VAULT_PRICES=(\[[^\]]*\])/, [0, 50, 40, 60, 80, 100, 150, 200, 300, 500]);
-  R.CAP_COST = nombres(/const CAP_COST=(\{[^}]*\})/, { 21: 1000, 22: 2500, 23: 3500, 24: 5000, 25: 6000 });
+  R.CAP_COST = nombres(/const CAP_COST=(\{[^}]*\})/, { 21: 200, 22: 300, 23: 400, 24: 500, 25: 1000 });
   R.SELL_PRICE = nombres(/SELL_PRICE=(\[[^\]]*\])/, [0, 0, 0, 1, 3, 5, 10, 25]);
   { const m = html.match(/const need=l=>([^;\n]+);/); try { R.need = new Function('l', 'return ' + (m ? m[1] : '(40+l*l*8+l*20)*(l>=20?2:1)')); } catch { R.need = l => (40 + l * l * 8 + l * 20) * (l >= 20 ? 2 : 1); } }
   { const m = html.match(/GLORY_XP=(\d+)/); R.GLORY_XP = m ? +m[1] : 4000; }
@@ -61,6 +61,9 @@ const signature = it => it.kind + '|' + it.tier + '|' + JSON.stringify(Object.ke
 const presObjet = it => { if (!it || !R || !R.KINDS[it.kind] || R.KINDS[it.kind].slot === 'conso' || R.KINDS[it.kind].slot === 'meuble') return 0; const K = R.KINDS[it.kind], t = it.tier | 0; return (K.alt || t >= 7 ? 10 : K.t7 ? 6 : Math.max(0, t - 1)) + Math.max(0, Math.min(2, it.up | 0)); };
 // le héros a pu changer d'équipement depuis la dernière sauvegarde : on prend le meilleur objet de chaque emplacement parmi ce qu'il portait ou avait dans son sac
 const presEquip = ch => { const best = {}; for (const it of [...(ch.equip || []), ...(ch.inv || [])]) if (it && ['arme', 'capa', 'armure', 'anneau'].includes(it.slot)) best[it.slot] = Math.max(best[it.slot] || 0, presObjet(it)); return Object.values(best).reduce((a, v) => a + v, 0); };
+// niveau maximum d'une classe : le sien (caps), ou l'ancien niveau maximum du compte s'il est plus haut
+const maitriseXP = () => { let x = 0; for (let l = 1; l < 25; l++) x += R.need(l); return x * 10; };
+const capDe = (sv, cls) => Math.max(20, Math.min(25, Math.max(sv.capLvl | 0 || 20, (sv.caps && typeof sv.caps === 'object' && sv.caps[cls]) | 0 || 20)));
 const prestigeGain = ch => { const spT = Object.values(ch.sp || {}).reduce((a, v) => a + (v | 0), 0); return Math.round(((ch.lvl | 0) + Math.floor((ch.kills | 0) / 25) + 2 * spT + 3 * (ch.bosses | 0) + 2 * (ch.gp | 0)) * (1 + presEquip(ch) / 100)); };
 
 // objet valide ? (comparé à ce que le jeu fabrique pour le même type et le même tier)
@@ -143,7 +146,7 @@ function verifier(ancien, nouveau, ctx) {
   for (const [cls, ch] of Object.entries(nouveau.chars)) {
     if (!R.CLASSES[cls]) { pb.push('classe inconnue'); continue; }
     if (!ch || typeof ch !== 'object') { pb.push('héros illisible'); continue; }
-    const cap = Math.max(20, Math.min(25, nouveau.capLvl | 0 || 20));
+    const cap = capDe(nouveau, cls);
     if (!estEntier(ch.lvl, 1, cap)) pb.push('niveau impossible (' + ch.lvl + ')');
     if (!Array.isArray(ch.equip) || ch.equip.length !== 4) pb.push('équipement illisible');
     if (!Array.isArray(ch.inv) || ![8, 16, 24].includes(ch.inv.length)) pb.push('sac illisible');
@@ -157,8 +160,12 @@ function verifier(ancien, nouveau, ctx) {
   if (nouveau.colis != null) { if (!Array.isArray(nouveau.colis) || nouveau.colis.length > 200) pb.push('coffre de livraison illisible'); else for (const it of nouveau.colis) { const e = ctrl(it); if (e) pb.push(e); } }
   for (const k of ['gold', 'cursite', 'prestige']) if (!estNombre(nouveau[k] ?? 0, 0, 1e9)) pb.push(k + ' impossible');
   if (nouveau.capLvl != null && !estEntier(nouveau.capLvl, 20, 25)) pb.push('niveau maximum impossible');
+  // niveau maximum par classe (save.caps) : l'ancien niveau maximum du compte (capLvl) reste acquis mais ne peut plus monter
+  if ((nouveau.capLvl | 0 || 20) > (ancien.capLvl | 0 || 20)) pb.push('niveau maximum du compte modifié');
+  if (nouveau.caps != null) { if (typeof nouveau.caps !== 'object' || Array.isArray(nouveau.caps)) pb.push('niveaux maximum illisibles'); else for (const k of Object.keys(nouveau.caps)) if (!R.CLASSES[k] || !estEntier(nouveau.caps[k], 20, 25)) pb.push('niveau maximum de classe impossible'); }
   for (const p of (nouveau.pets || [])) if (!p || !R.PET_KEYS.includes(p.k) || !estEntier(p.t | 0, 0, 3)) pb.push('familier impossible');
   if ((nouveau.titles || []).includes('admin')) pb.push('titre admin');
+  for (const t of (nouveau.titles || [])) if (typeof t === 'string' && t.startsWith('m_') && !(ancien.titles || []).includes(t)) { const c = nouveau.chars[t.slice(2)]; if (!c || (+c.mxp || 0) < maitriseXP() - 0.5 || (c.lvl | 0) < 25) pb.push('titre de maîtrise injustifié'); }
   if (pb.length) return { ok: false, raisons: [...new Set(pb)].slice(0, 6) };
 
   // une sauvegarde sans aucun héros ne remplace jamais des héros existants
@@ -208,7 +215,7 @@ function verifier(ancien, nouveau, ctx) {
   for (const [cls, ch0] of Object.entries(ancien.chars)) { const ch1 = nouveau.chars[cls]; if (!ch1 || ((ch1.lvl | 0) === 1 && (ch1.kills | 0) < (ch0.kills | 0))) presOk += prestigeGain(ch0); }
   // niveaux max achetés au Gardien du Prestige
   let presDepense = 0;
-  for (let l = (ancien.capLvl | 0 || 20) + 1; l <= (nouveau.capLvl | 0 || 20); l++) presDepense += R.CAP_COST[l] || 99999;
+  for (const cls of Object.keys(R.CLASSES)) for (let l = capDe(ancien, cls) + 1; l <= capDe(nouveau, cls); l++) presDepense += R.CAP_COST[l] || 99999;
   if (d('prestige') > presOk - presDepense + 0.5) pb.push(presDepense > 0 ? 'niveau maximum non payé' : 'prestige injustifié (+' + Math.round(d('prestige')) + ')');
 
   // --- Cursite : jamais créée par le joueur ---
@@ -283,6 +290,9 @@ function verifier(ancien, nouveau, ctx) {
     if ((ch1.lvl | 0) > (ch0.lvl | 0)) gainNiv += ch1.lvl - ch0.lvl;
     gainKills += Math.max(0, (ch1.kills | 0) - (ch0.kills | 0)); gainBoss += Math.max(0, (ch1.bosses | 0) - (ch0.bosses | 0)); gainGloire += Math.max(0, (ch1.gp | 0) - (ch0.gp | 0));
     gainXP += Math.max(0, xpTot(ch1) - xpTot(ch0));
+    { const m0 = Math.max(0, +ch0.mxp || 0), m1 = +ch1.mxp || 0, gl = c => Math.max(0, +c.gxp || 0) + (c.gp | 0) * R.GLORY_XP;
+      if (!(m1 >= 0) || m1 > maitriseXP() + 0.5) pb.push('maîtrise impossible (' + cls + ')');
+      else if (m1 > m0 + 0.5) { if ((ch1.lvl | 0) < 25) pb.push('maîtrise avant le niveau 25 (' + cls + ')'); else if (m1 - m0 > gl(ch1) - gl(ch0) + 1) pb.push('maîtrise gagnée trop vite (' + cls + ')'); } }
   }
   // compteurs du classement (prestige total gagné, monstres tués) : ils ne montent pas plus vite que ce qui les nourrit
   { const s0 = ancien.stats || {}, s1 = nouveau.stats || {};

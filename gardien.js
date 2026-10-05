@@ -84,7 +84,7 @@ function demarrer({ port, cle, salle = 'principal', log = console.log, cible = '
     ResizeObserver: function () { return { observe() {}, disconnect() {}, unobserve() {} }; }, MutationObserver: function () { return { observe() {}, disconnect() {} }; }, IntersectionObserver: function () { return { observe() {}, disconnect() {} }; },
     ImageData: function (d, w, h) { this.data = d; this.width = w; this.height = h; }, Event: function () {}, KeyboardEvent: function () {}, MouseEvent: function () {}, CustomEvent: function () {}, HTMLElement: function () {}, HTMLCanvasElement: function () {}, Path2D: function () { return noop; }, DOMMatrix: function () { return noop; },
     speechSynthesis: undefined, history: { replaceState() {}, pushState() {} }, getSelection: () => ({ removeAllRanges() {} }),
-    GARDIEN_MODE: !bot, BOT_MODE: !!bot,
+    GARDIEN_MODE: !bot, BOT_MODE: !!bot, MAUDIT_T: +process.env.MAUDIT_PERIODE || 0, // monstre maudit : 600 s par défaut, réglable pour les essais
   };
   ctx.window = ctx; ctx.self = ctx; ctx.globalThis = ctx;
   vm.createContext(ctx);
