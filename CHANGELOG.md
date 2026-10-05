@@ -1,5 +1,12 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.70 (index.html seulement ; server.js inchangé depuis la 0.0.69 ; wiki.html régénéré)
+- **Vitesse d'attaque et vitesse de déplacement : fin des plafonds durs.** Jusqu'à 70 (attaque) et 60 (déplacement), rien ne change. Au-delà, chaque point compte maintenant pour un tiers au lieu de ne plus compter du tout : s'optimiser continue de payer, sans rendre une classe démesurée. La fiche de statistiques affiche le total et son effet réel.
+- **Sort du Rocher** (Mage) : l'écran ne tremble plus sans fin, et la longue recharge reste attachée à cette relique — changer de capacité ne la transporte plus, y revenir ne la remet pas à zéro. Même règle pour toutes les Reliques de la Tour.
+- **Nouveaux états affichés**, avec leur icône : Épines (Heaume aux Épines), Fureur (Miroir de Fureur et Voile du Carnage), Hâte (Pacte de Hâte). On voit enfin combien de temps l'effet dure.
+- **Baguette de l'Étoile Filante** (Prêtre) : les monstres touchés sont affaiblis 4 secondes — leurs tirs font 10 % de dégâts en moins (nouvel état « Affaibli »).
+- **Pacte de Hâte** (Démoniste) : le démon a sa propre apparence, coûte 250 de mana et reste 14 secondes.
+
 ## ver.0.0.69 (index.html, server.js, butin.js, gardien.js ; wiki.html régénéré)
 - **Serveurs de 100 joueurs** : chacun des trois serveurs (Roi Bouffon, Léviathan, Dévoreur d'Étoiles) accueille maintenant 100 joueurs au lieu de 16. La fontaine du Village affiche le nombre de joueurs sur 100.
 - Pour tenir cette foule, le serveur n'envoie plus à chacun que ce qui l'entoure : les joueurs proches en temps réel, les joueurs éloignés ou ailleurs une fois par seconde, et seulement les monstres qui sont autour de soi.
