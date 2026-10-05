@@ -9,12 +9,12 @@ const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
 
 const PORT = process.env.PORT || 3000;
-const MAX_JOUEURS_PAR_SALLE = 16;
+const MAX_JOUEURS_PAR_SALLE = +process.env.MAX_JOUEURS_PAR_SALLE || 100;
 const MAX_MEMBRES_GUILDE = 3; // compétition de raid à 3 (les guildes déjà plus grandes gardent leurs membres mais ne recrutent plus)
 // Les serveurs proposés par le Passeur des mondes (PNJ du Village) : une salle chacun, sur la même machine
 const SERVEURS = [['principal', 'Roi Bouffon'], ['leviathan', 'Léviathan'], ['devoreur', "Dévoreur d'Étoiles"]];
 const SERVEURS_IDS = new Set(SERVEURS.map(s => s[0]));
-const MAX_OCTETS_ETAT = 8192;
+const MAX_OCTETS_ETAT = 8192, MAX_OCTETS_GARDIEN = 200000; // le Gardien décrit tous les monstres proches de tous les joueurs : le serveur n'en relaie à chacun que sa part
 
 const INDEX = fs.readFileSync(path.join(__dirname, 'public', 'index.html'));
 let MENTIONS = Buffer.from('<meta charset="utf-8"><p>Conditions indisponibles.</p>'); try { MENTIONS = fs.readFileSync(path.join(__dirname, 'public', 'mentions.html')); } catch (e) { console.error('[mentions] fichier public/mentions.html absent'); }
@@ -30,18 +30,27 @@ try { scores = JSON.parse(fs.readFileSync(FICHIER_SCORES, 'utf8')) || {}; } catc
 let scoresModifies = false;
 const entier = (v, max) => Math.max(0, Math.min(max, Math.floor(Number(v) || 0)));
 const CLASSES_OK = ['guerrier', 'mage', 'archer', 'pretre', 'trickster', 'assassin', 'bouclier', 'invocateur'];
-function enregistrerScore(m) {
+// Le classement n'accepte que les joueurs connectés à leur compte, une ligne par compte, et jamais plus que ce que dit la sauvegarde validée par l'arbitre.
+const ligneScore = new Map(); // id de compte -> ligne du classement
+function bornesScore(save) { const st = (save && save.stats) || {}, niv = {}; for (const [c, ch] of Object.entries((save && save.chars) || {})) niv[c] = (ch && ch.lvl) | 0; return { gold: +((save && save.gold) || 0), pres: +(st.presTot || 0), kills: +(st.kills || 0), niv }; }
+function enregistrerScore(moi, m) {
+  if (!moi.compte) return false;
   const id = String(m.id || '').replace(/[^a-z0-9]/gi, '').slice(0, 24);
-  if (id.length < 8) return;
+  if (id.length < 8) return false;
+  if (scores[id] && scores[id].cp != null && scores[id].cp !== moi.compte.id) return false; // la ligne d'un autre compte
+  const B = (moi.cpt && moi.cpt.bornes) || null; if (!B) return false;
+  { const avant = ligneScore.get(moi.compte.id); if (avant && avant !== id) delete scores[avant]; ligneScore.set(moi.compte.id, id); }
+  m = Object.assign({}, m, { gold: Math.min(+m.gold || 0, B.gold), pres: Math.min(+m.pres || 0, B.pres), kills: Math.min(+m.kills || 0, B.kills), l: Math.min(+m.l || 1, B.niv[m.c] || 1) });
   const nom = filtrer(String(m.n || 'Joueur').replace(/[\u0000-\u001f\u007f]/g, '')).slice(0, 16) || 'Joueur';
   scores[id] = {
     n: nom, c: CLASSES_OK.includes(m.c) ? m.c : 'guerrier', l: entier(m.l, 25),
     gold: entier(m.gold, 1e9), pres: entier(m.pres, 1e9), kills: entier(m.kills, 1e9),
     shots: entier(m.shots, 1e10), hits: Math.min(entier(m.hits, 1e10), entier(m.shots, 1e10)),
-    t: Date.now()
+    t: Date.now(), cp: moi.compte.id
   };
-  scoresModifies = true;
+  scoresModifies = true; return true;
 }
+for (const [id, e] of Object.entries(scores)) if (e && e.cp != null) ligneScore.set(e.cp, id);
 function top(demandeur, demandeurCompte) {
   const liste = Object.entries(scores);
   const ligne = (id, s, v) => ({ n: s.n, c: s.c, l: s.l, v, moi: id === demandeur });
@@ -116,6 +125,7 @@ try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch {}
 const { DatabaseSync } = require('node:sqlite');
 const db = new DatabaseSync(path.join(DATA_DIR, 'jeu.db'));
 db.exec(`PRAGMA journal_mode=WAL;
+PRAGMA synchronous=NORMAL;
 CREATE TABLE IF NOT EXISTS comptes (id INTEGER PRIMARY KEY AUTOINCREMENT, nom TEXT NOT NULL UNIQUE COLLATE NOCASE, sel TEXT NOT NULL, hash TEXT NOT NULL, cree INTEGER NOT NULL, vu INTEGER, save TEXT, maj INTEGER);
 CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, compte INTEGER NOT NULL, cree INTEGER NOT NULL);`);
 const cleAlpha = n => String(n == null ? '' : n).toLowerCase().replace(/\s+/g, ''); // sans majuscules ni espaces : « Laturne 19 » = « laturne19 »
@@ -152,7 +162,7 @@ function retirerObjets(save, sig, n) {
   const zones = []; for (const ch of Object.values(save.chars || {})) zones.push(ch.inv || []); for (const c of ((save.vault && save.vault.c) || [])) zones.push(c || []); if (Array.isArray(save.colis)) zones.push(save.colis); for (const ch of Object.values(save.chars || {})) zones.push(ch.equip || []);
   for (const z of zones) for (let i = 0; i < z.length && n > 0; i++) if (z[i] && butin.signature(z[i]) === sig) { z[i] = null; n--; }
 }
-const hacher = (mdp, sel) => crypto.scryptSync(String(mdp), sel, 64).toString('hex');
+const hacher = (mdp, sel, suite) => crypto.scrypt(String(mdp), sel, 64, (err, buf) => suite(err ? null : buf.toString('hex')));
 const essais = new Map(); // anti force brute : 8 essais par minute et par IP
 function tropDEssais(ip) { const t = Date.now(), e = (essais.get(ip) || []).filter(x => t - x < 60000); e.push(t); essais.set(ip, e); return e.length > 8; }
 setInterval(() => { try { sql.sessVieilles.run(Date.now() - 60 * 86400000); } catch {} essais.clear(); }, 3600000);
@@ -167,7 +177,7 @@ function connecter(moi, c, ws) {
   let save = null; try { save = c.save ? JSON.parse(c.save) : null; } catch { save = null; }
   let cgu = null; try { const r = sql.cguDernier.get(c.id); cgu = r ? r.version : null; } catch {}
   envoyer(ws, { t: 'authres', ok: true, token, nom: c.nom, id: c.id, admin: moi.compte.admin, save, cgu });
-  if (save) { envoyerCapGardien(moi, save); moi.cpt.boost = +save.boostXP || 0; }
+  if (save) { envoyerCapGardien(moi, save); moi.cpt.boost = +save.boostXP || 0; moi.cpt.maudits = mauditsDe(save); moi.cpt.bornes = bornesScore(save); }
   if (concoursVisible()) envoyer(ws, etatConcours());
   envoyer(ws, etatObjectif()); tournoiCloture(); envoyer(ws, etatTournoi(moi)); envoyer(ws, etatGuerre()); if (ALPHAS.has(cleAlpha(c.nom))) envoyer(ws, { t: 'titres', l: ['alpha'] }); try { envoyer(ws, etatDiscord(moi)); } catch {}
   console.log(`[compte] ${c.nom} connecté${moi.compte.admin ? ' (admin)' : ''}`);
@@ -183,20 +193,28 @@ function actionCompte(moi, ws, m) {
   if (m.a === 'register') {
     if (filtrer(nom) !== nom) { non('Ce nom n\'est pas autorisé'); return; }
     if (sql.parNom.get(nom)) { non('Ce nom de compte est déjà pris'); return; }
-    const sel = crypto.randomBytes(16).toString('hex'); sql.creer.run(nom, sel, hacher(mdp, sel), Date.now());
-    console.log(`[compte] création ${nom}`); connecter(moi, sql.parNom.get(nom), ws); moi.nouveau = true; return;
+    const sel = crypto.randomBytes(16).toString('hex');
+    hacher(mdp, sel, h => { if (!h || ws.readyState !== 1) return; if (sql.parNom.get(nom)) { non('Ce nom de compte est déjà pris'); return; }
+      sql.creer.run(nom, sel, h, Date.now()); console.log(`[compte] création ${nom}`); connecter(moi, sql.parNom.get(nom), ws); moi.nouveau = true; });
+    return;
   }
   if (m.a === 'login') {
     const c = sql.parNom.get(nom);
-    if (!c || !crypto.timingSafeEqual(Buffer.from(hacher(mdp, c.sel), 'hex'), Buffer.from(c.hash, 'hex'))) { non('Nom ou mot de passe incorrect'); return; }
-    connecter(moi, c, ws); return;
+    hacher(mdp, c ? c.sel : '00', h => { if (ws.readyState !== 1) return; // même temps de calcul que le compte existe ou non
+      if (!c || !h || !crypto.timingSafeEqual(Buffer.from(h, 'hex'), Buffer.from(c.hash, 'hex'))) { non('Nom ou mot de passe incorrect'); return; }
+      connecter(moi, sql.parId.get(c.id) || c, ws); });
+    return;
   }
   non('Action inconnue');
 }
+// héros maudits d'une sauvegarde (mode maudit : mort définitive contre de meilleures chances de butin)
+const mauditsDe = s => { try { return Object.keys((s && s.chars) || {}).filter(c => s.chars[c] && s.chars[c].maudit); } catch { return []; } };
 function sauverCompte(moi, m) {
   if (!moi.compte || !m.data || typeof m.data !== 'object' || Array.isArray(m.data)) return;
   const txt = JSON.stringify(m.data); if (txt.length > 1500000) return;
   const row = sql.parId.get(moi.compte.id); let ancien = null; try { ancien = row && row.save ? JSON.parse(row.save) : null; } catch { ancien = null; }
+  // compte neuf : la première sauvegarde est contrôlée comme les autres, en partant de zéro (aucun or, aucune Cursite, aucun objet qui ne vienne du kit de départ ou du serveur)
+  if (!ancien || !ancien.chars) ancien = { current: null, chars: {}, gold: 0, cursite: 0, prestige: 0, stats: {}, premiere: 1 };
   // les admins ne sont pas contrôlés (outils de test)
   const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)); moi.dons = cpt.dons; moi.seaux = cpt.seaux;
   if (!moi.compte.admin) {
@@ -222,7 +240,7 @@ function sauverCompte(moi, m) {
     if (cpt.achats) cpt.achats = cpt.achats.filter(a => !a.vu); if (cpt.frais) cpt.frais = cpt.frais.filter(f => !f.vu && Date.now() - f.t < 600000);                // achats de l'hôtel des ventes payés
   } else { Object.assign(cpt.dons, DONS0()); cpt.aPerdre = []; }
   arbitre.apprendre(m.data);
-  cpt.boost = +m.data.boostXP || 0;
+  cpt.boost = +m.data.boostXP || 0; cpt.maudits = mauditsDe(m.data); cpt.bornes = bornesScore(m.data);
   sql.save.run(txt, Date.now(), moi.compte.id);
   envoyerCapGardien(moi, m.data); parrPaliers(moi, m.data);
 }
@@ -239,10 +257,24 @@ function conclureEchange(A, B) {
     for (const [sig, n] of parSig) { const e = { sig, max: butin.compterSig(sx, sig) - n, t: Date.now() }; XC.aPerdre.push(e); notes.push({ XC, e }); }
   }
   // si l'échange est annulé juste après (sac plein…), on efface ce qui a été noté
-  const annuler = () => { for (const n of notes) { if (n.e) n.XC.aPerdre = n.XC.aPerdre.filter(x => x !== n.e); else { const L = n.YC.dons.liste[n.sig]; if (L && L.length) L.pop(); } } };
+  // Si un des deux a déjà enregistré ce qu'il a reçu, il est trop tard : l'échange est définitif (sinon l'objet existerait en double).
+  const annuler = () => {
+    const attendus = new Map(); for (const n of notes) if (!n.e) { const k = n.YC; if (!attendus.has(k)) attendus.set(k, new Map()); const M = attendus.get(k); M.set(n.sig, (M.get(n.sig) || 0) + 1); }
+    for (const [YC, M] of attendus) for (const [sig, nb] of M) if (((YC.dons.liste[sig] || []).length) < nb) return false;
+    for (const n of notes) if (n.e && !n.XC.aPerdre.includes(n.e)) return false;
+    for (const n of notes) { if (n.e) n.XC.aPerdre = n.XC.aPerdre.filter(x => x !== n.e); else { const L = n.YC.dons.liste[n.sig]; if (L && L.length) L.pop(); } }
+    return true; };
   A.dernierEchange = B.dernierEchange = { t: Date.now(), annuler };
   A.offre = B.offre = A.trOk = B.trOk = null;
 }
+// Bots de compagnie : tous présents quand le serveur est calme, la moitié à partir de 10 vrais joueurs connectés, aucun à partir de 20.
+// Ils reviennent quand le monde repart (en dessous de 8, puis de 18, pour ne pas clignoter autour du seuil).
+let partBots = 1;
+function vraisJoueurs() { let n = 0; for (const s of salles.values()) for (const j of s.values()) if (!j.gardien && !j.bot) n++; return n; }
+setInterval(() => { const n = vraisJoueurs(); let p;
+  if (n >= 20) p = 0; else if (n >= 18) p = partBots === 0 ? 0 : 0.5; else if (n >= 10) p = 0.5; else if (n >= 8) p = partBots === 1 ? 1 : 0.5; else p = 1;
+  partBots = p; try { gardienProc && gardienProc.send({ t: 'bots', part: p, joueurs: n }); } catch {}
+}, 10000).unref();
 function trouverJoueur(peer) { for (const s of salles.values()) { const j = s.get(peer); if (j) return j; } return null; }
 
 // ---- Modération : bannissements et sourdines par adresse IP, gardés dans moderation.json ----
@@ -400,22 +432,84 @@ function actionGuilde(moi, salle, m) {
     if (!raidEv || raidEv.actif || !raidEv.res) { rep({ a: 'err', msg: 'Pas de récompense de raid pour le moment' }); return; }
     const i = raidEv.res.findIndex(r => r.gid === gid), x = raidEv.g[gid];
     if (i < 0 || !x || !x.c[pid]) { rep({ a: 'err', msg: 'Tu n\'as pas participé au dernier raid' }); return; }
-    if (raidEv.recu[pid]) { rep({ a: 'err', msg: 'Récompense déjà récupérée' }); return; }
-    raidEv.recu[pid] = true; sauverRaid(); { const G = gainRang(i + 1); if (moi.dons) { moi.dons.or += G.or; moi.dons.cursite += G.cu; moi.dons.objets += G.oeufs + G.cro; } } rep({ a: 'reward', rang: i + 1, gain: gainRang(i + 1) }); diffuserGuilde(gid, true); return;
+    if (!moi.compte) { rep({ a: 'err', msg: 'Connecte-toi à ton compte pour récupérer la récompense' }); return; }
+    raidEv.recuC = raidEv.recuC || {};
+    if (raidEv.recu[pid] || raidEv.recuC[moi.compte.id]) { rep({ a: 'err', msg: 'Récompense déjà récupérée' }); return; }
+    raidEv.recu[pid] = true; raidEv.recuC[moi.compte.id] = true; sauverRaid(); { const G = gainRang(i + 1); if (moi.dons) { moi.dons.or += G.or; moi.dons.cursite += G.cu; moi.dons.objets += G.oeufs + G.cro; } } rep({ a: 'reward', rang: i + 1, gain: gainRang(i + 1) }); diffuserGuilde(gid, true); return;
   }
 }
 
-function envoyer(ws, msg) {
-  if (ws.readyState === 1) ws.send(JSON.stringify(msg));
+const MAX_CONNEXIONS_PAR_IP = +process.env.MAX_CONNEXIONS_PAR_IP || 12, parIp = new Map(); // une famille ou une salle de classe passe, pas un robot qui ouvre mille connexions
+// Relais groupé : un envoi par joueur toutes les 50 ms au lieu d'un envoi par message (c'était le premier coût du serveur).
+// ws.lot : file d'attente du joueur (tableau de textes JSON) ; cle : pour la position d'un autre joueur, seul le dernier état compte.
+const LOT_MS = +process.env.LOT_MS || 50, enLot = new Set();
+function pousser(ws, txt, cle) {
+  if (ws.readyState !== 1) return;
+  if (!ws.lot) { ws.send(txt); return; }
+  if (cle) { const i = ws.lotCles.get(cle); if (i != null) { ws.lot[i] = txt; return; } ws.lotCles.set(cle, ws.lot.length); }
+  ws.lot.push(txt); enLot.add(ws);
 }
-function diffuser(salle, msg, sauf) {
+function vider() { for (const ws of enLot) { if (ws.readyState === 1 && ws.lot.length) ws.send(ws.lot.length === 1 ? ws.lot[0] : '[' + ws.lot.join(',') + ']'); ws.lot.length = 0; ws.lotCles.clear(); } enLot.clear(); }
+function envoyer(ws, msg) {
+  pousser(ws, JSON.stringify(msg));
+}
+/* ---------- Relais des positions, pour des salles de 100 joueurs ----------
+   Chaque joueur ne reçoit au rythme du jeu que ce qui l'entoure :
+   · même scène, tout près (ou donjon, arène… : toute la scène) : à chaque passe (50 ms) ;
+   · Village : 10 fois par seconde tout près, 2 fois par seconde plus loin ;
+   · Plaines, au-delà de 30 cases : une fois par seconde (le point sur la carte) ;
+   · autre scène : une fois par seconde, sans les données de l'hôte (liste des joueurs, chat).
+   L'hôte d'une scène (le Gardien, ou le joueur qui fait vivre les monstres) est toujours relayé à plein rythme, et sa liste de monstres est
+   réduite pour chacun à ce qui se trouve à 36 cases de lui. Le chat et les événements partent tout de suite pour tout le monde. */
+const PRES_DE = 300, LOIN = 360; // en dixièmes de case : « tout près » dans les Plaines, et portée de la liste de monstres
+const CLES_HOTE = ['M', 'D', 'G', 'X', 'h', 'pz'];
+function etatLeger(e) { if (!e || (e.M == null && e.D == null && e.h == null && e.G == null && e.X == null && e.pz == null)) return e; const o = Object.assign({}, e); for (const k of CLES_HOTE) delete o[k]; return o; }
+function intervalleRelais(j, p) {
+  const sj = j.etat.s, sp = p.etat.s;
+  if (sj !== sp) return j.gardien ? -1 : 1000; // une copie du Gardien n'a que faire des joueurs des autres scènes
+  if (j.gardien || p.gardien || typeof p.etat.M === 'string' || typeof j.etat.M === 'string') return 0;
+  if (sj === 'r' || sj === 'n') { const d = Math.hypot(j.etat.x - p.etat.x, j.etat.y - p.etat.y); if (sj === 'n') return d <= 160 ? 100 : 500; return d <= PRES_DE ? 0 : 1000; }
+  return 0;
+}
+const decoupe = (txt) => txt.split(';').map(t => { const f = t.split(','); return { t, x: +f[2], y: +f[3] }; });
+function texteRelais(p, j) {
+  const e = p.etat;
+  if (e.s !== j.etat.s) return p.txtLeger || (p.txtLeger = JSON.stringify({ t: 'p', peer: p.peer, presence: etatLeger(e) }));
+  const gros = !j.gardien && typeof e.M === 'string' && e.M.length > 1200 && typeof j.etat.x === 'number' && typeof j.etat.y === 'number';
+  if (!gros) return p.txtP || (p.txtP = JSON.stringify({ t: 'p', peer: p.peer, presence: e }));
+  // liste de monstres (et de morts récentes) de l'hôte : seulement ce qui est autour du destinataire
+  const x = j.etat.x, y = j.etat.y, pres = L => { let s = ''; for (const m of L) if (Math.abs(m.x - x) <= LOIN && Math.abs(m.y - y) <= LOIN) s += (s ? ';' : '') + m.t; return s; };
+  const o = Object.assign({}, e); o.M = pres(p.monP || (p.monP = decoupe(e.M)));
+  if (typeof e.D === 'string' && e.D.length > 300) o.D = pres(p.mortsP || (p.mortsP = decoupe(e.D)));
+  return JSON.stringify({ t: 'p', peer: p.peer, presence: o });
+}
+function relayer() {
+  const now = Date.now();
+  for (const salle of salles.values()) {
+    if (salle.size < 2) continue;
+    const L = [...salle.values()];
+    for (const j of L) {
+      if (j.ws.readyState !== 1) continue; const vu = j.vuP || (j.vuP = new Map());
+      for (const p of L) {
+        if (p === j || !p.majP) continue;
+        const d = vu.get(p.peer) || 0; if (p.majP <= d) continue;
+        { const itv = intervalleRelais(j, p); if (itv < 0) { if (d) continue; } else if (!(p.urgP > d) && itv && now - d < itv) continue; } // -1 : une seule fois (le Gardien sait que le joueur existe, puis l'oublie)
+        vu.set(p.peer, now); pousser(j.ws, texteRelais(p, j), 'p' + p.peer);
+      }
+    }
+  }
+}
+setInterval(() => { try { relayer(); } catch (e) { console.error('[relais]', e.message); } vider(); }, LOT_MS);
+function diffuser(salle, msg, sauf, cle) {
   const txt = JSON.stringify(msg);
-  for (const j of salle.values()) if (j !== sauf && j.ws.readyState === 1) j.ws.send(txt);
+  for (const j of salle.values()) if (j !== sauf) pousser(j.ws, txt, cle);
 }
 
 wss.on('connection', (ws, req) => {
   const ip = ipDe(req);
   if (modo.bans[ip]) { ws.close(4003, 'Banni'); return; }
+  const local = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+  if (!local) { const nb = (parIp.get(ip) || 0) + 1; if (nb > MAX_CONNEXIONS_PAR_IP) { ws.close(4005, 'Trop de connexions'); return; } parIp.set(ip, nb); ws.once('close', () => { const v = (parIp.get(ip) || 1) - 1; if (v > 0) parIp.set(ip, v); else parIp.delete(ip); }); }
   const params = new URL(req.url, 'http://local').searchParams;
   const nom = (params.get('salle') || 'principal').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 32) || 'principal';
   let salle = salles.get(nom);
@@ -425,6 +519,8 @@ wss.on('connection', (ws, req) => {
   if (!estGardien && !estBot && [...salle.values()].filter(j => !j.gardien && !j.bot).length >= MAX_JOUEURS_PAR_SALLE) { ws.close(4001, 'Salle pleine'); return; }
 
   const peer = crypto.randomBytes(6).toString('hex');
+  if (params.get('lot') === '1') { ws.lot = []; ws.lotCles = new Map(); }
+  if (ws.lot) { const fermer = ws.close.bind(ws); ws.close = (...x) => { try { if (ws.lot.length && ws.readyState === 1) ws.send('[' + ws.lot.join(',') + ']'); ws.lot.length = 0; ws.lotCles.clear(); } catch {} fermer(...x); }; } // rien ne reste en attente quand on ferme
   const moi = { ws, peer, ip, etat: {}, vivant: true, msgs: 0, gardien: estGardien, bot: estBot };
   moi.salleNom = nom;
   if (estGardien) console.log(`[gardien] connecté à la salle ${nom}`);
@@ -434,7 +530,7 @@ wss.on('connection', (ws, req) => {
 
   envoyer(ws, {
     t: 'hello', peer, salle: nom, seed: REALM_SEED,
-    peers: [...salle.values()].filter(j => j !== moi).map(j => ({ peer: j.peer, presence: j.etat }))
+    peers: [...salle.values()].filter(j => j !== moi).map(j => ({ peer: j.peer, presence: etatLeger(j.etat) }))
   });
   diffuser(salle, { t: 'join', peer }, moi);
 
@@ -444,10 +540,10 @@ wss.on('connection', (ws, req) => {
     try { m = JSON.parse(data); } catch { return; }
     if (m && m.t === 'auth') { actionCompte(moi, ws, m); return; }
     if (m && m.t === 'save') { sauverCompte(moi, m); return; }
-    if (m && m.t === 'score') { enregistrerScore(m); moi.idJoueur = String(m.id || ''); return; }
+    if (m && m.t === 'score') { if (enregistrerScore(moi, m)) moi.idJoueur = String(m.id || ''); return; }
     if (m && m.t === 'top') { envoyer(ws, top(moi.idJoueur || String(m.id || ''), moi.compte && moi.compte.id)); return; }
     if (m && m.t === 'g') { actionGuilde(moi, salle, m); return; }
-    if (m && m.t === 'serveurs') { envoyer(ws, { t: 'serveurs', ici: nom, l: SERVEURS.map(([id, n]) => ({ id, n, j: salles.get(id) ? [...salles.get(id).values()].filter(j => !j.gardien).length : 0 })) }); return; }
+    if (m && m.t === 'serveurs') { envoyer(ws, { t: 'serveurs', ici: nom, max: MAX_JOUEURS_PAR_SALLE, l: SERVEURS.map(([id, n]) => ({ id, n, j: salles.get(id) ? [...salles.get(id).values()].filter(j => !j.gardien).length : 0 })) }); return; }
     if (m && m.t === 'cle') { utiliserCle(moi, nom); return; }
     if (m && m.t === 'peche') { pecher(moi, nom, m); return; }
     if (m && (m.t === 'dessin' || m.t === 'px')) { dessiner(moi, m); return; }
@@ -588,21 +684,23 @@ wss.on('connection', (ws, req) => {
       if (k === 'ti' && v === 'alpha' && !(moi.compte && ALPHAS.has(cleAlpha(moi.compte.nom)))) v = null; // titre réservé aux premiers testeurs
       if (k === 'ti' && v === 'roipeche' && !(moi.compte && roiPeche() && roiPeche().compte === moi.compte.nom)) v = null; // titre du vainqueur du tournoi de pêche
       if (k === 'm' && typeof v === 'string') { if (modo.mutes[moi.ip]) { if (!moi.averti) { moi.averti = true; envoyer(ws, { t: 'dev', cmd: 'mute', arg: 0 }); } continue; } v = filtrer(v).slice(0, 140); }
-      if (k === 'n' && typeof v === 'string') v = filtrer(v).slice(0, 16);
+      if (k === 'n' && typeof v === 'string') { if (v === moi.nBrut) v = moi.nFiltre; else { moi.nBrut = v; v = moi.nFiltre = filtrer(v).slice(0, 16); } } // le filtre ne tourne que si le pseudo change
       if (v === null) delete moi.etat[k]; else moi.etat[k] = v;
     }
     if (!modo.mutes[moi.ip]) moi.averti = false;
-    if (JSON.stringify(moi.etat).length > MAX_OCTETS_ETAT) moi.etat = {};
+    if ((data.length > 1500 || !(moi.msgsTot = (moi.msgsTot || 0) + 1 & 31)) && JSON.stringify(moi.etat).length > (moi.gardien ? MAX_OCTETS_GARDIEN : MAX_OCTETS_ETAT)) moi.etat = {}; // taille de l'état : vérifiée sur les gros messages, et une fois sur 32
     try { butin.observer(nom, moi, m.patch); } catch (e) { console.error('[butin] témoin', e.message); }
     if (!moi.gardien && SERVEURS_IDS.has(nom) && typeof moi.etat.s === 'string' && moi.etat.s[0] === 'd') demanderDonjon(nom, moi.etat.s);
-    diffuser(salle, { t: 'p', peer, presence: moi.etat }, moi);
+    // la position n'est plus relayée tout de suite à toute la salle : relayer() s'en charge, à un rythme qui dépend de la distance
+    moi.majP = Date.now(); moi.txtP = moi.txtLeger = moi.monP = moi.mortsP = null;
+    if (moi.etat.m !== moi.mVu || moi.etat.ev !== moi.evVu) { moi.mVu = moi.etat.m; moi.evVu = moi.etat.ev; moi.urgP = moi.majP; } // nouveau message de chat ou nouvel événement : tout de suite, pour tout le monde
   });
 
   ws.on('pong', () => { moi.vivant = true; });
   ws.on('close', () => {
     if (moi.compte && enLigne.get(moi.compte.id) === moi) enLigne.delete(moi.compte.id);
     if (gardienProc && !moi.gardien) try { gardienProc.send({ t: 'capfin', peer }); } catch {}
-    salle.delete(peer);
+    salle.delete(peer); for (const j of salle.values()) if (j.vuP) j.vuP.delete(peer);
     diffuser(salle, { t: 'leave', peer });
     console.log(`[${nom}] départ ${peer} (${salle.size} joueur(s))`);
     if (!salle.size) salles.delete(nom);
@@ -723,7 +821,7 @@ const VENGEANCE_TAUX = 1 / 250;
 function pecher(moi, salle, m) {
   if (!moi.compte || !moi.etat || moi.etat.s !== 'r') return;
   const force = !!(m && m.force) && moi.compte.admin;
-  if (!force) { if (Date.now() - (moi.pecheT || 0) < 2500) return; moi.pecheT = Date.now(); if (Math.random() >= VENGEANCE_TAUX) return; }
+  if (!force) { if (Date.now() - (moi.pecheT || 0) < 2500) return; moi.pecheT = Date.now(); { const c = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)); c.prises = (c.prises || 0) + 1; } if (Math.random() >= VENGEANCE_TAUX) return; }
   const id = 1 + crypto.randomInt(2000000000);
   ticketsCle.set(salle + '|dv' + id.toString(36), Date.now() + 2 * 3600000);
   console.log(`[pêche] ${moi.compte.nom} ouvre La Vengeance sous-marine (${salle})`);
@@ -870,7 +968,8 @@ const contenuPack = row => { try { const c = JSON.parse(row.contenu); return { i
 // envoie une livraison : l'arbitre est prévenu (Cursite et objets attendus), puis le jeu range tout dans le coffre de livraison
 function packEnvoyer(moi, row) {
   const c = contenuPack(row), cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id));
-  cpt.dons.cursite += c.cursite; cpt.dons.boosts = (cpt.dons.boosts || 0) + c.boost; for (const it of c.items) butin.noter(cpt.dons, it);
+  cpt.colisNotes = cpt.colisNotes || new Set();
+  if (!cpt.colisNotes.has(row.id)) { cpt.colisNotes.add(row.id); cpt.dons.cursite += c.cursite; cpt.dons.boosts = (cpt.dons.boosts || 0) + c.boost; for (const it of c.items) butin.noter(cpt.dons, it); }
   envoyer(moi.ws, { t: 'colis', id: row.id, items: c.items, cursite: c.cursite, boost: c.boost, motif: row.pack === 'tour' ? 'Tour des Chevaliers' : PACK.MOTIF });
 }
 function packs(moi, m) {
@@ -899,7 +998,13 @@ const TOURS = { get: db.prepare('SELECT quand FROM tours WHERE compte = ?'), set
 function tour(moi, m) {
   if (!moi.compte) return;
   if (m.a === 'entrer') {
-    let ok = !!moi.compte.admin; if (!ok) { try { const r = sql.parId.get(moi.compte.id); ok = !!(r && r.save && r.save.includes('"cle_tour"')); } catch {} }
+    let ok = !!moi.compte.admin;
+    if (!ok) { // comme la Clef du Temps : la clef doit être dans la sauvegarde connue, et le serveur exige qu'elle en disparaisse
+      let sv = null; try { const r = sql.parId.get(moi.compte.id); sv = r && r.save ? JSON.parse(r.save) : null; } catch { sv = null; }
+      const R = arbitre.regles();
+      if (sv && R && R.KINDS.cle_tour) { const sig = butin.signature(R.mkItem('cle_tour', 0)), cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)), e = cpt.aPerdre.find(x => x.sig === sig), dispo = e ? e.max : butin.compterSig(sv, sig);
+        if (dispo >= 1) { ok = true; if (e) { e.max = dispo - 1; e.t = Date.now(); } else cpt.aPerdre.push({ sig, max: dispo - 1, t: Date.now() }); } }
+    }
     if (ok) TOURS.set.run(moi.compte.id, Date.now()); else TOURS.del.run(moi.compte.id); return;
   }
   if (m.a === 'fin') { TOURS.del.run(moi.compte.id); return; }
@@ -927,8 +1032,8 @@ function tour(moi, m) {
 function colisRecu(moi, m) {
   if (!moi.compte || m.a !== 'recu') return;
   const row = PACK.un.get(m.id | 0); if (!row || row.compte !== moi.compte.id || row.etat !== 1) return;
-  if (m.deja) { // déjà reçue lors d'un envoi précédent : on retire ce qui vient d'être noté une deuxième fois
-    const c = contenuPack(row), cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id));
+  if (m.deja && !(moi.cpt && moi.cpt.colisRendus && moi.cpt.colisRendus.has(row.id))) { // déjà reçue lors d'un envoi précédent : on retire (une seule fois) ce qui vient d'être noté une deuxième fois
+    const c = contenuPack(row), cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)); (cpt.colisRendus = cpt.colisRendus || new Set()).add(row.id);
     cpt.dons.cursite = Math.max(0, cpt.dons.cursite - c.cursite); cpt.dons.boosts = Math.max(0, (cpt.dons.boosts || 0) - c.boost);
     for (const it of c.items) { const L = cpt.dons.liste[butin.signature(it)]; if (L && L.length) L.pop(); } }
   let sv = null; try { const r = sql.parId.get(moi.compte.id); sv = r && r.save ? JSON.parse(r.save) : null; } catch {}
@@ -1086,7 +1191,9 @@ function guerreBonus(moi, key, sc) { if (sc !== 'r' || !moi.idJoueur) return 1; 
 setInterval(() => { const neuf = guerreTour(); if (guerreSale) { guerreSale = false; try { fs.writeFileSync(FICHIER_GUERRE, JSON.stringify({ heure: GUERRE.heure, n: GUERRE.n, tenant: GUERRE.tenant })); } catch (e) { console.error('[guerre]', e.message); } diffuserPartout(Object.assign(etatGuerre(), neuf ? { neuf: 1 } : {})); } }, 10000);
 
 // ---------- heure de Paris (semaine d'objectif, dimanche de pêche) ----------
-function paris() { const t = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Paris' }), [d, h] = t.split(' '), [y, m, j] = d.split('-').map(Number);
+let parisCache = null, parisT = 0; // recalculé une fois par seconde au plus (appelé à chaque monstre tué)
+function paris() { const n = Date.now(); if (parisCache && n - parisT < 1000) return parisCache; parisT = n; return parisCache = paris0(); }
+function paris0() { const t = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Paris' }), [d, h] = t.split(' '), [y, m, j] = d.split('-').map(Number);
   const jr = new Date(Date.UTC(y, m - 1, j)), js = process.env.FAUX_DIMANCHE ? 0 : jr.getUTCDay(), /* FAUX_DIMANCHE : pour les essais */ lundi = new Date(jr.getTime() - ((js + 6) % 7) * 86400000);
   return { jour: d, js, semaine: lundi.toISOString().slice(0, 10), heure: +h.slice(0, 2) }; }
 
@@ -1128,6 +1235,8 @@ function tournoiPrise(moi, m) {
   if (f.r >= 4 && Date.now() - (moi.legT || 0) > 60000) { moi.legT = Date.now(); const nomF = (INDEX.toString('utf8').match(new RegExp("\\['(?:lac|mer)','" + String(m.f).replace(/\W/g, '') + "','((?:[^'\\\\]|\\\\.)*)'")) || [])[1];
     discord.annoncer('🎣 **' + nomDiscord(moi) + '** a pêché un poisson légendaire : **' + String(nomF || 'un légendaire').replace(/\\'/g, "'") + '** de ' + w.toLocaleString('fr-FR') + ' kg !', null, 0, 'peche'); }
   if (!tournoiActif()) return;
+  // chaque poisson pris est signalé au serveur ({t:'peche'}) : pas de prise au tournoi sans pêche, et un légendaire toutes les 15 prises au plus
+  { const c = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)); if ((c.prises || 0) < 1) return; if (f.r >= 4) { if ((c.prises || 0) - (c.priseLeg || -99) < 15 || (c.prises || 0) < 15) return; c.priseLeg = c.prises; } }
   const now = Date.now(); if (now - (moi.tournoiT || 0) < 4000 || (f.r >= 3 && now - (moi.tournoiR || 0) < 45000)) return; moi.tournoiT = now; if (f.r >= 3) moi.tournoiR = now;
   const P = paris(); if (TOURNOI.jour !== P.jour) { TOURNOI.jour = P.jour; TOURNOI.best = {}; }
   const cur = TOURNOI.best[moi.compte.nom]; if (cur && cur.w >= w) return;
@@ -1177,5 +1286,5 @@ function reclamerKill(moi, m, nom, salle, essai) {
   const sc = String(m.s || ''), d = donjonsGardes.get(nom + '|' + sc);
   const G = gardienDe(salle, sc || 'r');
   if (!G && d && Date.now() - d.t < 8000 && essai < 25) { setTimeout(() => { if (moi.ws.readyState === 1) reclamerKill(moi, m, nom, salle, essai + 1); }, 400); return; }
-  butin.reclamer(moi, m, { salle: nom, membres: salle, gardien: G, sansClef: sc[0] === 'd' && !ticketOk(nom, sc) && !moi.compte.admin, boost: moi.cpt.boost || 0, onRefus: r => noterSuspect(moi, 'kill', 1, 'Monstre refusé : ' + r), dons: moi.dons, rythme: moi.cpt.rythme, envoyer, boostServeur: bonusObjectif(), guerre: guerreBonus(moi, String(m.k || ''), sc), onTue: (key, s, r) => { concoursTue(moi, key, s); objectifTue(); guerreTue(moi, key, s); bossTue(moi, key, s); reliqueTrouvee(moi, key, r); }, signaler: r => { try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(r)); } catch {} } });
+  butin.reclamer(moi, m, { salle: nom, membres: salle, gardien: G, sansClef: sc[0] === 'd' && !ticketOk(nom, sc) && !moi.compte.admin, boost: moi.cpt.boost || 0, maudit: c => (moi.cpt.maudits || []).includes(c), onRefus: r => noterSuspect(moi, 'kill', 1, 'Monstre refusé : ' + r), dons: moi.dons, rythme: moi.cpt.rythme, envoyer, boostServeur: bonusObjectif(), guerre: guerreBonus(moi, String(m.k || ''), sc), onTue: (key, s, r) => { concoursTue(moi, key, s); objectifTue(); guerreTue(moi, key, s); bossTue(moi, key, s); reliqueTrouvee(moi, key, r); }, signaler: r => { try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(r)); } catch {} } });
 }

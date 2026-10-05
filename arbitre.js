@@ -269,12 +269,21 @@ function verifier(ancien, nouveau, ctx) {
   const xpTot = ch => { let x = 0; for (let l = 1; l < (ch.lvl | 0); l++) x += R.need(l); return x + Math.max(0, +ch.xp || 0) + Math.max(0, +ch.gxp || 0) + (ch.gp | 0) * R.GLORY_XP; };
   for (const [cls, ch1] of Object.entries(nouveau.chars)) {
     let ch0 = ancien.chars[cls];
+    // mode maudit : un héros maudit ne peut pas « continuer » en perdant des niveaux
+    if (ch0 && ch0.maudit) { const zero = (ch1.lvl | 0) <= 1 && (ch1.kills | 0) === 0;
+      // le pacte peut être rompu auprès du Passeur, mais un héros maudit qui meurt repart de zéro : jamais de niveaux perdus « à la place »
+      if (!zero && (ch1.lvl | 0) < (ch0.lvl | 0)) pb.push('héros maudit : mort non définitive (' + cls + ')'); }
+    if (ch1.maudit && !(ch0 && ch0.maudit) && (ch1.lvl | 0) < 20) pb.push('malédiction avant le niveau 20 (' + cls + ')');
     // héros neuf ou mort définitive : il repart de zéro avec son équipement de départ
     if (!ch0 || ((ch1.lvl | 0) <= (ch0.lvl | 0) && (ch1.kills | 0) < (ch0.kills | 0))) { kits++; ch0 = { lvl: 1, xp: 0, gxp: 0, gp: 0, kills: 0, bosses: 0 }; }
     if ((ch1.lvl | 0) > (ch0.lvl | 0)) gainNiv += ch1.lvl - ch0.lvl;
     gainKills += Math.max(0, (ch1.kills | 0) - (ch0.kills | 0)); gainBoss += Math.max(0, (ch1.bosses | 0) - (ch0.bosses | 0)); gainGloire += Math.max(0, (ch1.gp | 0) - (ch0.gp | 0));
     gainXP += Math.max(0, xpTot(ch1) - xpTot(ch0));
   }
+  // compteurs du classement (prestige total gagné, monstres tués) : ils ne montent pas plus vite que ce qui les nourrit
+  { const s0 = ancien.stats || {}, s1 = nouveau.stats || {};
+    if ((+s1.presTot || 0) - (+s0.presTot || 0) > Math.max(0, d('prestige')) + 0.5 && (+s1.presTot || 0) > (nouveau.prestige || 0)) pb.push('prestige total gonflé');
+    if ((+s1.kills || 0) - (+s0.kills || 0) > gainKills + 0.5 && (+s1.kills || 0) > Object.values(nouveau.chars).reduce((a, c) => a + (c.kills | 0), 0)) pb.push('monstres tués gonflés (classement)'); }
   if (!etape2) { // étape 1 seulement : sans butin serveur, on limite le rythme
     if (gainNiv > sx.niveaux + 0.01) pb.push('niveaux gagnés trop vite (+' + gainNiv + ')'); else sx.niveaux -= gainNiv;
     if (gainKills > sx.monstres + 0.5) pb.push('monstres tués trop vite (+' + gainKills + ')'); else sx.monstres -= gainKills;

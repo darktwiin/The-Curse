@@ -71,7 +71,8 @@ function demarrer({ port, cle, salle = 'principal', log = console.log, cible = '
     performance: { now: () => Date.now() - debut }, devicePixelRatio: 1, innerWidth: 1280, innerHeight: 720, screen: { width: 1280, height: 720 },
     matchMedia: () => ({ matches: false, addEventListener() {}, addListener() {} }), getComputedStyle: () => new Proxy({}, { get: () => '' }),
     addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => true, alert: () => {}, confirm: () => true, prompt: () => null, open: () => null, scrollTo: () => {}, focus: () => {},
-    requestAnimationFrame: f => sT(() => f(Date.now() - debut), 33), cancelAnimationFrame: cT,
+    // 30 images par seconde ; une copie qui attend au Village (réserve) n'a rien à faire vivre : 4 images par seconde lui suffisent
+    requestAnimationFrame: f => sT(() => f(Date.now() - debut), ctx && ctx.__repos && ctx.__repos() ? 250 : 33), cancelAnimationFrame: cT,
     setTimeout: sT, clearTimeout: cT, setInterval: sI, clearInterval: cI, queueMicrotask,
     Image: function () { return element('img'); }, Audio: function () { return element('audio'); }, AudioContext: function () { return noop; }, webkitAudioContext: undefined, OffscreenCanvas: undefined,
     WebSocket: function (url) { const ws = new WebSocket(url.replace(/^ws:\/\/[^/]+/, 'ws://127.0.0.1:' + port) + (url.includes('?') ? '&' : '?') + (bot ? 'bot=' : 'gardien=') + encodeURIComponent(cle)); sockets.add(ws); ws.on('error', () => {}); return ws; },
@@ -104,6 +105,7 @@ function demarrer({ port, cle, salle = 'principal', log = console.log, cible = '
       P.hp=99999; P.god=true; admInv=true; paused=false;
     }
     window.__aller=c=>{window.__cible=c;gardienPlace();sendPresence();};
+    window.__repos=()=>scene==='nexus'&&!window.__bot;
     gardienPlace();
     setInterval(()=>{try{ gardienPlace(); P.hp=S().tot.vie; P.god=true; P.o2=15; admInv=true; paused=false; if(!deathEl.hidden){deathEl.hidden=true;} keys.clear&&keys.clear(); mouse.down=false; }catch(e){}},1000);
     // ménage régulier (le Gardien tourne des jours) : joueurs partis, monstres morts
@@ -205,15 +207,24 @@ if (require.main === module) {
   const preparer = salle => { if (reserves.has(salle)) return; setTimeout(() => { if (reserves.has(salle) || !plaines.has(salle)) return; try { reserves.set(salle, lancer('pool', salle)); } catch (e) { console.error('[gardien] réserve :', e.message); } }, 1500); };
   ouvrirSalle('principal');
   // les bots (serveur principal seulement) : BOTS=0 pour les couper, 4 par défaut
-  const NB_BOTS = Math.max(0, Math.min(12, process.env.BOTS == null ? 4 : (+process.env.BOTS || 0))), bots = [];
-  if (NB_BOTS) { const noms = NOMS_BOTS.slice().sort(() => Math.random() - 0.5).slice(0, NB_BOTS);
-    noms.forEach((nom, i) => setTimeout(() => { try { bots.push(demarrer({ port, cle, salle: 'principal', bot: { nom, noms }, log: m => console.log(m) })); } catch (e) { console.error('[bots] échec :', e.stack || e.message); } }, 6000 + i * 5000)); }
+  // Ils tiennent compagnie quand le serveur est vide : le serveur en demande la moitié à partir de 10 vrais joueurs connectés, et plus aucun à partir de 20.
+  const NB_BOTS = Math.max(0, Math.min(12, process.env.BOTS == null ? 4 : (+process.env.BOTS || 0))), bots = [], nomsBots = NOMS_BOTS.slice().sort(() => Math.random() - 0.5).slice(0, NB_BOTS);
+  let botsVoulus = NB_BOTS, botsT = null;
+  const reglerBots = () => {
+    while (bots.length > botsVoulus) { const b = bots.pop(); try { b.G.arreter(); } catch {} console.log('[bots] ' + b.nom + ' quitte le jeu (' + bots.length + ' restant(s))'); }
+    if (bots.length < botsVoulus && !botsT) botsT = setTimeout(() => { botsT = null; if (bots.length >= botsVoulus) return;
+      const nom = nomsBots.find(n => !bots.some(b => b.nom === n)); if (!nom) return;
+      try { bots.push({ nom, G: demarrer({ port, cle, salle: 'principal', bot: { nom, noms: nomsBots }, log: m => console.log(m) }) }); } catch (e) { console.error('[bots] échec :', e.stack || e.message); }
+      reglerBots(); }, bots.length ? 5000 : 6000);
+  };
+  if (NB_BOTS) reglerBots();
   const MAX_DONJONS = +process.env.GARDIEN_MAX_DONJONS || 12;
   process.on('message', m => {
     try {
       if (!m) return;
       if (m.t === 'cap') { const c = Math.max(1000, +m.cap || 25000); caps.set(String(m.peer), c); for (const G of toutes()) if (G.ctx.__gcap) G.ctx.__gcap(String(m.peer), c); }
       else if (m.t === 'capfin') caps.delete(String(m.peer));
+      else if (m.t === 'bots') { const n = Math.max(0, Math.min(NB_BOTS, Math.round(NB_BOTS * (+m.part || 0)))); if (n !== botsVoulus) { botsVoulus = n; console.log('[bots] ' + n + ' bot(s) voulu(s) sur ' + NB_BOTS + ' (' + (m.joueurs | 0) + ' joueur(s) connecté(s))'); reglerBots(); } }
       else if (m.t === 'salle') ouvrirSalle(String(m.salle || ''));
       else if (m.t === 'sallefin') {
         const salle = String(m.salle || ''); if (salle === 'principal') return;

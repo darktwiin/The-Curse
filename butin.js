@@ -33,16 +33,17 @@ function objetT7(R, cls) {
   else k = 'anneau';
   return R.KINDS[k + '7'] ? R.mkItem(k + '7', 6) : null;
 }
+const MAUDIT_POTION = 0.01, MAUDIT_POTION_BOSS = 0.05, MAUDIT_RELIQUE = 0.01; // mode maudit
 const TAUX_RESSOURCE = 0.2; // ressource de talisman sur un boss de donjon
 const DONJONS_T7 = 'ah', TAUX_T7 = 0.05; // Observatoire Céleste et Horloge Brisée : 5 % par monstre tué
-function potionsCarac(R, key, d, scene) {
+function potionsCarac(R, key, d, scene, k) { k = k || 1; // k : 2 pour un héros maudit (chances doublées)
   if (d.tuto) return [];
-  for (const t in DUN_POT) if (R.DTYPES[t] && R.DTYPES[t].bk === key) { const [st, ch] = DUN_POT[t]; return Math.random() < ch ? [st === '*' ? pick(R.SK) : st] : []; }
+  for (const t in DUN_POT) if (R.DTYPES[t] && R.DTYPES[t].bk === key) { const [st, ch] = DUN_POT[t]; return Math.random() < ch * k ? [st === '*' ? pick(R.SK) : st] : []; }
   if (key === 'chronos') { const n = ri(2, 3), o = []; for (let i = 0; i < n; i++) o.push(pick(R.SK)); return o; }
   if (d.star != null || key === 'devoreur') { const n = ri(1, 2), o = []; for (let i = 0; i < n; i++) o.push(pick(R.SK)); return o; }
-  if (key === 'dieu_fou' || key === 'colosse') return Math.random() < 0.2 ? [pick(R.SK)] : [];
+  if (key === 'dieu_fou' || key === 'colosse') return Math.random() < 0.2 * k ? [pick(R.SK)] : [];
   // avant-dernière zone 0,8 %, dernière zone 1,1 % d'une potion de caractéristique au hasard
-  if (scene === 'realm') { if (R.ZONES[5].pool.includes(key) && Math.random() < 0.008) return [pick(R.SK)]; if (R.ZONES[6].pool.includes(key) && Math.random() < 0.011) return [pick(R.SK)]; }
+  if (scene === 'realm') { if (R.ZONES[5].pool.includes(key) && Math.random() < 0.008 * k) return [pick(R.SK)]; if (R.ZONES[6].pool.includes(key) && Math.random() < 0.011 * k) return [pick(R.SK)]; }
   return [];
 }
 // œuf de familier : la chance suit la difficulté de l'endroit (monstres et boss confondus)
@@ -55,7 +56,8 @@ function tauxOeuf(R, key, sc) {
   const z = R.ZONES ? R.ZONES.findIndex(q => (q.pool || []).includes(key)) : -1;
   return z >= 0 ? OEUF_ZONES[Math.min(z, OEUF_ZONES.length - 1)] : OEUF_ZONES[0];
 }
-function tirer(R, key, cls, scene, sc) {
+function tirer(R, key, cls, scene, sc, opt) {
+  const maudit = !!(opt && opt.maudit), donjon = typeof sc === 'string' && sc[0] === 'd';
   const d = R.MON[key], out = { xp: d.xp | 0, b: d.boss ? 1 : 0, it: [], rel: -1, oeuf: 0, spg: [], sp: [], or: 0 };
   if (d.tuto) { out.xp *= 2; out.tuto = 1; return out; }
   if (Math.random() < d.drop) { const n = d.n && d.boss ? d.n : 1; for (let i = 0; i < n; i++) { let t = ri(d.loot[0], d.loot[1]); if (Math.random() < 0.08) t = Math.min(6, t + 1); out.it.push(objetAuHasard(R, t, cls)); } }
@@ -77,7 +79,16 @@ function tirer(R, key, cls, scene, sc) {
   if (d.boss && typeof sc === 'string' && sc[0] === 'd' && R.TALIS && R.TALIS[sc[1]]) { const T = R.DTYPES[sc[1]]; if (T && (T.bk === key || T.bk2 === key) && Math.random() < TAUX_RESSOURCE) out.res = sc[1]; }
   if ((key === 'dieu_fou' || key === 'colosse') && R.TALIS && Math.random() < TAUX_RESSOURCE) out.res = key === 'dieu_fou' ? 'j' : 'x'; // ressource des deux boss du centre de l'île
   if (d.midBoss || GARANTIS.includes(key)) out.spg.push(R.mkItem('sp_' + pick(R.SK), 0));
-  out.sp = potionsCarac(R, key, d, scene).map(k => R.mkItem('sp_' + k, 0));
+  out.sp = potionsCarac(R, key, d, scene, maudit ? 2 : 1).map(k => R.mkItem('sp_' + k, 0));
+  // mode maudit (le héros a accepté la mort définitive) : en donjon, 1 % de potion de caractéristique sur un monstre et 5 % sur un boss, en plus du reste ;
+  // 1 % de relique sur les monstres des deux derniers donjons (turquoise à l'Observatoire, de Chronos à l'Horloge)
+  if (maudit && donjon) {
+    if (Math.random() < (d.boss ? MAUDIT_POTION_BOSS : MAUDIT_POTION)) out.sp.push(R.mkItem('sp_' + pick(R.SK), 0));
+    if (!d.boss && Math.random() < MAUDIT_RELIQUE) {
+      if (sc[1] === 'a') { out.rel = out.it.length; out.it.push(objetAuHasard(R, 7, cls)); }
+      else if (sc[1] === 'h') { const tous = Object.keys(R.KINDS).filter(k => R.KINDS[k].alt && !R.KINDS[k].art), miens = tous.filter(k => (R.KINDS[k].cls || []).includes(cls)); if (tous.length) out.it.push(R.mkItem(pick(miens.length && Math.random() < 0.5 ? miens : tous), 7)); }
+    }
+  }
   if (d.or && Math.random() < d.or[0]) out.or = Math.max(1, Math.round(ri(d.or[1], d.or[2]) * 1.3)); // pièces +30 %
   return out;
 }
@@ -90,7 +101,7 @@ function observer(salle, moi, patch) {
   const R = arbitre.regles(); if (!R || !R.MKEYS) return;
   if (typeof patch.M === 'string') hotes.set(salle + '|' + s, { peer: moi.peer, t: Date.now() });
   if (typeof patch.D === 'string') {
-    for (const e of patch.D.split(';').slice(0, 40)) {
+    for (const e of patch.D.split(';').slice(-120)) { // les plus récentes sont à la fin ; le Gardien en annonce jusqu'à 60
       const f = e.split(','); if (f.length < 4) continue;
       const id = parseInt(f[0], 36), k = R.MKEYS[+f[1]]; if (!(id > 0) || !k) continue;
       const cle = salle + '|' + s + '|' + id; if (!temoins.has(cle)) temoins.set(cle, { peer: moi.peer, k, t: Date.now() });
@@ -163,7 +174,9 @@ function reclamer(moi, m, ctx) {
   vus.add(cle); if (vus.size > 3000) { const a = [...vus].slice(-1500); vus.clear(); a.forEach(v => vus.add(v)); }
   // tirage
   const cls = R.CLASSES[m.c] ? String(m.c) : String((moi.etat && moi.etat.c) || '');
-  const r = tirer(R, key, cls, s === 'r' ? 'realm' : 'dungeon', s);
+  // maudit : jugé sur le héros réellement en jeu (celui que le serveur voit), pas sur la classe annoncée
+  const enJeu = String((moi.etat && moi.etat.c) || cls), maudit = !!(ctx.maudit && ctx.maudit(enJeu));
+  const r = tirer(R, key, cls, s === 'r' ? 'realm' : 'dungeon', s, { maudit });
   if (ctx.boost && Date.now() < ctx.boost) r.xp = Math.round(r.xp * 1.3); // boost d'expérience (Cursite)
   if (ctx.boostServeur > 1) r.xp = Math.round(r.xp * ctx.boostServeur);     // objectif commun de la semaine atteint
   if (ctx.guerre > 1) { r.xp = Math.round(r.xp * ctx.guerre); if (r.or) { const v = r.or * ctx.guerre; r.or = Math.floor(v) + (Math.random() < v - Math.floor(v) ? 1 : 0); } } // guerre des guildes : zone tenue par sa guilde

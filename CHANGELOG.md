@@ -1,5 +1,22 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.69 (index.html, server.js, butin.js, gardien.js ; wiki.html régénéré)
+- **Serveurs de 100 joueurs** : chacun des trois serveurs (Roi Bouffon, Léviathan, Dévoreur d'Étoiles) accueille maintenant 100 joueurs au lieu de 16. La fontaine du Village affiche le nombre de joueurs sur 100.
+- Pour tenir cette foule, le serveur n'envoie plus à chacun que ce qui l'entoure : les joueurs proches en temps réel, les joueurs éloignés ou ailleurs une fois par seconde, et seulement les monstres qui sont autour de soi.
+- (interne) Gardien allégé : grille des joueurs pour les monstres, monstres endormis loin de tout joueur, copies en réserve ralenties, plus de relais des autres scènes vers le Gardien. Témoin des morts corrigé (les 120 dernières au lieu des 40 premières).
+
+## ver.0.0.68 (index.html, server.js, arbitre.js, gardien.js ; wiki.html et wiki-modele.html mis à jour)
+- **Mode maudit** : le pacte peut maintenant être rompu en retournant parler au Passeur, au Village (jamais une fois mort). Il reste propre à chaque héros.
+- **Héros maudits** : un crâne violet flotte au-dessus de leur tête, visible de tous les joueurs.
+- **Serveur plus solide pour l'arrivée de nouveaux joueurs** : les échanges entre le jeu et le serveur sont regroupés, ce qui permet d'accueillir environ deux à trois fois plus de joueurs en même temps ; créer un compte ou se connecter ne ralentit plus les autres.
+- **Compagnons du Village** : les personnages qui tiennent compagnie quand le serveur est calme se retirent quand il y a du monde — la moitié à partir de 10 joueurs connectés, tous à partir de 20.
+- (interne) Sécurité : une livraison en attente ne peut plus être créditée plusieurs fois ; la première sauvegarde d'un compte neuf est contrôlée comme les autres ; la Clef de la Tour est réellement consommée à l'entrée ; une seule récompense de raid par compte ; un échange ne peut plus être annulé après encaissement ; le classement exige un compte et ne dépasse jamais la sauvegarde validée ; prises du tournoi de pêche liées aux pêches vues par le serveur ; 12 connexions au plus par adresse ; nom du gagnant du concours échappé.
+
+## ver.0.0.67 (index.html, server.js, arbitre.js, butin.js ; wiki.html et wiki-modele.html mis à jour)
+- **Tour des Chevaliers : dix nouveaux gardiens de palier.** Fini les boss de donjon recyclés : la Tour a maintenant ses propres seigneurs chevaliers, tirés au hasard — le Capitaine de la Garde, le Bourreau, le Croisé, la Dame de Fer, le Chevalier Écarlate, le Chevalier d'Émeraude, le Seigneur d'Azur, le Roi-Chevalier, le Chevalier Spectral et le Connétable de la Nuit.
+- **Chaque palier a son épreuve**, quel que soit le gardien : la Garde (palier 5), le Tournoi (10), le Siège (15), le Jugement (20), le Dernier Rempart (25). Les attaques changent et se durcissent à chaque palier, et à partir du palier 10 le gardien appelle des chevaliers en renfort quand il faiblit.
+- **Le Passeur et le mode maudit.** Quand un héros atteint le niveau 20, un personnage sombre l'appelle au Village. Il propose un pacte, héros par héros et sans retour : **toute mort devient définitive**. En échange : 1 % de potion de caractéristique sur chaque monstre de donjon et 5 % sur chaque boss de donjon, toutes les chances actuelles de potion de caractéristique doublées, 1 % de relique sur chaque monstre de l'Observatoire Céleste et de l'Horloge Brisée, et 5 % de dégâts en plus — infligés comme subis.
+
 ## ver.0.0.66 (index.html seulement ; server.js inchangé depuis la 0.0.64 ; wiki.html régénéré)
 - **La Vengeance sous-marine** (donjon caché de la pêche, 1 chance sur 250) : le portail s'ouvre maintenant à quelques pas du pêcheur, sur la terre ferme, au lieu de l'aspirer dedans à la prise suivante. Il reste ouvert 2 minutes et tout le monde peut le prendre.
 - **Coffre de livraison** de la maison : nouvelle apparence, un colis ficelé d'un ruban rouge.
