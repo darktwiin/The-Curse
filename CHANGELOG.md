@@ -1,5 +1,18 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.71 (index.html, butin.js, gardien.js ; server.js inchangé depuis la 0.0.69 ; wiki.html régénéré)
+- **Les Plaines Sauvages changent de forme.** L'île n'est plus un disque : c'est une longue terre qui monte du sud au nord. On débarque sur la Plage des Naufragés, tout en bas, et on remonte zone après zone — Plaines d'Émeraude, Marais Putride, Forêt des Murmures, Canyon de Rouille, Terres Brûlées, Terres Désolées — par des passages plus étroits entre chaque région.
+- **Le nord est beaucoup plus grand** : les Terres Brûlées et les Terres Désolées font plus de deux fois leur ancienne surface, avec plus de monstres, pour que les héros de haut niveau ne se marchent plus dessus. Les zones de départ sont plus petites : on y croise plus vite d'autres joueurs.
+- Une grande route de briques remonte toute l'île ; dans le nord, des routes de côté et des traverses permettent de circuler vite.
+- **Portails des Plaines Sauvages** : le portail du Village ouvre maintenant une liste de destinations.
+  - **Plage des Naufragés** : gratuit, comme avant.
+  - **Avant-poste des Terres Désolées** : 1 000 pièces, une fois pour toutes (pour tous tes héros). On arrive directement au début des Terres Désolées.
+  - **Portail scellé** : futures zones à venir.
+- **Avant-poste des Terres Désolées** : une zone sûre, marquée sur la carte. Quatre gardes invincibles abattent les monstres qui s'en approchent (sans butin ni expérience). À l'intérieur, rien ne peut te blesser — mais on ne peut ni attaquer ni lancer de capacité.
+- La mini-carte et la grande carte (M) suivent la nouvelle forme de l'île. La carte déjà découverte repart de zéro.
+- Les deux boss (Roi Bouffon et Béhémoth d'Obsidienne) apparaissent maintenant au nord de l'île, dans les Terres Brûlées ou les Terres Désolées.
+- (interne) L'île est décrite par une liste de points (ILE) et chaque zone par ses rangées (ZONES[i].y) : ajouter une zone au nord revient à ajouter une ligne. Le contrôle « monstre hors de sa zone » du serveur suit la nouvelle carte.
+
 ## ver.0.0.70 (index.html seulement ; server.js inchangé depuis la 0.0.69 ; wiki.html régénéré)
 - **Vitesse d'attaque et vitesse de déplacement : fin des plafonds durs.** Jusqu'à 70 (attaque) et 60 (déplacement), rien ne change. Au-delà, chaque point compte maintenant pour un tiers au lieu de ne plus compter du tout : s'optimiser continue de payer, sans rendre une classe démesurée. La fiche de statistiques affiche le total et son effet réel.
 - **Sort du Rocher** (Mage) : l'écran ne tremble plus sans fin, et la longue recharge reste attachée à cette relique — changer de capacité ne la transporte plus, y revenir ne la remet pas à zéro. Même règle pour toutes les Reliques de la Tour.

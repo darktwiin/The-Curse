@@ -113,7 +113,8 @@ setInterval(() => { const lim = Date.now() - 90000; for (const [k, v] of temoins
 // ---------- zones des Plaines (même calcul que le jeu : distance au centre, zones mises à l'échelle ×3) ----------
 const ZCACHE = {};
 function zonesDu(R, key) { if (ZCACHE[key]) return ZCACHE[key]; const o = []; R.ZONES.forEach((z, i) => { if (z.pool.includes(key)) o.push(i); }); return (ZCACHE[key] = o); }
-function zoneA(R, d) { for (let i = R.ZONES.length - 1; i >= 0; i--) { const r = R.ZONES[i].r; if (d < r[1] * 3 && d >= r[0] * 3) return i; } return 0; }
+// l'île monte du sud au nord : chaque zone occupe une tranche de rangées (ZONES[i].y = [nord, sud])
+function zoneA(R, y) { for (let i = 0; i < R.ZONES.length; i++) { const r = R.ZONES[i].y; if (r && y >= r[0]) return i; } return R.ZONES.length - 1; }
 
 // ---------- rythme par compte ----------
 const SEAUX = { tues: { debit: 70, max: 100 }, boss: { debit: 4, max: 10 } };
@@ -143,7 +144,7 @@ function reclamer(moi, m, ctx) {
   if (s === ici && isFinite(px) && isFinite(py) && Math.hypot(px - x0, py - y0) > 30) return non('monstre trop loin du joueur');
   if (s === 'r') {
     const zs = zonesDu(R, key);
-    if (zs.length) { const dist = Math.hypot(x0 - 360, y0 - 360), lo = zoneA(R, dist + 16), hi = zoneA(R, Math.max(0, dist - 16)); if (!zs.some(z => z >= lo - 1 && z <= hi + 1)) return non('monstre hors de sa zone (' + key + ', zones ' + zs.join('/') + ' vs ' + lo + '-' + hi + ')'); }
+    if (zs.length) { const lo = zoneA(R, y0 + 60), hi = zoneA(R, y0 - 60); if (!zs.some(z => z >= lo - 1 && z <= hi + 1)) return non('monstre hors de sa zone (' + key + ', zones ' + zs.join('/') + ' vs ' + lo + '-' + hi + ')'); }
   } else if (s[0] === 'd') {
     // le boss d'un autre donjon ne peut pas mourir ici
     const t = s[1]; for (const k in R.DTYPES) if (k !== t && R.DTYPES[k].bk === key && !(R.DTYPES[t] && R.DTYPES[t].bk === key)) return non('boss d\'un autre donjon');

@@ -161,7 +161,7 @@ function initBot(bot) {
         let k=md>rng*0.85?1:md<Math.min(rng*0.5,3)?-1:0;if(P.hp<st.tot.vie*0.4)k=-1;vers(ux*k-uy*B.strafe*0.8,uy*k+ux*B.strafe*0.8);
         if(time>B.capa&&P.mp>=(C().equip[1]?C().equip[1].cost||40:999)){B.capa=time+rnd(4,9);try{useAbility();}catch(e){}}
       }else{P.auto=false;B.aim=null;
-        if(!B.tgt||Math.hypot(B.tgt.x-P.x,B.tgt.y-P.y)<3||time>B.tgtT){const z=ZONES[B.zi].r,a0=Math.atan2(P.y-RC,P.x-RC),a=a0+rnd(-0.35,0.35),rr=rnd(z[0]+2,z[1]-2);B.tgt={x:RC+Math.cos(a)*rr,y:RC+Math.sin(a)*rr};B.tgtT=time+40;}
+        if(!B.tgt||Math.hypot(B.tgt.x-P.x,B.tgt.y-P.y)<3||time>B.tgtT){const z=ZONES[B.zi].y,ty=clamp(P.y<z[0]||P.y>z[1]?rnd(z[0]+8,z[1]-8):P.y+rnd(-45,45),z[0]+6,z[1]-6),w=Math.max(6,ileW(ty)-14);B.tgt={x:ileX(ty)+rnd(-w,w),y:ty};B.tgtT=time+40;}
         let dx=B.tgt.x-P.x,dy=B.tgt.y-P.y;if(time<B.evite){const l=Math.hypot(dx,dy)||1,c=Math.cos(B.ea),s2=Math.sin(B.ea);const x2=dx/l*c-dy/l*s2,y2=dx/l*s2+dy/l*c;dx=x2;dy=y2;}vers(dx,dy);}
       // coincé contre un obstacle : on contourne
       if(time>B.bloque){B.bloque=time+0.8;if(Math.hypot(P.x-B.lx,P.y-B.ly)<0.5&&keys.size){B.evite=time+rnd(0.8,1.6);B.ea=(Math.random()<0.5?-1:1)*rnd(1.2,1.9);}B.lx=P.x;B.ly=P.y;}}
