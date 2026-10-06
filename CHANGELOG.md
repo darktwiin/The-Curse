@@ -1,5 +1,11 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.82 (index.html, server.js ; wiki.html régénéré)
+- **La Brèche va plus vite : 3 étages au lieu de 5.** Plus de jauge à remplir : trouve le portail de chaque étage, et le **gardien** t'attend au bout du troisième.
+- **Tu peux éviter les salles.** Rien ne t'oblige à tuer les monstres : file tout droit vers le portail si tu veux gagner du temps (et donc des chances d'améliorer tes runes).
+- La barre en haut de l'écran montre l'étage en cours, puis la vie du gardien.
+- (interne) BRECHE_ETAGES=3, d.brBoss sur le dernier étage, le gardien est posé par l'hôte de l'étage (brecheHote) ; durée minimale d'une course côté serveur 30 s → 15 s.
+
 ## ver.0.0.81 (index.html ; wiki.html régénéré)
 - **Filet de sécurité au chargement.** Si le jeu rencontre une erreur en démarrant, l'écran-titre et le bouton « Jouer » fonctionnent quand même, et un bandeau rouge affiche l'erreur en haut de l'écran : envoie-en une capture sur le Discord, ça permet de corriger tout de suite.
 - (interne) Démarrage sous try/catch (repli sur le choix du héros), petit script « data-filet » avant le script principal, version de l'écran-titre écrite sans attendre le jeu.

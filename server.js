@@ -1055,7 +1055,7 @@ function breche(moi, m, salle) {
   const c = cpt.breche; if (!c) return;
   if (m.a === 'fin') {
     if (c.etat !== 0) return; const B = BRECHES.get(c.cle); if (!B) return;
-    if (!B.fin) { if (Date.now() - B.t0 < 30000) return refus('La Brèche ne se laisse pas traverser si vite'); B.fin = Date.now(); }
+    if (!B.fin) { if (Date.now() - B.t0 < 15000) return refus('La Brèche ne se laisse pas traverser si vite'); B.fin = Date.now(); }
     const el = (B.fin - B.t0) / 1000, chances = el < 60 ? 4 : el < 120 ? 3 : el < 180 ? 2 : el < 300 ? 1 : 0, E = runesDe(moi, c.cls);
     const manque = RUNES_BRECHE.filter(k => !E.niv[k]), rune = manque.length ? manque[Math.floor(Math.random() * manque.length)] : null;
     if (rune) { E.niv[rune] = 1; cpt.dons.breche.push(c.cls + '|r|' + rune + '|1'); }

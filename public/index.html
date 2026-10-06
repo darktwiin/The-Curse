@@ -478,7 +478,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.81"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.82"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -495,7 +495,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp mait" id="mxBar" hidden><i id="mxF"></i><span><em>Maîtrise</em><b id="mxT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.81</div>
+    <div class="verTag" id="verTag">ver.0.0.82</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -672,7 +672,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.81</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.82</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -714,7 +714,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.81</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.82</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -3258,7 +3258,7 @@ const inForge=(x,y)=>x>=FORGE_R.x0&&x<=FORGE_R.x1&&y>=FORGE_R.y0&&y<=FORGE_R.y1;
 function forgeSolid(x,y){return (y===12&&x!==-12&&x!==-1)||(y===11)||(x===-12&&y>=14&&y<=20)||(x===-1&&y>=19&&y<=21)||(y===22&&((x>=-11&&x<=-3)));}
 function genDungeon(seed,t){
   t=DTYPES[t]&&t!=='a'?t:'c';const ck=t+seed;if(dungeonCache.has(ck))return dungeonCache.get(ck);
-  if(DTYPES[t].breche){let d=null;for(let k=0;k<200&&!d;k++)d=genMazeTry(seed*31+k,{GW:6,GH:4,vides:2,salles:15,dist:5,culs:2,boucles:3});if(d){d=themeDungeon(d,t,seed);d.breche=true;d.etage=((seed%8)+8)%8||1;d.down=d.etage<BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.altar={x:-999,y:-999};d.doors=[];d.arena=null;dungeonCache.set(ck,d);return d;}}
+  if(DTYPES[t].breche){let d=null;for(let k=0;k<200&&!d;k++)d=genMazeTry(seed*31+k,{GW:6,GH:4,vides:2,salles:15,dist:5,culs:2,boucles:3});if(d){d=themeDungeon(d,t,seed);d.breche=true;d.etage=((seed%8)+8)%8||1;d.down=d.etage<BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.brBoss=d.etage>=BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.altar={x:-999,y:-999};d.doors=[];d.arena=null;dungeonCache.set(ck,d);return d;}}
   if(t==='h'){let d=null;for(let k=0;k<80&&!d;k++)d=genMazeTry(seed*31+k);if(d){d=themeDungeon(d,t,seed);dungeonCache.set(ck,d);return d;}} // Horloge Brisée : un vrai labyrinthe
   let d=null;for(let k=0;k<120;k++){d=genDungeonTry(seed*31+k);if(d.rooms.length>=10&&d.boss.w>=21&&Math.hypot(d.boss.x-d.start.x,d.boss.y-d.start.y)>=48)break;} // on exige toutes les salles et une grande arène
   d=themeDungeon(d,t,seed);dungeonCache.set(ck,d);return d;
@@ -3441,7 +3441,7 @@ const DTYPES={
   a:{nom:'Observatoire Céleste',boss:"le Dévoreur d'Étoiles",col:['#0d1030','#ffd23f'],niv:'Donjon très difficile · 4 gardiens'},
   v:{nom:'La Vengeance sous-marine',boss:'les deux poissons légendaires',col:['#0a4a5a','#ffd23f'],niv:'Donjon intermédiaire · courants marins',pool:['v_sardine','v_rouget','v_raie','v_congre','v_espadon'],bk:'b_lune',bk2:'b_koi',mini:[30,120,130],mech:'Tout est sous l\'eau : les courants marins te poussent · les deux poissons légendaires t\'attendent ensemble'},
   h:{nom:"L'Horloge Brisée",boss:"Chronos, l'Horloger Maudit",col:['#141034','#3ff0ff'],niv:'Donjon à clef · temps déréglé',pool:['rouage','pendule','sablier','coucou'],bk:'chronos',mini:[40,34,90],mech:'Labyrinthe : la carte ne montre que les salles déjà traversées · zones bleues : le temps ralentit · zones dorées : il accélère'},
-  // La Brèche : trois thèmes tirés au hasard (étages en labyrinthe, pas d'arène : le gardien apparaît quand la jauge est pleine)
+  // La Brèche : trois thèmes tirés au hasard (étages en labyrinthe, pas d'arène : le gardien attend au bout du troisième étage)
   u:{nom:'La Brèche · Sanctuaire runique',boss:"l'Archiviste des Runes",col:['#0e2a3a','#7df0e0'],niv:'La Brèche · à partir du niveau 20',pool:['br_eclat','br_sentinelle','br_scribe'],bk:'br_archiviste',mini:[70,130,150],mech:'Étages en labyrinthe · tue des monstres pour remplir la jauge, puis affronte le gardien',breche:1},
   w:{nom:'La Brèche · Nid de la Corruption',boss:'la Mère Corrompue',col:['#2a0e3a','#b6f04a'],niv:'La Brèche · à partir du niveau 20',pool:['br_larve','br_oeil','br_gueule'],bk:'br_mere',mini:[120,60,140],mech:'Étages en labyrinthe · tue des monstres pour remplir la jauge, puis affronte le gardien',breche:1},
   z:{nom:"La Brèche · Cœur de l'Orage",boss:'le Tisse-Foudre',col:['#141a3a','#ffe27a'],niv:'La Brèche · à partir du niveau 20',pool:['br_etincelle','br_nuee','br_heraut'],bk:'br_tisse',mini:[80,90,170],mech:'Étages en labyrinthe · tue des monstres pour remplir la jauge, puis affronte le gardien',breche:1}};
@@ -3560,7 +3560,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000081;let newerWarned=false;
+const NETV=2,BUILD=2600000082;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -8687,7 +8687,7 @@ function frame(now){
 /* ================= La Brèche : runes, arbre, donjon à étages ================= */
 // Tout est rangé par classe dans save.breche[classe] (comme les sacs, rien n'est perdu à la mort définitive) :
 //   runes : { clef: niveau 1 à 20 } · eq : la rune sertie au centre de l'arbre · arbre : les nœuds pris, dans l'ordre · diff : plus haute difficulté terminée
-var BRECHE_ETAGES=5,BRECHE_BUT=130,BRECHE_RESET=300,BR=null,BRI=null,BRP=null,PATCOL=null;
+var BRECHE_ETAGES=3,BRECHE_BUT=130,BRECHE_RESET=300,BR=null,BRI=null,BRP=null,PATCOL=null;
 var VEIL={x:11.5,y:25.5};
 var RUNES={
   longue:{nom:'Longue-vue',col:'#7df0e0',max:'+1 case de portée pour ton arme',txt:n=>'+'+(n*0.05).toFixed(2).replace('.',',')+' case de portée'},
@@ -8732,7 +8732,7 @@ var brDiffSel=1;
 const brChance=(niv,d)=>{const e=niv-d;return e<=0?1:e===1?0.2:e===2?0.05:0;};
 function renderBreche(){const b=BRC(),ch=C(),max=clamp((b.diff|0)+1,1,20),ok=ch.lvl>=20;brDiffSel=clamp(brDiffSel,1,max);
   let h='<h2 style="color:#7df0e0">Le Veilleur de la Brèche</h2><p style="font-style:italic;color:#cfe8f0">« La malédiction s\'est fendue, '+CLASSES[save.current].nom+'. Sous le Village, une brèche descend, étage après étage. Ceux qui en reviennent rapportent des runes. Ceux qui traînent n\'en rapportent rien. »</p>';
-  h+='<div style="border:2px solid #2a5a6a;background:rgba(125,240,224,.06);padding:10px 12px;display:grid;gap:4px;font-size:13px"><span>• Jusqu\'à '+BRECHE_ETAGES+' étages en labyrinthe. Chaque monstre tué remplit la jauge ; pleine, le <b>gardien</b> apparaît. Sa mort ouvre la sortie et dresse un <b>pilier</b>.</span><span>• Chaque Brèche terminée donne une <b>rune</b> que ton '+CLASSES[save.current].nom+' n\'a pas encore (il y en a '+RUNE_KEYS.length+').</span><span>• Le temps compte : gardien vaincu en moins d\'1 minute, <b>4 chances</b> d\'améliorer une rune · 2 minutes, 3 · 3 minutes, 2 · 5 minutes, 1 · au-delà, aucune.</span><span>• Une rune s\'améliore à coup sûr si la difficulté vaut au moins son niveau, à 20 % avec un niveau de retard, à 5 % avec deux, jamais au-delà.</span><span>• La mort ne fait rien perdre ici : tu reprends au début de l\'étage.</span></div>';
+  h+='<div style="border:2px solid #2a5a6a;background:rgba(125,240,224,.06);padding:10px 12px;display:grid;gap:4px;font-size:13px"><span>• '+BRECHE_ETAGES+' étages en labyrinthe. Trouve le portail de chaque étage : tu peux <b>éviter les salles</b> et filer tout droit. Le <b>gardien</b> t\'attend au bout du dernier étage. Sa mort ouvre la sortie et dresse un <b>pilier</b>.</span><span>• Chaque Brèche terminée donne une <b>rune</b> que ton '+CLASSES[save.current].nom+' n\'a pas encore (il y en a '+RUNE_KEYS.length+').</span><span>• Le temps compte : gardien vaincu en moins d\'1 minute, <b>4 chances</b> d\'améliorer une rune · 2 minutes, 3 · 3 minutes, 2 · 5 minutes, 1 · au-delà, aucune.</span><span>• Une rune s\'améliore à coup sûr si la difficulté vaut au moins son niveau, à 20 % avec un niveau de retard, à 5 % avec deux, jamais au-delà.</span><span>• La mort ne fait rien perdre ici : tu reprends au début de l\'étage.</span></div>';
   if(!ok)h+='<p style="color:#ff9a8a">Reviens quand ton '+CLASSES[save.current].nom+' aura atteint le niveau 20.</p>';
   else{h+='<h3 style="margin:12px 0 6px">Difficulté</h3><div style="display:grid;grid-template-columns:repeat(10,1fr);gap:4px">';for(let d=1;d<=20;d++)h+='<button type="button" class="act'+(d===brDiffSel?' main':'')+'" data-brd="'+d+'" '+(d>max?'disabled':'')+' style="padding:4px 0">'+d+'</button>';
     h+='</div><p class="hint" style="margin:6px 0">Difficulté '+brDiffSel+' : monstres '+Math.round(brHpK(brDiffSel,1)*100)+' % de vie, '+Math.round(brDmgK(brDiffSel)*100)+' % de dégâts · une rune de niveau '+brDiffSel+' ou moins s\'y améliore à coup sûr. Termine une difficulté pour ouvrir la suivante.</p>';
@@ -8801,10 +8801,10 @@ function brecheTick(){
   brecheEcoute();
   if(!BR.bossVu&&monsters.some(m=>m.key===MAP.bossKey&&m.hp>0)){BR.bossVu=1;BR.bossAnn=1;const d0=MON[MAP.bossKey];showBanner(d0.nom.toUpperCase(),'Le gardien de la Brèche','#ff5a6a');sfx('boss');}
   if(!BR.fini&&brEtat()>=2)brecheReclame();
-  if(BR.bossAnn!==brEtat()&&brEtat()===1&&!monsters.some(m=>m.d.boss&&m.hp>0)){BR.bossAnn=1;showBanner('Le gardien de la Brèche est apparu !','Rejoins tes compagnons : il est à un autre étage','#ff5a6a');sfx('boss');}}
+}
 function brecheDepart(o){if(!save.current||!room||!room.raw){note('Il faut être connecté pour entrer dans la Brèche');return;}BR={run:o.run,d:o.d,th:o.th,t0:o.t0,n:Math.max(1,o.n|0),fl:[0,0,0,0,0],etat:0,fini:0};BRP=null;
-  room.raw({t:'breche',a:'entrer',run:o.run,d:o.d,th:o.th,c:save.current});brecheEtage(1);showBanner('LA BRÈCHE · difficulté '+o.d,DTYPES[o.th].nom.split('· ')[1]+' · remplis la jauge, puis abats le gardien','#7df0e0');}
-function brecheEtage(n,parLeBas){if(!BR)return;n=clamp(n,1,BRECHE_ETAGES);enterDungeon(BR.run*8+n,BR.th);if(parLeBas&&MAP.down){P.x=MAP.down.x;P.y=MAP.down.y+1.8;}P.invul=2;note('Étage '+n+' / '+BRECHE_ETAGES);}
+  room.raw({t:'breche',a:'entrer',run:o.run,d:o.d,th:o.th,c:save.current});brecheEtage(1);showBanner('LA BRÈCHE · difficulté '+o.d,DTYPES[o.th].nom.split('· ')[1]+' · '+BRECHE_ETAGES+' étages, le gardien est au bout du dernier','#7df0e0');}
+function brecheEtage(n,parLeBas){if(!BR)return;n=clamp(n,1,BRECHE_ETAGES);enterDungeon(BR.run*8+n,BR.th);if(parLeBas&&MAP.down){P.x=MAP.down.x;P.y=MAP.down.y+1.8;}P.invul=2;note(n>=BRECHE_ETAGES?'Dernier étage : le gardien est au bout':'Étage '+n+' / '+BRECHE_ETAGES+' · trouve le portail');}
 // progression : l'hôte de chaque étage (le Gardien du serveur ou un joueur) compte les monstres tombés chez lui et l'annonce (bh) ;
 // chaque participant retient le meilleur compte connu de chaque étage et le répète (bk), pour qu'un nouvel hôte reprenne où l'ancien s'est arrêté.
 const brTotal=()=>BR?BR.fl.reduce((a,v)=>a+(v|0),0):0,brEtat=()=>BR?BR.etat|0:0;
@@ -8815,11 +8815,11 @@ function brScene(){if(scene!=='dungeon'||!MAP||!MAP.breche)return null;const run
     if(!o)o={d:clamp(+f[2]|0,1,20),n:clamp(+f[3]|0,1,8),etat:+f[1]||0,fl:[0,1,2,3,4].map(i=>fl[i]||0)};else{o.etat=Math.max(o.etat,+f[1]||0);for(let i=0;i<5;i++)o.fl[i]=Math.max(o.fl[i]||0,fl[i]||0);}}
   return o;}
 function brecheHote(){const o=brScene();if(!o)return;const e=(MAP.etage||1)-1;MAP.brKills=Math.max(MAP.brKills|0,o.fl[e]|0);MAP.brEtat=Math.max(MAP.brEtat|0,o.etat);MAP.brO=o;
-  if(!MAP.brMis){MAP.brMis=1;const k=brHpK(o.d,o.n);for(const m of monsters){if(m.d.boss||m.max!==m.d.hp)continue;const plein=m.hp>=m.max;m.max=Math.round(m.d.hp*k);if(plein)m.hp=m.max;}}}
+  if(!MAP.brMis){MAP.brMis=1;const k=brHpK(o.d,o.n);for(const m of monsters){if(m.d.boss||m.max!==m.d.hp)continue;const plein=m.hp>=m.max;m.max=Math.round(m.d.hp*k);if(plein)m.hp=m.max;}}
+  if(MAP.brBoss&&(MAP.brEtat|0)<2&&o.etat<2&&!MAP.brBossMis&&MAP.brMis){MAP.brBossMis=1;if(!monsters.some(m=>m.key===MAP.bossKey)){const b=addMon(MAP.bossKey,MAP.brBoss.x,MAP.brBoss.y,0);b.max=b.hp=Math.round(b.d.hp*brHpK(o.d,o.n));b.hx=b.x;b.hy=b.y;b.cd=2.5;}MAP.brEtat=Math.max(MAP.brEtat|0,1);}}
 function brecheKill(m){if(scene!=='dungeon'||!MAP||!MAP.breche)return;const o=brScene()||MAP.brO;if(!o)return;
   if(m.key===MAP.bossKey){MAP.brEtat=2;MAP.brFin=Math.round(m.x*10)/10+','+Math.round(m.y*10)/10;return;}
-  if(m.d.boss)return;MAP.brKills=(MAP.brKills|0)+1;const e=(MAP.etage||1)-1;let tot=0;for(let i=0;i<5;i++)tot+=i===e?MAP.brKills:(o.fl[i]|0);
-  if(tot>=BRECHE_BUT&&(MAP.brEtat|0)<1&&o.etat<1){MAP.brEtat=1;const b=addMon(MAP.bossKey,m.x,m.y,0);b.max=b.hp=Math.round(b.d.hp*brHpK(o.d,o.n));b.hx=b.x;b.hy=b.y;b.cd=2.5;if(!window.GARDIEN_MODE){burst(b.x,b.y,b.d.bc,70,6);vfx.push({k:'boom',x:b.x,y:b.y,r:5,t:0,life:0.6,col:b.d.bc});}}}
+  if(m.d.boss)return;MAP.brKills=(MAP.brKills|0)+1;}
 // participant : on écoute les hôtes (bh) et les compagnons (bk)
 function brecheEcoute(){if(!BR)return;for(const r of remotes.values()){if(!r.p||Date.now()-r.upd>9000)continue;
     if(typeof r.p.bh==='string'){const f=r.p.bh.split(':');if(+f[0]===BR.run){const e=(+f[1]|0)-1;if(e>=0&&e<5)BR.fl[e]=Math.max(BR.fl[e]|0,+f[2]|0);BR.etat=Math.max(BR.etat,+f[3]|0);}}
@@ -8837,11 +8837,12 @@ function onBreche(m){if(!m)return;
 // mort dans la Brèche : rien n'est perdu, on reprend au début de l'étage
 function brecheMort(){const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;P.x=MAP.start.x;P.y=MAP.start.y;P.invul=3;eb=[];strikes=[];showBanner('Tu tombes…','La Brèche te rend au début de l\'étage · le temps continue','#ff5a6a');sfx('boss',0.5);}
 // affichage : jauge, temps et chances restantes, en haut et au centre, sans gêner la vue
-function drawBrecheHUD(){if(!BR||scene!=='dungeon'||!MAP||!MAP.breche)return;const w=Math.min(300,W*0.34),x=W/2-w/2,y=Math.round(TS*0.22),hh=Math.max(10,Math.round(TS*0.22)),k=clamp(brTotal()/BRECHE_BUT,0,1),e=brEtat(),s=Math.max(0,(brNow()-BR.t0)/1000),ch=BR.finT!=null?BR.finT:s,nb=ch<60?4:ch<120?3:ch<180?2:ch<300?1:0;
-  ctx.globalAlpha=0.85;R(x-3,y-3,w+6,hh+6,'#0b0a12');R(x,y,w,hh,'#1a2a30');R(x,y,w*k,hh,e>=2?'#7ed957':e>=1?'#ff5a6a':'#7df0e0');ctx.globalAlpha=1;
-  label(e>=2?'Gardien vaincu':e>=1?'Le gardien est là !':'Jauge '+Math.floor(k*100)+' %',W/2,y+hh/2,'#ffffff',Math.round(hh*0.9),700);
+function drawBrecheHUD(){if(!BR||scene!=='dungeon'||!MAP||!MAP.breche)return;const w=Math.min(300,W*0.34),x=W/2-w/2,y=Math.round(TS*0.22),hh=Math.max(10,Math.round(TS*0.22)),et=MAP.etage||1,e=brEtat(),s=Math.max(0,(brNow()-BR.t0)/1000),ch=BR.finT!=null?BR.finT:s,nb=ch<60?4:ch<120?3:ch<180?2:ch<300?1:0;
+  const bo=monsters.find(m=>m.key===MAP.bossKey&&m.hp>0),k=e>=2?1:bo?clamp(bo.hp/bo.max,0,1):clamp((et-1)/BRECHE_ETAGES,0,1);
+  ctx.globalAlpha=0.85;R(x-3,y-3,w+6,hh+6,'#0b0a12');R(x,y,w,hh,'#1a2a30');R(x,y,w*k,hh,e>=2?'#7ed957':bo?'#ff5a6a':'#7df0e0');if(!bo&&e<2)for(let i=1;i<BRECHE_ETAGES;i++)R(x+Math.round(w*i/BRECHE_ETAGES)-1,y,2,hh,'#0b0a12');ctx.globalAlpha=1;
+  label(e>=2?'Gardien vaincu':et>=BRECHE_ETAGES?(bo?'Le gardien · '+Math.ceil(bo.hp/bo.max*100)+' %':'Le gardien est au bout'):'Étage '+et+' / '+BRECHE_ETAGES+' · trouve le portail',W/2,y+hh/2,'#ffffff',Math.round(hh*0.9),700);
   if(e>=2&&BR.finT==null)BR.finT=s;const t=BR.finT!=null?BR.finT:s,col=nb>=3?'#7ed957':nb>=1?'#ffd23f':'#ff5a6a';
-  label('Difficulté '+BR.d+' · étage '+(MAP.etage||1)+'/'+BRECHE_ETAGES+' · '+Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0')+' · '+(nb?nb+' chance'+(nb>1?'s':''):'aucune chance'),W/2,y+hh+Math.round(TS*0.24),col,Math.round(TS*0.24));}
+  label('Difficulté '+BR.d+' · '+Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0')+' · '+(nb?nb+' chance'+(nb>1?'s':''):'aucune chance'),W/2,y+hh+Math.round(TS*0.24),col,Math.round(TS*0.24));}
 function drawBrecheMonde(d){if(!d.breche)return;
   if(d.down)drawPortal(d.down.x,d.down.y,'#7df0e0','#ffffff','Étage '+((d.etage||1)+1),'descendre');
   if(d.pilier){const X=sx(d.pilier.x),Y=sy(d.pilier.y),u=TS/16,p=0.5+0.5*Math.sin(time*3);up(d.pilier.x,d.pilier.y,()=>{ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(X,Y+6*u,8*u,3*u,0,0,TAU);ctx.fill();ctx.fillStyle='rgba(125,240,224,'+(0.15+0.15*p)+')';ctx.beginPath();ctx.arc(X,Y-8*u,16*u,0,TAU);ctx.fill();R(X-6*u,Y+2*u,12*u,4*u,'#3a4656');R(X-4*u,Y-18*u,8*u,20*u,'#5a6878');R(X-4*u,Y-18*u,2*u,20*u,'#8494a8');R(X-5*u,Y-21*u,10*u,3*u,'#8494a8');
