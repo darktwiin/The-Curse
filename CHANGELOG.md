@@ -1,5 +1,28 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.79 (index.html, server.js, butin.js, arbitre.js ; wiki.html régénéré)
+- **La Brèche : un nouveau contenu de fin de jeu, seul ou à plusieurs.** Au niveau 20, le **Veilleur de la Brèche** apparaît au Village, à gauche de l'entrée.
+  - Un donjon à étages (5 au plus), en labyrinthe, sur un thème tiré au hasard parmi trois : le **Sanctuaire runique**, le **Nid de la Corruption** et le **Cœur de l'Orage**. Neuf nouveaux monstres, trois nouveaux gardiens, une nouvelle musique.
+  - Chaque monstre tué remplit une jauge, en haut de l'écran. Pleine (comptez deux à trois étages), le **gardien** apparaît. Sa mort ouvre la sortie et dresse le **pilier des runes**.
+  - **20 difficultés** : il faut en terminer une pour ouvrir la suivante.
+  - **Le temps compte** : gardien vaincu en moins d'1 minute, 4 chances d'améliorer une rune · 2 minutes, 3 chances · 3 minutes, 2 · 5 minutes, 1 · au-delà, aucune.
+  - La mort n'y fait rien perdre : on reprend au début de l'étage, et le temps continue.
+  - **À plusieurs** : le meneur ouvre la Brèche, les joueurs proches du Veilleur ont 15 secondes pour accepter, tout le monde part ensemble. Les monstres et le gardien gagnent 30 % de vie par joueur.
+- **Dix runes, vingt niveaux chacune.** Chaque Brèche terminée donne une rune que ta classe n'a pas encore. Leur effet grandit régulièrement jusqu'au niveau 20 :
+  - **Longue-vue** : +1 case de portée · **Véloce** : vitesse d'attaque ×2, dégâts ÷2 · **Puissant** : dégâts ×2, vitesse d'attaque ÷2
+  - **Carnivore** : 10 % des dégâts de l'arme te soignent · **Ami des bêtes** : bonus du familier +50 % · **Savant** : +25 % d'expérience (gloire comprise)
+  - **Duc** : +25 % de pièces · **Dans le mille** : 10 % de coups critiques (150 % des dégâts, en rouge) · **Phantom** : dash sans recharge (au niveau 20 seulement) · **Pape** : +30 % de soins reçus
+  - Une rune s'améliore à coup sûr si la difficulté vaut au moins son niveau, à 20 % avec un niveau de retard, à 5 % avec deux, jamais au-delà.
+- **L'arbre.** Une seule rune agit à la fois : on la fait glisser au centre de l'arbre. Autour, jusqu'à 15 points à placer de proche en proche (1 par niveau de 21 à 25, 1 par rune au niveau 20) : +10 vie, +10 mana, et quelques nœuds rares (+5 puissance, +5 vitesse d'attaque, +5 vitesse de déplacement, +50 vie et mana). Redistribuer coûte 300 pièces.
+- Runes et arbre sont propres à chaque classe. La mort définitive ne les efface pas, mais l'arbre reste scellé tant que le héros n'a pas retrouvé le niveau 20.
+- **Maîtrise de classe** : plus aucun bonus d'expérience ne la remplit plus vite (ni boost, ni objectif de la semaine, ni rune) — seule l'expérience de base des monstres compte.
+
+## ver.0.0.78 (index.html, arbitre.js ; server.js inchangé depuis la 0.0.72 ; wiki.html régénéré)
+- **Herboriste : les grandes potions.** Au niveau 15 du métier, deux nouvelles recettes : la **Grande potion de vie** et la **Grande potion de mana**, qui rendent 250 points (au lieu de 120).
+  - Recette : les deux plantes habituelles (Sanguine + Racine vermeille, ou Azurine + Lunaire), et un **Lys des abîmes** à la place du Trèfle doré.
+  - Le **Lys des abîmes** est une plante rare : on n'en trouve qu'un ou deux par grand donjon des Terres Brûlées et Désolées (les six grands donjons). Il brille en violet et se cueille en passant dessus ; chaque joueur du groupe cueille le sien.
+  - Les touches F et V choisissent toutes seules : la petite potion si elle suffit, la grande s'il manque plus de 150 points.
+
 ## ver.0.0.77 (index.html seulement ; server.js inchangé depuis la 0.0.72 ; wiki.html régénéré)
 - **Mort définitive : les sacs à dos achetés sont conservés.** Le héros repart toujours de zéro (niveau, équipement, potions de caractéristiques, contenu des sacs), mais il garde son 2e et son 3e sac, vides.
 

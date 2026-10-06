@@ -153,7 +153,7 @@ sql.cguDernier = db.prepare('SELECT version FROM consentements WHERE compte = ? 
 sql.anoIns = db.prepare('INSERT INTO anomalies (compte, nom, quand, raisons) VALUES (?, ?, ?, ?)');
 sql.anoListe = db.prepare('SELECT nom, quand, raisons FROM anomalies ORDER BY id DESC LIMIT 60');
 for (const r of db.prepare('SELECT save FROM comptes WHERE save IS NOT NULL').all()) { try { arbitre.apprendre(JSON.parse(r.save)); } catch {} }
-const DONS0 = () => ({ cursite: 0, or: 0, prestige: 0, objets: 0, xp: 0, kills: 0, boss: 0, liste: {}, sol: [], res: {}, boosts: 0 });
+const DONS0 = () => ({ cursite: 0, or: 0, prestige: 0, objets: 0, xp: 0, kills: 0, boss: 0, liste: {}, sol: [], res: {}, boosts: 0, breche: [] });
 // état anti-triche par compte (survit aux reconnexions tant que le serveur tourne)
 const etatsComptes = new Map();
 function etatCompte(id) { let e = etatsComptes.get(id); if (!e) { e = { dons: DONS0(), seaux: arbitre.nouveauxSeaux(), rythme: {}, aPerdre: [] }; etatsComptes.set(id, e); } return e; }
@@ -177,7 +177,7 @@ function connecter(moi, c, ws) {
   let save = null; try { save = c.save ? JSON.parse(c.save) : null; } catch { save = null; }
   let cgu = null; try { const r = sql.cguDernier.get(c.id); cgu = r ? r.version : null; } catch {}
   envoyer(ws, { t: 'authres', ok: true, token, nom: c.nom, id: c.id, admin: moi.compte.admin, save, cgu });
-  if (save) { envoyerCapGardien(moi, save); moi.cpt.boost = +save.boostXP || 0; moi.cpt.maudits = mauditsDe(save); moi.cpt.bornes = bornesScore(save); }
+  if (save) { envoyerCapGardien(moi, save); moi.cpt.boost = +save.boostXP || 0; moi.cpt.rune = runeDe(save); moi.cpt.maudits = mauditsDe(save); moi.cpt.bornes = bornesScore(save); }
   if (concoursVisible()) envoyer(ws, etatConcours());
   envoyer(ws, etatObjectif()); tournoiCloture(); envoyer(ws, etatTournoi(moi)); envoyer(ws, etatGuerre()); if (ALPHAS.has(cleAlpha(c.nom))) envoyer(ws, { t: 'titres', l: ['alpha'] }); try { envoyer(ws, etatDiscord(moi)); } catch {}
   console.log(`[compte] ${c.nom} connecté${moi.compte.admin ? ' (admin)' : ''}`);
@@ -240,7 +240,7 @@ function sauverCompte(moi, m) {
     if (cpt.achats) cpt.achats = cpt.achats.filter(a => !a.vu); if (cpt.frais) cpt.frais = cpt.frais.filter(f => !f.vu && Date.now() - f.t < 600000);                // achats de l'hôtel des ventes payés
   } else { Object.assign(cpt.dons, DONS0()); cpt.aPerdre = []; }
   arbitre.apprendre(m.data);
-  cpt.boost = +m.data.boostXP || 0; cpt.maudits = mauditsDe(m.data); cpt.bornes = bornesScore(m.data);
+  cpt.boost = +m.data.boostXP || 0; cpt.rune = runeDe(m.data); cpt.maudits = mauditsDe(m.data); cpt.bornes = bornesScore(m.data);
   sql.save.run(txt, Date.now(), moi.compte.id);
   envoyerCapGardien(moi, m.data); parrPaliers(moi, m.data);
 }
@@ -550,6 +550,7 @@ wss.on('connection', (ws, req) => {
     if (m && m.t === 'tournoi') { tournoiPrise(moi, m); return; }
     if (m && m.t === 'hv') { hotelDesVentes(moi, m); return; }
     if (m && m.t === 'pack') { packs(moi, m); return; }
+    if (m && m.t === 'breche') { try { breche(moi, m, nom); } catch (e) { console.error('[brèche]', e.message); } return; }
     if (m && m.t === 'tour') { try { tour(moi, m); } catch (e) { console.error('[tour]', e.message); } return; }
     if (m && m.t === 'discord') { liaisonDiscord(moi, m); return; }
     if (m && m.t === 'colis') { colisRecu(moi, m); return; }
@@ -1025,6 +1026,54 @@ function packs(moi, m) {
   console.log(`[pack] ${moi.compte.nom} récupère son pack de démarrage (${String(m.cls)})`);
   packEnvoyer(moi, PACK.un.get(row.id));
 }
+// ---------- La Brèche : le serveur tient le chronomètre, tire la rune et les améliorations ----------
+// rune sertie par le héros en jeu (elle n'agit qu'à partir du niveau 20) : sert au butin (Savant : expérience · Duc : pièces)
+function runeDe(sv) { try { const cls = sv.current, ch = sv.chars && sv.chars[cls], b = sv.breche && sv.breche[cls]; if (!ch || (ch.lvl | 0) < 20 || !b || !b.eq) return null; const n = Math.max(0, Math.min(20, (b.runes && b.runes[b.eq]) | 0)); return n ? { k: String(b.eq), n } : null; } catch { return null; } }
+const RUNES_BRECHE = ['longue', 'veloce', 'puissant', 'carnivore', 'ami', 'savant', 'duc', 'mille', 'phantom', 'pape'];
+const BRECHES = new Map(); // `${salle}|${course}` -> { t0, d, fin }
+setInterval(() => { const lim = Date.now() - 2 * 3600000; for (const [k, B] of BRECHES) if (B.t0 < lim) BRECHES.delete(k); }, 600000).unref();
+const chanceRune = (niv, d) => { const e = niv - d; return e <= 0 ? 1 : e === 1 ? 0.2 : e === 2 ? 0.05 : 0; };
+// niveaux des runes d'une classe : la sauvegarde enregistrée au premier appel, puis ce que le serveur a lui-même accordé
+function runesDe(moi, cls) { const cpt = moi.cpt; cpt.brNiv = cpt.brNiv || {}; if (cpt.brNiv[cls]) return cpt.brNiv[cls];
+  let sv = null; try { const r = sql.parId.get(moi.compte.id); sv = r && r.save ? JSON.parse(r.save) : null; } catch {}
+  const b = (sv && sv.breche && sv.breche[cls]) || {}, niv = {}; for (const k of RUNES_BRECHE) { const n = (b.runes && b.runes[k]) | 0; if (n > 0) niv[k] = Math.min(20, n); }
+  return (cpt.brNiv[cls] = { niv, diff: Math.max(0, Math.min(20, b.diff | 0)), lvl: (sv && sv.chars && sv.chars[cls] && sv.chars[cls].lvl) | 0 }); }
+function breche(moi, m, salle) {
+  if (!moi.compte) return; const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)), R = arbitre.regles();
+  const refus = msg => envoyer(moi.ws, { t: 'breche', a: 'refus', msg });
+  cpt.dons.breche = cpt.dons.breche || [];
+  if (m.a === 'entrer') {
+    const cls = String(m.c || ''), run = m.run | 0; let d = m.d | 0; if (!R || !R.CLASSES[cls] || !(run > 0) || d < 1 || d > 20) return;
+    const E = runesDe(moi, cls); if (E.lvl < 20 && !moi.compte.admin) return refus('Il faut un héros de niveau 20');
+    const cle = salle + '|' + run; let B = BRECHES.get(cle); if (!B) { if (BRECHES.size > 5000) return; B = { t0: Date.now(), d, fin: 0 }; BRECHES.set(cle, B); }
+    d = B.d; if (d > E.diff + 1 && !moi.compte.admin) return refus('Termine d\'abord la difficulté ' + (E.diff + 1));
+    if (B.fin || Date.now() - B.t0 > 20000) return refus('Cette Brèche est déjà partie');
+    cpt.breche = { cle, cls, d, etat: 0, chances: 0 };
+    console.log(`[brèche] ${moi.compte.nom} (${cls}) entre · difficulté ${d}`);
+    return envoyer(moi.ws, { t: 'breche', a: 'entrer', ok: 1, t0: B.t0, d });
+  }
+  const c = cpt.breche; if (!c) return;
+  if (m.a === 'fin') {
+    if (c.etat !== 0) return; const B = BRECHES.get(c.cle); if (!B) return;
+    if (!B.fin) { if (Date.now() - B.t0 < 30000) return refus('La Brèche ne se laisse pas traverser si vite'); B.fin = Date.now(); }
+    const el = (B.fin - B.t0) / 1000, chances = el < 60 ? 4 : el < 120 ? 3 : el < 180 ? 2 : el < 300 ? 1 : 0, E = runesDe(moi, c.cls);
+    const manque = RUNES_BRECHE.filter(k => !E.niv[k]), rune = manque.length ? manque[Math.floor(Math.random() * manque.length)] : null;
+    if (rune) { E.niv[rune] = 1; cpt.dons.breche.push(c.cls + '|r|' + rune + '|1'); }
+    if (c.d > E.diff) { E.diff = c.d; cpt.dons.breche.push(c.cls + '|d|' + c.d); }
+    c.etat = 1; c.chances = chances;
+    console.log(`[brèche] ${moi.compte.nom} termine la difficulté ${c.d} en ${Math.round(el)} s · rune ${rune || '—'} · ${chances} chance(s)`);
+    return envoyer(moi.ws, { t: 'breche', a: 'fin', c: c.cls, d: c.d, temps: el, chances, rune });
+  }
+  if (m.a === 'up') {
+    if (c.etat !== 1 || !(c.chances > 0)) return refus('Aucune chance d\'amélioration en réserve');
+    if (Date.now() - (moi.brT || 0) < 250) return; moi.brT = Date.now();
+    const k = String(m.k || ''), E = runesDe(moi, c.cls), L = E.niv[k] | 0; if (!L) return refus('Rune inconnue'); if (L >= 20) return refus('Cette rune est déjà au niveau maximum');
+    const p = chanceRune(L, c.d); if (!p) return envoyer(moi.ws, { t: 'breche', a: 'up', k, ok: 0, imp: 1, niv: L, reste: c.chances });
+    c.chances--; const ok = Math.random() < p; if (ok) { E.niv[k] = L + 1; cpt.dons.breche.push(c.cls + '|r|' + k + '|' + (L + 1)); }
+    if (cpt.dons.breche.length > 600) cpt.dons.breche = cpt.dons.breche.slice(-400);
+    return envoyer(moi.ws, { t: 'breche', a: 'up', k, ok: ok ? 1 : 0, niv: E.niv[k], reste: c.chances });
+  }
+}
 // ---------- Tour des Chevaliers (phase de test) : les récompenses d'un palier partent au coffre de livraison ----------
 // entrée : il faut une Clef de la Tour dans la sauvegarde connue du serveur (les admins entrent sans clef) ; sortie : une seule récompense par entrée
 PACK.insTour = db.prepare("INSERT INTO packs (compte, pack, etat, quand, contenu) VALUES (?, 'tour', 1, ?, ?)");
@@ -1322,5 +1371,5 @@ function reclamerKill(moi, m, nom, salle, essai) {
   const sc = String(m.s || ''), d = donjonsGardes.get(nom + '|' + sc);
   const G = gardienDe(salle, sc || 'r');
   if (!G && d && Date.now() - d.t < 8000 && essai < 25) { setTimeout(() => { if (moi.ws.readyState === 1) reclamerKill(moi, m, nom, salle, essai + 1); }, 400); return; }
-  butin.reclamer(moi, m, { salle: nom, membres: salle, gardien: G, sansClef: sc[0] === 'd' && !ticketOk(nom, sc) && !moi.compte.admin, boost: moi.cpt.boost || 0, maudit: c => (moi.cpt.maudits || []).includes(c), onRefus: r => noterSuspect(moi, 'kill', 1, 'Monstre refusé : ' + r), dons: moi.dons, rythme: moi.cpt.rythme, envoyer, boostServeur: bonusObjectif(), guerre: guerreBonus(moi, String(m.k || ''), sc), onTue: (key, s, r) => { concoursTue(moi, key, s); objectifTue(); guerreTue(moi, key, s); bossTue(moi, key, s); reliqueTrouvee(moi, key, r); }, signaler: r => { try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(r)); } catch {} } });
+  butin.reclamer(moi, m, { salle: nom, membres: salle, gardien: G, sansClef: sc[0] === 'd' && !ticketOk(nom, sc) && !moi.compte.admin, boost: moi.cpt.boost || 0, rune: moi.cpt.rune || null, maudit: c => (moi.cpt.maudits || []).includes(c), onRefus: r => noterSuspect(moi, 'kill', 1, 'Monstre refusé : ' + r), dons: moi.dons, rythme: moi.cpt.rythme, envoyer, boostServeur: bonusObjectif(), guerre: guerreBonus(moi, String(m.k || ''), sc), onTue: (key, s, r) => { concoursTue(moi, key, s); objectifTue(); guerreTue(moi, key, s); bossTue(moi, key, s); reliqueTrouvee(moi, key, r); }, signaler: r => { try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(r)); } catch {} } });
 }

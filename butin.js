@@ -186,9 +186,13 @@ function reclamer(moi, m, ctx) {
   // maudit : jugé sur le héros réellement en jeu (celui que le serveur voit), pas sur la classe annoncée
   const enJeu = String((moi.etat && moi.etat.c) || cls), maudit = !!(ctx.maudit && ctx.maudit(enJeu));
   const r = tirer(R, key, cls, s === 'r' ? 'realm' : 'dungeon', s, { maudit });
+  r.xm = r.xp; // expérience de base : la seule qui compte pour la maîtrise de classe (aucun bonus ne s'y applique)
   if (ctx.boost && Date.now() < ctx.boost) r.xp = Math.round(r.xp * 1.3); // boost d'expérience (Cursite)
   if (ctx.boostServeur > 1) r.xp = Math.round(r.xp * ctx.boostServeur);     // objectif commun de la semaine atteint
   if (ctx.guerre > 1) { r.xp = Math.round(r.xp * ctx.guerre); if (r.or) { const v = r.or * ctx.guerre; r.or = Math.floor(v) + (Math.random() < v - Math.floor(v) ? 1 : 0); } } // guerre des guildes : zone tenue par sa guilde
+  // runes de la Brèche : Savant (+1,25 % d'expérience par niveau), Duc (+1,25 % de pièces par niveau)
+  if (ctx.rune && ctx.rune.k === 'savant') r.xp = Math.round(r.xp * (1 + 0.0125 * ctx.rune.n));
+  if (ctx.rune && ctx.rune.k === 'duc' && r.or) { const v = r.or * (1 + 0.0125 * ctx.rune.n); r.or = Math.floor(v) + (Math.random() < v - Math.floor(v) ? 1 : 0); }
   const dons = ctx.dons; nettoyer(dons);
   dons.xp += r.xp; dons.kills += 1; dons.boss += r.b; dons.or += r.or;
   for (const it of [...r.it, ...r.spg, ...r.sp]) noter(dons, it);

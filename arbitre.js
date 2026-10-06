@@ -127,6 +127,7 @@ const SEAUX = {
   boss: { debit: 3, max: 12 },            // boss tués
   gloire: { debit: 2, max: 6 },           // points de gloire
   herbes: { debit: 25, max: 60 },         // plantes cueillies
+  lys: { debit: 1, max: 4 },              // Lys des abîmes : un ou deux par grand donjon
 };
 function nouveauxSeaux() { const s = { t: Date.now() }; for (const k in SEAUX) s[k] = SEAUX[k].max; return s; }
 function remplir(sx) { const now = Date.now(), dt = (now - sx.t) / 60000; sx.t = now; for (const k in SEAUX) sx[k] = Math.min(SEAUX[k].max, (sx[k] ?? SEAUX[k].max) + SEAUX[k].debit * dt); }
@@ -235,14 +236,15 @@ function verifier(ancien, nouveau, ctx) {
     if (!(+nouveau.boostXP <= Date.now() + 3600000 + 10 * 60000)) pb.push('boost d\'XP trafiqué');
   }
   // --- herboriste : cinq plantes cueillies dans les Plaines (rythme limité). Potion de vie = Sanguine + Racine vermeille + Trèfle doré ; potion de mana = Azurine + Lunaire + Trèfle doré ---
-  const libHerbe = { pvie: 0, pmana: 0, t: 0 };
+  const libHerbe = { pvie: 0, pmana: 0, t: 0, d: 0 }, GRANDES = { gvie: 'pvie', gmana: 'pmana' };
   { const h0 = ancien.herbes || {}, h1 = nouveau.herbes || {}; let gain = 0; const moins = k => Math.max(0, (h0[k] | 0) - (h1[k] | 0));
-    for (const k of Object.keys(h1)) { if (!'srlat'.includes(k) || k.length !== 1) { pb.push('plante inconnue'); continue; } if (!estEntier(h1[k] ?? 0, 0, 99999)) { pb.push('plantes impossibles'); continue; } gain += Math.max(0, (h1[k] | 0) - (h0[k] | 0)); }
+    for (const k of Object.keys(h1)) { if (!'srlatd'.includes(k) || k.length !== 1) { pb.push('plante inconnue'); continue; } if (!estEntier(h1[k] ?? 0, 0, 99999)) { pb.push('plantes impossibles'); continue; } if (k !== 'd') gain += Math.max(0, (h1[k] | 0) - (h0[k] | 0)); }
+    { const gl = Math.max(0, (h1.d | 0) - (h0.d | 0)); if (gl > sx.lys + 0.5) pb.push('Lys des abîmes cueillis trop vite (+' + gl + ')'); else sx.lys -= gl; }
     if (gain > sx.herbes + 0.5) pb.push('plantes cueillies trop vite (+' + gain + ')'); else sx.herbes -= gain;
-    libHerbe.pvie = Math.min(moins('s'), moins('r')); libHerbe.pmana = Math.min(moins('a'), moins('l')); libHerbe.t = moins('t');
+    libHerbe.pvie = Math.min(moins('s'), moins('r')); libHerbe.pmana = Math.min(moins('a'), moins('l')); libHerbe.t = moins('t'); libHerbe.d = moins('d');
     // expérience du métier : 10 par potion fabriquée
     const x0 = (ancien.herbo && ancien.herbo.xp) | 0, x1 = (nouveau.herbo && nouveau.herbo.xp) | 0;
-    if (!estEntier((nouveau.herbo && nouveau.herbo.xp) ?? 0, 0, 1000000)) pb.push('métier impossible'); else if (x1 - x0 > 10 * Math.min(libHerbe.t, libHerbe.pvie + libHerbe.pmana)) pb.push('expérience d\'herboriste injustifiée'); }
+    if (!estEntier((nouveau.herbo && nouveau.herbo.xp) ?? 0, 0, 1000000)) pb.push('métier impossible'); else if (x1 - x0 > 10 * Math.min(libHerbe.t + libHerbe.d, libHerbe.pvie + libHerbe.pmana)) pb.push('expérience d\'herboriste injustifiée'); }
   // --- cristaux de Cursite : un meuble acheté 1000 Cursite, qui peut passer dans le sac (pour l'hôtel des ventes) et rapporte 10 Cursite par jour une fois posé ---
   const nbCr = sv => objets(sv).filter(it => it.kind === 'cristal').length, hCr = sv => Math.max(0, (sv.house && sv.house.inv && sv.house.inv.cristal) | 0);
   const crI0 = nbCr(ancien), crI1 = nbCr(nouveau), crH0 = hCr(ancien), crH1 = hCr(nouveau);
@@ -275,6 +277,16 @@ function verifier(ancien, nouveau, ctx) {
       return !!(ancien.chars[cls] || (ancien.unlock && ancien.unlock[cls]) || Math.max(niv(ancien), niv(nouveau)) >= 15); };
     for (const cls of Object.keys(nouveau.chars)) if (R.CLASSES[cls] && !dq(cls)) pb.push('héros non débloqué (' + cls + ')');
     for (const cls of Object.keys(nouveau.unlock || {})) if (nouveau.unlock[cls] && R.CLASSES[cls] && !dq(cls)) pb.push('déblocage de héros injustifié'); }
+  // --- la Brèche : runes, arbre et difficulté, par classe. Tout vient du serveur (dons.breche : « classe|r|rune|niveau » et « classe|d|difficulté »). ---
+  { const RK = ['longue', 'veloce', 'puissant', 'carnivore', 'ami', 'savant', 'duc', 'mille', 'phantom', 'pape'], accord = new Set(dons.breche || []), b1 = nouveau.breche, b0 = (ancien.breche && typeof ancien.breche === 'object' && ancien.breche) || {};
+    if (b1 != null) { if (typeof b1 !== 'object' || Array.isArray(b1)) pb.push('Brèche illisible'); else for (const cls of Object.keys(b1)) {
+      const n = b1[cls], a0 = (b0[cls] && typeof b0[cls] === 'object' && b0[cls]) || {}; if (!R.CLASSES[cls] || !n || typeof n !== 'object') { pb.push('Brèche : classe inconnue'); continue; }
+      const r1 = (n.runes && typeof n.runes === 'object' && n.runes) || {}, r0 = (a0.runes && typeof a0.runes === 'object' && a0.runes) || {};
+      for (const k of Object.keys(r1)) { if (!RK.includes(k) || !estEntier(r1[k], 0, 20)) { pb.push('rune impossible'); continue; } for (let L = (r0[k] | 0) + 1; L <= (r1[k] | 0); L++) if (!accord.has(cls + '|r|' + k + '|' + L)) { pb.push('rune non accordée par le serveur (' + k + ' ' + L + ')'); break; } }
+      if (n.eq != null && !(RK.includes(n.eq) && (r1[n.eq] | 0) > 0)) pb.push('rune sertie sans la posséder');
+      if (!estEntier(n.diff ?? 0, 0, 20)) pb.push('difficulté impossible'); else for (let d = (a0.diff | 0) + 1; d <= (n.diff | 0); d++) if (!accord.has(cls + '|d|' + d) && d === (n.diff | 0)) pb.push('difficulté de Brèche non terminée (' + d + ')');
+      if (n.arbre != null) { if (!Array.isArray(n.arbre) || n.arbre.length > 15 || new Set(n.arbre).size !== n.arbre.length || n.arbre.some(id => typeof id !== 'string' || !/^-?[0-4],-?[0-4]$/.test(id))) pb.push('arbre impossible'); }
+    } } }
   // --- progression des héros ---
   let gainNiv = 0, gainKills = 0, gainBoss = 0, gainGloire = 0, gainXP = 0, kits = 0;
   const xpTot = ch => { let x = 0; for (let l = 1; l < (ch.lvl | 0); l++) x += R.need(l); return x + Math.max(0, +ch.xp || 0) + Math.max(0, +ch.gxp || 0) + (ch.gp | 0) * R.GLORY_XP; };
@@ -348,6 +360,7 @@ function verifier(ancien, nouveau, ctx) {
     for (; plus > 0; plus--) {
       if (kind === 'cle' || kind === 'cle_tour') { if (donsObj > 0) donsObj--; else horsListe++; continue; } // une clef vient toujours du serveur
       if (libHerbe[kind] > 0 && libHerbe.t > 0) { libHerbe[kind]--; libHerbe.t--; continue; }   // potion fabriquée avec ses plantes
+      if (GRANDES[kind] && libHerbe[GRANDES[kind]] > 0 && libHerbe.d > 0) { if (((ancien.herbo && ancien.herbo.xp) | 0) < 3150) pb.push('grande potion avant le niveau 15 du métier'); libHerbe[GRANDES[kind]]--; libHerbe.d--; continue; } // grande potion : niveau 15 (3 150 points), Lys des abîmes à la place du Trèfle
       if (conso) { // un consommable vient du serveur, d'un cadeau, du kit d'un nouveau héros, des plantes, ou d'un achat payé
         if ((kind === 'pvie' || kind === 'pmana') && kitPot > 0) { kitPot--; continue; }
         if (libConso > 0) { libConso--; continue; }
