@@ -1,5 +1,9 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.81 (index.html ; wiki.html régénéré)
+- **Filet de sécurité au chargement.** Si le jeu rencontre une erreur en démarrant, l'écran-titre et le bouton « Jouer » fonctionnent quand même, et un bandeau rouge affiche l'erreur en haut de l'écran : envoie-en une capture sur le Discord, ça permet de corriger tout de suite.
+- (interne) Démarrage sous try/catch (repli sur le choix du héros), petit script « data-filet » avant le script principal, version de l'écran-titre écrite sans attendre le jeu.
+
 ## ver.0.0.80 (index.html ; wiki.html régénéré)
 - **Correctif urgent : le bouton « Jouer » ne répondait plus.** Depuis la 0.0.79, les joueurs qui avaient déjà un héros restaient bloqués sur l'écran-titre. C'est réparé, rien n'a été perdu : tes héros, ton or et tes objets sont intacts.
 - (interne) Le démarrage du jeu s'exécutait avant la définition des fonctions de la Brèche (runeDmgK appelée par S()) : il est déplacé tout en bas du script.

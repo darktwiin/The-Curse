@@ -478,7 +478,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.80"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.81"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -495,7 +495,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp mait" id="mxBar" hidden><i id="mxF"></i><span><em>Maîtrise</em><b id="mxT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.80</div>
+    <div class="verTag" id="verTag">ver.0.0.81</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -672,7 +672,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.80</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.81</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -714,7 +714,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.80</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.81</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -901,6 +901,15 @@ body.ton #opts{position:fixed;z-index:120}
   </aside>
 </div>
 
+<script data-filet>
+/* Filet de sécurité : toute erreur pendant le chargement s'affiche à l'écran (avec la version), au lieu de laisser un écran-titre muet. */
+(function(){var t0=Date.now(),n=0,v='';try{v=document.getElementById('verTag').textContent;document.getElementById('tsVer').textContent=v;}catch(e){}
+  function montre(txt){if(n>=4||Date.now()-t0>30000)return;n++;try{var b=document.getElementById('errDem');if(!b){b=document.createElement('div');b.id='errDem';b.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99999;background:#5a0d1a;color:#fff;font:13px/1.5 monospace;padding:8px 12px;border-bottom:2px solid #ff5a6a;white-space:pre-wrap;user-select:text';b.textContent='Le jeu a rencontré une erreur au chargement ('+v+'). Fais une capture de ce bandeau et envoie-la sur le Discord :';document.body.appendChild(b);}b.textContent+='\n• '+txt;}catch(e){}}
+  window.__errDem=function(quoi,err){montre(quoi+' : '+(err&&err.message||err)+(err&&err.stack?' | '+String(err.stack).split('\n').slice(1,3).join(' ').replace(/https?:\/\/[^\/]+\//g,'').slice(0,160):''));};
+  window.addEventListener('error',function(e){montre((e.message||'erreur')+' (ligne '+(e.lineno||'?')+':'+(e.colno||'?')+')');});
+  window.addEventListener('unhandledrejection',function(e){var r=e.reason;montre('promesse : '+(r&&r.message||r));});
+})();
+</script>
 <script>
 (()=>{
 'use strict';
@@ -3551,7 +3560,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000080;let newerWarned=false;
+const NETV=2,BUILD=2600000081;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -8856,11 +8865,11 @@ function brInvTick(){const inv=brInvite();if(!inv||inv.run===brInvVu){if(!brInvE
 brInvEl.addEventListener('click',e=>{const b=e.target.closest('[data-bv]');if(!b||!brInvCur)return;brInvVu=brInvCur.run;if(b.dataset.bv==='oui'&&brInvCur.t0-brNow()>300){BRI={run:brInvCur.run,d:brInvCur.d,th:brInvCur.th,t0:brInvCur.t0,chef:0};sendPresence();note('Tu rejoins la Brèche de '+brInvCur.de+' : départ imminent');}brInvEl.hidden=true;cv.focus();});
 setInterval(()=>{try{if(save.current){brInvTick();if(BRI)brecheTick();}}catch(e){}},400);
 /* ---- démarrage : en dernier, une fois que tout le reste du jeu est défini ---- */
-nexusMap=genNexus();MAP=nexusMap;
-if(save.current&&save.chars[save.current]){updWho();enterNexus();const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;}
-else{save.current=null;P.x=13;P.y=11;openSelect();}
-setTab('inv');renderPlayers();applyCursor();setSong('lobby');
-initRoom();
+// Protégé : si quoi que ce soit casse ici, l'écran-titre et le choix du héros doivent quand même s'ouvrir (et l'erreur s'affiche à l'écran).
+try{nexusMap=genNexus();MAP=nexusMap;}catch(err){console.error(err);if(window.__errDem)window.__errDem('carte du village',err);}
+try{if(save.current&&save.chars[save.current]){updWho();enterNexus();const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;}
+else{save.current=null;P.x=13;P.y=11;openSelect();}}catch(err){console.error(err);if(window.__errDem)window.__errDem('héros',err);try{P.x=13;P.y=11;scene='nexus';MAP=nexusMap;openSelect();}catch(e){}}
+for(const [quoi,f] of [['inventaire',()=>setTab('inv')],['joueurs',()=>renderPlayers()],['curseur',()=>applyCursor()],['musique',()=>setSong('lobby')],['réseau',()=>initRoom()]]){try{f();}catch(err){console.error(err);if(window.__errDem)window.__errDem(quoi,err);}}
 function installDebug(){if(window.__rm)return;window.__rm={P,save,tp:(x,y)=>{P.x=x;P.y=y;},realm:()=>{enterRealm();},dungeon:(id,t)=>enterDungeon(id||12345,t),astral:()=>({stars,minis:MAP.minis,start:MAP.start,hub:MAP.hub}),toMini:i=>{const g=MAP.minis[i];P.x=g.x;P.y=g.y+3;},toHub:()=>{P.x=MAP.hub.x+.5;P.y=MAP.hub.y+4;},toGate:()=>{const g=MAP.doors[1];P.x=g.x+.5;P.y=g.y+3;},setStars:v=>{if(amHost)setStars(v);},state:()=>({scene,host:amHost,mons:monsters.length,near:monsters.filter(m=>Math.hypot(m.x-P.x,m.y-P.y)<12).map(m=>m.key),eb:eb.length,gold:save.gold,inv:C()&&C().inv.length,portals:dportals.length,zone:curZone}),gold:n=>{save.gold+=n;},kill:()=>{for(const m of monsters)if(Math.hypot(m.x-P.x,m.y-P.y)<14){if(amHost)hostKill(m);}},portal:()=>{dportals.push({id:++monId,x:P.x+2,y:P.y,life:60});},give:k=>{const f=freeInv();if(f>=0)C().inv[f]=mkItem(k,0);invDirty=true;},arena:()=>({fight,altar:MAP.altar,doors:MAP.doors&&MAP.doors.length,inside:inArena(P.x,P.y),arena:MAP.arena}),toAltar:()=>{P.x=MAP.altar.x;P.y=MAP.altar.y+2;},toDoor:()=>{const d=MAP.doors[0],a=MAP.altar;const vx=(d.x+.5)-a.x,vy=(d.y+.5)-a.y,l=Math.hypot(vx,vy);P.x=d.x+.5+vx/l*1.5;P.y=d.y+.5+vy/l*1.5;return{x:d.x,y:d.y};},lowBoss:()=>{for(const m of monsters)if(m.d.boss)m.hp=Math.min(m.hp,300);},die:()=>die('Test'),god:()=>{P.god=true;}};}
 requestAnimationFrame(frame);
 /* ================= écran titre : l'Horloge Brisée, violette, tourne à l'envers ================= */
