@@ -478,7 +478,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.82"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.83"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -495,7 +495,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp mait" id="mxBar" hidden><i id="mxF"></i><span><em>Maîtrise</em><b id="mxT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.82</div>
+    <div class="verTag" id="verTag">ver.0.0.83</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -672,7 +672,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.82</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.83</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -714,7 +714,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.82</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.83</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -3560,7 +3560,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000082;let newerWarned=false;
+const NETV=2,BUILD=2600000083;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -4452,6 +4452,7 @@ function populateDungeon0(){
     if(Math.hypot(rm.x-d.start.x,rm.y-d.start.y)<16)return; // zone d'entrée protégée
     const n=d.maze?2+ri(0,2):3+ri(0,3);for(let k=0;k<n;k++){for(let t=0;t<20;t++){const x=rm.x-(rm.w>>1)+1+Math.random()*(rm.w-2),y=rm.y-(rm.h>>1)+1+Math.random()*(rm.h-2);if(!blocked(x,y,0.4)){addMon(pick(DTYPES[d.dtype].pool),x,y,0);break;}}}
   });
+  if(d.breche&&d.brBoss){const b=addMon(d.bossKey,d.brBoss.x,d.brBoss.y,0);b.hx=b.x;b.hy=b.y;b.cd=2.5;}
 }
 let zoneCapCache={};
 function zoneCap(r){if(zoneCapCache[r]!=null)return zoneCapCache[r];let n=0;for(let i=0;i<RW*RH;i++)if(realm.reg[i]===r&&!realm.sol[i])n++;return zoneCapCache[r]=Math.round(n/(r===6?150:190)*1.15);}
@@ -8638,6 +8639,7 @@ function drawMini(){
     mctx.drawImage(d.miniCv,V.ox,V.oy,d.w/miniZoom,d.h/miniZoom,0,0,Wm,Wm);
     if(d.minis){const cols=['#ff6a4a','#2ed8c8','#6ad86a','#ffb04a'];for(const g of d.minis){if(d.fog&&!d.seen[Math.floor(g.y)*d.w+Math.floor(g.x)])continue;mctx.fillStyle=stars&(1<<g.i)?'#555':cols[g.i];mctx.fillRect(mx(g.x)-3,my(g.y)-3,6,6);}}
     for(const m of monsters){if(d.fog&&!d.seen[Math.floor(m.y)*d.w+Math.floor(m.x)])continue;if(m.d.star!=null)continue;mctx.fillStyle=m.d.boss?'#3ff0ff':'#ff4d5e';const s=m.d.boss?5:miniZoom>=4?4:2;mctx.fillRect(mx(m.x)-s/2,my(m.y)-s/2,s,s);}
+    if(d.breche&&!d.pilier){const c=d.down||d.brBoss;if(c){const X=clamp(mx(c.x),4,Wm-4),Y=clamp(my(c.y),4,Wm-4),p=0.5+0.5*Math.sin(time*5),s2=5+Math.round(p*3);mctx.fillStyle='#0b0a12';mctx.fillRect(X-s2/2-1,Y-s2/2-1,s2+2,s2+2);mctx.fillStyle=d.down?'#7df0e0':'#ff5a6a';mctx.fillRect(X-s2/2,Y-s2/2,s2,s2);}}
     mctx.fillStyle='#4fb8e8';for(const r of others)mctx.fillRect(mx(r.x)-2,my(r.y)-2,4,4);
     mctx.fillStyle='#fff';mctx.fillRect(mx(P.x)-2,my(P.y)-2,4,4);
   }else if(scene==='arena'||scene==='ghall'||scene==='raid'){
@@ -8815,8 +8817,8 @@ function brScene(){if(scene!=='dungeon'||!MAP||!MAP.breche)return null;const run
     if(!o)o={d:clamp(+f[2]|0,1,20),n:clamp(+f[3]|0,1,8),etat:+f[1]||0,fl:[0,1,2,3,4].map(i=>fl[i]||0)};else{o.etat=Math.max(o.etat,+f[1]||0);for(let i=0;i<5;i++)o.fl[i]=Math.max(o.fl[i]||0,fl[i]||0);}}
   return o;}
 function brecheHote(){const o=brScene();if(!o)return;const e=(MAP.etage||1)-1;MAP.brKills=Math.max(MAP.brKills|0,o.fl[e]|0);MAP.brEtat=Math.max(MAP.brEtat|0,o.etat);MAP.brO=o;
-  if(!MAP.brMis){MAP.brMis=1;const k=brHpK(o.d,o.n);for(const m of monsters){if(m.d.boss||m.max!==m.d.hp)continue;const plein=m.hp>=m.max;m.max=Math.round(m.d.hp*k);if(plein)m.hp=m.max;}}
-  if(MAP.brBoss&&(MAP.brEtat|0)<2&&o.etat<2&&!MAP.brBossMis&&MAP.brMis){MAP.brBossMis=1;if(!monsters.some(m=>m.key===MAP.bossKey)){const b=addMon(MAP.bossKey,MAP.brBoss.x,MAP.brBoss.y,0);b.max=b.hp=Math.round(b.d.hp*brHpK(o.d,o.n));b.hx=b.x;b.hy=b.y;b.cd=2.5;}MAP.brEtat=Math.max(MAP.brEtat|0,1);}}
+  if(!MAP.brMis){MAP.brMis=1;const k=brHpK(o.d,o.n);for(const m of monsters){if((m.d.boss&&m.key!==MAP.bossKey)||m.max!==m.d.hp)continue;const plein=m.hp>=m.max;m.max=Math.round(m.d.hp*k);if(plein)m.hp=m.max;}}
+  if(MAP.brBoss&&(MAP.brEtat|0)<1)MAP.brEtat=1;}
 function brecheKill(m){if(scene!=='dungeon'||!MAP||!MAP.breche)return;const o=brScene()||MAP.brO;if(!o)return;
   if(m.key===MAP.bossKey){MAP.brEtat=2;MAP.brFin=Math.round(m.x*10)/10+','+Math.round(m.y*10)/10;return;}
   if(m.d.boss)return;MAP.brKills=(MAP.brKills|0)+1;}

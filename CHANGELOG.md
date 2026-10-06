@@ -1,5 +1,10 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.83 (index.html ; wiki.html régénéré)
+- **Brèche : un repère sur la mini-carte.** La carte reste dans le brouillard, mais un point qui clignote indique le portail de l'étage (turquoise), puis la salle du gardien (rouge). De quoi foncer droit au but.
+- **Brèche : il n'y a plus qu'un seul gardien.** Un double apparaissait parfois au dernier étage et tombait presque aussitôt.
+- (interne) Le gardien est posé avec les autres monstres de l'étage (populateDungeon0, même identifiant chez tous) au lieu d'être ajouté par l'hôte ; sa vie est mise à l'échelle par brecheHote.
+
 ## ver.0.0.82 (index.html, server.js ; wiki.html régénéré)
 - **La Brèche va plus vite : 3 étages au lieu de 5.** Plus de jauge à remplir : trouve le portail de chaque étage, et le **gardien** t'attend au bout du troisième.
 - **Tu peux éviter les salles.** Rien ne t'oblige à tuer les monstres : file tout droit vers le portail si tu veux gagner du temps (et donc des chances d'améliorer tes runes).
