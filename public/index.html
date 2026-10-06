@@ -478,7 +478,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.83"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.84"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -495,7 +495,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp mait" id="mxBar" hidden><i id="mxF"></i><span><em>Maîtrise</em><b id="mxT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.83</div>
+    <div class="verTag" id="verTag">ver.0.0.84</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -672,7 +672,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.83</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.84</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -714,7 +714,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.83</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.84</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -3560,7 +3560,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000083;let newerWarned=false;
+const NETV=2,BUILD=2600000084;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -8695,7 +8695,7 @@ var RUNES={
   longue:{nom:'Longue-vue',col:'#7df0e0',max:'+1 case de portée pour ton arme',txt:n=>'+'+(n*0.05).toFixed(2).replace('.',',')+' case de portée'},
   veloce:{nom:'Véloce',col:'#ffe27a',max:'Vitesse d\'attaque ×2, dégâts ÷2',txt:n=>'Vitesse d\'attaque ×'+(1+n*0.05).toFixed(2).replace('.',',')+', dégâts ÷'+(1+n*0.05).toFixed(2).replace('.',',')},
   puissant:{nom:'Puissant',col:'#ff7a5a',max:'Dégâts ×2, vitesse d\'attaque ÷2',txt:n=>'Dégâts ×'+(1+n*0.05).toFixed(2).replace('.',',')+', vitesse d\'attaque ÷'+(1+n*0.05).toFixed(2).replace('.',',')},
-  carnivore:{nom:'Carnivore',col:'#ff3b6a',max:'10 % des dégâts de ton arme te soignent',txt:n=>(n*0.5).toFixed(1).replace('.',',')+' % des dégâts de ton arme te soignent'},
+  carnivore:{nom:'Carnivore',col:'#ff3b6a',max:'1 % des dégâts de ton arme te soignent',txt:n=>(n*0.05).toFixed(2).replace('.',',')+' % des dégâts de ton arme te soignent'},
   ami:{nom:'Ami des bêtes',col:'#9fe07a',max:'Bonus du familier +50 %',txt:n=>'Bonus du familier +'+(n*2.5).toFixed(1).replace('.',',')+' %'},
   savant:{nom:'Savant',col:'#7ed957',max:'+25 % d\'expérience (gloire comprise)',txt:n=>'+'+(n*1.25).toFixed(2).replace('.',',')+' % d\'expérience (gloire comprise, pas la maîtrise)'},
   duc:{nom:'Duc',col:'#ffd23f',max:'+25 % de pièces',txt:n=>'+'+(n*1.25).toFixed(2).replace('.',',')+' % de pièces'},
@@ -8712,7 +8712,7 @@ const soin=n=>{const k=runeN('pape');return k?Math.round(n*(1+k*0.015)):n;};
 var WBR={};function WBr(kind){const b=WB[kind],n=runeN('longue');if(!n||!b||!(b.range>0))return b;const k=kind+':'+n;return WBR[k]||(WBR[k]=Object.assign(Object.create(b),{range:b.range+n*0.05}));}
 // coups critiques : tirés à chaque projectile de l'arme (rune « Dans le mille »), 150 % des dégâts, affichés en rouge
 function critTir(n0){const n=runeN('mille'),vol=runeN('carnivore');for(let i=n0;i<pb.length;i++){const b=pb[i];if(!(b.dmg>0)||b.cosm)continue;b.arme=1;if(n&&Math.random()<n*0.005){b.dmg=Math.round(b.dmg*1.5);b.crit=1;b.col='#ff3b4a';b.trail='#ff3b4a';b.r=(b.r||0.2)*1.2;}}}
-function volVie(dg){const n=runeN('carnivore');if(!n||!(dg>0))return;const mx=S().tot.vie,got=Math.min(dg*n*0.005,mx-P.hp);if(got>0){P.hp+=got;P.volAcc=(P.volAcc||0)+got;if(P.volAcc>=15){ft(P.x,P.y-0.9,'+'+Math.round(P.volAcc),'#ff3b6a');P.volAcc=0;}}}
+function volVie(dg){const n=runeN('carnivore');if(!n||!(dg>0))return;const mx=S().tot.vie,got=Math.min(dg*n*0.0005,mx-P.hp);if(got>0){P.hp+=got;P.volAcc=(P.volAcc||0)+got;if(P.volAcc>=15){ft(P.x,P.y-0.9,'+'+Math.round(P.volAcc),'#ff3b6a');P.volAcc=0;}}}
 // ---------- l'arbre : un seul plateau, le même pour toutes les classes. Le centre reçoit la rune ; on avance de proche en proche. ----------
 var ARBRE=(()=>{const N={},add=(x,y,t,st)=>{N[x+','+y]={id:x+','+y,x,y,t,st};};
   const dirs=[[0,-1,{puissance:5},'Force'],[1,0,{vatt:5},'Célérité'],[0,1,{vdep:5},'Élan'],[-1,0,{vie:50,mana:50},'Vitalité']];

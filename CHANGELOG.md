@@ -1,5 +1,8 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.84 (index.html ; wiki.html régénéré)
+- **Rune Carnivore rééquilibrée.** Elle était beaucoup trop forte : le vol de vie passe de 10 % à **1 %** des dégâts de l'arme au niveau 20 (0,05 % par niveau).
+
 ## ver.0.0.83 (index.html ; wiki.html régénéré)
 - **Brèche : un repère sur la mini-carte.** La carte reste dans le brouillard, mais un point qui clignote indique le portail de l'étage (turquoise), puis la salle du gardien (rouge). De quoi foncer droit au but.
 - **Brèche : il n'y a plus qu'un seul gardien.** Un double apparaissait parfois au dernier étage et tombait presque aussitôt.
