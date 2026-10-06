@@ -1,5 +1,9 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.80 (index.html ; wiki.html régénéré)
+- **Correctif urgent : le bouton « Jouer » ne répondait plus.** Depuis la 0.0.79, les joueurs qui avaient déjà un héros restaient bloqués sur l'écran-titre. C'est réparé, rien n'a été perdu : tes héros, ton or et tes objets sont intacts.
+- (interne) Le démarrage du jeu s'exécutait avant la définition des fonctions de la Brèche (runeDmgK appelée par S()) : il est déplacé tout en bas du script.
+
 ## ver.0.0.79 (index.html, server.js, butin.js, arbitre.js ; wiki.html régénéré)
 - **La Brèche : un nouveau contenu de fin de jeu, seul ou à plusieurs.** Au niveau 20, le **Veilleur de la Brèche** apparaît au Village, à gauche de l'entrée.
   - Un donjon à étages (5 au plus), en labyrinthe, sur un thème tiré au hasard parmi trois : le **Sanctuaire runique**, le **Nid de la Corruption** et le **Cœur de l'Orage**. Neuf nouveaux monstres, trois nouveaux gardiens, une nouvelle musique.
