@@ -406,10 +406,13 @@ function verifier(ancien, nouveau, ctx) {
   for (const e of aPerdre) { if (Date.now() - e.t < 3000) continue; /* 3 s de marge : une sauvegarde déjà partie peut encore contenir l'objet */ const n = c1.get(e.sig) || 0; if (n > e.max) enTrop.push(e); }
   if (enTrop.length) pb.push('objet donné ou utilisé toujours dans le sac (duplication)');
 
+  // consommables réellement utilisés dans cette sauvegarde (bus, éclos, donnés à manger) : le reste de ce qui a disparu a pu être posé au sol
+  const utilises = {};
   // --- potions de caractéristique bues : chaque point demande une potion disparue ---
   for (const k of Object.keys(R.SP_DEF)) {
     let bu = 0; for (const [cls, ch1] of Object.entries(nouveau.chars)) { const ch0 = ancien.chars[cls]; if (ch0 && (ch1.lvl | 0) >= 1) bu += Math.max(0, ((ch1.sp || {})[k] | 0) - ((ch0.sp || {})[k] | 0)); }
     if (!bu) continue;
+    utilises['sp_' + k] = bu;
     const avant = nbKind(o0, it => it.kind === 'sp_' + k), apres = nbKind(o1, it => it.kind === 'sp_' + k);
     // une potion donnée par le serveur et bue aussitôt (ramassée puis bue entre deux sauvegardes) n'est jamais passée par le sac : elle compte aussi
     let recues = 0; { const L = liste[signature(R.mkItem('sp_' + k, 0))]; const manque = bu - Math.max(0, avant - apres); while (L && L.length && recues < manque) { L.shift(); recues++; } }
@@ -426,6 +429,7 @@ function verifier(ancien, nouveau, ctx) {
     for (const p of neufs) { if ((p.t | 0) === 0) communs++; else { const meme = partis.filter(q => q.k === p.k && (q.t | 0) === (p.t | 0) - 1).length; if (meme >= 3) evos++; else pb.push('familier de rang supérieur injustifié'); } }
     // relance : 3 familiers rendus (hors évolutions) donnent droit à 1 familier commun
     const relances = Math.floor(Math.max(0, partis.length - 3 * evos) / 3);
+    utilises['*oeuf'] = communs; utilises.croquette = evos;
     if (communs > oeufs + relances + (dons.objets || 0)) pb.push('familier sans œuf');
     if (evos > croq + (dons.objets || 0)) pb.push('évolution sans croquette');
   }
@@ -448,8 +452,15 @@ function verifier(ancien, nouveau, ctx) {
   { const donnes = new Set((ctx.aPerdre || []).map(e => e.sig)), vendu = gainBrut - (dons.or || 0) > 0.5;
     for (const [k, n] of c0) { const moins = n - (c1.get(k) || 0) - (fondus.get(k) || 0); if (moins <= 0 || donnes.has(k)) continue;
       const kind = k.split('|')[0], t = +k.split('|')[1], K = R.KINDS[kind]; if (!K) continue;
-      if (K.slot === 'conso' ? kind !== 'cle' : (vendu && (R.SELL_PRICE[t] || 0) > 0)) continue;
-      for (let i = 0; i < Math.min(moins, 8); i++) sol.push({ sig: k, t: Date.now() }); }
+      if (K.slot !== 'conso') { if (vendu && (R.SELL_PRICE[t] || 0) > 0) continue; for (let i = 0; i < Math.min(moins, 8); i++) sol.push({ sig: k, t: Date.now() }); continue; }
+      // consommables : ceux dont l'usage laisse une trace (potion de caractéristique, œuf, croquette) peuvent avoir été posés au sol pour la part qui n'a PAS servi ;
+      // les grandes potions aussi (2 au plus par sauvegarde). Les potions ordinaires n'en ont pas besoin : elles se rachètent 5 pièces.
+      let pose = 0;
+      if (kind === 'cle') pose = moins;
+      else if (kind.startsWith('sp_') || kind === 'croquette') { const u = Math.min(moins, utilises[kind] || 0); utilises[kind] = (utilises[kind] || 0) - u; pose = moins - u; }
+      else if (K.egg) { const u = Math.min(moins, utilises['*oeuf'] || 0); utilises['*oeuf'] = (utilises['*oeuf'] || 0) - u; pose = moins - u; }
+      else if (kind === 'gvie' || kind === 'gmana') pose = Math.min(moins, 2);
+      for (let i = 0; i < Math.min(pose, 8); i++) sol.push({ sig: k, t: Date.now() }); }
     if (sol.length > 40) sol.splice(0, sol.length - 40); }
   // cadeaux pas encore dans le sac (sac plein : l'objet attend au sol) : le crédit reste valable
   // la Cursite donnée par le serveur mais pas encore ajoutée par le jeu (livraison en cours) reste due

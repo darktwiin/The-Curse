@@ -1,5 +1,15 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.85 (index.html, server.js, arbitre.js, butin.js ; wiki.html régénéré)
+- **Brèche : tomber, c'est sortir.** Si tu meurs dans la Brèche, tu es renvoyé au Village **sans rien perdre** (ni expérience ni équipement), mais tu ne peux plus entrer dans cette Brèche. Seul, elle se referme ; en groupe, tes compagnons peuvent encore la finir, et seuls ceux qui battent le gardien gagnent la rune et débloquent la difficulté suivante.
+- **Brèche : le gardien ne se laisse plus grignoter de loin.** Si sa salle se vide, il reprend toute sa vie : il faut qu'au moins un joueur y reste.
+- **L'arbre de la Brèche est redessiné.** On part du **Départ**, en bas, on monte jusqu'à la rune, puis on choisit ses branches : Rempart (+5 armure), Vitalité (+50 vie, +50 mana), Élan (+5 vitesse de déplacement), Force (+5 puissance). Une branche centrale mène à la **Suite**, qui s'ouvrira plus tard. **Tous les points ont été rendus : replace-les** (c'est gratuit).
+- **Rune Carnivore** : 2 % de vol de vie au niveau 20 (au lieu de 1 %).
+- **Monstre maudit** : il ne gagne plus de vie à chaque joueur qui passe près de lui (c'est ce qui donnait l'impression qu'il se soignait). Seuls ceux qui le combattent comptent : +10 % de vie par combattant, +30 % au plus. Sa prime passe de 100 à **200 pièces**.
+- **Correctif** : poser au sol une potion de caractéristique, une grande potion, un œuf ou une croquette puis la ramasser ne fait plus refuser la sauvegarde.
+- (interne) Anti-triche : l'onglet Triche et l'onglet Suspects affichent le personnage (pseudo et classe) à côté du compte ; « coups de loin » : seuil 18 → 22 cases, rien n'est compté dans les 6 s qui suivent un saut de position (téléportation, dash, retour au Village).
+- (interne) Arbre : save.breche[classe].av=2 (remise à zéro à la première lecture) ; Brèche : message serveur « mort », B.morts ; arbitre : les consommables disparus sans trace d'usage sont notés comme posés au sol.
+
 ## ver.0.0.84 (index.html ; wiki.html régénéré)
 - **Rune Carnivore rééquilibrée.** Elle était beaucoup trop forte : le vol de vie passe de 10 % à **1 %** des dégâts de l'arme au niveau 20 (0,05 % par niveau).
 

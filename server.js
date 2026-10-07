@@ -150,8 +150,10 @@ db.exec(`CREATE TABLE IF NOT EXISTS anomalies (id INTEGER PRIMARY KEY AUTOINCREM
 db.exec(`CREATE TABLE IF NOT EXISTS consentements (compte INTEGER NOT NULL, version TEXT NOT NULL, quand INTEGER NOT NULL, PRIMARY KEY (compte, version))`);
 sql.cguIns = db.prepare('INSERT OR IGNORE INTO consentements (compte, version, quand) VALUES (?, ?, ?)');
 sql.cguDernier = db.prepare('SELECT version FROM consentements WHERE compte = ? ORDER BY quand DESC LIMIT 1');
-sql.anoIns = db.prepare('INSERT INTO anomalies (compte, nom, quand, raisons) VALUES (?, ?, ?, ?)');
-sql.anoListe = db.prepare('SELECT nom, quand, raisons FROM anomalies ORDER BY id DESC LIMIT 60');
+try { db.exec('ALTER TABLE anomalies ADD COLUMN perso TEXT'); } catch {} // personnage en jeu au moment du refus : « pseudo|classe »
+sql.anoIns = db.prepare('INSERT INTO anomalies (compte, nom, quand, raisons, perso) VALUES (?, ?, ?, ?, ?)');
+sql.anoListe = db.prepare('SELECT nom, quand, raisons, perso FROM anomalies ORDER BY id DESC LIMIT 60');
+const persoDe = moi => { try { const e = moi && moi.etat; return e && e.n ? String(e.n).slice(0, 16) + '|' + String(e.c || '').slice(0, 16) : ''; } catch { return ''; } };
 for (const r of db.prepare('SELECT save FROM comptes WHERE save IS NOT NULL').all()) { try { arbitre.apprendre(JSON.parse(r.save)); } catch {} }
 const DONS0 = () => ({ cursite: 0, or: 0, prestige: 0, objets: 0, xp: 0, kills: 0, boss: 0, liste: {}, sol: [], res: {}, boosts: 0, breche: [] });
 // état anti-triche par compte (survit aux reconnexions tant que le serveur tourne)
@@ -221,7 +223,7 @@ function sauverCompte(moi, m) {
     let v; try { v = arbitre.verifier(ancien, m.data, { seaux: cpt.seaux, dons: cpt.dons, aPerdre: cpt.aPerdre, aPayer: hvAPayer(cpt, ancien, m.data) }); } catch (e) { console.error('[arbitre] erreur', e); v = { ok: true }; }
     if (!v.ok) {
       moi.refus = (moi.refus || 0) + 1;
-      sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(v.raisons));
+      sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(v.raisons), persoDe(moi));
       console.log(`[arbitre] sauvegarde refusée pour ${moi.compte.nom} : ${v.raisons.join(' · ')}`);
       noterSuspect(moi, 'save', 1, 'Sauvegarde refusée : ' + v.raisons.join(' · '));
       // objets donnés lors d'un échange mais gardés : on les retire aussi de la sauvegarde du serveur
@@ -595,7 +597,7 @@ wss.on('connection', (ws, req) => {
         else if (/^\d+$/.test(a)) { CONCOURS.debut = Date.now() + (+a) * 60000; CONCOURS.gagnant = null; sauverConcours(); armerConcours(); diffuserPartout(etatConcours({ live: 1 })); }
         res(true, 'Concours : départ ' + new Date(CONCOURS.debut).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }) + (CONCOURS.gagnant ? ' · gagnant : ' + CONCOURS.gagnant.n + ' (' + Math.round(CONCOURS.gagnant.d / 1000) + ' s)' : ' · pas encore de gagnant')); return; }
       if (cmd === 'suspects') { res(true, '', { suspects: listeSuspects() }); return; }
-      if (cmd === 'anomalies') { res(true, '', { anomalies: sql.anoListe.all().map(r => ({ n: r.nom, t: r.quand, r: JSON.parse(r.raisons || '[]') })) }); return; }
+      if (cmd === 'anomalies') { res(true, '', { anomalies: sql.anoListe.all().map(r => ({ n: r.nom, t: r.quand, r: JSON.parse(r.raisons || '[]'), p: String(r.perso || '').split('|')[0], c: String(r.perso || '').split('|')[1] || '' })) }); return; }
       if (cmd === 'admins') { const out = []; for (const s of salles.values()) for (const j of s.values()) if (j.admin) out.push({ n: String((j.etat && j.etat.n) || 'Joueur').slice(0, 16), ip: masquer(j.ip), t: j.admin, s: String((j.etat && j.etat.s) || ''), moi: j === moi }); res(true, '', { admins: out }); return; }
       if (cmd === 'bans') { res(true, '', { bans: Object.entries(modo.bans).map(([ip, b]) => ({ id: ip, ip: masquer(ip), n: b.n, t: b.t })) }); return; }
       if (cmd === 'unban') { const id = String(m.to || ''); if (!modo.bans[id]) { res(false, 'Déjà débanni'); return; } const n = modo.bans[id].n; delete modo.bans[id]; sauverModo(); res(true, n + ' est débanni', { bans: Object.entries(modo.bans).map(([ip, b]) => ({ id: ip, ip: masquer(ip), n: b.n, t: b.t })) }); console.log(`[modo] débanni ${n}`); return; }
@@ -812,7 +814,7 @@ function fiche(moi) {
   if (!moi || !moi.compte || moi.compte.admin) return null;
   let f = suspects.get(moi.compte.id);
   if (!f) { f = { nom: moi.compte.nom, save: 0, kill: 0, clip: 0, loin: 0, invul: 0, vitesse: 0, raisons: [], alerte: false }; suspects.set(moi.compte.id, f); }
-  f.vu = Date.now(); f.srv = moi.salleNom; return f;
+  f.vu = Date.now(); f.srv = moi.salleNom; { const pp = persoDe(moi); if (pp) f.perso = pp; } return f;
 }
 function scoreDe(f) { return f.save * 10 + f.kill * 1 + Math.floor(f.clip / 20000) + f.loin * 2 + (f.invul >= 150 ? 30 : f.invul >= 90 ? 10 : 0) + f.vitesse * 5; }
 function noterSuspect(moi, champ, n, raison) {
@@ -820,11 +822,11 @@ function noterSuspect(moi, champ, n, raison) {
   if (champ === 'invul') f.invul = Math.max(f.invul, n); else f[champ] += n;
   if (raison) { f.raisons.unshift({ t: Date.now(), r: String(raison).slice(0, 120) }); f.raisons.length = Math.min(f.raisons.length, 8); }
   // première alerte rouge de la session : gardée dans l'historique (onglet Triche)
-  if (!f.alerte && scoreDe(f) >= 30) { f.alerte = true; try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(['Suspect (score ' + scoreDe(f) + ') : ' + (f.raisons[0] ? f.raisons[0].r : champ)])); } catch {} console.log(`[suspect] ${moi.compte.nom} : score ${scoreDe(f)}`); }
+  if (!f.alerte && scoreDe(f) >= 30) { f.alerte = true; try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(['Suspect (score ' + scoreDe(f) + ') : ' + (f.raisons[0] ? f.raisons[0].r : champ)]), f.perso || ''); } catch {} console.log(`[suspect] ${moi.compte.nom} : score ${scoreDe(f)}`); }
 }
 function listeSuspects() {
   const enLigneIds = new Set(); for (const j of tousLesSockets()) if (j.compte) enLigneIds.add(j.compte.id);
-  return [...suspects.entries()].map(([id, f]) => ({ n: f.nom, s: scoreDe(f), on: enLigneIds.has(id), vu: f.vu, srv: (SERVEURS.find(x => x[0] === f.srv) || [0, f.srv || '?'])[1],
+  return [...suspects.entries()].map(([id, f]) => ({ n: f.nom, p: String(f.perso || '').split('|')[0], c: String(f.perso || '').split('|')[1] || '', s: scoreDe(f), on: enLigneIds.has(id), vu: f.vu, srv: (SERVEURS.find(x => x[0] === f.srv) || [0, f.srv || '?'])[1],
     d: { save: f.save, kill: f.kill, clip: f.clip, loin: f.loin, invul: f.invul, vitesse: f.vitesse }, r: f.raisons.slice(0, 4) }))
     .filter(x => x.s > 0).sort((a, b) => (b.on - a.on) || (b.s - a.s)).slice(0, 50);
 }
@@ -1040,7 +1042,7 @@ function runesDe(moi, cls) { const cpt = moi.cpt; cpt.brNiv = cpt.brNiv || {}; i
   return (cpt.brNiv[cls] = { niv, diff: Math.max(0, Math.min(20, b.diff | 0)), lvl: (sv && sv.chars && sv.chars[cls] && sv.chars[cls].lvl) | 0 }); }
 function breche(moi, m, salle) {
   if (!moi.compte) return; const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)), R = arbitre.regles();
-  const refus = msg => envoyer(moi.ws, { t: 'breche', a: 'refus', msg });
+  const refus = msg => envoyer(moi.ws, { t: 'breche', a: 'refus', msg, e: m.a === 'entrer' ? 1 : 0 }); // e : entrée refusée, le jeu ressort le joueur
   cpt.dons.breche = cpt.dons.breche || [];
   if (m.a === 'entrer') {
     const cls = String(m.c || ''), run = m.run | 0; let d = m.d | 0; if (!R || !R.CLASSES[cls] || !(run > 0) || d < 1 || d > 20) return;
@@ -1048,11 +1050,14 @@ function breche(moi, m, salle) {
     const cle = salle + '|' + run; let B = BRECHES.get(cle); if (!B) { if (BRECHES.size > 5000) return; B = { t0: Date.now(), d, fin: 0 }; BRECHES.set(cle, B); }
     d = B.d; if (d > E.diff + 1 && !moi.compte.admin) return refus('Termine d\'abord la difficulté ' + (E.diff + 1));
     if (B.fin || Date.now() - B.t0 > 20000) return refus('Cette Brèche est déjà partie');
+    if (B.morts && B.morts.has(moi.compte.id)) return refus('Tu es tombé dans cette Brèche : tu ne peux plus y entrer');
     cpt.breche = { cle, cls, d, etat: 0, chances: 0 };
     console.log(`[brèche] ${moi.compte.nom} (${cls}) entre · difficulté ${d}`);
     return envoyer(moi.ws, { t: 'breche', a: 'entrer', ok: 1, t0: B.t0, d });
   }
   const c = cpt.breche; if (!c) return;
+  // tombé : la course est finie pour lui (ni rune ni difficulté débloquée), les autres continuent
+  if (m.a === 'mort') { if (c.etat !== 0) return; const B = BRECHES.get(c.cle); if (B) (B.morts || (B.morts = new Set())).add(moi.compte.id); cpt.breche = null; console.log(`[brèche] ${moi.compte.nom} tombe · difficulté ${c.d}`); return; }
   if (m.a === 'fin') {
     if (c.etat !== 0) return; const B = BRECHES.get(c.cle); if (!B) return;
     if (!B.fin) { if (Date.now() - B.t0 < 15000) return refus('La Brèche ne se laisse pas traverser si vite'); B.fin = Date.now(); }

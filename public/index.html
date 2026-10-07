@@ -478,7 +478,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.84"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.85"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -495,7 +495,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp mait" id="mxBar" hidden><i id="mxF"></i><span><em>Maîtrise</em><b id="mxT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.84</div>
+    <div class="verTag" id="verTag">ver.0.0.85</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -672,7 +672,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.84</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.85</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -714,7 +714,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.84</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.85</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -1704,7 +1704,7 @@ Object.assign(MON,{
 for(const k in MON)if(k!=='devoreur')MON[k].rel=0; // reliques bleues : seulement sur le Dévoreur d'Étoiles (les dorées viennent de Chronos)
 MON.vipere={nom:'Vipère des Désolations',hp:2000,xp:180,spd:2.9,dmg:58,cd:1.15,pat:'vipere',bs:7.5,br:8,sz:1.05,loot:[4,6],drop:0.34,pref:4.5,bc:'#7ed957',eff:'poi/4',or:[0.2,1,2],rel:0,dun:1/29};
 // Monstre maudit des Plaines : toutes les 10 minutes, un monstre ordinaire des six premières zones est frappé par la malédiction. Il garde son apparence (m.sk), double de taille, et prend la force du Dévoreur d'Étoiles.
-MON.maudit={nom:'Monstre maudit',hp:MON.devoreur.hp,xp:MON.devoreur.xp,spd:MON.devoreur.spd,dmg:MON.devoreur.dmg,cd:0.85,pat:'maudit',bs:MON.devoreur.bs,br:MON.devoreur.br,sz:2,loot:[0,0],drop:0,pref:6,bc:'#b45aff',boss:true,or:[1,100,100],rel:0,ai:2,maud:1,arm:MON.devoreur.arm};
+MON.maudit={nom:'Monstre maudit',hp:MON.devoreur.hp,xp:MON.devoreur.xp,spd:MON.devoreur.spd,dmg:MON.devoreur.dmg,cd:0.85,pat:'maudit',bs:MON.devoreur.bs,br:MON.devoreur.br,sz:2,loot:[0,0],drop:0,pref:6,bc:'#b45aff',boss:true,or:[1,200,200],rel:0,ai:2,maud:1,arm:MON.devoreur.arm};
 // La Brèche : trois familles de monstres (une par thème), chacune avec son gardien. Aucun butin : la Brèche paie en runes.
 {const M=(nom,hp,xp,spd,dmg,cd,pat,bs,sz,pref,bc,x)=>Object.assign({nom,hp,xp,spd,dmg,cd,pat,bs,br:10,sz,loot:[0,0],drop:0,pref,bc,or:[0.25,1,2],rel:0,ai:1,br_:1},x||{}),
   B=(nom,bc,bp)=>({nom,hp:52000,xp:4000,spd:1.5,dmg:66,cd:0.95,pat:'br_boss',bs:5.5,br:11,sz:2.6,loot:[0,0],drop:0,pref:5.5,bc,boss:true,or:[1,30,50],rel:0,ai:2,bp,br_:1});
@@ -3258,7 +3258,7 @@ const inForge=(x,y)=>x>=FORGE_R.x0&&x<=FORGE_R.x1&&y>=FORGE_R.y0&&y<=FORGE_R.y1;
 function forgeSolid(x,y){return (y===12&&x!==-12&&x!==-1)||(y===11)||(x===-12&&y>=14&&y<=20)||(x===-1&&y>=19&&y<=21)||(y===22&&((x>=-11&&x<=-3)));}
 function genDungeon(seed,t){
   t=DTYPES[t]&&t!=='a'?t:'c';const ck=t+seed;if(dungeonCache.has(ck))return dungeonCache.get(ck);
-  if(DTYPES[t].breche){let d=null;for(let k=0;k<200&&!d;k++)d=genMazeTry(seed*31+k,{GW:6,GH:4,vides:2,salles:15,dist:5,culs:2,boucles:3});if(d){d=themeDungeon(d,t,seed);d.breche=true;d.etage=((seed%8)+8)%8||1;d.down=d.etage<BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.brBoss=d.etage>=BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.altar={x:-999,y:-999};d.doors=[];d.arena=null;dungeonCache.set(ck,d);return d;}}
+  if(DTYPES[t].breche){let d=null;for(let k=0;k<200&&!d;k++)d=genMazeTry(seed*31+k,{GW:6,GH:4,vides:2,salles:15,dist:5,culs:2,boucles:3});if(d){d=themeDungeon(d,t,seed);d.breche=true;d.etage=((seed%8)+8)%8||1;d.down=d.etage<BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.brBoss=d.etage>=BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.brSalle=d.brBoss&&d.boss&&d.boss.w>0?{x:d.boss.x+.5,y:d.boss.y+.5,w:d.boss.w,h:d.boss.h}:null;d.altar={x:-999,y:-999};d.doors=[];d.arena=null;dungeonCache.set(ck,d);return d;}}
   if(t==='h'){let d=null;for(let k=0;k<80&&!d;k++)d=genMazeTry(seed*31+k);if(d){d=themeDungeon(d,t,seed);dungeonCache.set(ck,d);return d;}} // Horloge Brisée : un vrai labyrinthe
   let d=null;for(let k=0;k<120;k++){d=genDungeonTry(seed*31+k);if(d.rooms.length>=10&&d.boss.w>=21&&Math.hypot(d.boss.x-d.start.x,d.boss.y-d.start.y)>=48)break;} // on exige toutes les salles et une grande arène
   d=themeDungeon(d,t,seed);dungeonCache.set(ck,d);return d;
@@ -3560,7 +3560,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000084;let newerWarned=false;
+const NETV=2,BUILD=2600000085;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -3679,7 +3679,9 @@ const gSuivi=p=>{let v=G_SUIVI.get(p);if(!v){v={clip:0,loin:0,invul:0};G_SUIVI.s
 const G_PCT=new Map(); // joueur|boss -> réserve pour les dégâts en « % de la vie » (se remplit de 16 % de la vie du boss toutes les 3 s, 32 % au plus)
 const G_VU=new Map(); // joueur -> (monstre -> dernier total annoncé) : pour ne compter qu'une fois un dépassement
 function gardienFiltre(peer,m,d,id,tot){const r=remotes.get(peer);let vu=G_VU.get(peer);if(!vu){vu=new Map();G_VU.set(peer,vu);}const neuf=tot>(vu.get(id)||0);vu.set(id,tot);if(vu.size>400)vu.clear();
-  if(r&&Math.hypot(m.x-r.x,m.y-r.y)>18){if(neuf)gSuivi(peer).loin++;return 0;}
+  {const sv=gSuivi(peer);if(r){if(sv.px!=null&&Math.hypot(r.x-sv.px,r.y-sv.py)>5)sv.tj=time;sv.px=r.x;sv.py=r.y;}
+    // 22 cases : la portée la plus longue, la rune Longue-vue (+1 case) et le chemin parcouru pendant le vol du tir ; rien n'est compté dans les 6 s qui suivent un saut (téléportation, dash, retour au départ)
+    if(r&&Math.hypot(m.x-r.x,m.y-r.y)>22){if(neuf&&!(time-(sv.tj==null?-99:sv.tj)<6))sv.loin++;return 0;}}
   const cap=G_CAPS.get(peer)||25000;let b=G_SEAU.get(peer);if(!b){b={v:cap*4,t:time};G_SEAU.set(peer,b);}b.v=Math.min(cap*4,b.v+cap*Math.max(0,time-b.t));b.t=time;
   let q=null,libre=m.max*0.6; // capacités en « % de la vie »
   if(m.d.boss){const kq=peer+'|'+id;q=G_PCT.get(kq);if(!q){q={v:m.max*0.32,t:time};if(G_PCT.size>300)G_PCT.clear();G_PCT.set(kq,q);}q.v=Math.min(m.max*0.32,q.v+m.max*0.16*Math.max(0,time-q.t)/3);q.t=time;libre=q.v;}
@@ -5152,7 +5154,7 @@ function handleDeath(id,key,x,y){
   // donjon à deux boss : la sortie s'ouvre quand les deux sont vaincus
   const duo=scene==='dungeon'&&MAP.bossKey2&&(key===MAP.bossKey||key===MAP.bossKey2),reste=duo&&monsters.some(q=>q.hp>0&&q.id!==id&&(q.key===MAP.bossKey||q.key===MAP.bossKey2));
   if(scene==='dungeon'&&MAP&&MAP.breche&&BR&&key===MAP.bossKey){BR.etat=2;brecheFinIci(x,y);brecheReclame();}
-  if(key==='maudit'){showBanner('Le monstre maudit est vaincu !','1 potion de caractéristique et 100 pièces pour ceux qui lui ont infligé '+MAUDIT_MIN.toLocaleString('fr-FR')+' dégâts','#b45aff');MAUD.vuId=0;}
+  if(key==='maudit'){showBanner('Le monstre maudit est vaincu !','1 potion de caractéristique et 200 pièces pour ceux qui lui ont infligé '+MAUDIT_MIN.toLocaleString('fr-FR')+' dégâts','#b45aff');MAUD.vuId=0;}
   else if(d.boss&&d.star==null)showBanner(d.nom+' est vaincu'+(key==='liche'||key==='b_koi'?'e':'')+' !',scene==='realm'?'Un boss du nord apparaît tous les 20 monstres tués':reste?'Il reste l\'autre poisson légendaire !':'Le portail de sortie est ouvert','#ff5a6a');
   if(scene==='dungeon'&&(duo?!reste:key===MAP.bossKey)){exitOpen=true;MAP.bossExit={x,y};setFight(2);
     if(dungeonT==='o'&&MAP.bubbles&&MAP.mech){const r=5.5;MAP.bubbles.push({x,y,r});for(let yy=Math.floor(y-r);yy<=y+r;yy++)for(let xx=Math.floor(x-r);xx<=x+r;xx++){if(xx<0||yy<0||xx>=MAP.w||yy>=MAP.h)continue;const i=yy*MAP.w+xx;if(!MAP.sol[i]&&Math.hypot(xx+.5-x,yy+.5-y)<=r)MAP.mech[i]=1;}
@@ -6519,11 +6521,11 @@ function renderEffGrid(){const g=$('#effGrid');g.textContent='';for(const [e,ic,
     b.onclick=()=>{const tg=$('#effTgt').value,t=clamp(+$('#effDur').value||8,1,60);let n=0;if(tg!=='scr'){adminEff(e,t);n++;}if(tg!=='me')for(const r of screenPlayers()){adminReq('eff',r.peer,{e,t});n++;}note(n?nm+' · '+n+' cible'+(n>1?'s':''):'Aucun joueur à l\'écran');};g.append(b);}
   $('#fpMe').textContent='Ma vue 1re personne : '+(FPV?'activée':'désactivée');}
 function renderAno(list){const box=$('#devAno');box.textContent='';if(!list.length){box.innerHTML='<p class="hint">Aucune sauvegarde refusée. 👍</p>';return;}
-  for(const a of list){const row=document.createElement('div');row.className='devrow';const nm=document.createElement('span');const d=new Date(a.t);nm.textContent=clean(String(a.n||'?')).slice(0,16)+' · '+d.toLocaleDateString('fr-FR')+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+' · '+(a.r||[]).join(' · ');row.append(nm);box.append(row);}}
+  for(const a of list){const row=document.createElement('div');row.className='devrow';const nm=document.createElement('span');const d=new Date(a.t);nm.textContent=clean(String(a.n||'?')).slice(0,16)+(a.p?' ('+clean(String(a.p)).slice(0,16)+(a.c&&CLASSES[a.c]?', '+CLASSES[a.c].nom:'')+')':'')+' · '+d.toLocaleDateString('fr-FR')+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+' · '+(a.r||[]).join(' · ');row.append(nm);box.append(row);}}
 function renderSus(list){const box=$('#devSus');box.textContent='';if(!list.length){box.innerHTML='<p class="hint">Aucun joueur suspect pour le moment. 👍</p>';return;}
   const lib={save:'sauvegardes refusées',kill:'monstres refusés',clip:'dégâts rognés',loin:'coups de loin',invul:'s sans perdre de vie (boss)',vitesse:'déplacements impossibles'};
   for(const x of list){const row=document.createElement('div');row.className='devrow';row.style.display='block';const col=x.s>=30?'#ff5a6a':x.s>=10?'#ffb04a':'#e8e4f2';
-    const h=document.createElement('div');h.innerHTML='<b style="color:'+col+'">'+clean(String(x.n||'?')).slice(0,16)+'</b> · score '+x.s+' · '+(x.on?'<span style="color:#7ed957">en ligne</span> ('+clean(String(x.srv||'')).slice(0,24)+')':'hors ligne, vu à '+new Date(x.vu).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}));
+    const h=document.createElement('div');h.innerHTML='<b style="color:'+col+'">'+clean(String(x.n||'?')).slice(0,16)+'</b>'+(x.p?' · personnage <b>'+clean(String(x.p)).slice(0,16)+'</b>'+(x.c&&CLASSES[x.c]?' ('+CLASSES[x.c].nom+')':''):'')+' · score '+x.s+' · '+(x.on?'<span style="color:#7ed957">en ligne</span> ('+clean(String(x.srv||'')).slice(0,24)+')':'hors ligne, vu à '+new Date(x.vu).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}));
     const d=document.createElement('div');d.className='hint';d.textContent=Object.entries(x.d).filter(([k,v])=>v>0).map(([k,v])=>(k==='clip'?Math.round(v).toLocaleString('fr-FR'):v)+' '+lib[k]).join(' · ');
     const r=document.createElement('div');r.className='hint';r.style.opacity='.75';r.textContent=(x.r||[]).map(e=>new Date(e.t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+' '+e.r).join(' | ');
     row.append(h,d,r);box.append(row);}}
@@ -7187,6 +7189,8 @@ function update(dt){
     if(amHost){scaleT-=dt;if(scaleT<=0){scaleT=1;const sk2=sceneKey(),pl2=[];if(!window.GARDIEN_MODE)pl2.push({x:P.x,y:P.y,id:'#moi'});for(const r of remotes.values())if(activeIn(r,sk2))pl2.push({x:r.x,y:r.y,id:String(r.p.n||r.peer)});
       for(const m of monsters){if(!m.d.boss||m.hp<=0||m.d.tuto)continue;const are=scene==='dungeon'&&MAP.arena&&inArena(m.x,m.y);if(!m.vus)m.vus=new Set();
         for(const p of pl2)if(are?inArena(p.x,p.y):Math.hypot(p.x-m.x,p.y-m.y)<16)m.vus.add(p.id);
+        if(m.key==='maudit'){ // seuls ceux qui le combattent vraiment comptent (500 dégâts au moins) : +10 % de vie chacun, +30 % au plus
+          let nc=((dmgTot.get(m.id)||{tot:0}).tot>=500)?1:0;for(const [,mp] of applied)if((mp.get(m.id)||0)>=500)nc++;const wm=Math.round(m.d.hp*(1+0.1*clamp(nc-1,0,3)));if(wm>m.max){m.hp+=wm-m.max;m.max=wm;ft(m.x,m.y-m.d.sz*0.8,'+10 % de vie ('+nc+' combattants)','#b45aff');}continue;}
         const n=m.vus.size,want=Math.round(m.d.hp*(1+0.2*Math.max(0,n-1)));if(want>m.max){m.hp+=want-m.max;m.max=want;if(n>1)ft(m.x,m.y-m.d.sz*0.8,'+20 % de vie ('+n+' joueurs)','#ff9a3c');}}}}
     if(amHost&&scene==='realm'){
       spawnT-=dt;if(spawnT<=0){spawnT=0.5;{const plz=scenePlayersAll();monsters=monsters.filter(m=>!m.perdu&&(m.d.boss||m.hp<=0||m.r<0||regionAt(m.x,m.y)===m.r||plz.some(p=>Math.hypot(p.x-m.x,p.y-m.y)<26)));} // un monstre sorti de sa zone, que personne ne voit, est retiré : sa zone le remplace
@@ -8695,7 +8699,7 @@ var RUNES={
   longue:{nom:'Longue-vue',col:'#7df0e0',max:'+1 case de portée pour ton arme',txt:n=>'+'+(n*0.05).toFixed(2).replace('.',',')+' case de portée'},
   veloce:{nom:'Véloce',col:'#ffe27a',max:'Vitesse d\'attaque ×2, dégâts ÷2',txt:n=>'Vitesse d\'attaque ×'+(1+n*0.05).toFixed(2).replace('.',',')+', dégâts ÷'+(1+n*0.05).toFixed(2).replace('.',',')},
   puissant:{nom:'Puissant',col:'#ff7a5a',max:'Dégâts ×2, vitesse d\'attaque ÷2',txt:n=>'Dégâts ×'+(1+n*0.05).toFixed(2).replace('.',',')+', vitesse d\'attaque ÷'+(1+n*0.05).toFixed(2).replace('.',',')},
-  carnivore:{nom:'Carnivore',col:'#ff3b6a',max:'1 % des dégâts de ton arme te soignent',txt:n=>(n*0.05).toFixed(2).replace('.',',')+' % des dégâts de ton arme te soignent'},
+  carnivore:{nom:'Carnivore',col:'#ff3b6a',max:'2 % des dégâts de ton arme te soignent',txt:n=>(n*0.1).toFixed(1).replace('.',',')+' % des dégâts de ton arme te soignent'},
   ami:{nom:'Ami des bêtes',col:'#9fe07a',max:'Bonus du familier +50 %',txt:n=>'Bonus du familier +'+(n*2.5).toFixed(1).replace('.',',')+' %'},
   savant:{nom:'Savant',col:'#7ed957',max:'+25 % d\'expérience (gloire comprise)',txt:n=>'+'+(n*1.25).toFixed(2).replace('.',',')+' % d\'expérience (gloire comprise, pas la maîtrise)'},
   duc:{nom:'Duc',col:'#ffd23f',max:'+25 % de pièces',txt:n=>'+'+(n*1.25).toFixed(2).replace('.',',')+' % de pièces'},
@@ -8703,7 +8707,7 @@ var RUNES={
   phantom:{nom:'Phantom',col:'#c8a0ff',max:'Le dash n\'a plus de temps de recharge',txt:n=>n>=20?'Le dash n\'a plus de temps de recharge':'Sans effet avant le niveau 20 (dash illimité)'},
   pape:{nom:'Pape',col:'#f4f1e8',max:'+30 % de soins reçus',txt:n=>'+'+(n*1.5).toFixed(1).replace('.',',')+' % de soins reçus, de toutes les sources'}};
 var RUNE_KEYS=Object.keys(RUNES);
-function BRC(cls){cls=cls||save.current;if(!save.breche||typeof save.breche!=='object'||Array.isArray(save.breche))save.breche={};let b=save.breche[cls];if(!b||typeof b!=='object'){b=save.breche[cls]={runes:{},eq:null,arbre:[],diff:0};}if(!b.runes||typeof b.runes!=='object')b.runes={};if(!Array.isArray(b.arbre))b.arbre=[];return b;}
+function BRC(cls){cls=cls||save.current;if(!save.breche||typeof save.breche!=='object'||Array.isArray(save.breche))save.breche={};let b=save.breche[cls];if(!b||typeof b!=='object'){b=save.breche[cls]={runes:{},eq:null,arbre:[],diff:0};}if(!b.runes||typeof b.runes!=='object')b.runes={};if(!Array.isArray(b.arbre))b.arbre=[];if(b.av!==ARBRE_V){b.arbre=[];b.av=ARBRE_V;}return b;}
 // la rune sertie n'agit (comme l'arbre) qu'à partir du niveau 20
 function runeN(k){if(!save.current||!save.breche)return 0;const ch=C();if(!ch||ch.lvl<20)return 0;const b=save.breche[save.current];return b&&b.eq===k?clamp(b.runes[k]|0,0,20):0;}
 const runeDmgK=()=>{const p=runeN('puissant'),v=runeN('veloce');return (1+p*0.05)/(1+v*0.05);},runeRateK=()=>{const p=runeN('puissant'),v=runeN('veloce');return (1+v*0.05)/(1+p*0.05);};
@@ -8712,20 +8716,27 @@ const soin=n=>{const k=runeN('pape');return k?Math.round(n*(1+k*0.015)):n;};
 var WBR={};function WBr(kind){const b=WB[kind],n=runeN('longue');if(!n||!b||!(b.range>0))return b;const k=kind+':'+n;return WBR[k]||(WBR[k]=Object.assign(Object.create(b),{range:b.range+n*0.05}));}
 // coups critiques : tirés à chaque projectile de l'arme (rune « Dans le mille »), 150 % des dégâts, affichés en rouge
 function critTir(n0){const n=runeN('mille'),vol=runeN('carnivore');for(let i=n0;i<pb.length;i++){const b=pb[i];if(!(b.dmg>0)||b.cosm)continue;b.arme=1;if(n&&Math.random()<n*0.005){b.dmg=Math.round(b.dmg*1.5);b.crit=1;b.col='#ff3b4a';b.trail='#ff3b4a';b.r=(b.r||0.2)*1.2;}}}
-function volVie(dg){const n=runeN('carnivore');if(!n||!(dg>0))return;const mx=S().tot.vie,got=Math.min(dg*n*0.0005,mx-P.hp);if(got>0){P.hp+=got;P.volAcc=(P.volAcc||0)+got;if(P.volAcc>=15){ft(P.x,P.y-0.9,'+'+Math.round(P.volAcc),'#ff3b6a');P.volAcc=0;}}}
+function volVie(dg){const n=runeN('carnivore');if(!n||!(dg>0))return;const mx=S().tot.vie,got=Math.min(dg*n*0.001,mx-P.hp);if(got>0){P.hp+=got;P.volAcc=(P.volAcc||0)+got;if(P.volAcc>=15){ft(P.x,P.y-0.9,'+'+Math.round(P.volAcc),'#ff3b6a');P.volAcc=0;}}}
 // ---------- l'arbre : un seul plateau, le même pour toutes les classes. Le centre reçoit la rune ; on avance de proche en proche. ----------
-var ARBRE=(()=>{const N={},add=(x,y,t,st)=>{N[x+','+y]={id:x+','+y,x,y,t,st};};
-  const dirs=[[0,-1,{puissance:5},'Force'],[1,0,{vatt:5},'Célérité'],[0,1,{vdep:5},'Élan'],[-1,0,{vie:50,mana:50},'Vitalité']];
-  dirs.forEach(([dx,dy,rare,nom],i)=>{add(dx,dy,'m',{vie:10});add(dx*2,dy*2,'m',{mana:10});add(dx*3,dy*3,'m',{vie:10});N[dx*4+','+dy*4]={id:dx*4+','+dy*4,x:dx*4,y:dy*4,t:'r',st:rare,nom};});
-  [[1,-1],[1,1],[-1,1],[-1,-1]].forEach(([sx,sy],i)=>{add(sx,sy*2,'m',{mana:10});add(sx*2,sy,'m',{vie:10});N[sx*2+','+sy*2]={id:sx*2+','+sy*2,x:sx*2,y:sy*2,t:'g',st:i%2?{mana:30}:{vie:30},nom:i%2?'Esprit':'Robustesse'};});
+// Version 2 : on part du bas (« Départ »), on monte jusqu'à la rune, puis quatre branches sur les côtés et une branche centrale vers la « Suite » (à venir).
+// Chaque nœud a un parent (de) : 'D' = le départ. px, py : place sur le plateau. Les identifiants restent des « x,y » (contrôlés par le serveur).
+var BR_TOMBE=new Set(); // courses où ce joueur est tombé : il n'y retourne pas
+var ARBRE_V=2,ARBRE_COL={'-2':'#9fb4c8','-1':'#ff6b74','0':'#7df0e0','1':'#7ed957','2':'#ff9a3c'},ARBRE_X={'-2':74,'-1':174,'0':270,'1':366,'2':466},ARBRE_Y={'0':132,'1':218,'2':296,'3':376,'4':444};
+var ARBRE=(()=>{const N={},add=(x,y,de,st,nom)=>{N[x+','+y]={id:x+','+y,x,y,de,st,t:nom?'r':'m',nom:nom||'',px:ARBRE_X[x],py:ARBRE_Y[y],col:ARBRE_COL[x]};};
+  add(0,4,'D',{vie:10});add(0,3,'0,4',{mana:10});
+  add(-1,2,'0,3',{vie:10});add(-1,1,'-1,2',{mana:10});add(-1,0,'-1,1',{vie:50,mana:50},'Vitalité');
+  add(-2,2,'-1,2',{vie:10});add(-2,1,'-2,2',{vie:10});add(-2,0,'-2,1',{armure:5},'Rempart');
+  add(1,2,'0,3',{mana:10});add(1,1,'1,2',{vie:10});add(1,0,'1,1',{vdep:5},'Élan');
+  add(2,2,'1,2',{mana:10});add(2,1,'2,2',{mana:10});add(2,0,'2,1',{puissance:5},'Force');
+  add(0,1,'0,3',{vie:10});add(0,0,'0,1',{mana:10});
   return N;})();
-var ARBRE_NOMS={vie:'vie',mana:'mana',puissance:'puissance',vatt:'vitesse d\'attaque',vdep:'vitesse de déplacement'};
+var ARBRE_NOMS={vie:'vie',mana:'mana',armure:'armure',puissance:'puissance',vatt:'vitesse d\'attaque',vdep:'vitesse de déplacement'};
 const noeudTxt=n=>Object.keys(n.st).map(k=>'+'+n.st[k]+' '+ARBRE_NOMS[k]).join(' · ');
 function brPoints(cls){cls=cls||save.current;const ch=save.chars[cls],b=BRC(cls);if(!ch)return 0;return clamp(ch.lvl-20,0,5)+RUNE_KEYS.filter(k=>(b.runes[k]|0)>=20).length;}
 // nœuds qui comptent vraiment : il faut le niveau 20, et seuls les premiers pris tiennent si le héros a moins de points qu'avant
-function arbreActif(cls){cls=cls||save.current;const ch=save.chars[cls];if(!ch||ch.lvl<20||!save.breche||!save.breche[cls])return [];const b=save.breche[cls];return (b.arbre||[]).filter(id=>ARBRE[id]).slice(0,brPoints(cls));}
+function arbreActif(cls){cls=cls||save.current;const ch=save.chars[cls];if(!ch||ch.lvl<20||!save.breche||!save.breche[cls])return [];const b=save.breche[cls];if(b.av!==ARBRE_V)return [];return (b.arbre||[]).filter(id=>ARBRE[id]).slice(0,brPoints(cls));}
 function arbreBonus(){const o={};if(!save.current||!save.breche)return o;for(const id of arbreActif()){const st=ARBRE[id].st;for(const k in st)o[k]=(o[k]||0)+st[k];}return o;}
-function noeudLibre(id,b){if(!ARBRE[id]||b.arbre.includes(id))return false;const n=ARBRE[id];return [[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>{const x=n.x+dx,y=n.y+dy;return (x===0&&y===0)||b.arbre.includes(x+','+y);});}
+function noeudLibre(id,b){if(!ARBRE[id]||b.arbre.includes(id))return false;const p=ARBRE[id].de;return p==='D'||b.arbre.includes(p);}
 // ---------- le Veilleur et les fenêtres ----------
 const veilleurLa=()=>!!(save.current&&C()&&(C().lvl>=20||(save.breche&&save.breche[save.current]&&(Object.keys(save.breche[save.current].runes||{}).length||(save.breche[save.current].diff|0)>0))));
 const brEl=document.createElement('div');brEl.className='overlay';brEl.id='brWin';brEl.hidden=true;brEl.innerHTML='<div class="shop-inner" role="dialog" aria-label="La Brèche" style="max-width:700px;max-height:94vh;overflow:auto;border-color:#7df0e0"><div id="brBody"></div></div>';$('#pets').after(brEl);
@@ -8734,7 +8745,7 @@ var brDiffSel=1;
 const brChance=(niv,d)=>{const e=niv-d;return e<=0?1:e===1?0.2:e===2?0.05:0;};
 function renderBreche(){const b=BRC(),ch=C(),max=clamp((b.diff|0)+1,1,20),ok=ch.lvl>=20;brDiffSel=clamp(brDiffSel,1,max);
   let h='<h2 style="color:#7df0e0">Le Veilleur de la Brèche</h2><p style="font-style:italic;color:#cfe8f0">« La malédiction s\'est fendue, '+CLASSES[save.current].nom+'. Sous le Village, une brèche descend, étage après étage. Ceux qui en reviennent rapportent des runes. Ceux qui traînent n\'en rapportent rien. »</p>';
-  h+='<div style="border:2px solid #2a5a6a;background:rgba(125,240,224,.06);padding:10px 12px;display:grid;gap:4px;font-size:13px"><span>• '+BRECHE_ETAGES+' étages en labyrinthe. Trouve le portail de chaque étage : tu peux <b>éviter les salles</b> et filer tout droit. Le <b>gardien</b> t\'attend au bout du dernier étage. Sa mort ouvre la sortie et dresse un <b>pilier</b>.</span><span>• Chaque Brèche terminée donne une <b>rune</b> que ton '+CLASSES[save.current].nom+' n\'a pas encore (il y en a '+RUNE_KEYS.length+').</span><span>• Le temps compte : gardien vaincu en moins d\'1 minute, <b>4 chances</b> d\'améliorer une rune · 2 minutes, 3 · 3 minutes, 2 · 5 minutes, 1 · au-delà, aucune.</span><span>• Une rune s\'améliore à coup sûr si la difficulté vaut au moins son niveau, à 20 % avec un niveau de retard, à 5 % avec deux, jamais au-delà.</span><span>• La mort ne fait rien perdre ici : tu reprends au début de l\'étage.</span></div>';
+  h+='<div style="border:2px solid #2a5a6a;background:rgba(125,240,224,.06);padding:10px 12px;display:grid;gap:4px;font-size:13px"><span>• '+BRECHE_ETAGES+' étages en labyrinthe. Trouve le portail de chaque étage : tu peux <b>éviter les salles</b> et filer tout droit. Le <b>gardien</b> t\'attend au bout du dernier étage. Sa mort ouvre la sortie et dresse un <b>pilier</b>.</span><span>• <b>Si tu tombes</b>, tu rentres au Village sans rien perdre, mais cette Brèche est finie pour toi. Et si la salle du gardien se vide, il reprend toute sa vie.</span><span>• Chaque Brèche terminée donne une <b>rune</b> que ton '+CLASSES[save.current].nom+' n\'a pas encore (il y en a '+RUNE_KEYS.length+').</span><span>• Le temps compte : gardien vaincu en moins d\'1 minute, <b>4 chances</b> d\'améliorer une rune · 2 minutes, 3 · 3 minutes, 2 · 5 minutes, 1 · au-delà, aucune.</span><span>• Une rune s\'améliore à coup sûr si la difficulté vaut au moins son niveau, à 20 % avec un niveau de retard, à 5 % avec deux, jamais au-delà.</span><span>• La mort ne fait rien perdre ici : tu reprends au début de l\'étage.</span></div>';
   if(!ok)h+='<p style="color:#ff9a8a">Reviens quand ton '+CLASSES[save.current].nom+' aura atteint le niveau 20.</p>';
   else{h+='<h3 style="margin:12px 0 6px">Difficulté</h3><div style="display:grid;grid-template-columns:repeat(10,1fr);gap:4px">';for(let d=1;d<=20;d++)h+='<button type="button" class="act'+(d===brDiffSel?' main':'')+'" data-brd="'+d+'" '+(d>max?'disabled':'')+' style="padding:4px 0">'+d+'</button>';
     h+='</div><p class="hint" style="margin:6px 0">Difficulté '+brDiffSel+' : monstres '+Math.round(brHpK(brDiffSel,1)*100)+' % de vie, '+Math.round(brDmgK(brDiffSel)*100)+' % de dégâts · une rune de niveau '+brDiffSel+' ou moins s\'y améliore à coup sûr. Termine une difficulté pour ouvrir la suivante.</p>';
@@ -8751,20 +8762,26 @@ brEl.addEventListener('click',e=>{if(e.target===brEl){closeBreche();return;}cons
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!brEl.hidden)closeBreche();else if(!arbEl.hidden)closeArbre();}});
 // ----- arbre et runes -----
 function runeIcone(k,n,s){const R0=RUNES[k];s=s||44;return '<span style="display:inline-grid;place-items:center;width:'+s+'px;height:'+s+'px;flex:none;background:radial-gradient(circle at 35% 30%,#fff,'+(R0?R0.col:'#3a3648')+' 38%,#0e0a18 100%);border:2px solid '+(R0?R0.col:'#3a3648')+';transform:rotate(45deg);box-shadow:0 0 10px '+(R0?R0.col:'transparent')+'"><b style="transform:rotate(-45deg);font-family:var(--display);font-size:'+Math.round(s*0.36)+'px;color:#0b0a12">'+(n||'?')+'</b></span>';}
-function renderArbre(){const cls=save.current,b=BRC(),ch=C(),pts=brPoints(),ok=ch.lvl>=20,actifs=arbreActif(),libres=pts-b.arbre.length,U=46,OX=4.6*U,OY=4.6*U,bonus=arbreBonus();
+function renderArbre(){const cls=save.current,b=BRC(),ch=C(),pts=brPoints(),ok=ch.lvl>=20,actifs=arbreActif(),libres=pts-b.arbre.length,bonus=arbreBonus(),PW=540,PH=556,RX=270,RY=296,DX=270,DY=512,SX=270,SY=46;
   let h='<h2 style="color:#7df0e0">Arbre et runes · '+CLASSES[cls].nom+'</h2>';
   if(!ok)h+='<p style="color:#ff9a8a;border:2px solid #ff5a6a;padding:8px 12px">L\'arbre est scellé tant que ton '+CLASSES[cls].nom+' n\'a pas retrouvé le niveau 20. Tes runes et tes nœuds t\'attendent.</p>';
-  h+='<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start"><div style="flex:none"><div id="arbPlateau" style="position:relative;width:'+(9.2*U)+'px;height:'+(9.2*U)+'px;background:radial-gradient(circle at 50% 50%,rgba(125,240,224,.12),transparent 62%),#120f1c;border:2px solid var(--line)">';
-  // liens
-  h+='<svg width="'+(9.2*U)+'" height="'+(9.2*U)+'" style="position:absolute;inset:0">';
-  for(const id in ARBRE){const n=ARBRE[id];for(const [dx,dy] of [[1,0],[0,1]]){const m=ARBRE[(n.x+dx)+','+(n.y+dy)]||((n.x+dx===0&&n.y+dy===0)?{x:0,y:0,c:1}:null);if(!m)continue;const on=actifs.includes(id)&&(m.c||actifs.includes(m.x+','+m.y));h+='<line x1="'+(OX+n.x*U)+'" y1="'+(OY+n.y*U)+'" x2="'+(OX+m.x*U)+'" y2="'+(OY+m.y*U)+'" stroke="'+(on?'#7df0e0':'#3a3648')+'" stroke-width="'+(on?4:3)+'"/>';}
-    for(const [dx,dy] of [[-1,0],[0,-1]])if(n.x+dx===0&&n.y+dy===0)h+='<line x1="'+(OX+n.x*U)+'" y1="'+(OY+n.y*U)+'" x2="'+OX+'" y2="'+OY+'" stroke="'+(actifs.includes(id)?'#7df0e0':'#3a3648')+'" stroke-width="'+(actifs.includes(id)?4:3)+'"/>';}
-  h+='</svg>';
-  for(const id in ARBRE){const n=ARBRE[id],pris=b.arbre.includes(id),act=actifs.includes(id),dispo=!pris&&ok&&libres>0&&noeudLibre(id,b),sz=n.t==='r'?34:n.t==='g'?30:22,col=n.t==='r'?'#ffd23f':n.t==='g'?'#c8a0ff':(n.st.vie?'#ff6b74':'#6aa6f2');
-    h+='<button type="button" data-nd="'+id+'" title="'+(n.nom?n.nom+' : ':'')+noeudTxt(n)+(pris&&!act?' (inactif : il te manque des points)':'')+'" style="position:absolute;left:'+(OX+n.x*U-sz/2)+'px;top:'+(OY+n.y*U-sz/2)+'px;width:'+sz+'px;height:'+sz+'px;padding:0;border-radius:'+(n.t==='m'?'50%':'6px')+';cursor:'+(dispo?'pointer':'default')+';border:3px solid '+(act?col:pris?'#6a6478':dispo?'#f4f1e8':'#3a3648')+';background:'+(act?col:pris?'#3a3648':'#1a1626')+';box-shadow:'+(dispo?'0 0 10px #f4f1e8':act?'0 0 8px '+col:'none')+';'+(n.t==='r'?'transform:rotate(45deg);':'')+'"></button>';}
-  // le centre : la rune sertie
-  h+='<div id="arbCentre" title="Fais glisser une rune ici" style="position:absolute;left:'+(OX-30)+'px;top:'+(OY-30)+'px;width:60px;height:60px;display:grid;place-items:center;border-radius:50%;border:3px dashed '+(b.eq&&RUNES[b.eq]?RUNES[b.eq].col:'#7df0e0')+';background:#0b0a12">'+(b.eq&&RUNES[b.eq]?runeIcone(b.eq,b.runes[b.eq]|0,34):'<span class="hint" style="font-size:11px;text-align:center">rune</span>')+'</div>';
-  h+='</div><div style="width:'+(9.2*U)+'px;margin-top:6px;display:grid;gap:4px;font-size:13px"><span><b style="color:#7df0e0">Points : '+Math.min(b.arbre.length,pts)+' / '+pts+'</b> <span class="hint">· 1 par niveau de 21 à 25, 1 par rune au niveau 20 (15 au plus)</span></span><span>'+(Object.keys(bonus).length?'Bonus actifs : '+Object.keys(bonus).map(k=>'+'+bonus[k]+' '+ARBRE_NOMS[k]).join(' · '):'<span class="hint">Aucun nœud actif. Clique un nœud voisin du centre.</span>')+'</span><span class="hint">Rond rouge : +10 vie · rond bleu : +10 mana · carré violet : +30 · losange doré : nœud rare.</span>'
+  h+='<style>@keyframes arbPulse{0%,100%{box-shadow:0 0 0 0 rgba(244,241,232,.0),0 0 8px rgba(244,241,232,.55)}50%{box-shadow:0 0 0 4px rgba(244,241,232,.18),0 0 16px rgba(244,241,232,.9)}}#arbPlateau button{font-family:inherit;transition:transform .12s}#arbPlateau button[data-ok="1"]:hover{transform:scale(1.08)}</style>';
+  h+='<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start"><div style="flex:none;max-width:100%;overflow:auto"><div id="arbPlateau" style="position:relative;width:'+PW+'px;height:'+PH+'px;background:radial-gradient(circle at 50% 53%,rgba(125,240,224,.16),transparent 34%),radial-gradient(ellipse at 50% 100%,rgba(125,240,224,.10),transparent 55%),repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 28px),repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 28px),#0f0c18;border:2px solid var(--line);box-shadow:inset 0 0 60px #000">';
+  // liens : du Départ à la rune, de la rune aux branches, puis de proche en proche
+  const pos=id=>id==='D'?[DX,DY-22]:id==='R'?[RX,RY]:[ARBRE[id].px,ARBRE[id].py],lien=(a,c,on,col,tirets)=>'<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+c[0]+'" y2="'+c[1]+'" stroke="'+(on?col:'#3a3648')+'" stroke-width="'+(on?5:3)+'" stroke-linecap="round"'+(on?' style="filter:drop-shadow(0 0 4px '+col+')"':'')+(tirets?' stroke-dasharray="3 8"':'')+'/>';
+  h+='<svg width="'+PW+'" height="'+PH+'" style="position:absolute;inset:0">';
+  h+=lien(pos('0,3'),pos('R'),actifs.includes('0,3'),'#7df0e0');
+  for(const id in ARBRE){const n=ARBRE[id],on=actifs.includes(id),viaRune=n.de==='0,3';h+=lien(pos(viaRune?'R':n.de),pos(id),on,n.col);}
+  h+=lien(pos('0,0'),[SX,SY+20],false,'#7df0e0',true)+'</svg>';
+  // la Suite (fermée pour l'instant) et le Départ
+  h+='<div title="La suite de l\'arbre arrivera dans une prochaine mise à jour" style="position:absolute;left:'+(SX-92)+'px;top:'+(SY-22)+'px;width:184px;height:44px;display:grid;place-items:center;border:3px dashed #5a5470;background:repeating-linear-gradient(135deg,#17131f 0 8px,#1d1828 8px 16px);color:#8a84a0;font-size:13px;letter-spacing:.14em"><span>🔒 SUITE <span style="font-size:11px;letter-spacing:0;opacity:.8">· à venir</span></span></div>';
+  h+='<div style="position:absolute;left:'+(DX-80)+'px;top:'+(DY-20)+'px;width:160px;height:40px;display:grid;place-items:center;border:3px solid #7df0e0;background:linear-gradient(#17323a,#0f1e26);color:#7df0e0;font-weight:700;letter-spacing:.2em;box-shadow:0 0 14px rgba(125,240,224,.45),3px 3px 0 #000">▲ DÉPART</div>';
+  for(const id in ARBRE){const n=ARBRE[id],pris=b.arbre.includes(id),act=actifs.includes(id),dispo=!pris&&ok&&libres>0&&noeudLibre(id,b),rare=n.t==='r',w=rare?(Math.abs(n.x)===2?104:80):34,hh=rare?(Math.abs(n.x)===2?60:76):34,stc=n.st.vie&&!n.st.mana?'#ff6b74':n.st.mana&&!n.st.vie?'#6aa6f2':n.col,col=rare?n.col:stc;
+    const txt=rare?'<span style="display:block;font-size:10px;letter-spacing:.1em;opacity:.85;text-transform:uppercase">'+n.nom+'</span><span style="display:block;font-size:12px;line-height:1.15;font-weight:700">'+Object.keys(n.st).map(k=>'+'+n.st[k]+' '+(k==='vdep'?'déplacement':k==='vatt'?'attaque':ARBRE_NOMS[k])).join('<br>')+'</span>':'<span style="font-size:10px;font-weight:700">+'+Object.values(n.st)[0]+'</span>';
+    h+='<button type="button" data-nd="'+id+'" data-ok="'+(dispo?1:0)+'" title="'+(n.nom?n.nom+' : ':'')+noeudTxt(n)+(pris&&!act?' (inactif : il te manque des points)':dispo?' · clique pour prendre ce nœud':pris?'':' · prends d\'abord le nœud d\'avant')+'" style="position:absolute;left:'+(n.px-w/2)+'px;top:'+(n.py-hh/2)+'px;width:'+w+'px;height:'+hh+'px;padding:0 2px;display:grid;place-items:center;text-align:center;border-radius:'+(rare?'8px':'50%')+';cursor:'+(dispo?'pointer':'default')+';border:3px solid '+(act?col:pris?'#6a6478':dispo?'#f4f1e8':'#3a3648')+';background:'+(act?(rare?'linear-gradient('+col+','+col+'cc)':col):pris?'#3a3648':'#1a1626')+';color:'+(act?'#0b0a12':pris?'#a09ab0':dispo?'#f4f1e8':(rare?col:'#6a6478'))+';'+(dispo?'animation:arbPulse 1.4s infinite;':act?'box-shadow:0 0 12px '+col+(rare?',3px 3px 0 #000':'')+';':rare?'box-shadow:3px 3px 0 #000;':'')+'">'+txt+'</button>';}
+  // le cœur : la rune sertie
+  {const rc=b.eq&&RUNES[b.eq]?RUNES[b.eq].col:'#7df0e0';h+='<div id="arbCentre" title="Fais glisser une rune ici" style="position:absolute;left:'+(RX-37)+'px;top:'+(RY-37)+'px;width:74px;height:74px;display:grid;place-items:center;border-radius:50%;border:3px '+(b.eq?'solid ':'dashed ')+rc+';background:radial-gradient(circle,#1b2a33,#0b0a12 70%);box-shadow:0 0 22px '+rc+'66,inset 0 0 12px #000">'+(b.eq&&RUNES[b.eq]?runeIcone(b.eq,b.runes[b.eq]|0,40):'<span class="hint" style="font-size:11px;text-align:center;line-height:1.2">rune<br>à sertir</span>')+'</div>';}
+  h+='</div><div style="width:'+PW+'px;max-width:100%;margin-top:6px;display:grid;gap:4px;font-size:13px"><span><b style="color:#7df0e0">Points : '+Math.min(b.arbre.length,pts)+' / '+pts+'</b>'+(libres>0&&ok?' · <b style="color:#f4f1e8">'+libres+' à placer</b>':'')+' <span class="hint">· 1 par niveau de 21 à 25, 1 par rune au niveau 20 (15 au plus)</span></span><span>'+(Object.keys(bonus).length?'Bonus actifs : '+Object.keys(bonus).map(k=>'+'+bonus[k]+' '+ARBRE_NOMS[k]).join(' · '):'<span class="hint">Aucun nœud actif. Commence par le nœud juste au-dessus du Départ.</span>')+'</span><span class="hint">On part du bas, on monte jusqu\'à la rune, puis on choisit ses branches : Rempart, Vitalité, Élan, Force. Rond rouge : +10 vie · rond bleu : +10 mana. La Suite s\'ouvrira plus tard.</span>'
     +'<span><button type="button" class="act" data-arb="reset" '+(b.arbre.length&&save.gold>=BRECHE_RESET?'':'disabled')+'>Redistribuer les points · '+BRECHE_RESET+' pièces</button></span></div></div>';
   // runes
   h+='<div style="flex:1;min-width:300px;display:grid;gap:6px"><b style="color:#7df0e0">Runes ('+RUNE_KEYS.filter(k=>b.runes[k]).length+' / '+RUNE_KEYS.length+')</b><span class="hint">Une seule rune agit à la fois : fais-la glisser au centre de l\'arbre (ou clique « Sertir »).'+(BRP&&BRP.chances>0?' <b style="color:#7ed957">'+BRP.chances+' chance'+(BRP.chances>1?'s':'')+' d\'amélioration (difficulté '+BRP.d+').</b>':'')+'</span>';
@@ -8782,7 +8799,7 @@ function runeSertir(k){const b=BRC();if(k&&!b.runes[k])return;b.eq=k||null;persi
 function openArbre(){if(!save.current)return;renderArbre();arbEl.hidden=false;paused=true;keys.clear();mouse.down=false;sfx('item');}
 function closeArbre(){arbEl.hidden=true;paused=false;cv.focus();}
 arbEl.addEventListener('click',e=>{if(e.target===arbEl){closeArbre();return;}const b=BRC();
-  const nd=e.target.closest('[data-nd]');if(nd){const id=nd.dataset.nd;if(C().lvl<20){sfx('deny');return;}if(b.arbre.includes(id))return;if(brPoints()-b.arbre.length<=0){note('Plus de point à placer');sfx('deny');return;}if(!noeudLibre(id,b)){note('Ce nœud ne touche aucun nœud déjà pris');sfx('deny');return;}b.arbre.push(id);persist();pushSave(true);statsDirty=true;sfx('level',0.5);renderArbre();return;}
+  const nd=e.target.closest('[data-nd]');if(nd){const id=nd.dataset.nd;if(C().lvl<20){sfx('deny');return;}if(b.arbre.includes(id))return;if(brPoints()-b.arbre.length<=0){note('Plus de point à placer');sfx('deny');return;}if(!noeudLibre(id,b)){note('Prends d\'abord le nœud d\'avant : on part du Départ, en bas');sfx('deny');return;}b.arbre.push(id);persist();pushSave(true);statsDirty=true;sfx('level',0.5);renderArbre();return;}
   const rn=e.target.closest('[data-rn]');if(rn){const k=rn.dataset.rn,a=rn.dataset.ra;if(a==='sertir')runeSertir(k);else if(a==='oter')runeSertir(null);else if(a==='up'){if(room&&room.raw){rn.disabled=true;room.raw({t:'breche',a:'up',k});}}return;}
   const a=e.target.closest('[data-arb]');if(!a)return;if(a.dataset.arb==='non'){closeArbre();return;}
   if(a.dataset.arb==='reset'){if(!b.arbre.length||save.gold<BRECHE_RESET){sfx('deny');return;}save.gold-=BRECHE_RESET;b.arbre=[];persist();pushSave(true);statsDirty=true;invDirty=true;sfx('coin');note('Points repris : à toi de les replacer');renderArbre();}});
@@ -8802,9 +8819,10 @@ function brecheTick(){
   if(!MAP.pilier&&!amHost){const h=hostKey();const bx=h&&h.r&&h.r.p&&typeof h.r.p.bx==='string'?h.r.p.bx.split(','):null;if(bx&&isFinite(+bx[0])){brecheFinIci(+bx[0],+bx[1]);}}
   brecheEcoute();
   if(!BR.bossVu&&monsters.some(m=>m.key===MAP.bossKey&&m.hp>0)){BR.bossVu=1;BR.bossAnn=1;const d0=MON[MAP.bossKey];showBanner(d0.nom.toUpperCase(),'Le gardien de la Brèche','#ff5a6a');sfx('boss');}
+  {const bo=monsters.find(m=>m.key===MAP.bossKey&&m.hp>0);if(bo){if(BR.bh0!=null&&BR.bh0<bo.max*0.97&&bo.hp>=bo.max){showBanner('Le gardien a repris toute sa vie','Sa salle était vide : il faut qu\'au moins un joueur y reste','#ff5a6a');sfx('deny');}BR.bh0=bo.hp;}}
   if(!BR.fini&&brEtat()>=2)brecheReclame();
 }
-function brecheDepart(o){if(!save.current||!room||!room.raw){note('Il faut être connecté pour entrer dans la Brèche');return;}BR={run:o.run,d:o.d,th:o.th,t0:o.t0,n:Math.max(1,o.n|0),fl:[0,0,0,0,0],etat:0,fini:0};BRP=null;
+function brecheDepart(o){if(!save.current||!room||!room.raw){note('Il faut être connecté pour entrer dans la Brèche');return;}if(BR_TOMBE.has(o.run)){note('Tu es tombé dans cette Brèche : tu ne peux plus y entrer');sfx('deny');return;}BR={run:o.run,d:o.d,th:o.th,t0:o.t0,n:Math.max(1,o.n|0),fl:[0,0,0,0,0],etat:0,fini:0};BRP=null;
   room.raw({t:'breche',a:'entrer',run:o.run,d:o.d,th:o.th,c:save.current});brecheEtage(1);showBanner('LA BRÈCHE · difficulté '+o.d,DTYPES[o.th].nom.split('· ')[1]+' · '+BRECHE_ETAGES+' étages, le gardien est au bout du dernier','#7df0e0');}
 function brecheEtage(n,parLeBas){if(!BR)return;n=clamp(n,1,BRECHE_ETAGES);enterDungeon(BR.run*8+n,BR.th);if(parLeBas&&MAP.down){P.x=MAP.down.x;P.y=MAP.down.y+1.8;}P.invul=2;note(n>=BRECHE_ETAGES?'Dernier étage : le gardien est au bout':'Étage '+n+' / '+BRECHE_ETAGES+' · trouve le portail');}
 // progression : l'hôte de chaque étage (le Gardien du serveur ou un joueur) compte les monstres tombés chez lui et l'annonce (bh) ;
@@ -8818,7 +8836,11 @@ function brScene(){if(scene!=='dungeon'||!MAP||!MAP.breche)return null;const run
   return o;}
 function brecheHote(){const o=brScene();if(!o)return;const e=(MAP.etage||1)-1;MAP.brKills=Math.max(MAP.brKills|0,o.fl[e]|0);MAP.brEtat=Math.max(MAP.brEtat|0,o.etat);MAP.brO=o;
   if(!MAP.brMis){MAP.brMis=1;const k=brHpK(o.d,o.n);for(const m of monsters){if((m.d.boss&&m.key!==MAP.bossKey)||m.max!==m.d.hp)continue;const plein=m.hp>=m.max;m.max=Math.round(m.d.hp*k);if(plein)m.hp=m.max;}}
-  if(MAP.brBoss&&(MAP.brEtat|0)<1)MAP.brEtat=1;}
+  if(MAP.brBoss&&(MAP.brEtat|0)<1)MAP.brEtat=1;
+  if(MAP.brBoss){const bo=monsters.find(m=>m.key===MAP.bossKey&&m.hp>0);if(bo&&bo.hp<bo.max){let n=0;if(!window.GARDIEN_MODE&&brSalle(P.x,P.y))n++;const k=sceneKey();for(const r of remotes.values())if(r.p&&!r.p.gd&&activeIn(r,k)&&brSalle(r.x,r.y))n++;
+      if(n)MAP.brVideT=0;else if(!MAP.brVideT)MAP.brVideT=time;else if(time-MAP.brVideT>2.5){bo.hp=bo.max;bo.x=bo.tx=bo.hx;bo.y=bo.ty=bo.hy;bo.phase=0;MAP.brVideT=0;}}else MAP.brVideT=0;}}
+// la salle du gardien (sa « arène ») : il faut qu'au moins un joueur y reste, sinon il reprend toute sa vie
+function brSalle(x,y){const d=MAP;if(!d||!d.brBoss)return false;const A=d.brSalle;return A?Math.abs(x-A.x)<=A.w/2+1&&Math.abs(y-A.y)<=A.h/2+1:Math.hypot(x-d.brBoss.x,y-d.brBoss.y)<11;}
 function brecheKill(m){if(scene!=='dungeon'||!MAP||!MAP.breche)return;const o=brScene()||MAP.brO;if(!o)return;
   if(m.key===MAP.bossKey){MAP.brEtat=2;MAP.brFin=Math.round(m.x*10)/10+','+Math.round(m.y*10)/10;return;}
   if(m.d.boss)return;MAP.brKills=(MAP.brKills|0)+1;}
@@ -8830,14 +8852,16 @@ function brecheEcoute(){if(!BR)return;for(const r of remotes.values()){if(!r.p||
 function brecheFinIci(x,y){if(!MAP||MAP.pilier)return;let px=x+2.6,py=y;for(const [dx,dy] of [[2.6,0],[-2.6,0],[0,2.6],[0,-2.6],[1.8,1.8],[-1.8,1.8]])if(!solidAt(x+dx,y+dy)){px=x+dx;py=y+dy;break;}MAP.pilier={x:px,y:py};exitOpen=true;MAP.bossExit=MAP.bossExit||{x,y};}
 function brecheReclame(){if(!BR||BR.fini)return;BR.fini=1;try{room.raw({t:'breche',a:'fin',run:BR.run});}catch(e){}}
 function onBreche(m){if(!m)return;
-  if(m.a==='refus'){note(String(m.msg||'La Brèche refuse').slice(0,90));sfx('deny');if(!arbEl.hidden)renderArbre();return;}
+  if(m.a==='refus'){note(String(m.msg||'La Brèche refuse').slice(0,90));sfx('deny');if(m.e&&BR&&scene==='dungeon'&&MAP&&MAP.breche){BR=null;sendPresence();enterNexus();}if(!arbEl.hidden)renderArbre();return;}
   if(m.a==='entrer'){if(BR&&+m.t0>0)BR.t0=+m.t0;return;}
   if(m.a==='fin'){const b=BRC(m.c);BRP={chances:m.chances|0,d:m.d|0,c:String(m.c||'')};if((m.d|0)>(b.diff|0))b.diff=m.d|0;const s=Math.round(+m.temps||0);
     if(m.rune&&RUNES[m.rune]&&!b.runes[m.rune]){b.runes[m.rune]=1;showBanner('RUNE : '+RUNES[m.rune].nom,RUNES[m.rune].max,RUNES[m.rune].col);sfx('relic');burst(P.x,P.y,RUNES[m.rune].col,60,5);try{sendChat('◈ a trouvé une rune dans la Brèche : '+RUNES[m.rune].nom+' !');}catch(e){}}
     persist();pushSave(true);try{pushChat({n:'Serveur',t:'◈ Brèche terminée en '+Math.floor(s/60)+' min '+String(s%60).padStart(2,'0')+' s : '+(BRP.chances?BRP.chances+' chance'+(BRP.chances>1?'s':'')+' d\'amélioration, au pilier ou chez le Veilleur.':'trop tard pour améliorer une rune cette fois.'),life:16,col:'#7df0e0'});}catch(e){}return;}
   if(m.a==='up'){const b=BRC(BRP?BRP.c:null);if(BRP)BRP.chances=m.reste|0;if(m.ok&&RUNES[m.k]){b.runes[m.k]=clamp(m.niv|0,1,20);persist();pushSave(true);statsDirty=true;sfx('relic');showBanner(RUNES[m.k].nom+' · niveau '+b.runes[m.k],(b.runes[m.k]>=20?'Niveau maximum : +1 point d\'arbre · ':'')+RUNES[m.k].txt(b.runes[m.k]),RUNES[m.k].col);}else if(m.imp){note('Cette rune est trop haute pour cette difficulté');sfx('deny');}else{sfx('deny');note('L\'amélioration échoue… il te reste '+(m.reste|0)+' chance'+((m.reste|0)>1?'s':''));}if(!arbEl.hidden)renderArbre();return;}}
-// mort dans la Brèche : rien n'est perdu, on reprend au début de l'étage
-function brecheMort(){const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;P.x=MAP.start.x;P.y=MAP.start.y;P.invul=3;eb=[];strikes=[];showBanner('Tu tombes…','La Brèche te rend au début de l\'étage · le temps continue','#ff5a6a');sfx('boss',0.5);}
+// mort dans la Brèche : rien n'est perdu (ni expérience ni équipement), mais on est renvoyé au Village et la course est finie pour ce héros
+function brecheMort(){const seul=!BR||(BR.n|0)<=1||![...remotes.values()].some(r=>r.p&&typeof r.p.bk==='string'&&BR&&+r.p.bk.split(':')[0]===BR.run&&Date.now()-r.upd<9000);
+  try{if(room&&room.raw)room.raw({t:'breche',a:'mort'});}catch(e){}if(BR)BR_TOMBE.add(BR.run);BR=null;BRI=null;eb=[];strikes=[];enterNexus();const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;P.x=VEIL.x+0.5;P.y=VEIL.y+1.8;P.invul=3;sendPresence();
+  showBanner('Tu tombes dans la Brèche',seul?'Elle se referme · rien n\'est perdu, retente ta chance':'Retour au Village · rien n\'est perdu, tes compagnons peuvent encore la finir','#ff5a6a');sfx('boss',0.5);}
 // affichage : jauge, temps et chances restantes, en haut et au centre, sans gêner la vue
 function drawBrecheHUD(){if(!BR||scene!=='dungeon'||!MAP||!MAP.breche)return;const w=Math.min(300,W*0.34),x=W/2-w/2,y=Math.round(TS*0.22),hh=Math.max(10,Math.round(TS*0.22)),et=MAP.etage||1,e=brEtat(),s=Math.max(0,(brNow()-BR.t0)/1000),ch=BR.finT!=null?BR.finT:s,nb=ch<60?4:ch<120?3:ch<180?2:ch<300?1:0;
   const bo=monsters.find(m=>m.key===MAP.bossKey&&m.hp>0),k=e>=2?1:bo?clamp(bo.hp/bo.max,0,1):clamp((et-1)/BRECHE_ETAGES,0,1);

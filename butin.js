@@ -60,8 +60,8 @@ function tirer(R, key, cls, scene, sc, opt) {
   const maudit = !!(opt && opt.maudit), donjon = typeof sc === 'string' && sc[0] === 'd';
   const d = R.MON[key], out = { xp: d.xp | 0, b: d.boss ? 1 : 0, it: [], rel: -1, oeuf: 0, spg: [], sp: [], or: 0 };
   if (d.tuto) { out.xp *= 2; out.tuto = 1; return out; }
-  // monstre maudit des Plaines : une potion de caractéristique au hasard et 100 pièces, rien d'autre
-  if (key === 'maudit') { out.sp = [R.mkItem('sp_' + pick(R.SK), 0)]; out.or = 100; return out; }
+  // monstre maudit des Plaines : une potion de caractéristique au hasard et 200 pièces, rien d'autre
+  if (key === 'maudit') { out.sp = [R.mkItem('sp_' + pick(R.SK), 0)]; out.or = 200; return out; }
   if (Math.random() < d.drop) { const n = d.n && d.boss ? d.n : 1; for (let i = 0; i < n; i++) { let t = ri(d.loot[0], d.loot[1]); if (Math.random() < 0.08) t = Math.min(6, t + 1); out.it.push(objetAuHasard(R, t, cls)); } }
   if (d.rel && (key === 'devoreur' || Math.random() < d.rel)) { out.rel = out.it.length; out.it.push(objetAuHasard(R, 7, cls)); }
   // les potions de vie et de mana ne tombent plus : elles se fabriquent à l'atelier de l'herboriste avec les plantes des Plaines
