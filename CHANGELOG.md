@@ -1,5 +1,9 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.88 (index.html ; wiki.html régénéré)
+- **Correctif** : une erreur pouvait s'afficher au chargement et empêcher le sac de s'afficher correctement.
+- (interne) Icône manquante pour un consommable du contenu masqué (ICONS sans entrée) : même fiole que les potions de caractéristique, et repli sur une potion si un dessin manque un jour.
+
 ## ver.0.0.87 (index.html, server.js, arbitre.js, butin.js ; wiki.html régénéré)
 - **Pêcher à plusieurs paie.** Le portail de la Vengeance sous-marine s'ouvre bien plus souvent quand on pêche côte à côte dans les Plaines : 3 fois plus à deux, 6 fois plus à trois, 10 fois plus à quatre et plus. Et il s'ouvre pour tout le groupe.
 - **Démoniste** : l'anti-triche pouvait rogner une partie des dégâts de ses démons (surtout avec la Gemme de la Nova), ce qui faisait « remonter » la vie des boss. Son plafond de dégâts compte maintenant tous ses démons.
