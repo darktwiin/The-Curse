@@ -1,5 +1,13 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.86 (index.html, server.js, arbitre.js, butin.js, generer-wiki.js ; wiki.html régénéré)
+- **Arbre de la Brèche : l'emplacement de rune se débloque.** C'est maintenant un nœud comme les autres : il faut y mettre un point (le troisième en partant du Départ) avant de pouvoir sertir une rune. Les points et la rune sertie ont été rendus à tout le monde : replace-les, c'est gratuit.
+- **Une rune sertie le reste.** Si ton héros meurt et retombe sous le niveau 20, sa rune continue d'agir. Seuls les autres nœuds de l'arbre attendent le retour au niveau 20.
+- **Quelque chose se prépare pour les héros de niveau 25…** Un vieil homme s'est installé près des portails du Village. Il ne parle qu'à ceux qui sont allés au bout du prestige, et il a une drôle d'histoire à raconter. Une très grosse mise à jour arrive : on en reparle bientôt.
+- **Correctif** : la téléportation du Mystificateur n'est plus comptée comme un « déplacement impossible » par l'anti-triche.
+- (interne) Contenu de la prochaine extension embarqué et masqué du wiki (drapeau secret) ; anti-triche adapté aux nouveaux ordres de grandeur (plafond de dégâts suivant l'arme et la capacité, positions jusqu'à 5 000, zones de la seconde île).
+- (interne) Arbre : save.breche[classe].av=3, nœud « 0,2 » ; runeDe côté serveur suit la même règle.
+
 ## ver.0.0.85 (index.html, server.js, arbitre.js, butin.js ; wiki.html régénéré)
 - **Brèche : tomber, c'est sortir.** Si tu meurs dans la Brèche, tu es renvoyé au Village **sans rien perdre** (ni expérience ni équipement), mais tu ne peux plus entrer dans cette Brèche. Seul, elle se referme ; en groupe, tes compagnons peuvent encore la finir, et seuls ceux qui battent le gardien gagnent la rune et débloquent la difficulté suivante.
 - **Brèche : le gardien ne se laisse plus grignoter de loin.** Si sa salle se vide, il reprend toute sa vie : il faut qu'au moins un joueur y reste.

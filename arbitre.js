@@ -418,6 +418,15 @@ function verifier(ancien, nouveau, ctx) {
     let recues = 0; { const L = liste[signature(R.mkItem('sp_' + k, 0))]; const manque = bu - Math.max(0, avant - apres); while (L && L.length && recues < manque) { L.shift(); recues++; } }
     if (bu > Math.max(0, avant - apres) + recues + (dons.objets || 0)) pb.push('potions de ' + k + ' bues sans potion');
   }
+  // --- élixirs des Colosses : au-delà des plafonds, 10 par caractéristique (armure comprise), un élixir disparu par point ---
+  { const K2 = [...R.SK, 'armure'];
+    for (const [cls, ch1] of Object.entries(nouveau.chars)) { const e = ch1 && ch1.sp2; if (e == null) continue; if (typeof e !== 'object' || Array.isArray(e)) { pb.push('élixirs illisibles'); continue; } for (const k of Object.keys(e)) if (!K2.includes(k) || !estEntier(e[k], 0, 10)) pb.push('élixir impossible (' + cls + ')'); }
+    for (const k of K2) { if (!R.KINDS['sp2_' + k]) continue;
+      let bu = 0; for (const [cls, ch1] of Object.entries(nouveau.chars)) { const ch0 = ancien.chars[cls]; bu += Math.max(0, ((((ch1 && ch1.sp2) || {})[k]) | 0) - ((((ch0 && ch0.sp2) || {})[k]) | 0)); }
+      if (!bu) continue; utilises['sp2_' + k] = bu;
+      const avant = nbKind(o0, it => it.kind === 'sp2_' + k), apres = nbKind(o1, it => it.kind === 'sp2_' + k);
+      let recues = 0; { const L = liste[signature(R.mkItem('sp2_' + k, 0))]; const manque = bu - Math.max(0, avant - apres); while (L && L.length && recues < manque) { L.shift(); recues++; } }
+      if (bu > Math.max(0, avant - apres) + recues + (dons.objets || 0)) pb.push('élixirs de ' + k + ' bus sans élixir'); } }
 
   // --- familiers : un œuf pour chaque nouveau familier commun, 3 identiques + 1 croquette pour monter d'un rang ---
   if (Array.isArray(nouveau.pets)) {
@@ -457,7 +466,7 @@ function verifier(ancien, nouveau, ctx) {
       // les grandes potions aussi (2 au plus par sauvegarde). Les potions ordinaires n'en ont pas besoin : elles se rachètent 5 pièces.
       let pose = 0;
       if (kind === 'cle') pose = moins;
-      else if (kind.startsWith('sp_') || kind === 'croquette') { const u = Math.min(moins, utilises[kind] || 0); utilises[kind] = (utilises[kind] || 0) - u; pose = moins - u; }
+      else if (kind.startsWith('sp_') || kind.startsWith('sp2_') || kind === 'croquette') { const u = Math.min(moins, utilises[kind] || 0); utilises[kind] = (utilises[kind] || 0) - u; pose = moins - u; }
       else if (K.egg) { const u = Math.min(moins, utilises['*oeuf'] || 0); utilises['*oeuf'] = (utilises['*oeuf'] || 0) - u; pose = moins - u; }
       else if (kind === 'gvie' || kind === 'gmana') pose = Math.min(moins, 2);
       for (let i = 0; i < Math.min(pose, 8); i++) sol.push({ sig: k, t: Date.now() }); }
@@ -475,11 +484,13 @@ function degatsMax(s) {
   const lvl = Math.max(1, ch.lvl | 0), w = (ch.equip || [])[0];
   // miroir du Mystificateur équipé : bonus offensif (voir prisOff dans le jeu)
   const pc = (ch.equip || [])[1], po = pc && R.prisOff && R.KINDS[pc.kind] && (R.KINDS[pc.kind].base || pc.kind) === 'prisme' ? R.prisOff(pc) : null, prisme = k => (po && po[k]) || 0;
-  const stat = k => c.base[k] + c.gain[k] * (lvl - 1) + (((ch.sp || {})[k] | 0) * ((R.SP_DEF[k] || {}).step || 1)) + (ch.equip || []).reduce((a, it) => a + ((it && it.stats && it.stats[k]) || 0), 0) + 30 + prisme(k) + ((s.talisEq && s.talis && s.talis[s.talisEq] && R.TALIS && R.TALIS[s.talisEq] && R.TALIS[s.talisEq].st[k]) || 0);
+  const stat = k => c.base[k] + c.gain[k] * (lvl - 1) + (((ch.sp || {})[k] | 0) * ((R.SP_DEF[k] || {}).step || 1)) + (((ch.sp2 || {})[k] | 0) * 5) + (ch.equip || []).reduce((a, it) => a + ((it && it.stats && it.stats[k]) || 0), 0) + 30 + prisme(k) + ((s.talisEq && s.talis && s.talis[s.talisEq] && R.TALIS && R.TALIS[s.talisEq] && R.TALIS[s.talisEq].st[k]) || 0);
   if (!w || !Array.isArray(w.dmg) || !R.WB || !R.WB[w.kind]) return 25000;
   const mult = (0.5 + stat('puissance') / 50) * 1.45 * 1.3, cadence = (1.5 + 6.5 * stat('vatt') / 75) * 1.5 * Math.max(1, R.WB[w.kind].rk || 1) * 2 /* frénésie */;
   const tirs = (R.WB[w.kind].shots + (w.extra || 0)) * (R.WB[w.kind].dm || 1) * (R.WB[w.kind].am || 1); // am : nombre de monstres touchés par une aura
-  return Math.round(Math.max(3000, w.dmg[1] * (1 + 0.1 * Math.min(2, w.up | 0)) * mult * tirs * cadence * 3));
+  // capacité Tier 8 (dégâts ×10) portée avec une arme plus faible : le plafond suit la capacité
+  const capa8 = pc && R.KINDS[pc.kind] && R.KINDS[pc.kind].t8 ? 4 : 1;
+  return Math.round(Math.max(3000, w.dmg[1] * (1 + 0.1 * Math.min(2, w.up | 0)) * mult * tirs * cadence * 3) * capa8);
 }
 
 module.exports = { degatsMax, verifier, nouveauxSeaux, regles: () => R, objetValide, apprendre };

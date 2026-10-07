@@ -689,7 +689,9 @@ wss.on('connection', (ws, req) => {
       const sc = m.patch.s !== undefined ? m.patch.s : moi.etat.s, now = Date.now(), pp = moi.posPrec;
       if (pp && pp.s === sc && now - (moi.sT || 0) > 3000 && now - (moi.tpT || 0) > 3000) {
         const dist = Math.hypot(m.patch.x - pp.x, m.patch.y - pp.y) / 10, dt = Math.max(0.05, (now - pp.t) / 1000);
-        if (dist > 3 && dist / dt > 30) {
+        // téléportation du Mystificateur : le jeu l'annonce (ev « t ») dans le même envoi ; jusqu'à 17 cases (miroir Tier 8 : 15), ce n'est pas un déplacement impossible
+        if (typeof m.patch.ev === 'string' && m.patch.ev.split('|')[1] === 't') moi.tpEvT = now;
+        if (dist > 3 && dist / dt > 30 && !(dist <= 17 && now - (moi.tpEvT || 0) < 600)) {
           let presDAutre = false; for (const j of salle.values()) if (j !== moi && j.etat && j.etat.s === sc && Math.hypot((j.etat.x || 0) - m.patch.x, (j.etat.y || 0) - m.patch.y) / 10 < 4) presDAutre = true;
           if (!presDAutre) noterSuspect(moi, 'vitesse', 1, 'Déplacement impossible : ' + dist.toFixed(1) + ' cases en ' + dt.toFixed(2) + ' s');
         }
@@ -1029,8 +1031,8 @@ function packs(moi, m) {
   packEnvoyer(moi, PACK.un.get(row.id));
 }
 // ---------- La Brèche : le serveur tient le chronomètre, tire la rune et les améliorations ----------
-// rune sertie par le héros en jeu (elle n'agit qu'à partir du niveau 20) : sert au butin (Savant : expérience · Duc : pièces)
-function runeDe(sv) { try { const cls = sv.current, ch = sv.chars && sv.chars[cls], b = sv.breche && sv.breche[cls]; if (!ch || (ch.lvl | 0) < 20 || !b || !b.eq) return null; const n = Math.max(0, Math.min(20, (b.runes && b.runes[b.eq]) | 0)); return n ? { k: String(b.eq), n } : null; } catch { return null; } }
+// rune sertie par le héros en jeu : sert au butin (Savant : expérience · Duc : pièces)
+function runeDe(sv) { try { const cls = sv.current, ch = sv.chars && sv.chars[cls], b = sv.breche && sv.breche[cls]; if (!ch || !b || !b.eq || b.av !== 3 || !Array.isArray(b.arbre) || !b.arbre.includes('0,2')) return null; const n = Math.max(0, Math.min(20, (b.runes && b.runes[b.eq]) | 0)); return n ? { k: String(b.eq), n } : null; } catch { return null; } } // la rune agit dès que son emplacement est débloqué dans l'arbre (version 3), quel que soit le niveau du héros
 const RUNES_BRECHE = ['longue', 'veloce', 'puissant', 'carnivore', 'ami', 'savant', 'duc', 'mille', 'phantom', 'pape'];
 const BRECHES = new Map(); // `${salle}|${course}` -> { t0, d, fin }
 setInterval(() => { const lim = Date.now() - 2 * 3600000; for (const [k, B] of BRECHES) if (B.t0 < lim) BRECHES.delete(k); }, 600000).unref();
@@ -1264,14 +1266,15 @@ const FICHIER_GUERRE = path.join(DATA_DIR, 'guerre.json'), GUERRE_BONUS = 1.10;
 const GUERRE = { heure: Math.floor(Date.now() / GUERRE_PERIODE), n: {}, tenant: {} }; // n : zone -> { gid: tués } · tenant : zone -> gid
 try { const g = JSON.parse(fs.readFileSync(FICHIER_GUERRE, 'utf8')); if (g && g.heure === GUERRE.heure) { GUERRE.n = g.n || {}; GUERRE.tenant = g.tenant || {}; } else if (g && g.heure === GUERRE.heure - 1) { GUERRE.n = g.n || {}; GUERRE.heure = g.heure; } } catch {}
 let guerreSale = false;
-const zoneDe = key => { const R = arbitre.regles(); return R && R.ZONES ? R.ZONES.findIndex(z => (z.pool || []).includes(key)) : -1; };
+// la guerre des guildes ne porte que sur les zones de la première île
+const zoneDe = key => { const R = arbitre.regles(); return R && R.ZONES ? R.ZONES.findIndex(z => !z.ile && (z.pool || []).includes(key)) : -1; };
 function guerreTour() { // changement d'heure : les gagnants prennent les zones, les compteurs repartent de zéro
   const h = Math.floor(Date.now() / GUERRE_PERIODE); if (h === GUERRE.heure) return false;
   const tenant = {}; if (h === GUERRE.heure + 1) for (const z of Object.keys(GUERRE.n)) { let best = null, bn = 0; for (const [gid, n] of Object.entries(GUERRE.n[z])) if (guildes[gid] && n > bn) { bn = n; best = gid; } if (best) tenant[z] = best; }
   GUERRE.heure = h; GUERRE.n = {}; GUERRE.tenant = tenant; guerreSale = true;
   console.log('[guerre] nouvelle heure : ' + (Object.entries(tenant).map(([z, gid]) => z + '=' + guildes[gid].tag).join(' ') || 'aucune zone tenue')); return true;
 }
-function etatGuerre() { const R = arbitre.regles(), nb = R && R.ZONES ? R.ZONES.length : 7, zones = [];
+function etatGuerre() { const R = arbitre.regles(), nb = R && R.ZONES ? R.ZONES.filter(z => !z.ile).length : 7, zones = [];
   for (let z = 0; z < nb; z++) { const t = guildes[GUERRE.tenant[z]], top = Object.entries(GUERRE.n[z] || {}).filter(([gid]) => guildes[gid]).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([gid, n]) => ({ tag: guildes[gid].tag, nom: guildes[gid].nom, n }));
     zones.push({ t: t ? { tag: t.tag, nom: t.nom } : null, top }); }
   return { t: 'guerre', zones, fin: (GUERRE.heure + 1) * GUERRE_PERIODE, bonus: Math.round((GUERRE_BONUS - 1) * 100) }; }
