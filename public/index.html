@@ -478,7 +478,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.86"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.87"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -495,7 +495,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp mait" id="mxBar" hidden><i id="mxF"></i><span><em>Maîtrise</em><b id="mxT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.86</div>
+    <div class="verTag" id="verTag">ver.0.0.87</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -672,7 +672,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.86</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.87</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -714,7 +714,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.86</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.87</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -1723,13 +1723,23 @@ MON.maudit={nom:'Monstre maudit',hp:MON.devoreur.hp,xp:MON.devoreur.xp,spd:MON.d
     br_etincelle:M('Étincelle vive',1000,130,3.4,40,1.1,'single',9.5,0.85,4,'#ffe27a',{mv:'erratic'}),br_nuee:M('Nuée d\'orage',1900,200,1.8,50,1.7,'wave',6,1.25,6,'#ffe27a',{n:3}),br_heraut:M('Héraut de la foudre',2400,230,2.4,54,2.2,'mines',6.5,1.25,5,'#8a9ae0',{n:7,ai:2}),br_tisse:B('Le Tisse-Foudre','#ffe27a',[6,4,9])});}
 // Grotte de glace (le passage vers l'Île aux Colosses) et Île aux Colosses : des monstres d'un autre gabarit. secret : pas dans le wiki pour l'instant.
 // ile:2 : butin de l'Île (Tier 8, élixirs). pr : rayon de leurs projectiles.
-{const G=(nom,hp,xp,spd,dmg,cd,pat,bs,sz,pref,bc,x)=>Object.assign({nom,hp,xp,spd,dmg,cd,pat,bs,br:8,sz,loot:[5,6],drop:0.28,pref,bc,or:[0.25,1,3],rel:0,ai:2,arm:0.1,secret:1,glace:1},x||{}),
-  C=(nom,hp,xp,spd,dmg,cd,pat,bs,sz,pref,bc,or,x)=>Object.assign({nom,hp,xp,spd,dmg,cd,pat,bs,br:9,sz,loot:[5,6],drop:0.2,pref,bc,or:[0.3,or,or*2],rel:0,ai:2,arm:0.1,secret:1,ile:2,pr:0.24},x||{});
+// bspr : dessin de leurs projectiles (jamais de simple boule) · eff : l'effet négatif que chacun de leurs tirs inflige · t8 : chance d'objet Tier 8 (seul équipement qu'ils lâchent)
+{const G=(nom,hp,xp,spd,dmg,cd,pat,bs,sz,pref,bc,bspr,x)=>Object.assign({nom,hp,xp,spd,dmg,cd,pat,bs,br:8,sz,loot:[5,6],drop:0.28,pref,bc,or:[0.25,1,3],rel:0,ai:2,arm:0.1,secret:1,glace:1,bspr,eff:'slow/2',pr:0.2},x||{}),
+  C=(nom,hp,xp,spd,dmg,cd,pat,bs,sz,pref,bc,or,t8,bspr,eff,x)=>Object.assign({nom,hp,xp,spd,dmg,cd,pat,bs,br:9,sz,loot:[0,0],drop:0,pref,bc,or:[0.3,or,or*2],rel:0,ai:2,arm:0.1,secret:1,ile:2,pr:0.3,t8,bspr,eff},x||{});
   Object.assign(MON,{
-    gl_golem:G('Golem de givre',5200,210,1.4,105,2,'golem',4,1.5,3.5,'#8fd0f0'),gl_chauve:G('Chauve-souris des glaces',2600,180,4.4,80,1,'burst',9,1.1,5,'#3ff0ff',{n:4,mv:'erratic'}),gl_spectre:G('Spectre gelé',3800,195,2.6,95,1.4,'ring',6,1.25,6,'#cfe8f5',{n:14}),
-    c_crabe:C('Crabe-forteresse',14000,320,2.6,330,1.2,'shotgun',7.5,2.3,3,'#3ff0ff',3,{n:5,spread:0.2,mv:'erratic'}),c_tortue:C('Tortue-bastion',18000,340,1,380,2,'star',4.5,2.5,5,'#b45aff',3,{n:16}),c_albatros:C('Albatros des tempêtes',10000,300,4.2,300,1.2,'burst',9.5,2.3,7.5,'#e8eef6',3,{n:4,mv:'erratic'}),
-    c_mammouth:C('Mammouth doré',32000,480,2.4,560,1.6,'wave',6,2.6,4,'#ffd23f',5,{n:5,mv:'charge'}),c_cyclope:C('Cyclope des steppes',27000,460,1.8,640,2.2,'golem',4.5,2.5,5,'#ff7a3d',5),c_roc:C('Roc ravisseur',21000,440,4.4,520,1.1,'trio',10,2.4,7.5,'#ffd23f',5,{mv:'erratic'}),
-    c_titan:C('Titan de granit',58000,700,1.3,900,2,'ring',6,2.7,4.5,'#ffb04a',8,{n:18}),c_hydre:C('Hydre des cimes',50000,680,2,600,0.35,'spiral',6.5,2.6,6,'#6ac8a8',8,{arms:3}),c_orage:C("Colosse d'orage",44000,660,3,780,1.5,'sniper',14,2.5,8.5,'#ffe27a',8,{n:3,br:12,mv:'erratic'})});}
+    gl_golem:G('Golem de givre',52000,210,1.4,105,2,'golem',4,1.5,3.5,'#8fd0f0','stalactite'),gl_chauve:G('Chauve-souris des glaces',26000,180,4.4,80,1,'burst',9,1.1,5,'#3ff0ff','croc_glace',{n:4,mv:'erratic'}),gl_spectre:G('Spectre gelé',38000,195,2.6,95,1.4,'ring',6,1.25,6,'#cfe8f5','flocon',{n:14}),
+    // Grève d'Obsidienne : 1 % de Tier 8
+    c_crabe:C('Crabe-forteresse',140000,320,2.6,330,1.2,'shotgun',7.5,2.3,3,'#3ff0ff',3,0.01,'col_pince','slow/2.5',{n:5,spread:0.2,mv:'erratic'}),      // pincé : ralenti
+    c_tortue:C('Tortue-bastion',180000,340,1,380,2,'star',4.5,2.5,5,'#b45aff',3,0.01,'col_cristal','hallu/3',{n:16}),                                      // éclats de cristal : hallucinations
+    c_albatros:C('Albatros des tempêtes',100000,300,4.2,300,1.2,'burst',9.5,2.3,7.5,'#e8eef6',3,0.01,'col_plume','blind/1.5',{n:4,mv:'erratic'}),          // bourrasque : aveuglé
+    // Steppe des Géants : 2 %
+    c_mammouth:C('Mammouth doré',320000,480,2.4,560,1.6,'wave',6,2.6,4,'#ffd23f',5,0.02,'col_defense','par/0.6',{n:5,mv:'charge'}),                        // coup de défense : étourdi
+    c_cyclope:C('Cyclope des steppes',270000,460,1.8,640,2.2,'golem',4.5,2.5,5,'#ff7a3d',5,0.02,'col_rocher','slow/3'),                                     // rocher : jambes broyées, ralenti
+    c_roc:C('Roc ravisseur',210000,440,4.4,520,1.1,'trio',10,2.4,7.5,'#ffd23f',5,0.02,'col_serre','poi/4',{mv:'erratic'}),                                  // serres : saignement
+    // Cimes des Titans : 3 %
+    c_titan:C('Titan de granit',580000,700,1.3,900,2,'ring',6,2.7,4.5,'#ffb04a',8,0.03,'col_poing','par/0.8',{n:18}),                                       // poing de pierre : étourdi
+    c_hydre:C('Hydre des cimes',500000,680,2,600,0.35,'spiral',6.5,2.6,6,'#6ac8a8',8,0.03,'col_venin','poi/5',{arms:3}),                                    // venin
+    c_orage:C("Colosse d'orage",440000,660,3,780,1.5,'sniper',14,2.5,8.5,'#ffe27a',8,0.03,'col_foudre','burn/3',{n:3,br:12,mv:'erratic'})});}                // foudre : brûlure
 for(const k in MON)MON[k].pref=Math.round(MON[k].pref*80)/100; // tous les monstres cherchent à se tenir 20 % plus près du joueur
 for(const k in MON)MON[k].sz=Math.round(MON[k].sz*(MON[k].boss?1.1:1.25)*100)/100; // monstres un peu plus grands à l'écran
 const MKEYS=Object.keys(MON);
@@ -2242,6 +2252,21 @@ Object.assign(BOSS_BULLET,{g_belier:'corne',g_scorpion:'dard',g_serpent:'venin',
   for(const k in M)if(MON[k]){MON[k].bspr=M[k];if(BOSS_BULLET[k])BOSS_BULLET[k]=M[k];}
   }
 /*TIRS_FIN*/
+// Projectiles de l'Île aux Colosses : 16×16, avec une traînée (tr) qui les suit. Aucune boule.
+function bulletArt16(fn){const N=16,c=document.createElement('canvas');c.width=N;c.height=N;const g=c.getContext('2d');const px=(x,y,col,w,h)=>{g.fillStyle=col;g.fillRect(x,y,w||1,h||1);};fn(px,g);
+  const id=g.getImageData(0,0,N,N),d=id.data,o=new Uint8ClampedArray(d);for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=(y*N+x)*4;if(d[i+3])continue;for(const [a,b] of [[1,0],[-1,0],[0,1],[0,-1]]){const X=x+a,Y=y+b;if(X>=0&&Y>=0&&X<N&&Y<N&&d[(Y*N+X)*4+3]){o[i]=11;o[i+1]=10;o[i+2]=18;o[i+3]=255;break;}}}
+  g.putImageData(new ImageData(o,N,N),0,0);return c;}
+Object.assign(BULLET_ART,{
+  col_pince:{dir:true,tr:'#3ff0ff',c:bulletArt16(p=>{p(1,6,'#2a3450',5,4);p(5,3,'#46557a',6,3);p(5,10,'#46557a',6,3);p(10,2,'#46557a',4,2);p(10,12,'#46557a',4,2);p(13,3,'#3ff0ff',2,2);p(13,11,'#3ff0ff',2,2);p(6,6,'#2a3450',3,4);p(9,5,'#161c30',4,1);p(9,10,'#161c30',4,1);p(6,4,'#8fa0c8',4,1);p(2,7,'#46557a',3,1);})},
+  col_cristal:{dir:true,tr:'#b45aff',c:bulletArt16(p=>{p(2,7,'#5c2a9a',3,2);p(4,6,'#7a3ad0',4,4);p(7,5,'#b45aff',4,6);p(10,6,'#d8a0ff',3,4);p(12,7,'#ffffff',3,2);p(7,5,'#e8c8ff',4,1);p(5,9,'#4a1f80',5,1);p(8,7,'#ffffff',2,1);p(1,4,'#b45aff',2,1);p(2,11,'#b45aff',2,1);})},
+  col_plume:{dir:true,tr:'#e8eef6',c:bulletArt16(p=>{p(1,8,'#8a98b0',13,1);for(let x=3;x<13;x++){const h=x<8?x-2:13-x;p(x,8-h,'#f8fbff',1,h);p(x,9,'#c8d2e0',1,Math.max(1,h-1));}p(13,7,'#3a4660',2,3);p(0,5,'#bfe8ff',3,1);p(1,11,'#bfe8ff',3,1);p(0,8,'#bfe8ff',1,1);})},
+  col_defense:{dir:false,tr:'#f4ead0',c:bulletArt16(p=>{p(2,3,'#f4ead0',3,3);p(3,5,'#f4ead0',3,3);p(4,7,'#f4ead0',4,3);p(6,9,'#f4ead0',5,3);p(9,11,'#e0d0a8',4,2);p(12,12,'#c8b88a',2,2);p(2,3,'#ffffff',2,1);p(4,8,'#c8b88a',2,1);p(7,11,'#c8b88a',3,1);p(1,2,'#ffd23f',2,1);})},
+  col_rocher:{dir:false,tr:'#8a6240',c:bulletArt16(p=>{p(4,2,'#8a6240',8,12);p(2,4,'#8a6240',12,8);p(5,3,'#b08458',6,3);p(3,5,'#b08458',4,3);p(9,8,'#5a3e26',4,4);p(4,10,'#5a3e26',4,3);p(7,6,'#3a2614',1,5);p(8,10,'#3a2614',3,1);p(5,7,'#3a2614',2,1);p(6,4,'#d8b088',2,1);})},
+  col_serre:{dir:true,tr:'#ffd23f',c:bulletArt16(p=>{for(const y of [2,7,12]){p(2,y,'#8a5a2a',5,2);p(6,y,'#c08a44',4,2);p(10,y+(y===7?0:y<7?1:-1),'#ffd23f',3,2);p(13,y+(y===7?0:y<7?2:-2),'#fff6c0',2,1);}p(1,4,'#4a2e14',2,8);p(0,6,'#4a2e14',1,4);})},
+  col_poing:{dir:true,tr:'#ffb04a',c:bulletArt16(p=>{p(1,5,'#5a6274',5,6);p(5,3,'#9aa2b4',8,10);p(12,4,'#c8d0e0',2,8);p(6,3,'#c8d0e0',6,1);p(6,12,'#5a6274',6,1);p(8,5,'#5a6274',1,6);p(10,5,'#5a6274',1,6);p(6,7,'#ffb04a',2,2);p(2,7,'#ffb04a',2,2);p(13,6,'#ffffff',1,3);})},
+  col_venin:{dir:true,tr:'#7ed957',c:bulletArt16(p=>{p(6,4,'#3a8a3a',6,8);p(4,6,'#3a8a3a',10,4);p(7,5,'#7ed957',5,5);p(11,6,'#b8ff6a',2,3);p(8,6,'#e8ffc0',2,1);p(1,7,'#3a8a3a',3,2);p(2,4,'#7ed957',2,1);p(0,10,'#7ed957',2,1);p(3,11,'#3a8a3a',2,2);p(6,12,'#1e4a1e',5,1);})},
+  col_foudre:{dir:true,tr:'#ffe27a',c:bulletArt16(p=>{p(0,7,'#ffe27a',4,2);p(3,5,'#ffe27a',3,2);p(5,7,'#fff6c0',3,3);p(7,9,'#ffe27a',3,2);p(9,6,'#fff6c0',3,3);p(11,5,'#ffffff',3,2);p(13,7,'#ffffff',3,2);p(5,7,'#ffffff',2,1);p(2,10,'#ffb020',2,1);p(8,3,'#ffb020',2,1);})}
+});
 const BOSS_ATK={};for(const k in BOSS_ART)if(MON[k]){MSPR[k]=BOSS_ART[k](0);BOSS_ATK[k]=BOSS_ART[k](1);MON[k].bspr=BOSS_BULLET[k];}
 /*ART2_DEBUT*/
 // ---------- monstres redessinés : 32 pixels logiques, trois images (repos A, repos B, attaque) ----------
@@ -3701,7 +3726,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000086;let newerWarned=false;
+const NETV=2,BUILD=2600000087;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -4611,7 +4636,7 @@ let realmKills=0;const CENTRAL=['dieu_fou','colosse'];
 function centralBosses(){const l=monsters.filter(q=>CENTRAL.includes(q.key)&&q.hp>0).map(m=>({key:m.key,x:m.x,y:m.y}));if(amHost)return l;
   const h=hostKey(),o=[];if(h.r&&typeof h.r.p.RB==='string')for(const e of h.r.p.RB.split(';')){const f=e.split(',');if(CENTRAL.includes(f[0]))o.push({key:f[0],x:+f[1]/10,y:+f[2]/10});}return o.length?o:l;}
 // le boss du centre le plus proche du héros (c'est lui que montre la flèche)
-function centralBoss(){let b=null,bd=1e9;for(const c of centralBosses()){const d=Math.hypot(c.x-P.x,c.y-P.y);if(d<bd){bd=d;b=c;}}return b;}
+function centralBoss(){let b=null,bd=1e9;for(const c of centralBosses()){if(surIle2(c.y)!==surIle2(P.y))continue;const d=Math.hypot(c.x-P.x,c.y-P.y);if(d<bd){bd=d;b=c;}}return b;}
 function killsToBoss(){if(amHost)return realmKills;const h=hostKey();return h.r&&typeof h.r.p.RK==='number'?h.r.p.RK:0;}
 
 /* ---------- Chronos, l'Horloger Maudit : ses sorts s'enchaînent au hasard (jamais deux fois le même de suite) ----------
@@ -5149,7 +5174,7 @@ function mauditNait(src){if(!src){const l=monsters.filter(m=>m.hp>0&&!m.d.boss&&
 function mauditTick(){if(!amHost||scene!=='realm')return;if(!MAUD.next){MAUD.next=time+MAUDIT_T();return;}if(time<MAUD.next)return;if(monsters.some(m=>m.key==='maudit'&&m.hp>0)){MAUD.next=time+5;return;}MAUD.next=time+MAUDIT_T();mauditNait();}
 const mauditCode=()=>{const m=monsters.find(q=>q.key==='maudit'&&q.hp>0);return m?m.id.toString(36)+','+Math.round(m.x)+','+Math.round(m.y)+','+MKEYS.indexOf(m.sk):null;};
 // où est-il ? l'hôte le sait ; les autres lisent ce qu'il annonce (même à l'autre bout de l'île)
-function mauditInfo(){if(scene!=='realm')return null;let c=null;if(amHost)c=mauditCode();else{const h=hostKey();c=h&&h.r&&h.r.p&&typeof h.r.p.MC==='string'?h.r.p.MC:null;}if(!c)return null;const f=c.split(','),id=parseInt(f[0],36),x=+f[1],y=+f[2];if(!(id>0)||!isFinite(x)||!isFinite(y))return null;
+function mauditInfo(){if(scene!=='realm'||surIle2(P.y))return null;let c=null;if(amHost)c=mauditCode();else{const h=hostKey();c=h&&h.r&&h.r.p&&typeof h.r.p.MC==='string'?h.r.p.MC:null;}if(!c)return null;const f=c.split(','),id=parseInt(f[0],36),x=+f[1],y=+f[2];if(!(id>0)||!isFinite(x)||!isFinite(y))return null;
   const o={id,x,y,sk:MKEYS[+f[3]]};if(MAUD.vuId!==id&&!window.GARDIEN_MODE){MAUD.vuId=id;const z=regionAt(x,y);showBanner('☠ Un monstre maudit rôde !',((MON[o.sk]&&MON[o.sk].nom)||'Un monstre')+(z>=0&&ZONES[z]?' · '+ZONES[z].nom:'')+' · il est marqué en violet sur la carte','#b45aff');sfx('boss',0.6);try{pushChat({n:'Serveur',t:'☠ Un monstre maudit rôde'+(z>=0&&ZONES[z]?' : '+ZONES[z].nom:'')+'. Inflige-lui '+MAUDIT_MIN.toLocaleString('fr-FR')+' dégâts pour avoir ta part.',life:14,col:'#d8a8ff'});}catch(e){}}return o;}
 // aura de la malédiction : halo qui bat, deux anneaux de runes qui tournent en sens contraires, flammèches violettes
 function mauditAura(m){const X=sx(m.x),Y=sy(m.y),r=TS*m.d.sz*0.62,t=time+(m.seed||0);
@@ -5414,7 +5439,7 @@ $('#dPerma').addEventListener('click',()=>{
 });
 
 /* ================= sacs au sol ================= */
-function bagKind(items){let t=-1,sp=false,t7=false;for(const it of items){if(it&&it.slot!=='conso')t=Math.max(t,it.tier);if(it&&KINDS[it.kind].sp)sp=true;if(it&&KINDS[it.kind].t7)t7=true;}return t>=7?'relique':sp?'orange':t7?'violet':'brun';}
+function bagKind(items){let t=-1,sp=false,t7=false,t8=false;for(const it of items){if(it&&it.slot!=='conso')t=Math.max(t,it.tier);if(it&&(KINDS[it.kind].sp||KINDS[it.kind].sp2))sp=true;if(it&&KINDS[it.kind].t7)t7=true;if(it&&KINDS[it.kind].t8)t8=true;}return t>=7?'relique':t8?'blanc':sp?'orange':t7?'violet':'brun';}
 function addToBag(x,y,items,atPlayer){
   let b=atPlayer?groundBag:null;
   if(!b||b.items.length+items.length>8){b={x:x+rnd(-.15,.15),y:y+rnd(-.15,.15),items:[],life:90};bags.push(b);}
@@ -8706,7 +8731,9 @@ function render(){
       ctx.globalAlpha=1;ctx.lineWidth=Math.max(2,TS*0.06);ctx.strokeStyle='#fff6c0';ctx.stroke();ctx.fillStyle='#ffffff';ctx.fillRect(X+ux*L*0.5-2,Y+uy*L*0.5-2,4,4);continue;}
     if(b.pw&&heavyOut){ctx.fillStyle='#0b0a12';ctx.beginPath();ctx.arc(X,Y,s+2+Math.max(4,TS*0.1),0,TAU);ctx.fill();}
     if(b.pw){ctx.fillStyle='rgba(180,90,255,.3)';ctx.beginPath();ctx.arc(X,Y,s*1.9,0,TAU);ctx.fill();ctx.fillStyle=b.col;ctx.beginPath();ctx.arc(X,Y,s+2,0,TAU);ctx.fill();ctx.fillStyle='#12081f';ctx.beginPath();ctx.arc(X,Y,s*0.6,0,TAU);ctx.fill();continue;}
-    if(b.spr&&BULLET_ART[b.spr]){const ba=BULLET_ART[b.spr],z=Math.max(s*3.4,TS*0.56);ctx.globalAlpha=0.25;ctx.fillStyle=b.col;ctx.beginPath();ctx.arc(X,Y,z*0.62,0,TAU);ctx.fill();ctx.globalAlpha=1;
+    if(b.spr&&BULLET_ART[b.spr]){const ba=BULLET_ART[b.spr],z=Math.max(s*3.4,TS*0.56);
+      if(ba.tr){const sp=Math.hypot(b.vx,b.vy)||1,ux=b.vx/sp,uy=b.vy/sp;for(let k=4;k>=1;k--){ctx.globalAlpha=0.07+0.06*(4-k);ctx.fillStyle=ba.tr;const q=z*(0.5-0.07*k);ctx.beginPath();ctx.arc(X-ux*z*0.33*k,Y-uy*z*0.33*k,q,0,TAU);ctx.fill();}ctx.globalAlpha=0.5;ctx.strokeStyle=ba.tr;ctx.lineWidth=Math.max(1,z*0.06);ctx.beginPath();ctx.moveTo(X-ux*z*0.4,Y-uy*z*0.4);ctx.lineTo(X-ux*z*1.7,Y-uy*z*1.7);ctx.stroke();}
+      ctx.globalAlpha=0.25;ctx.fillStyle=b.col;ctx.beginPath();ctx.arc(X,Y,z*0.62,0,TAU);ctx.fill();ctx.globalAlpha=1;
       ctx.save();ctx.translate(X,Y);ctx.rotate(ba.dir?Math.atan2(b.vy,b.vx):ba.fix?0:time*7+b.bx);ctx.drawImage(ba.c,-z/2,-z/2,z,z);ctx.restore();continue;}
     ctx.globalAlpha=0.22;ctx.fillStyle=b.col;ctx.beginPath();ctx.arc(X,Y,s*1.8,0,TAU);ctx.fill();ctx.globalAlpha=1;
     ctx.fillStyle='#0b0a12';ctx.beginPath();ctx.arc(X,Y,s+(heavyOut?Math.max(4,TS*0.1):2),0,TAU);ctx.fill();ctx.fillStyle=b.col;ctx.beginPath();ctx.arc(X,Y,s,0,TAU);ctx.fill();ctx.fillStyle='rgba(255,255,255,.8)';ctx.beginPath();ctx.arc(X-s*0.25,Y-s*0.25,s*0.35,0,TAU);ctx.fill();}
@@ -9058,8 +9085,8 @@ setInterval(()=>{try{if(save.current){brInvTick();if(BRI)brecheTick();}}catch(e)
 var NAVIG={x:19.5,y:5.6},navEl=null;
 function COLQ(cls){cls=cls||save.current;if(!save.colosse||typeof save.colosse!=='object'||Array.isArray(save.colosse))save.colosse={};let q=save.colosse[cls];if(!q||typeof q!=='object')q=save.colosse[cls]={s:0,b:{}};if(!q.b||typeof q.b!=='object')q.b={};q.s=clamp(q.s|0,0,4);return q;}
 function colEtape(){return save.current&&save.colosse&&save.colosse[save.current]?clamp(save.colosse[save.current].s|0,0,4):0;}
-// les maîtres à abattre : ceux des donjons du Village des donjons (sans la Vengeance sous-marine, qui ne s'ouvre qu'au hasard de la pêche)
-function colBosses(){return HPORTS.map(p=>p.t).filter(t=>t!=='v'&&DTYPES[t]&&(DTYPES[t].bk||t==='a')).map(t=>({t,k:DTYPES[t].bk||'devoreur',nom:cap1(DTYPES[t].boss),dj:DTYPES[t].nom}));}
+// les maîtres à abattre : ceux de tous les donjons (la Vengeance sous-marine s'ouvre en pêchant dans les Plaines : à plusieurs, les chances montent en flèche)
+function colBosses(){return HPORTS.map(p=>p.t).filter(t=>DTYPES[t]&&(DTYPES[t].bk||t==='a')).map(t=>({t,k:DTYPES[t].bk||'devoreur',nom:cap1(DTYPES[t].boss),dj:DTYPES[t].nom+(t==='v'?' · en pêchant dans les Plaines, bien plus souvent à plusieurs':'')}));}
 function navigLa(){return !!(save.current&&C()&&(Object.values(save.chars||{}).some(c=>c&&(c.lvl|0)>=25)||Object.values(save.colosse||{}).some(q=>q&&(q.s|0)>0)));}
 function colTue(key){if(!save.current||colEtape()!==1)return;const q=COLQ(),l=colBosses();if(q.b[key]||!l.some(b=>b.k===key))return;q.b[key]=1;persist();pushSave(true);const n=l.filter(b=>q.b[b.k]).length;
   if(n>=l.length){showBanner('Tous les maîtres sont tombés','Retourne voir le Vieux Navigateur, au Village','#8fd0f0');sfx('level');}else note('Quête du Navigateur : '+n+' / '+l.length+' maîtres de donjon');}

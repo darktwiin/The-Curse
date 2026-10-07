@@ -1,5 +1,11 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.87 (index.html, server.js, arbitre.js, butin.js ; wiki.html régénéré)
+- **Pêcher à plusieurs paie.** Le portail de la Vengeance sous-marine s'ouvre bien plus souvent quand on pêche côte à côte dans les Plaines : 3 fois plus à deux, 6 fois plus à trois, 10 fois plus à quatre et plus. Et il s'ouvre pour tout le groupe.
+- **Démoniste** : l'anti-triche pouvait rogner une partie des dégâts de ses démons (surtout avec la Gemme de la Nova), ce qui faisait « remonter » la vie des boss. Son plafond de dégâts compte maintenant tous ses démons.
+- **Le Vieux Navigateur** attend toujours les héros de niveau 25, près des portails du Village…
+- (interne) Suite du contenu masqué : réglages de vie, de butin, de tirs et d'effets ; marqueurs de boss limités à l'île où l'on se trouve.
+
 ## ver.0.0.86 (index.html, server.js, arbitre.js, butin.js, generer-wiki.js ; wiki.html régénéré)
 - **Arbre de la Brèche : l'emplacement de rune se débloque.** C'est maintenant un nœud comme les autres : il faut y mettre un point (le troisième en partant du Départ) avant de pouvoir sertir une rune. Les points et la rune sertie ont été rendus à tout le monde : replace-les, c'est gratuit.
 - **Une rune sertie le reste.** Si ton héros meurt et retombe sous le niveau 20, sa rune continue d'agir. Seuls les autres nœuds de l'arbre attendent le retour au niveau 20.

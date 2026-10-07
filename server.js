@@ -842,14 +842,19 @@ setInterval(() => { const n = Date.now(); for (const [k, t] of ticketsCle) if (t
 const ticketOk = (salle, sc) => (sc[1] !== 'h' && sc[1] !== 'v') || (ticketsCle.get(salle + '|' + sc) || 0) > Date.now();
 // pêche dans les Plaines : très rarement, un portail vers La Vengeance sous-marine (tirage côté serveur)
 const VENGEANCE_TAUX = 1 / 250;
+// pêcher à plusieurs au même endroit : ×3 à deux, ×6 à trois, ×10 à quatre et plus (1 chance sur 25) ; le portail s'ouvre alors pour tout le groupe
+const VENGEANCE_GROUPE = [1, 1, 3, 6, 10];
 function pecher(moi, salle, m) {
   if (!moi.compte || !moi.etat || moi.etat.s !== 'r') return;
   const force = !!(m && m.force) && moi.compte.admin;
-  if (!force) { if (Date.now() - (moi.pecheT || 0) < 2500) return; moi.pecheT = Date.now(); { const c = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)); c.prises = (c.prises || 0) + 1; } if (Math.random() >= VENGEANCE_TAUX) return; }
+  // les autres pêcheurs : dans les Plaines, à moins de 14 cases, et qui ont sorti un poisson dans les 30 dernières secondes
+  const now = Date.now(), groupe = []; const S0 = salles.get(salle); if (S0) for (const j of S0.values()) if (j !== moi && j.compte && !j.gardien && j.etat && j.etat.s === 'r' && now - (j.pecheT || 0) < 30000 && Math.hypot((j.etat.x - moi.etat.x) / 10, (j.etat.y - moi.etat.y) / 10) < 14) groupe.push(j);
+  if (!force) { if (now - (moi.pecheT || 0) < 2500) return; moi.pecheT = now; { const c = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)); c.prises = (c.prises || 0) + 1; } if (Math.random() >= VENGEANCE_TAUX * VENGEANCE_GROUPE[Math.min(4, groupe.length + 1)]) return; }
   const id = 1 + crypto.randomInt(2000000000);
   ticketsCle.set(salle + '|dv' + id.toString(36), Date.now() + 2 * 3600000);
   console.log(`[pêche] ${moi.compte.nom} ouvre La Vengeance sous-marine (${salle})`);
   envoyer(moi.ws, { t: 'vengeance', id });
+  for (const j of groupe) envoyer(j.ws, { t: 'vengeance', id }); // le portail apparaît aussi chez ceux qui pêchaient avec lui
 }
 
 // ---------- concours du premier donjon : le premier à terminer le donjon désigné, commencé après le départ, gagne 500 Cursite ----------

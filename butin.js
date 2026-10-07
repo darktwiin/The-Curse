@@ -36,7 +36,7 @@ function objetT7(R, cls) {
 const MAUDIT_POTION = 0.01, MAUDIT_POTION_BOSS = 0.05, MAUDIT_RELIQUE = 0.01; // mode maudit
 const TAUX_RESSOURCE = 0.2; // ressource de talisman sur un boss de donjon
 const DONJONS_T7 = 'ah', TAUX_T7 = 0.05;
-const TAUX_T8 = 0.03, TAUX_ELIXIR = 0.01; // Île aux Colosses : 3 % d'objet Tier 8 et 1 % d'élixir par monstre tué
+const TAUX_ELIXIR = 0.01; // Île aux Colosses : le Tier 8 est le seul équipement qui tombe (1 % sur la grève, 2 % sur la steppe, 3 % sur les cimes : MON[k].t8), plus 1 % d'élixir
 function objetT8(R, cls) {
   const c = R.CLASSES[cls] || R.CLASSES[Object.keys(R.CLASSES)[0]], r = Math.random(), mien = Math.random() < 0.55;
   let k;
@@ -91,7 +91,7 @@ function tirer(R, key, cls, scene, sc, opt) {
   if (d.boss && typeof sc === 'string' && sc[0] === 'd' && R.TALIS && R.TALIS[sc[1]]) { const T = R.DTYPES[sc[1]]; if (T && (T.bk === key || T.bk2 === key) && Math.random() < TAUX_RESSOURCE) out.res = sc[1]; }
   if ((key === 'dieu_fou' || key === 'colosse') && R.TALIS && Math.random() < TAUX_RESSOURCE) out.res = key === 'dieu_fou' ? 'j' : 'x'; // ressource des deux boss du centre de l'île
   if (d.ile === 2 && scene === 'realm') {
-    if (Math.random() < TAUX_T8) { const o8 = objetT8(R, cls); if (o8) { out.t8 = 1; out.it.push(o8); } }
+    if (Math.random() < (+d.t8 || 0)) { const o8 = objetT8(R, cls); if (o8) { out.t8 = 1; out.it.push(o8); } }
     if (Math.random() < TAUX_ELIXIR) { const k = pick([...R.SK, 'armure']); if (R.KINDS['sp2_' + k]) { out.elixir = 1; out.it.push(R.mkItem('sp2_' + k, 0)); } }
   }
   if (d.midBoss || GARANTIS.includes(key)) out.spg.push(R.mkItem('sp_' + pick(R.SK), 0));
