@@ -478,7 +478,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.89"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.90"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -495,7 +495,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp mait" id="mxBar" hidden><i id="mxF"></i><span><em>Maîtrise</em><b id="mxT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.89</div>
+    <div class="verTag" id="verTag">ver.0.0.90</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -672,7 +672,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.89</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.90</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -714,7 +714,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.89</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.90</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -3727,7 +3727,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000089;let newerWarned=false;
+const NETV=2,BUILD=2600000090;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -5635,7 +5635,8 @@ function setTab(t){tab=t;$('#tabInv').hidden=t!=='inv';$('#tabStats').hidden=t!=
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
 
 /* ================= événements (panneau de droite) ================= */
-const EVT={date:new Date(2026,9,8)}; // jeudi 8 octobre 2026
+const EVT={date:new Date(2026,9,8),debut:Date.UTC(2026,9,8,22,45)}; // nuit du 8 au 9 octobre 2026, 0h45 (Paris)
+const evtCompte=()=>{const d=EVT.debut-Date.now();if(d>86400000)return 'Dans '+Math.ceil(d/86400000)+' jours';if(d>3600000)return 'Début dans '+Math.floor(d/3600000)+' h '+String(Math.floor(d/60000)%60).padStart(2,'0');if(d>0)return 'Début dans '+Math.max(1,Math.ceil(d/60000))+' min !';if(d>-6*60000)return 'En cours !';return 'Événement terminé';};
 const evtJours=()=>{const n=new Date();return Math.ceil((EVT.date-new Date(n.getFullYear(),n.getMonth(),n.getDate()))/86400000);};
 // fond commun des bannières : dégradé, lueur, étincelles, puis un dessin à droite et un voile sombre à gauche pour le texte
 function evtFond(g,Wb,Hb,c0,c1,c2,lueur,graine,dessin){g.imageSmoothingEnabled=false;const gr=g.createLinearGradient(0,0,Wb,Hb);gr.addColorStop(0,c0);gr.addColorStop(0.55,c1);gr.addColorStop(1,c2);g.fillStyle=gr;g.fillRect(0,0,Wb,Hb);
@@ -5681,9 +5682,9 @@ const EVTS=[
   {id:'concours',h:120,bord:'#ffd23f',vis:()=>!!CONC,k:'Concours · un seul gagnant',t:'PREMIER DONJON',d:()=>!CONC?'':concOn()?CONC.dn+' · '+CONC.prix+' Cursite':concQuand()+' · '+CONC.prix+' Cursite',c:()=>!CONC?'':CONC.g?'🏆 '+CONC.g.n+' en '+fmtDuree(CONC.g.d):concOn()?'En cours depuis '+fmtDuree(Date.now()-CONC.debut):concDans(),
     fond:['#12060a','#4a0e1a','#b3363a','rgba(255,210,63,.7)',77],art:(g)=>{concBoss(g,232,120,18);},
     txt:()=>!CONC?'':concOn()?'Le <b>premier joueur</b> à terminer <b>'+clean(CONC.dn)+'</b> depuis le départ du chronomètre gagne <b>'+CONC.prix+' Cursite</b>. À trouver dans les Plaines Sauvages ; en groupe, la récompense est partagée.':'Le <b>premier joueur</b> à terminer le donjon désigné gagne <b>'+CONC.prix+' Cursite</b>. <b>Quel donjon ?</b> Il ne sera révélé qu\'au départ…',on:()=>!!CONC&&!CONC.g,clic:()=>openConc()},
-  {id:'raid',h:104,bord:'#ff9a3c',k:'Événement de guilde',t:'RAID DU DRAGON',d:()=>'Jeudi 8 octobre 2026',c:()=>{const j=evtJours();return j>1?'Dans '+j+' jours':j===1?'Demain !':j===0?'C\'est aujourd\'hui !':'Événement terminé';},
+  {id:'raid',h:104,bord:'#ff9a3c',k:'Événement de guilde',t:'RAID DU DRAGON',d:()=>'Nuit du 8 au 9 octobre · 0h45',c:evtCompte,
     fond:['#1a0608','#4a0e12','#b83a12','rgba(255,170,40,.75)',2026],art:(g)=>{const d=makeDragonFrame(2,'all'),k=4;g.drawImage(d,46,-192,d.width*k,d.height*k);},
-    txt:'Compétition de guildes : la guilde qui inflige le plus de dégâts au Dragon l\'emporte. <b>3 joueurs maximum par guilde.</b> Récompenses pour toutes les guildes classées.',on:()=>evtJours()>=0,clic:()=>openGuildWin()},
+    txt:'Compétition de guildes : la guilde qui inflige le plus de dégâts au Dragon l\'emporte. <b>3 joueurs maximum par guilde.</b> Récompenses pour toutes les guildes classées.',on:()=>Date.now()<EVT.debut+3600000,clic:()=>openGuildWin()},
   {id:'horloge',h:84,bord:'#3ff0ff',k:'Nouveau donjon à clef',t:'L\'HORLOGE BRISÉE',d:()=>'Boss : Chronos',c:()=>{const n=C()?C().inv.filter(it=>it&&it.kind==='cle').length:0;return n?'Tu as '+n+' clef'+(n>1?'s':'')+' : utilise-la depuis ton sac':'Trouve une Clef du Temps';},
     fond:['#05040e','#141034','#2a2a8a','rgba(63,240,255,.55)',77],art:(g)=>{const k=2;g.drawImage(CHRONO_SPR[2],128,-18,88*k,88*k);},on:()=>false,
     clic:()=>{showBanner('La Clef du Temps','1 % sur le boss des 6 grands donjons · 10 % sur chaque gardien de l\'Observatoire Céleste','#3ff0ff');}},

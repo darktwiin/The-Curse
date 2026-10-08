@@ -345,6 +345,12 @@ function finirRaid() {
   for (const gid of Object.keys(guildes)) diffuserGuilde(gid, true);
 }
 setInterval(() => { if (raidEv && raidEv.actif && Date.now() >= raidEv.fin) finirRaid(); }, 1000);
+// raid programmé : se lance tout seul à l'heure dite (rattrape jusqu'à 30 min de retard, jamais deux fois même après un redémarrage)
+const RAID_PROGRAMMES = [Date.parse('2026-10-08T22:45:00Z')]; // 9 octobre 2026, 0h45 heure de Paris
+let raidPlan = null; // départ programmé par la commande admin « raid N » (N minutes)
+setInterval(() => { const now = Date.now();
+  for (const t of RAID_PROGRAMMES.concat(raidPlan ? [raidPlan] : [])) if (now >= t && now < t + 30 * 60000 && !(raidEv && raidEv.id >= t - 60000)) { if (t === raidPlan) raidPlan = null; console.log('[raid] départ programmé'); lancerRaid(); break; }
+}, 5000);
 function vueRaid(gid, pid) {
   if (!raidEv) return { actif: false, reste: 0, top: [], guilde: 0, part: 0, dernier: null };
   const x = raidEv.g[gid] || { dmg: 0, c: {} }, cl = raidEv.actif ? classementRaid() : raidEv.res || [];
@@ -601,6 +607,7 @@ wss.on('connection', (ws, req) => {
       if (cmd === 'admins') { const out = []; for (const s of salles.values()) for (const j of s.values()) if (j.admin) out.push({ n: String((j.etat && j.etat.n) || 'Joueur').slice(0, 16), ip: masquer(j.ip), t: j.admin, s: String((j.etat && j.etat.s) || ''), moi: j === moi }); res(true, '', { admins: out }); return; }
       if (cmd === 'bans') { res(true, '', { bans: Object.entries(modo.bans).map(([ip, b]) => ({ id: ip, ip: masquer(ip), n: b.n, t: b.t })) }); return; }
       if (cmd === 'unban') { const id = String(m.to || ''); if (!modo.bans[id]) { res(false, 'Déjà débanni'); return; } const n = modo.bans[id].n; delete modo.bans[id]; sauverModo(); res(true, n + ' est débanni', { bans: Object.entries(modo.bans).map(([ip, b]) => ({ id: ip, ip: masquer(ip), n: b.n, t: b.t })) }); console.log(`[modo] débanni ${n}`); return; }
+      if (cmd === 'raid' && /^\d+$/.test(String(m.arg == null ? '' : m.arg)) && +m.arg > 0) { raidPlan = Date.now() + (+m.arg) * 60000; res(true, 'Raid programmé : départ ' + new Date(raidPlan).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })); return; }
       if (cmd === 'raid') { lancerRaid(); res(true, 'Raid lancé : portail ouvert, le Dragon arrive dans 30 secondes (5 minutes de combat)'); console.log('[raid] lancé'); return; }
       if (cmd === 'raidstop') { if (!raidEv || !raidEv.actif) { res(false, 'Aucun raid en cours'); return; } finirRaid(); res(true, 'Raid terminé, classement envoyé'); return; }
       if (cmd === 'infos') { const out = []; for (const s of salles.values()) for (const j of s.values()) out.push({ peer: j.peer, muet: !!modo.mutes[j.ip], bot: j.bot ? 1 : 0 }); res(true, '', { infos: out }); return; }

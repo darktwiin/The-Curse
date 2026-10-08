@@ -1,5 +1,9 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.90 (index.html, server.js ; wiki.html régénéré)
+- **Raid du Dragon : départ cette nuit à 0h45 !** Le raid se lance tout seul à l'heure prévue ; l'affiche affiche le compte à rebours.
+- (interne) Raids programmés côté serveur (RAID_PROGRAMMES, rattrapage 30 min, jamais deux fois) ; commande admin « raid N » = départ dans N minutes.
+
 ## ver.0.0.89 (index.html, server.js, arbitre.js, butin.js ; wiki.html régénéré)
 - **Fini les monstres qui « se soignent ».** Le serveur ne rogne plus jamais vos dégâts : les monstres et les boss perdent la vie que vous leur retirez, point.
 - **Les donjons sont hébergés par le joueur qui les lance**, comme les Plaines restent tenues par le serveur pour rester stables. Le serveur est plus léger et plus réactif.
