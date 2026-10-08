@@ -415,7 +415,7 @@ function verifier(ancien, nouveau, ctx) {
     utilises['sp_' + k] = bu;
     const avant = nbKind(o0, it => it.kind === 'sp_' + k), apres = nbKind(o1, it => it.kind === 'sp_' + k);
     // une potion donnée par le serveur et bue aussitôt (ramassée puis bue entre deux sauvegardes) n'est jamais passée par le sac : elle compte aussi
-    let recues = 0; { const L = liste[signature(R.mkItem('sp_' + k, 0))]; const manque = bu - Math.max(0, avant - apres); while (L && L.length && recues < manque) { L.shift(); recues++; } }
+    let recues = 0; { const sg = signature(R.mkItem('sp_' + k, 0)), L = liste[sg]; const manque = bu - Math.max(0, avant - apres); while (L && L.length && recues < manque) { L.shift(); recues++; } while (recues < manque && duSol(sg)) recues++; } // duSol : bue, puis remplacée par une potion posée et ramassée
     if (bu > Math.max(0, avant - apres) + recues + (dons.objets || 0)) pb.push('potions de ' + k + ' bues sans potion');
   }
   // --- élixirs des Colosses : au-delà des plafonds, 10 par caractéristique (armure comprise), un élixir disparu par point ---
@@ -425,7 +425,7 @@ function verifier(ancien, nouveau, ctx) {
       let bu = 0; for (const [cls, ch1] of Object.entries(nouveau.chars)) { const ch0 = ancien.chars[cls]; bu += Math.max(0, ((((ch1 && ch1.sp2) || {})[k]) | 0) - ((((ch0 && ch0.sp2) || {})[k]) | 0)); }
       if (!bu) continue; utilises['sp2_' + k] = bu;
       const avant = nbKind(o0, it => it.kind === 'sp2_' + k), apres = nbKind(o1, it => it.kind === 'sp2_' + k);
-      let recues = 0; { const L = liste[signature(R.mkItem('sp2_' + k, 0))]; const manque = bu - Math.max(0, avant - apres); while (L && L.length && recues < manque) { L.shift(); recues++; } }
+      let recues = 0; { const sg = signature(R.mkItem('sp2_' + k, 0)), L = liste[sg]; const manque = bu - Math.max(0, avant - apres); while (L && L.length && recues < manque) { L.shift(); recues++; } while (recues < manque && duSol(sg)) recues++; }
       if (bu > Math.max(0, avant - apres) + recues + (dons.objets || 0)) pb.push('élixirs de ' + k + ' bus sans élixir'); } }
 
   // --- familiers : un œuf pour chaque nouveau familier commun, 3 identiques + 1 croquette pour monter d'un rang ---
@@ -439,8 +439,10 @@ function verifier(ancien, nouveau, ctx) {
     // relance : 3 familiers rendus (hors évolutions) donnent droit à 1 familier commun
     const relances = Math.floor(Math.max(0, partis.length - 3 * evos) / 3);
     utilises['*oeuf'] = communs; utilises.croquette = evos;
-    if (communs > oeufs + relances + (dons.objets || 0)) pb.push('familier sans œuf');
-    if (evos > croq + (dons.objets || 0)) pb.push('évolution sans croquette');
+    let oeufSol = 0; while (communs > oeufs + relances + oeufSol + (dons.objets || 0) && duSol(signature(R.mkItem('egg', 0)))) oeufSol++;
+    if (communs > oeufs + relances + oeufSol + (dons.objets || 0)) pb.push('familier sans œuf');
+    let croqSol = 0; while (evos > croq + croqSol + (dons.objets || 0) && duSol(signature(R.mkItem('croquette', 0)))) croqSol++;
+    if (evos > croq + croqSol + (dons.objets || 0)) pb.push('évolution sans croquette');
   }
 
   // --- ressources de boss et talismans : chaque ressource vient du serveur, un talisman coûte 10 ressources de son donjon ---

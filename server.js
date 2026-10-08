@@ -424,7 +424,7 @@ function actionGuilde(moi, salle, m) {
     if (!raidEv || !raidEv.actif || Date.now() > raidEv.fin || Date.now() < (raidEv.spawn || 0)) return;
     let dmg = Math.max(0, Math.min(40000, Math.floor(Number(m.dmg) || 0))); if (!dmg) return;
     // dégâts plafonnés selon l'équipement du joueur (anti-triche)
-    { const cap = moi.capDps || 25000, now = Date.now(), b = moi.raidSeau || (moi.raidSeau = { v: cap * 10, t: now }); b.v = Math.min(cap * 10, b.v + cap * (now - b.t) / 1000); b.t = now; dmg = Math.min(dmg, Math.floor(b.v)); b.v -= dmg; if (!dmg) return; }
+    { const cap = (moi.capDps || 25000) * 3, now = Date.now(), b = moi.raidSeau || (moi.raidSeau = { v: cap * 10, t: now }); b.v = Math.min(cap * 10, b.v + cap * (now - b.t) / 1000); b.t = now; dmg = Math.min(dmg, Math.floor(b.v)); b.v -= dmg; if (!dmg) return; }
     const x = raidEv.g[gid] || (raidEv.g[gid] = { dmg: 0, c: {} });
     x.dmg += dmg; x.c[pid] = (x.c[pid] || 0) + dmg;
     if (!raidEv.ts || Date.now() - raidEv.ts > 5000) { raidEv.ts = Date.now(); sauverRaid(); }
@@ -714,7 +714,8 @@ wss.on('connection', (ws, req) => {
     if (!modo.mutes[moi.ip]) moi.averti = false;
     if ((data.length > 1500 || !(moi.msgsTot = (moi.msgsTot || 0) + 1 & 31)) && JSON.stringify(moi.etat).length > (moi.gardien ? MAX_OCTETS_GARDIEN : MAX_OCTETS_ETAT)) moi.etat = {}; // taille de l'état : vérifiée sur les gros messages, et une fois sur 32
     try { butin.observer(nom, moi, m.patch); } catch (e) { console.error('[butin] témoin', e.message); }
-    if (!moi.gardien && SERVEURS_IDS.has(nom) && typeof moi.etat.s === 'string' && moi.etat.s[0] === 'd') demanderDonjon(nom, moi.etat.s);
+    // les donjons ne sont plus gardés : le joueur qui lance le donjon l'héberge (le serveur juge seulement la vraisemblance des morts, voir butin.js)
+    if (process.env.GARDIEN_DONJONS === '1' && !moi.gardien && SERVEURS_IDS.has(nom) && typeof moi.etat.s === 'string' && moi.etat.s[0] === 'd') demanderDonjon(nom, moi.etat.s);
     // la position n'est plus relayée tout de suite à toute la salle : relayer() s'en charge, à un rythme qui dépend de la distance
     moi.majP = Date.now(); moi.txtP = moi.txtLeger = moi.monP = moi.mortsP = null;
     if (moi.etat.m !== moi.mVu || moi.etat.ev !== moi.evVu) { moi.mVu = moi.etat.m; moi.evVu = moi.etat.ev; moi.urgP = moi.majP; } // nouveau message de chat ou nouvel événement : tout de suite, pour tout le monde

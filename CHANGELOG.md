@@ -1,5 +1,12 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.89 (index.html, server.js, arbitre.js, butin.js ; wiki.html régénéré)
+- **Fini les monstres qui « se soignent ».** Le serveur ne rogne plus jamais vos dégâts : les monstres et les boss perdent la vie que vous leur retirez, point.
+- **Les donjons sont hébergés par le joueur qui les lance**, comme les Plaines restent tenues par le serveur pour rester stables. Le serveur est plus léger et plus réactif.
+- **Correctif de la potion de caractéristique** : poser une potion, en boire une autre puis reprendre la première faisait refuser la sauvegarde (et recharger le jeu). C'est réparé.
+- **Plus de rechargement brutal** : si le serveur doit corriger ta sauvegarde, la correction s'applique en jeu, avec un message, sans recharger la page.
+- (interne) Anti-triche : plus de Gardien dans les donjons (GARDIEN_DONJONS=1 pour les remettre) ; le Gardien des Plaines observe sans rogner ; vraisemblance des morts de boss côté serveur (coups annoncés par chacun, temps minimum selon le plafond de dégâts du groupe) ; l'arbitre accepte qu'une potion, un élixir, un œuf ou une croquette ramassés au sol remplacent ceux qui viennent d'être utilisés.
+
 ## ver.0.0.88 (index.html ; wiki.html régénéré)
 - **Correctif** : une erreur pouvait s'afficher au chargement et empêcher le sac de s'afficher correctement.
 - (interne) Icône manquante pour un consommable du contenu masqué (ICONS sans entrée) : même fiole que les potions de caractéristique, et repli sur une potion si un dessin manque un jour.

@@ -114,11 +114,17 @@ const temoins = new Map(); // `${salle}|${scene}|${id}` -> { peer, k, t }
 const hotes = new Map();   // `${salle}|${scene}` -> { peer, t }
 const partsMaudit = new Map(); // `${salle}|${scene}|${id}` -> { peer (l'hôte), parts: Map(peer -> dégâts), t } : annoncé par l'hôte à la mort du monstre maudit
 const MAUDIT_MIN = 5000;
+// coups annoncés par chaque joueur (champ h de sa présence) : `${salle}|${scène}|${id}` -> Map(peer -> { t0 : premier coup, tot, cap : ses dégâts par seconde maximum })
+const coups = new Map();
 function observer(salle, moi, patch) {
   const s = String((moi.etat && moi.etat.s) || ''); if (!s) return;
   const R = arbitre.regles(); if (!R || !R.MKEYS) return;
   if (typeof patch.M === 'string') hotes.set(salle + '|' + s, { peer: moi.peer, t: Date.now() });
   if (typeof patch.mp === 'string' && patch.mp.length < 6000) { const [i36, l] = patch.mp.split('|'), id = parseInt(i36, 36); if (id > 0) { const parts = new Map(); for (const e of String(l || '').split(';')) { const k = e.lastIndexOf(':'); if (k > 0) parts.set(e.slice(0, k), Math.max(0, +e.slice(k + 1) || 0)); } partsMaudit.set(salle + '|' + s + '|' + id, { peer: moi.peer, parts, t: Date.now() }); } }
+  if (typeof patch.h === 'string' && patch.h.length < 4000 && !moi.gardien) { const now = Date.now();
+    for (const e of patch.h.split(';')) { const k = e.indexOf(':'); if (k < 1) continue; const id = parseInt(e.slice(0, k), 36), tot = parseInt(e.slice(k + 1), 36); if (!(id > 0) || !(tot > 0)) continue;
+      const cle = salle + '|' + s + '|' + id; let c = coups.get(cle); if (!c) { if (coups.size > 60000) coups.clear(); c = new Map(); coups.set(cle, c); }
+      const v = c.get(moi.peer); if (v) { v.tot = Math.max(v.tot, tot); v.t = now; } else c.set(moi.peer, { t0: now, t: now, tot, cap: moi.capDps || 25000 }); } }
   if (typeof patch.D === 'string') {
     for (const e of patch.D.split(';').slice(-120)) { // les plus récentes sont à la fin ; le Gardien en annonce jusqu'à 60
       const f = e.split(','); if (f.length < 4) continue;
@@ -127,7 +133,7 @@ function observer(salle, moi, patch) {
     }
   }
 }
-setInterval(() => { const lim = Date.now() - 90000; for (const [k, v] of temoins) if (v.t < lim) temoins.delete(k); for (const [k, v] of hotes) if (v.t < lim) hotes.delete(k); for (const [k, v] of partsMaudit) if (v.t < lim) partsMaudit.delete(k); }, 30000).unref();
+setInterval(() => { const lim = Date.now() - 90000; for (const [k, v] of temoins) if (v.t < lim) temoins.delete(k); for (const [k, v] of hotes) if (v.t < lim) hotes.delete(k); for (const [k, v] of partsMaudit) if (v.t < lim) partsMaudit.delete(k); for (const [k, c] of coups) { let t = 0; for (const v of c.values()) t = Math.max(t, v.t); if (t < lim) coups.delete(k); } }, 30000).unref();
 
 // ---------- zones des Plaines (même calcul que le jeu : distance au centre, zones mises à l'échelle ×3) ----------
 const ZCACHE = {};
@@ -190,6 +196,11 @@ function reclamer(moi, m, ctx) {
   // monstre maudit : il faut lui avoir infligé 5 000 dégâts (la part de chacun est annoncée par l'hôte ; seule celle du Gardien compte quand il tient la scène)
   if (key === 'maudit') { const pm = partsMaudit.get(ctx.salle + '|' + cle), fiable = pm && (!G || pm.peer === G.peer);
     if (G || autres || fiable) { const dg = fiable ? (pm.parts.get(moi.peer) || 0) : 0; if (dg < MAUDIT_MIN) { vus.add(cle); ctx.envoyer(moi.ws, { t: 'butin', id: m.id, refus: 1, peu: 1, dg }); return; } } }
+  // vraisemblance (sans Gardien) : un boss ne peut pas tomber plus vite que ce que permettent les équipements de ceux qui l'ont frappé.
+  // Marges larges : la moitié de sa vie de base, 1,5 fois les dégâts maximum (déjà généreux), 2 s de tolérance. Les monstres ordinaires sont limités par le rythme ci-dessous.
+  if (d.boss && !G && !(moi.compte && moi.compte.admin)) { const c = coups.get(ctx.salle + '|' + cle);
+    if (c && c.size) { let t0 = Infinity, cap = 0; for (const v of c.values()) { t0 = Math.min(t0, v.t0); cap += v.cap; } const duree = (Date.now() - t0) / 1000, mini = (d.hp || 1) * 0.5 / (cap * 1.5) - 2;
+      if (duree < mini) return non('boss tué trop vite (' + key + ' en ' + duree.toFixed(1) + ' s, ' + Math.ceil(mini) + ' s au moins)'); } }
   // rythme humain
   const st = seau(ctx.rythme, 'tues'); if (st.v < 1) return non('trop de monstres d\'un coup');
   if (d.boss) { const sb = seau(ctx.rythme, 'boss'), dern = ctx.rythme.dernierBoss || (ctx.rythme.dernierBoss = {});

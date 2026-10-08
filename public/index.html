@@ -478,7 +478,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.88"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.89"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -495,7 +495,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp mait" id="mxBar" hidden><i id="mxF"></i><span><em>Maîtrise</em><b id="mxT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.88</div>
+    <div class="verTag" id="verTag">ver.0.0.89</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -672,7 +672,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.88</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.89</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -714,7 +714,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.88</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.89</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -3265,7 +3265,8 @@ function showAuth(msg,err){const el=document.getElementById('authWin');if(!el)re
 function hideAuth(){const el=document.getElementById('authWin');if(el)el.hidden=true;}
 function onNetHello(){if(!ONLINE)return;const tk=lsGet(TOKEN_KEY);if(tk){AUTH.ok=false;room.raw({t:'auth',a:'token',token:tk});showAuth('Connexion à ton compte…');}else if(!AUTH.ok)showAuth('');}
 // le serveur a refusé une sauvegarde incohérente : on reprend sa version
-function onSaveFix(m){if(!m.save||!m.save.chars)return;AUTH.ok=false;lsSet(SAVE_KEY,JSON.stringify(m.save));sessionStorage.setItem('rm-reload','1');sessionStorage.setItem('rm-fix',(m.raisons||[]).join(' · ').slice(0,200));location.reload();}
+function onSaveFix(m){if(!m.save||!m.save.chars)return;
+  {const msg=(m.raisons||[]).join(' · ').slice(0,160);if(save.current&&m.save.current===save.current&&m.save.chars[save.current]&&scene!=='tuto'){for(const k of Object.keys(save))delete save[k];Object.assign(save,m.save);try{lsSet(SAVE_KEY,JSON.stringify(save));}catch(e){}statsDirty=true;invDirty=true;try{updWho();}catch(e){}try{const st=S();P.hp=Math.min(P.hp,st.tot.vie);P.mp=Math.min(P.mp,st.tot.mana);}catch(e){}note('Le serveur a corrigé ta sauvegarde'+(msg?' : '+msg:''));sfx('deny');return;}}AUTH.ok=false;lsSet(SAVE_KEY,JSON.stringify(m.save));sessionStorage.setItem('rm-reload','1');sessionStorage.setItem('rm-fix',(m.raisons||[]).join(' · ').slice(0,200));location.reload();}
 setTimeout(()=>{const f=sessionStorage.getItem('rm-fix');if(f){sessionStorage.removeItem('rm-fix');showBanner('Sauvegarde resynchronisée','Le serveur a refusé une modification incohérente ('+f+')','#ff9a3c');}},2500);
 function authKicked(){AUTH.ok=false;lsSet(TOKEN_KEY,null);showAuth('Ton compte vient de se connecter sur un autre appareil.',true);}
 // Conditions d'utilisation : à accepter une fois par version du texte (les joueurs déjà inscrits aussi). Le serveur garde la date d'acceptation.
@@ -3726,7 +3727,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000088;let newerWarned=false;
+const NETV=2,BUILD=2600000089;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -3856,7 +3857,8 @@ function applyHits(peer,s){
   let mp=applied.get(peer);if(!mp){mp=new Map();applied.set(peer,mp);}
   for(const [id,tot] of parseHits(s)){const prev=mp.get(id)||0;if(tot<=prev)continue;const m=monsters.find(q=>q.id===id);if(!m||m.hp<=0){mp.set(id,tot);continue;}let dd=Math.min(tot-prev,200000);
     // ce qui dépasse le plafond n'est pas perdu : on ne note que ce qui a été appliqué, le reste sera repris au prochain message
-    if(window.GARDIEN_MODE){const ok=gardienFiltre(peer,m,dd,id,tot);mp.set(id,ok<dd?prev+ok:tot);dd=ok;if(dd<=0)continue;}else mp.set(id,tot);
+    if(window.GARDIEN_MODE)gardienFiltre(peer,m,dd,id,tot); // observation seulement : les dégâts passent toujours (plus de monstres qui « se soignent »)
+    mp.set(id,tot);
     m.hp-=dd;if(m.key==='dragon')m.hp=m.max;m.flash=0.1;if(m.hp<=0)hostKill(m);}
 }
 function deadBits(){const n=MAP.nInit|0,alive=new Set();for(const m of monsters)if(m.hp>0&&m.id<=n)alive.add(m.id);let out='';for(let i=1;i<=n;i+=4){let v=0;for(let j=0;j<4;j++)if(i+j<=n&&!alive.has(i+j))v|=1<<j;out+=v.toString(16);}return out;}
@@ -3918,7 +3920,7 @@ function sendPresence(){
   if(!room||!save.current)return;
   const st=S(),ch=C(),w=ch.equip[0];
   const sh=(canFight()&&(mouse.down||P.auto||aimTouch)&&w)?(()=>{const a=aimWorld();return Math.round(Math.atan2(a.y-P.y,a.x-P.x)*100);})():null;
-  const o={v:NETV,n:pseudo,c:save.current,l:ch.lvl,s:sceneKey(),rt:sceneT,tk:Math.floor(Date.now()/500),x:Math.round(P.x*10),y:Math.round(P.y*10),hp:Math.round(clamp(P.hp/st.tot.vie,0,1)*100),sh,w:w?w.kind:null,wt:w?w.tier:0,sk:mySkin(),au:shownAura()?(a=>[a.k,a.s,a.c,a.o?1:0].join('|'))(shownAura()):null,r:Math.round(st.rate*10),f:P.face,b:P.berserk>0?1:0,mv:P.moving?1:0,m:myMsg,hl:myHeal,ev:myEv,dd:scene==='arena'?Math.round((st.dmg[0]+st.dmg[1])/2*0.6):null,su:SUM.length?SUM.slice(0,8).map(z=>Math.round(z.x*10)+','+Math.round(z.y*10)+','+(z.def?'d':z.haste?'a':z.heal?'h':z.main?'m':'e')+','+((C().equip[0]||{}).tier|0)).join(';'):null,kp:KP&&KP.fin>Date.now()?[KP.s,Math.round(KP.x*10),Math.round(KP.y*10),KP.id.toString(36),Math.ceil((KP.fin-Date.now())/1000),KP.ty||'h'].join('|'):null,iv:P.invis>0||admInv?1:0,hid:admInv?1:0,gd:window.GARDIEN_MODE?1:null,bv:BUILD,gi:myGid,gt:GUILD?GUILD.tag:null,md:ch.maudit?1:null,pe:eqPet()?eqPet().k:null,ps:eqPet()?myPetSkin():null,nc:myNameCol(),pt:eqPet()?(eqPet().t||0):0,ti:myTitle(),mo:morphKey,as:P.invis>0&&!admInv?1:0,sf:myStates()||null,fi:FISH?Math.round(FISH.bx*10)+','+Math.round(FISH.by*10):null,pz:parQ.length?parSeq+'|'+parQ.join(';'):null,h:!safe()&&!amHost?encHits():null,M:null,D:null,G:null,F:scene==='dungeon'&&amHost?fight:null,S:scene==='dungeon'&&amHost?stars:null,B:amHost&&bossBoardT>time?bossBoardStr:null,bi:BRI&&BRI.chef?[BRI.run,BRI.d,BRI.th,BRI.t0].join('|'):null,bj:BRI&&!BRI.chef?BRI.run:null,bk:BR?BR.run+':'+BR.etat+':'+BR.d+':'+BR.n+':'+BR.fl.join('.'):null,bh:amHost&&scene==='dungeon'&&MAP&&MAP.breche?Math.floor(dungeonId/8)+':'+(MAP.etage||1)+':'+(MAP.brKills|0)+':'+(MAP.brEtat|0):null,bx:amHost&&scene==='dungeon'&&MAP&&MAP.brFin?MAP.brFin:null,MC:scene==='realm'&&amHost?mauditCode():null,mp:amHost&&maudPartsT>time?maudParts:null,bq:scene==='dungeon'?bossReq:null,RB:scene==='realm'&&amHost?(()=>{const l=monsters.filter(q=>CENTRAL.includes(q.key)&&q.hp>0).map(b=>b.key+','+Math.round(b.x*10)+','+Math.round(b.y*10));return l.length?l.join(';'):null;})():null,RK:scene==='realm'&&amHost?realmKills:null,X:scene==='dungeon'&&amHost&&MAP.nInit?deadBits():null};
+  const o={v:NETV,n:pseudo,c:save.current,l:ch.lvl,s:sceneKey(),rt:sceneT,tk:Math.floor(Date.now()/500),x:Math.round(P.x*10),y:Math.round(P.y*10),hp:Math.round(clamp(P.hp/st.tot.vie,0,1)*100),sh,w:w?w.kind:null,wt:w?w.tier:0,sk:mySkin(),au:shownAura()?(a=>[a.k,a.s,a.c,a.o?1:0].join('|'))(shownAura()):null,r:Math.round(st.rate*10),f:P.face,b:P.berserk>0?1:0,mv:P.moving?1:0,m:myMsg,hl:myHeal,ev:myEv,dd:scene==='arena'?Math.round((st.dmg[0]+st.dmg[1])/2*0.6):null,su:SUM.length?SUM.slice(0,8).map(z=>Math.round(z.x*10)+','+Math.round(z.y*10)+','+(z.def?'d':z.haste?'a':z.heal?'h':z.main?'m':'e')+','+((C().equip[0]||{}).tier|0)).join(';'):null,kp:KP&&KP.fin>Date.now()?[KP.s,Math.round(KP.x*10),Math.round(KP.y*10),KP.id.toString(36),Math.ceil((KP.fin-Date.now())/1000),KP.ty||'h'].join('|'):null,iv:P.invis>0||admInv?1:0,hid:admInv?1:0,gd:window.GARDIEN_MODE?1:null,bv:BUILD,gi:myGid,gt:GUILD?GUILD.tag:null,md:ch.maudit?1:null,pe:eqPet()?eqPet().k:null,ps:eqPet()?myPetSkin():null,nc:myNameCol(),pt:eqPet()?(eqPet().t||0):0,ti:myTitle(),mo:morphKey,as:P.invis>0&&!admInv?1:0,sf:myStates()||null,fi:FISH?Math.round(FISH.bx*10)+','+Math.round(FISH.by*10):null,pz:parQ.length?parSeq+'|'+parQ.join(';'):null,h:!safe()?encHits():null,M:null,D:null,G:null,F:scene==='dungeon'&&amHost?fight:null,S:scene==='dungeon'&&amHost?stars:null,B:amHost&&bossBoardT>time?bossBoardStr:null,bi:BRI&&BRI.chef?[BRI.run,BRI.d,BRI.th,BRI.t0].join('|'):null,bj:BRI&&!BRI.chef?BRI.run:null,bk:BR?BR.run+':'+BR.etat+':'+BR.d+':'+BR.n+':'+BR.fl.join('.'):null,bh:amHost&&scene==='dungeon'&&MAP&&MAP.breche?Math.floor(dungeonId/8)+':'+(MAP.etage||1)+':'+(MAP.brKills|0)+':'+(MAP.brEtat|0):null,bx:amHost&&scene==='dungeon'&&MAP&&MAP.brFin?MAP.brFin:null,MC:scene==='realm'&&amHost?mauditCode():null,mp:amHost&&maudPartsT>time?maudParts:null,bq:scene==='dungeon'?bossReq:null,RB:scene==='realm'&&amHost?(()=>{const l=monsters.filter(q=>CENTRAL.includes(q.key)&&q.hp>0).map(b=>b.key+','+Math.round(b.x*10)+','+Math.round(b.y*10));return l.length?l.join(';'):null;})():null,RK:scene==='realm'&&amHost?realmKills:null,X:scene==='dungeon'&&amHost&&MAP.nInit?deadBits():null};
   if(!safe()&&amHost&&othersInScene()){
     o.D=deaths.slice(window.GARDIEN_MODE?-60:-20).join(';');
     if(scene==='realm')o.G=dportals.map(d=>d.id.toString(36)+','+Math.round(d.x*10)+','+Math.round(d.y*10)+','+Math.ceil(d.life)+','+(d.t||'c')).join(';');
