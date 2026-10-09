@@ -40,6 +40,10 @@ function chargerRegles(html) {
   { const m = html.match(/BOOST_PRIX=(\d+)/); R.BOOST_PRIX = m ? +m[1] : 100; }
   { const m = html.match(/WQ_BONUS=(\d+)/); R.WQ_BONUS = m ? +m[1] : 150; }
   R.PET_KEYS = ['vie', 'mana', 'puissance', 'vatt', 'vdep', 'armure'];
+  R.VAULT_CU = nombres(/VAULT_CU=(\[[^\]]*\])/, [50, 150, 200, 300, 500]);
+  { const m = html.match(/HOUSE_PRIX=(\d+)/); R.HOUSE_PRIX = m ? +m[1] : 200; }
+  { const m = html.match(/ILEQ_BONUS=(\d+)/); R.ILEQ_BONUS = m ? +m[1] : 75; }
+  { const m = html.match(/PET_LEG_XP=(\d+)/); R.PET_LEG_XP = m ? +m[1] : 5000; }
   return R;
 }
 
@@ -164,7 +168,15 @@ function verifier(ancien, nouveau, ctx) {
   // niveau maximum par classe (save.caps) : l'ancien niveau maximum du compte (capLvl) reste acquis mais ne peut plus monter
   if ((nouveau.capLvl | 0 || 20) > (ancien.capLvl | 0 || 20)) pb.push('niveau maximum du compte modifié');
   if (nouveau.caps != null) { if (typeof nouveau.caps !== 'object' || Array.isArray(nouveau.caps)) pb.push('niveaux maximum illisibles'); else for (const k of Object.keys(nouveau.caps)) if (!R.CLASSES[k] || !estEntier(nouveau.caps[k], 20, 25)) pb.push('niveau maximum de classe impossible'); }
-  for (const p of (nouveau.pets || [])) if (!p || !R.PET_KEYS.includes(p.k) || !estEntier(p.t | 0, 0, 3)) pb.push('familier impossible');
+  for (const p of (nouveau.pets || [])) if (!p || !R.PET_KEYS.includes(p.k) || !estEntier(p.t | 0, 0, 4) || !estEntier(p.x ?? 0, 0, 1e6)) pb.push('familier impossible');
+  // familiers déjà là : le rang ne monte jamais tout seul, sauf l'éveil (Épique ou Ultime -> Légendaire) une fois la jauge pleine ; la jauge suit les monstres tués
+  { const avant = new Map((ancien.pets || []).map(p => [p.id, p])), dk = Object.entries(nouveau.chars || {}).reduce((a, [cls, c]) => a + Math.max(0, ((c && c.kills) | 0) - (((ancien.chars || {})[cls] || {}).kills | 0)), 0);
+    let xpGagne = 0;
+    for (const p of (nouveau.pets || [])) { const q = p && avant.get(p.id); if (!q) continue; const t0 = q.t | 0, t1 = p.t | 0;
+      if (t1 > t0) { if (!(t1 === 4 && (t0 === 2 || t0 === 3) && (q.x | 0) >= R.PET_LEG_XP)) pb.push('rang de familier trafiqué'); }
+      else if (t1 < t0) pb.push('rang de familier trafiqué');
+      else xpGagne += Math.max(0, (p.x | 0) - (q.x | 0)); }
+    if (xpGagne > dk * 20 + 60) pb.push('éveil de familier trop rapide (+' + xpGagne + ')'); }
   if ((nouveau.titles || []).includes('admin')) pb.push('titre admin');
   for (const t of (nouveau.titles || [])) if (typeof t === 'string' && t.startsWith('m_') && !(ancien.titles || []).includes(t)) { const c = nouveau.chars[t.slice(2)]; if (!c || (+c.mxp || 0) < maitriseXP() - 0.5 || (c.lvl | 0) < 25) pb.push('titre de maîtrise injustifié'); }
   if (pb.length) return { ok: false, raisons: [...new Set(pb)].slice(0, 6) };
@@ -209,6 +221,11 @@ function verifier(ancien, nouveau, ctx) {
   if (nouveau.wquests && nouveau.wquests.bonus && !(ancien.wquests && ancien.wquests.bonus && ancien.wquests.week === nouveau.wquests.week)) {
     const d0 = new Date(), sem = Math.floor((Math.floor((d0.getTime() - d0.getTimezoneOffset() * 60000) / 86400000) + 3) / 7);
     if (Math.abs((nouveau.wquests.week | 0) - sem) > 1) pb.push('quêtes d\'une autre semaine'); else bonusCursite += R.WQ_BONUS;
+  }
+
+  // --- bonus des 3 quêtes de l'Île aux Colosses (+75 Cursite, une fois par jour) ---
+  if (nouveau.iquests && nouveau.iquests.bonus && !(ancien.iquests && ancien.iquests.bonus && ancien.iquests.day === nouveau.iquests.day)) {
+    if (Math.abs((nouveau.iquests.day | 0) - today) > 1) pb.push('quêtes de l\'île d\'un autre jour'); else bonusCursite += R.ILEQ_BONUS;
   }
 
   // --- prestige : seulement par une mort définitive (calcul exact) ou un don du serveur ---
@@ -264,13 +281,18 @@ function verifier(ancien, nouveau, ctx) {
   const o0 = objets(ancien), o1 = objets(nouveau), c0 = compter(o0), c1 = compter(o1);
   const etape2 = !!R.MON;
   let orDepenseMin = 0;
-  for (let n = (ancien.vault && ancien.vault.n) || 1; n < ((nouveau.vault && nouveau.vault.n) || 1); n++) orDepenseMin += R.VAULT_PRICES[n] || 0;
+  for (let n = (ancien.vault && ancien.vault.n) || 1; n < ((nouveau.vault && nouveau.vault.n) || 1); n++) { if (n >= 5) cursiteDepenseMin += R.VAULT_CU[n - 5] || 0; else orDepenseMin += R.VAULT_PRICES[n] || 0; }
+  // styles de maison : chacun (sauf le Chalet) coûte de la Cursite ; celui qui était déjà porté avant la mise à jour reste acquis
+  { const h0 = (ancien.house && typeof ancien.house === 'object') ? ancien.house : {}, h1 = (nouveau.house && typeof nouveau.house === 'object') ? nouveau.house : {}, s0 = (h0.skins && typeof h0.skins === 'object') ? h0.skins : null, s1 = (h1.skins && typeof h1.skins === 'object' && !Array.isArray(h1.skins)) ? h1.skins : {};
+    const leg = k => !s0 && (h0.skin === k || (h0.skin === 'sylve' && k === 'sombre') || (h0.skin === 'astral' && k === 'paradis'));
+    if (Object.keys(s1).length > 12) pb.push('styles de maison impossibles');
+    else for (const k of Object.keys(s1)) if (!/^[a-z]{2,12}$/.test(k)) { pb.push('style de maison inconnu'); break; } else if (!(s0 && s0[k]) && !leg(k)) cursiteDepenseMin += R.HOUSE_PRIX; }
   for (const [cls, ch1] of Object.entries(nouveau.chars)) { const ch0 = ancien.chars[cls]; const n0 = ch0 ? ch0.inv.length : 8; if (ch1.inv.length > n0) orDepenseMin += (n0 < 16 && ch1.inv.length >= 16 ? 250 : 0) + (ch1.inv.length >= 24 && n0 < 24 ? 1500 : 0); }
   // valeur de revente des équipements disparus (vendus au marchand ou jetés)
   let ventes = 0;
   for (const [k, n] of c0) { const moins = n - (c1.get(k) || 0); if (moins > 0) { const t = +k.split('|')[1], K = R.KINDS[k.split('|')[0]]; if (K && K.slot !== 'conso') ventes += moins * (K.t7 ? 15 : (R.SELL_PRICE[t] || 0)); } }
   // familiers vendus : 40, 150, 600 ou 2500 pièces selon le rang
-  { const PRIX = [40, 150, 600, 2500], ids1 = new Set((nouveau.pets || []).map(p => p.id)); for (const p of (ancien.pets || [])) if (!ids1.has(p.id)) ventes += PRIX[Math.min(3, p.t | 0)] || 0; }
+  { const PRIX = [40, 150, 600, 2500, 6000], ids1 = new Set((nouveau.pets || []).map(p => p.id)); for (const p of (ancien.pets || [])) if (!ids1.has(p.id)) ventes += PRIX[Math.min(4, p.t | 0)] || 0; }
 
   // --- héros à débloquer : il faut déjà l'avoir, l'avoir débloqué, ou avoir son « parent » au niveau 15 ---
   { const dq = cls => { const r = R.CLASSES[cls] && R.CLASSES[cls].req; if (!r) return true; const niv = s => (s.chars && s.chars[r] && (s.chars[r].lvl | 0)) || 0;
@@ -395,7 +417,10 @@ function verifier(ancien, nouveau, ctx) {
     for (let i = 0; i < 3; i++) if (q1.got && q1.got[i] && !(meme && q0.got && q0.got[i])) orQuetes += MAXJ[i];
     const w0 = ancien.wquests || {}, w1 = nouveau.wquests || {}, memeS = w0.week === w1.week;
     if (!memeS && w1.week != null && w0.week != null && w1.week < w0.week) pb.push('quêtes d\'une autre semaine');
-    for (let i = 0; i < 3; i++) if (w1.got && w1.got[i] && !(memeS && w0.got && w0.got[i])) orQuetes += 525; }
+    for (let i = 0; i < 3; i++) if (w1.got && w1.got[i] && !(memeS && w0.got && w0.got[i])) orQuetes += 525;
+    const i0 = ancien.iquests || {}, i1 = nouveau.iquests || {}, memeI = i0.day === i1.day;
+    if (!memeI && i1.day != null && ((i0.day != null && i1.day < i0.day) || Math.abs((i1.day | 0) - today) > 1)) pb.push('quêtes de l\'île d\'un autre jour');
+    for (let i = 0; i < 3; i++) if (i1.got && i1.got[i] && !(memeI && i0.got && i0.got[i])) orQuetes += 700; }
   const gainBrut = d('gold') + orDepenseMin + (ctx.aPayer || 0); // aPayer : objets achetés à l'hôtel des ventes
   const orServeur = Math.min(Math.max(0, gainBrut - orQuetes - (etape2 ? ventes : 0)), dons.or || 0); // les pièces des quêtes et des ventes ne consomment pas celles du serveur
   const gainOr = gainBrut - (dons.or || 0) - (etape2 ? ventes : 0) - orQuetes;
@@ -486,7 +511,8 @@ function degatsMax(s) {
   const lvl = Math.max(1, ch.lvl | 0), w = (ch.equip || [])[0];
   // miroir du Mystificateur équipé : bonus offensif (voir prisOff dans le jeu)
   const pc = (ch.equip || [])[1], po = pc && R.prisOff && R.KINDS[pc.kind] && (R.KINDS[pc.kind].base || pc.kind) === 'prisme' ? R.prisOff(pc) : null, prisme = k => (po && po[k]) || 0;
-  const stat = k => c.base[k] + c.gain[k] * (lvl - 1) + (((ch.sp || {})[k] | 0) * ((R.SP_DEF[k] || {}).step || 1)) + (((ch.sp2 || {})[k] | 0) * 5) + (ch.equip || []).reduce((a, it) => a + ((it && it.stats && it.stats[k]) || 0), 0) + 30 + prisme(k) + ((s.talisEq && s.talis && s.talis[s.talisEq] && R.TALIS && R.TALIS[s.talisEq] && R.TALIS[s.talisEq].st[k]) || 0);
+  const pe = (s.pets || []).find(p => p && p.id === s.petEq), petB = k => pe && pe.k === k ? Math.ceil({ puissance: 10, vatt: 9 }[k] * [1, 1.6, 2.4, 3.5, 5][Math.min(4, pe.t | 0)] * 1.25) : 0;
+  const stat = k => petB(k) + c.base[k] + c.gain[k] * (lvl - 1) + (((ch.sp || {})[k] | 0) * ((R.SP_DEF[k] || {}).step || 1)) + (((ch.sp2 || {})[k] | 0) * 5) + (ch.equip || []).reduce((a, it) => a + ((it && it.stats && it.stats[k]) || 0), 0) + 30 + prisme(k) + ((s.talisEq && s.talis && s.talis[s.talisEq] && R.TALIS && R.TALIS[s.talisEq] && R.TALIS[s.talisEq].st[k]) || 0);
   if (!w || !Array.isArray(w.dmg) || !R.WB || !R.WB[w.kind]) return 25000;
   const mult = (0.5 + stat('puissance') / 50) * 1.45 * 1.3, cadence = (1.5 + 6.5 * stat('vatt') / 75) * 1.5 * Math.max(1, R.WB[w.kind].rk || 1) * 2 /* frénésie */;
   // Démoniste : ce sont ses démons qui frappent, jusqu'à 5 à la fois (le sien et 4 du pacte, forgés), plus le démon de hâte ; la Gemme de la Nova tire 12 projectiles par attaque

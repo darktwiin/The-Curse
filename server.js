@@ -1245,11 +1245,11 @@ const MAISON = { nb: db.prepare('SELECT COUNT(*) AS n FROM maison_coeurs WHERE m
 function planMaison(c, moi) {
   let sv = null; try { sv = c.save ? JSON.parse(c.save) : null; } catch {} sv = sv || {};
   const h = (sv.house && typeof sv.house === 'object') ? sv.house : {}, vus = new Set(), m = [];
-  const salle = h.salle ? 1 : 0;
-  for (const e of (Array.isArray(h.m) ? h.m : []).slice(0, salle ? 140 : 80)) { if (!Array.isArray(e)) continue; const id = String(e[0] || ''), x = e[1] | 0, y = e[2] | 0; if (!/^[a-zA-Z0-9]{1,12}$/.test(id) || x < (salle ? -15 : 1) || x > 25 || y < 1 || y > 16 || vus.has(x + ',' + y)) continue; vus.add(x + ',' + y); m.push([id, x, y, e[3] & 3]); }
-  const pets = (Array.isArray(sv.pets) ? sv.pets : []).filter(q => q && q.id !== sv.petEq).slice(0, 12).map(q => ({ k: String(q.k || '').slice(0, 16), t: Math.max(0, Math.min(3, q.t | 0)) }));
+  const salle = h.salle ? 1 : 0, dy = (h.v | 0) >= 2 ? 0 : 6; // maison agrandie de 6 rangées vers le haut (0.0.91) : une sauvegarde pas encore migrée a ses meubles 6 cases plus haut
+  for (const e of (Array.isArray(h.m) ? h.m : []).slice(0, salle ? 140 : 80)) { if (!Array.isArray(e)) continue; const id = String(e[0] || ''), x = e[1] | 0, y = (e[2] | 0) + dy; if (!/^[a-zA-Z0-9]{1,12}$/.test(id) || x < (salle ? -15 : 1) || x > 25 || y < 1 || y > 22 || vus.has(x + ',' + y)) continue; vus.add(x + ',' + y); m.push([id, x, y, e[3] & 3]); }
+  const pets = (Array.isArray(sv.pets) ? sv.pets : []).filter(q => q && q.id !== sv.petEq).slice(0, 12).map(q => ({ k: String(q.k || '').slice(0, 16), t: Math.max(0, Math.min(4, q.t | 0)) }));
   const lig = enLigne.get(c.id);
-  return { t: 'maison', a: 'plan', ok: 1, id: c.id, n: String((lig && lig.etat && lig.etat.n) || c.nom).slice(0, 16), skin: String(h.skin || 'bois').slice(0, 12), salle, m, coffres: Math.max(1, Math.min(10, (sv.vault && sv.vault.n) | 0 || 1)), colis: String((sv.cosm && sv.cosm.own && sv.cosm.own['cl:' + sv.cosm.colis] && sv.cosm.colis) || '').slice(0, 14), pets,
+  return { t: 'maison', a: 'plan', ok: 1, id: c.id, n: String((lig && lig.etat && lig.etat.n) || c.nom).slice(0, 16), skin: (() => { const k = h.skin === 'sylve' ? 'sombre' : h.skin === 'astral' ? 'paradis' : String(h.skin || 'bois'); return (h.skins && typeof h.skins === 'object' && k !== 'bois' && !h.skins[k] ? 'bois' : k).slice(0, 12); })(), salle, m, coffres: Math.max(1, Math.min(10, (sv.vault && sv.vault.n) | 0 || 1)), colis: String((sv.cosm && sv.cosm.own && sv.cosm.own['cl:' + sv.cosm.colis] && sv.cosm.colis) || '').slice(0, 14), pets,
     coeurs: MAISON.nb.get(c.id).n, aime: MAISON.a.get(c.id, moi.compte.id) ? 1 : 0, moi: c.id === moi.compte.id ? 1 : 0 };
 }
 function maison(moi, m, salle) {
@@ -1320,7 +1320,7 @@ setInterval(() => { if (objectifSale) { objectifSale = false; try { fs.writeFile
   if (objectifVu !== OBJECTIF.n) { objectifVu = OBJECTIF.n; diffuserPartout(etatObjectif()); } }, 20000).unref();
 
 // ---------- tournoi de pêche du dimanche : le plus gros poisson de la journée ; le vainqueur porte le titre « Roi de la pêche » toute la semaine ----------
-const POISSONS = {}; { const re = /\['(lac|mer)','(\w+)','(?:[^'\\]|\\.)*',(\d),([\d.]+),([\d.]+),/g, txt = INDEX.toString('utf8'); let m; while ((m = re.exec(txt))) POISSONS[m[2]] = { r: +m[3], min: +m[4], max: +m[5] }; }
+const POISSONS = {}; { const re = /\['(lac|mer|ile)','(\w+)','(?:[^'\\]|\\.)*',(\d),([\d.]+),([\d.]+),/g, txt = INDEX.toString('utf8'); let m; while ((m = re.exec(txt))) POISSONS[m[2]] = { r: +m[3], min: +m[4], max: +m[5] }; }
 const TOURNOI = { jour: '', best: {}, roi: null };
 const FICHIER_TOURNOI = path.join(DATA_DIR, 'peche.json');
 try { const o = JSON.parse(fs.readFileSync(FICHIER_TOURNOI, 'utf8')); if (o) { TOURNOI.jour = String(o.jour || ''); TOURNOI.best = o.best || {}; TOURNOI.roi = o.roi || null; } } catch {}
@@ -1338,7 +1338,7 @@ const etatTournoi = moi => { const r = roiPeche(); return { t: 'tournoi', actif:
 function tournoiPrise(moi, m) {
   if (!moi.compte) return; tournoiCloture();
   const f = POISSONS[String(m.f || '')], w = Math.round((+m.w || 0) * 1000) / 1000; if (!f || !(w >= f.min && w <= f.max)) return;
-  if (f.r >= 4 && Date.now() - (moi.legT || 0) > 60000) { moi.legT = Date.now(); const nomF = (INDEX.toString('utf8').match(new RegExp("\\['(?:lac|mer)','" + String(m.f).replace(/\W/g, '') + "','((?:[^'\\\\]|\\\\.)*)'")) || [])[1];
+  if (f.r >= 4 && Date.now() - (moi.legT || 0) > 60000) { moi.legT = Date.now(); const nomF = (INDEX.toString('utf8').match(new RegExp("\\['(?:lac|mer|ile)','" + String(m.f).replace(/\W/g, '') + "','((?:[^'\\\\]|\\\\.)*)'")) || [])[1];
     discord.annoncer('🎣 **' + nomDiscord(moi) + '** a pêché un poisson légendaire : **' + String(nomF || 'un légendaire').replace(/\\'/g, "'") + '** de ' + w.toLocaleString('fr-FR') + ' kg !', null, 0, 'peche'); }
   if (!tournoiActif()) return;
   // chaque poisson pris est signalé au serveur ({t:'peche'}) : pas de prise au tournoi sans pêche, et un légendaire toutes les 15 prises au plus

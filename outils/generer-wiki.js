@@ -27,7 +27,7 @@ const racine = path.join(__dirname, '..');
     const monstres=Object.keys(MON).filter(k=>!MON[k].secret).map(k=>{const d=MON[k];return{k,nom:d.nom,hp:d.hp,xp:d.xp,dmg:d.dmg,arm:d.arm||0,boss:!!d.boss,loot:d.loot||null,drop:d.drop||0,n:d.n||1,rel:d.rel||0,or:d.or||null,ou:ou(k),ic:url(MSPR[k]),fr:(typeof MFR!=='undefined'&&MFR[k])?[url(MFR[k][1]),url(MFR[k][2])]:null,tir:(()=>{const b=MON[k].bspr,l=Array.isArray(b)?b:b?[b]:[];return l.filter(n=>BULLET_ART[n]).map(n=>url(BULLET_ART[n].c));})(),dun2:d.dun2||0,mid:!!d.midBoss,star:d.star!=null,tuto:!!d.tuto,z:ZONES.findIndex(z=>z.pool.includes(k))};});
     const zones=ZONES.filter(z=>!z.secret).map((z,i)=>({nom:z.nom,niv:z.niv,pool:z.pool,col:z.col[0],dun:i>=5?DUN_RATE[i]:0}));
     const donjons=Object.keys(DTYPES).filter(t=>!DTYPES[t].secret).map(t=>{const T=DTYPES[t];return{t,nom:T.nom,boss:T.boss,niv:T.niv,mech:T.mech||'',pool:T.pool||[],bk:T.bk,bk2:T.bk2||null,col:T.col[1]};});
-    const poissons=FISHES.map(f=>({nom:f.nom,site:f.site,r:FISH_RAR[f.r].nom,col:FISH_RAR[f.r].col,min:f.min,max:f.max,ic:fishURL(f.id)}));
+    const poissons=FISHES.filter(f=>f.site!=='ile').map(f=>({nom:f.nom,site:f.site,r:FISH_RAR[f.r].nom,col:FISH_RAR[f.r].col,min:f.min,max:f.max,ic:fishURL(f.id)}));
     return JSON.stringify({ver,classes,objets,monstres,zones,donjons,poissons,REG_DUN,MID_DUN,stats:SL});})()`));
   await b.close();
   const data = JSON.parse(D);

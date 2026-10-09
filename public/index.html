@@ -478,7 +478,7 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.90"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.91"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
@@ -495,7 +495,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp mait" id="mxBar" hidden><i id="mxF"></i><span><em>Maîtrise</em><b id="mxT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.90</div>
+    <div class="verTag" id="verTag">ver.0.0.91</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -613,7 +613,7 @@ body.ton #opts{position:fixed;z-index:120}
       <div class="shop-inner fish-inner" role="dialog" aria-label="Tableau de pêche">
         <h2>Tableau de pêche</h2>
         <p id="fishQuest" class="hint"></p><div id="fishNiv"></div>
-        <div class="seg ftabs" id="fishTabs"><button type="button" data-f="lac" class="on">Lac de la maison</button><button type="button" data-f="mer">Mer des Plaines Sauvages</button></div>
+        <div class="seg ftabs" id="fishTabs"><button type="button" data-f="lac" class="on">Lac de la maison</button><button type="button" data-f="mer">Mer des Plaines Sauvages</button><button type="button" data-f="ile" hidden>Île aux Colosses</button></div>
         <div class="fgrid" id="fishGrid"></div>
         <div class="shop-foot"><span class="hint" id="fishFoot"></span><button type="button" class="act" id="fishClose">Fermer · Échap</button></div>
       </div>
@@ -626,8 +626,8 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="overlay" id="presWin" hidden>
-      <div class="shop-inner" role="dialog" aria-label="Gardien du Prestige">
-        <h2>Gardien du Prestige</h2>
+      <div class="shop-inner" role="dialog" aria-label="L'Oracle, gardien du prestige">
+        <h2>L'Oracle · gardien du prestige</h2>
         <p class="hint">Dépense tes points de prestige pour repousser le niveau maximum <b>de la classe que tu joues</b> : chaque classe se débloque à part. Chaque niveau au-delà de 20 donne ses statistiques normales, <b>en plus des plafonds</b>. Au niveau 25 s'ouvre la jauge de <b>maîtrise</b> de la classe.</p>
         <p id="presNow" class="presnow"></p>
         <div class="preslist" id="presList"></div>
@@ -672,7 +672,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.90</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.91</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -714,7 +714,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.90</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.91</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -1132,12 +1132,12 @@ const KINDS={
 // Potions de caractéristiques : gain permanent par potion, plafond (nombre de potions max) par stat
 // ---------- familiers : un par statistique, bonus au-delà des plafonds (potions et plafonds absolus) ----------
 const PET_DEF={
-  vie:{nom:'Flammèche',amt:70,col:'#ff5a3a',spr:['...X....','..XXX.X.','.XXYXXX.','.XYYYYX.','XYEYYEYX','XYYYYYYX','.XYYYYX.','..XXXX..'],pal:{X:'#e0402a',Y:'#ffb347',E:'#1a1420'}},
-  mana:{nom:'Feu follet',amt:70,col:'#4a8fe8',spr:['...XX...','..XYYX..','.XYYYYX.','.XEYYEX.','.XYYYYX.','..XYYX..','...XX.X.','.X...X..'],pal:{X:'#3f7fe0',Y:'#bfe8ff',E:'#1a1420'}},
-  puissance:{nom:'Petit golem',amt:7,col:'#ff9a3c',spr:['..XXXX..','.XYYYYX.','.XEYYEX.','XXYYYYXX','XYXXXXYX','.XYYYYX.','.XY..YX.','.XX..XX.'],pal:{X:'#8a5a2b',Y:'#d09a5a',E:'#ff9a3c'}},
-  vatt:{nom:'Colibri',amt:7,col:'#b16cff',spr:['........','.XX...X.','XXYX.XX.','.XEYXX..','..XYYX..','..XYYYXW','...XX..W','...X....'],pal:{X:'#6a3ab0',Y:'#c89aff',E:'#1a1420',W:'#ffd23f'}},
-  vdep:{nom:'Lièvre des vents',amt:6,col:'#3ff0ff',spr:['.X..X...','.XY.XY..','.XY.XY..','.XXXXX..','XEYYEYX.','XYYYYYX.','.XYYYYXX','..XX.XX.'],pal:{X:'#8a9aa8',Y:'#eef6ff',E:'#1a1420'}},
-  armure:{nom:'Tortue de pierre',amt:8,col:'#7ed957',spr:['........','..XXXX..','.XYXYYX.','XYYXYYXS','XYXYYXYS','.XXXXXX.','.S.SS.S.','........'],pal:{X:'#3f7a4a',Y:'#7ed957',S:'#c9b98a'}}};
+  vie:{nom:'Flammèche',amt:90,col:'#ff5a3a',spr:['...X....','..XXX.X.','.XXYXXX.','.XYYYYX.','XYEYYEYX','XYYYYYYX','.XYYYYX.','..XXXX..'],pal:{X:'#e0402a',Y:'#ffb347',E:'#1a1420'}},
+  mana:{nom:'Feu follet',amt:90,col:'#4a8fe8',spr:['...XX...','..XYYX..','.XYYYYX.','.XEYYEX.','.XYYYYX.','..XYYX..','...XX.X.','.X...X..'],pal:{X:'#3f7fe0',Y:'#bfe8ff',E:'#1a1420'}},
+  puissance:{nom:'Petit golem',amt:10,col:'#ff9a3c',spr:['..XXXX..','.XYYYYX.','.XEYYEX.','XXYYYYXX','XYXXXXYX','.XYYYYX.','.XY..YX.','.XX..XX.'],pal:{X:'#8a5a2b',Y:'#d09a5a',E:'#ff9a3c'}},
+  vatt:{nom:'Colibri',amt:9,col:'#b16cff',spr:['........','.XX...X.','XXYX.XX.','.XEYXX..','..XYYX..','..XYYYXW','...XX..W','...X....'],pal:{X:'#6a3ab0',Y:'#c89aff',E:'#1a1420',W:'#ffd23f'}},
+  vdep:{nom:'Lièvre des vents',amt:8,col:'#3ff0ff',spr:['.X..X...','.XY.XY..','.XY.XY..','.XXXXX..','XEYYEYX.','XYYYYYX.','.XYYYYXX','..XX.XX.'],pal:{X:'#8a9aa8',Y:'#eef6ff',E:'#1a1420'}},
+  armure:{nom:'Tortue de pierre',amt:10,col:'#7ed957',spr:['........','..XXXX..','.XYXYYX.','XYYXYYXS','XYXYYXYS','.XXXXXX.','.S.SS.S.','........'],pal:{X:'#3f7a4a',Y:'#7ed957',S:'#c9b98a'}}};
 // Familiers v2 : 20×20 pixels, dessinés au pixel près, 3 stades d'évolution par espèce
 function petCanvas(){const c=document.createElement('canvas');c.width=20;c.height=20;const g=c.getContext('2d');
   const P=(x,y,col)=>{g.fillStyle=col;g.fillRect(Math.round(x),Math.round(y),1,1);};
@@ -1288,8 +1288,9 @@ const PET_EVO={
   ['...G.G....','.MDG.GDM..','..MDRDM...','..RXXXR...','.RXEXEXR..','..MXRXM...','.DDRYRDD..','.DRXYXRD..','..RXYXR...','.D.D.D.D..']]}};
 for(const k in PET_EVO){PET_DEF[k].nom=PET_EVO[k].nom;PET_DEF[k].col={vie:'#d04a3a',mana:'#8a9ab0',puissance:'#e0a840',vatt:'#b16cff',vdep:'#3ff0ff',armure:'#6a6a7a'}[k];}
 const PET_KEYS=Object.keys(PET_DEF);
-// raretés : Commun, Rare, Épique (+ Ultime, réservé pour plus tard : poids 0)
-const PET_TIERS=[{nom:'Commun',col:'#dcd8e4',m:1,w:65},{nom:'Rare',col:'#4aa3ff',m:1.6,w:28},{nom:'Épique',col:'#b16cff',m:2.4,w:7},{nom:'Ultime',col:'#3ff0ff',m:3.5,w:0}];
+// raretés : Commun, Rare, Épique (+ Ultime, réservé pour plus tard : poids 0) · Légendaire : un Épique (ou Ultime) qui a combattu à tes côtés s'éveille chez l'éleveur
+const PET_TIERS=[{nom:'Commun',col:'#dcd8e4',m:1,w:65},{nom:'Rare',col:'#4aa3ff',m:1.6,w:28},{nom:'Épique',col:'#b16cff',m:2.4,w:7},{nom:'Ultime',col:'#3ff0ff',m:3.5,w:0},{nom:'Légendaire',col:'#ffb020',m:5,w:0}];
+const PET_LEG_XP=5000,PET_LEG_SOIN=0.03,PET_LEG_CD=5; // éveil : 5 000 points (1 par monstre, 3 sur l'Île aux Colosses, 20 par boss) · Légendaire : soigne 3 % de la vie toutes les 5 s
 function rollPetTier(){const tot=PET_TIERS.reduce((a,t)=>a+t.w,0);let r=Math.random()*tot;for(let i=0;i<PET_TIERS.length;i++){r-=PET_TIERS[i].w;if(r<0)return i;}return 0;}
 const petAmtK=(k,t)=>{const a=PET_DEF[k].amt*PET_TIERS[t||0].m;return PET_DEF[k].amt>=20?Math.round(a/5)*5:Math.round(a);};
 const PET_SPR={};
@@ -1646,7 +1647,13 @@ const FISHES=[
   ['mer','bar','Bar',1,1,10,'base','#8a9aa8','#f0f4f8','#4a5a6a'],['mer','congre','Congre',1,2,30,'long','#5a5a6a','#b8b8c8','#3a3a4a'],['mer','raie','Raie',1,2,20,'plat','#8a7a6a','#e8dcc8','#5a4a3a'],
   ['mer','thon','Thon rouge',2,50,400,'pique','#2a3a7a','#d8e0f0','#e8c020'],['mer','espadon','Espadon',2,50,300,'pique','#3a4a8a','#c8d0e8','#8a9ab8'],
   ['mer','marlin','Marlin bleu',3,100,600,'pique','#1a4ab0','#e0e8f8','#6a8ae0'],
-  ['mer','lune','Poisson-lune doré des abysses',4,300,1500,'rond','#ffd23f','#fff3b0','#c8862a']].map(f=>({site:f[0],id:f[1],nom:f[2],r:f[3],min:f[4],max:f[5],tpl:f[6],c:[f[7],f[8],f[9]]}));
+  ['mer','lune','Poisson-lune doré des abysses',4,300,1500,'rond','#ffd23f','#fff3b0','#c8862a'],
+  // mer de l'Île aux Colosses : autant d'espèces et les mêmes raretés que la mer des Plaines, mais jusqu'à 5 % plus lourdes
+  ['ile','hareng_obs','Hareng d\'obsidienne',0,0.05,0.21,'base','#3a3648','#8a86a0','#b45aff'],['ile','lancon_givre','Lançon de givre',0,0.3,1.575,'long','#8fd0f0','#e8f8ff','#3ff0ff'],['ile','grondin_basalte','Grondin des basaltes',0,0.1,0.84,'base','#5a4a4a','#c8b8a8','#ff7a3d'],['ile','sar_colosse','Sar des Colosses',0,0.3,3.15,'rond','#c8b070','#f4ecd0','#8a6a2a'],
+  ['ile','lieu_cimes','Lieu des cimes',1,1,10.5,'base','#6a7a8a','#dfe6f0','#2a3a4a'],['ile','murene_titan','Murène titanesque',1,2,31.5,'long','#4a5a2a','#b8c870','#ffd23f'],['ile','torpille_orage','Torpille d\'orage',1,2,21,'plat','#4a4a6a','#c8c8e8','#ffe27a'],
+  ['ile','thon_geant','Thon des géants',2,50,420,'pique','#3a2a1a','#d8c8a8','#ffb04a'],['ile','voilier_granit','Voilier de granit',2,50,315,'pique','#6a6c7a','#c0c6d6','#ff7a3d'],
+  ['ile','makaire_tempete','Makaire des tempêtes',3,100,630,'pique','#1a2a5a','#8fd0f0','#ffe27a'],
+  ['ile','coelacanthe','Cœlacanthe des Colosses',4,300,1575,'long','#2a3a6a','#7df0e0','#ffb020']].map(f=>({site:f[0],id:f[1],nom:f[2],r:f[3],min:f[4],max:f[5],tpl:f[6],c:[f[7],f[8],f[9]]}));
 {const mix=(a,b,k)=>{const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));const A=p(a),B=p(b);return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*k).toString(16).padStart(2,'0')).join('');};
   const clone=(k,src,tint,kk,o)=>{MON[k]=Object.assign({},MON[src],{ai:1,dun:0,dun2:0,rel:0},o);const [rows,pal]=MON_SPR[src];const np={};for(const c in pal)np[c]=/^#[0-9a-f]{6}$/i.test(pal[c])&&c!=='E'?mix(pal[c],tint,kk):pal[c];MON_SPR[k]=[rows,np];};
   const mob=(hp,dmg,xp)=>({hp,dmg,xp,loot:[2,4],drop:0.26,or:[0.12,1,2],boss:false});
@@ -3247,6 +3254,10 @@ if(typeof save.nameChanges!=='number')save.nameChanges=0;
 if(save.tutoDone===undefined)save.tutoDone=Object.keys(save.chars||{}).length>0;
 const NAME_PRICE=100; // Cursite pour chaque changement de pseudo après le premier (gratuit)
 if(!save.stats)save.stats={kills:0};
+const MAISON_V=2,MAISON_DY=6;
+function maisonV2(sv){sv=sv||save;if(!sv.house||typeof sv.house!=='object'||Array.isArray(sv.house))sv.house={};const h=sv.house;if((h.v|0)<MAISON_V){if(Array.isArray(h.m))for(const e of h.m)if(Array.isArray(e))e[2]=(e[2]|0)+MAISON_DY;h.v=MAISON_V;}
+  if(!h.skins||typeof h.skins!=='object'||Array.isArray(h.skins)){h.skins={};if(h.skin&&h.skin!=='bois')h.skins[h.skin==='sylve'?'sombre':h.skin==='astral'?'paradis':h.skin]=1;}}
+maisonV2();
 if(!save.vault||!Array.isArray(save.vault.c))save.vault={n:1,c:[]};
 while(save.vault.c.length<10)save.vault.c.push([null,null,null,null,null,null,null,null]);
 for(const ch of Object.values(save.chars||{})){for(const it of [...(ch.equip||[]),...(ch.inv||[])])if(it&&it.slot==='capa'&&KINDS[it.kind]){const f=mkItem(it.kind,it.tier);it.stats=f.stats;it.cost=f.cost;}}
@@ -3266,7 +3277,7 @@ function hideAuth(){const el=document.getElementById('authWin');if(el)el.hidden=
 function onNetHello(){if(!ONLINE)return;const tk=lsGet(TOKEN_KEY);if(tk){AUTH.ok=false;room.raw({t:'auth',a:'token',token:tk});showAuth('Connexion à ton compte…');}else if(!AUTH.ok)showAuth('');}
 // le serveur a refusé une sauvegarde incohérente : on reprend sa version
 function onSaveFix(m){if(!m.save||!m.save.chars)return;
-  {const msg=(m.raisons||[]).join(' · ').slice(0,160);if(save.current&&m.save.current===save.current&&m.save.chars[save.current]&&scene!=='tuto'){for(const k of Object.keys(save))delete save[k];Object.assign(save,m.save);try{lsSet(SAVE_KEY,JSON.stringify(save));}catch(e){}statsDirty=true;invDirty=true;try{updWho();}catch(e){}try{const st=S();P.hp=Math.min(P.hp,st.tot.vie);P.mp=Math.min(P.mp,st.tot.mana);}catch(e){}note('Le serveur a corrigé ta sauvegarde'+(msg?' : '+msg:''));sfx('deny');return;}}AUTH.ok=false;lsSet(SAVE_KEY,JSON.stringify(m.save));sessionStorage.setItem('rm-reload','1');sessionStorage.setItem('rm-fix',(m.raisons||[]).join(' · ').slice(0,200));location.reload();}
+  {const msg=(m.raisons||[]).join(' · ').slice(0,160);if(save.current&&m.save.current===save.current&&m.save.chars[save.current]&&scene!=='tuto'){for(const k of Object.keys(save))delete save[k];Object.assign(save,m.save);try{maisonV2();}catch(e){}try{lsSet(SAVE_KEY,JSON.stringify(save));}catch(e){}statsDirty=true;invDirty=true;try{updWho();}catch(e){}try{const st=S();P.hp=Math.min(P.hp,st.tot.vie);P.mp=Math.min(P.mp,st.tot.mana);}catch(e){}note('Le serveur a corrigé ta sauvegarde'+(msg?' : '+msg:''));sfx('deny');return;}}AUTH.ok=false;lsSet(SAVE_KEY,JSON.stringify(m.save));sessionStorage.setItem('rm-reload','1');sessionStorage.setItem('rm-fix',(m.raisons||[]).join(' · ').slice(0,200));location.reload();}
 setTimeout(()=>{const f=sessionStorage.getItem('rm-fix');if(f){sessionStorage.removeItem('rm-fix');showBanner('Sauvegarde resynchronisée','Le serveur a refusé une modification incohérente ('+f+')','#ff9a3c');}},2500);
 function authKicked(){AUTH.ok=false;lsSet(TOKEN_KEY,null);showAuth('Ton compte vient de se connecter sur un autre appareil.',true);}
 // Conditions d'utilisation : à accepter une fois par version du texte (les joueurs déjà inscrits aussi). Le serveur garde la date d'acceptation.
@@ -3307,7 +3318,10 @@ const ILE_X=new Float32Array(RH),ILE_W=new Float32Array(RH);
 const ileX=y=>ILE_X[clamp(Math.round(y),0,RH-1)],ileW=y=>ILE_W[clamp(Math.round(y),0,RH-1)];
 // un point au hasard dans la tranche d'une zone (pour faire apparaître les monstres sans tirer dans toute la carte)
 function zoneTir(r){const z=ZONES[r].y,ty=clamp(ri(z[0]-22,z[1]+22),1,RH-2),w=Math.max(8,ileW(ty)+26);return{tx:clamp(Math.round(ileX(ty)+rnd(-w,w)),1,RW-2),ty};}
-const auCamp=(x,y,m)=>scene==='realm'&&Math.hypot(x-CAMP.x,y-CAMP.y)<CAMP.r+(m||0);
+// Camp des Colosses : au cœur de l'île (entre la Steppe des Géants et les Cimes), sans gardes. Aucun monstre n'y naît ni n'y reste ; le découvrir ouvre le portail du Village vers lui.
+const CAMP2={x:Math.round(ileX(1724))+.5,y:1724.5,r:7.5},CAMP2NPC={x:Math.round(ileX(1724))+3,y:1721.6},CAMP2_PRIX=50;
+const auCamp=(x,y,m)=>scene==='realm'&&(Math.hypot(x-CAMP.x,y-CAMP.y)<CAMP.r+(m||0)||Math.hypot(x-CAMP2.x,y-CAMP2.y)<CAMP2.r+(m||0));
+const camp2Ouvert=()=>!!(save.portails&&save.portails.camp2);
 let REALM_SEED=Math.floor(Math.random()*1e9);
 function setRealmSeed(sd){sd=Math.floor(Number(sd))||0;if(!sd||sd===REALM_SEED)return;REALM_SEED=sd;if(scene!=='realm'){realm=null;realmImg=null;fogCv=null;zoneCapCache={};}}
 const ARENAS=[]; // les boss centraux apparaissent maintenant tous les 20 monstres tués
@@ -3326,10 +3340,10 @@ const nFence=(x,y)=>y>=34&&y<NH&&x>=0&&x<NW&&(x===0||x===NW-1||y===NH-1||penEdge
 const NTREES=[[20,36,0],[24,35,1],[28,37,0],[35,35,1],[40,36,0],[41,43,1],[22,44,1],[2,41,0],[2,52,1],[19,52,0],[23,50,0],[36,43,2],[33,37,2],[21,39,2],[4,51,2]]; // 0 feuillu, 1 sapin, 2 rocher
 const nTree=(x,y)=>NTREES.find(t=>t[0]===x&&t[1]===y);
 const nPath=(x,y)=>((x===15||x===16)&&y>=34&&y<=41)||(y>=40&&y<=41&&x>=9&&x<=39)||((x===30||x===39)&&y>=42&&y<=46);
-const VW=40,VHI=18,VH=20,VSPAWN={x:12.5,y:14},VBACK={x:12.5,y:16},COLIS={x:13,y:18}; // VHI : hauteur de la maison · VH : avec l'alcôve du coffre de livraison, sous le portail
-const ALCOVE=(x,y)=>(y===17&&x===12)||(y===18&&x>=11&&x<=13);
+const VW=40,VHI=24,VH=26,VSPAWN={x:12.5,y:20},VBACK={x:12.5,y:22},COLIS={x:13,y:24}; // maison agrandie vers le haut (+6 rangées) : les coffres restent tout en haut, l'entrée a de la place // VHI : hauteur de la maison · VH : avec l'alcôve du coffre de livraison, sous le portail
+const ALCOVE=(x,y)=>(y===VHI-1&&x===12)||(y===VHI&&x>=11&&x<=13);
 // parc à familiers (à droite) : clôture avec une entrée, les familiers restent dedans
-const LAKE={x0:2,y0:12,x1:7,y1:15},FBOARD={x:9.5,y:11.3},PARK={x0:27,y0:3,x1:37,y1:14,gate:[8,9]},HDECO={x:20.5,y:14.5},PSIGN={x:24.5,y:6.5},PRESNPC={x:24,y:11.4};
+const LAKE={x0:2,y0:18,x1:7,y1:21},FBOARD={x:9.5,y:17.3},PARK={x0:27,y0:9,x1:37,y1:20,gate:[14,15]},HDECO={x:20.5,y:20.5},PSIGN={x:24.5,y:12.5},PRESNPC={x:24,y:17.4};
 // plafond de niveau débloquable avec le prestige (commun à tous les héros du compte)
 // Niveau maximum : il se débloque classe par classe (save.caps), avec les points de prestige du compte. L'ancien déblocage valait pour tout le compte (save.capLvl) : il reste acquis à toutes les classes.
 const CAP_COST={21:200,22:300,23:400,24:500,25:1000};const maxLvl=cls=>clamp(Math.max(save.capLvl|0||20,(save.caps&&save.caps[cls||save.current])|0||20),20,25);
@@ -3338,7 +3352,9 @@ const HPORTS=['b','r','k','m','f','v','s','o','p','e','g','c','a','h'].map((t,i)
 const HPALIERS=[['Débutant',0,0,'#9fd06a'],['Intermédiaire',1,5,'#ffd23f'],['Difficile · dernières zones',6,11,'#ff9a3c'],['Très difficile',12,12,'#ff5a6a'],['À clef',13,13,'#3ff0ff']];
 // Coffre 1 en bas au centre (face à l'arrivée), puis vers l'extérieur, puis la rangée du haut
 const CHESTS=[12,8,16,4,20].map(x=>({x,y:8})).concat([12,8,16,4,20].map(x=>({x,y:3})));
-const VAULT_PRICES=[0,50,40,60,80,100,150,200,300,500];
+const VAULT_PRICES=[0,50,40,60,80,0,0,0,0,0],VAULT_CU=[50,150,200,300,500]; // coffres 1 à 5 en pièces, 6 à 10 (la rangée du haut) en Cursite
+const vaultPrix=i=>i>=5?{cu:VAULT_CU[i-5]}:{or:VAULT_PRICES[i]};
+const HOUSE_PRIX=200; // chaque style de maison (sauf le Chalet) se paie en Cursite
 const PUPITRE={x:2.5,y:19.5},STATUE={x:2.5,y:22.5};
 const SHOP={x:37.5,y:14.2};
 let realm=null,realmImg=null,nexusMap=null,fogCv=null,fogT=0;
@@ -3362,18 +3378,20 @@ function genRealm(){
   for(const yy of [1790,1612]){const w=ileW(yy)*0.6;for(let x=-w;x<=w;x+=0.6)road(ileX(yy)+x,yy+(vn(x/40+wob,yy)-.5)*16,1.2);}
   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)path[(Math.floor(TROU.y)+dy)*RW+Math.floor(TROU.x)+dx]=0;
   for(let y=0;y<RH;y++){const i2=y>=ILE2_TOP,ys=i2?ILE2[0][0]:YS,yn=i2?ILE2[ILE2.length-1][0]:YN,cx=ILE_X[y],hw=ILE_W[y],kz=0.16*clamp((ys-y)/(ys-yn)*1.6,0,1);for(let x=0;x<RW;x++){
-    const i=y*RW+x,ex=Math.abs(x+.5-cx),nearCamp=Math.hypot(x+.5-CAMP.x,y+.5-CAMP.y);
+    const i=y*RW+x,ex=Math.abs(x+.5-cx),nearCamp=Math.hypot(x+.5-CAMP.x,y+.5-CAMP.y),nearCamp2=Math.hypot(x+.5-CAMP2.x,y+.5-CAMP2.y);
     const terre=ex<hw+(vn(x/22+SX,y/22+SY)-.5)*32+(vn(x/7+SY,y/7+SX)-.5)*6;
     let r=terre?zoneOf(y+.5+(vn(x/50+SY,y/50+SX)-.5)*30-(x+.5-cx)*kz):-1;
     const nearSp2=Math.hypot(x+.5-SPAWN2.x,y+.5-(SPAWN2.y+1.5))<7,nearSpawn=nearSp2||Math.hypot(x+.5-SPAWN.x,y+.5-(SPAWN.y+1.5))<7||Math.hypot(x+.5-TROU.x,y+.5-TROU.y)<3.2;
     if(nearSpawn&&r<0)r=nearSp2?7:y<200?6:0;
     if(nearCamp<16)r=6;
+    if(nearCamp2<14)r=8;
     // petits lacs dans les zones intérieures
     if(r>=1&&r<=5&&!path[i]&&vn(x/13+SY*2,y/13+SX*2)>(r===5?0.87:0.8))r=-1;
     if(path[i]&&r<0&&ex<hw+6)r=zoneOf(y+.5);
     reg[i]=r;if(r<0){sol[i]=1;path[i]=0;continue;}
     // le camp des Terres Désolées : une cour pavée, entourée de pierres dressées, ouverte aux quatre vents
     if(nearCamp<16){if(nearCamp<CAMP.r)path[i]=1;else if(nearCamp<CAMP.r+1.15){const ax=Math.abs(x+.5-CAMP.x),ay=Math.abs(y+.5-CAMP.y);if(Math.min(ax,ay)>1.6){sol[i]=1;deco[i]=1;path[i]=0;}else path[i]=1;}continue;}
+    if(nearCamp2<14){if(nearCamp2<CAMP2.r)path[i]=1;else if(nearCamp2<CAMP2.r+1.15){const ax=Math.abs(x+.5-CAMP2.x),ay=Math.abs(y+.5-CAMP2.y);if(Math.min(ax,ay)>1.6&&h2(x,y)<0.55){sol[i]=1;deco[i]=1;path[i]=0;}else path[i]=1;}continue;}
     const dz=ZONES[r].deco;
     if(!nearSpawn&&!path[i]&&h2(x+HX,y+HY)<dz[0]){sol[i]=1;deco[i]=dz[1];}
   }}
@@ -3625,7 +3643,7 @@ const cap1=s=>s.charAt(0).toUpperCase()+s.slice(1);
 /* ---------- meubles de la maison : 25 objets à acheter, poser, tourner, reprendre ---------- */
 // d(q,f,v) dessine la vue v : 0 face · 1 côté · 2 dos. « vues » dit quelle vue sert pour chacune des 4 orientations, « flips » lesquelles sont retournées en miroir.
 const MEUBLES={},MB_ORDRE=[],MBIMG={};let VIS=null,DECO={on:false,sel:null,r:0};
-const SALLE={x0:-16,x1:-1,porte:[5,6],prix:1000},VOX=16;
+const SALLE={x0:-16,x1:-1,porte:[11,12],prix:1000},VOX=16;
 function defM(id,nom,prix,h,sol,d,anim,o){MEUBLES[id]=Object.assign({id,nom,prix,h,sol,d,anim:anim|0,vues:[0,1,2,1],flips:[0,0,0,1],fixe:false},o||{});MB_ORDRE.push(id);}
 function meubleImg(id,f,r){const M=MEUBLES[id],fr=M.anim?(f|0)%M.anim:0;r=M.fixe?0:(r|0)&3;const k=id+fr+'_'+r;if(!MBIMG[k]){const c=document.createElement('canvas');c.width=16;c.height=16*M.h;const g=c.getContext('2d'),fl=!!M.flips[r];M.d((x,y,w,h,col)=>{g.fillStyle=col;g.fillRect(fl?16-x-w:x,y,w,h);},fr,M.vues[r]);MBIMG[k]=c;}return MBIMG[k];}
 const SYM={fixe:true};
@@ -3682,7 +3700,7 @@ const CRISTAL_JOUR=10;
 const MBURL={};function meubleURL(id){return MBURL[id]||(MBURL[id]=meubleImg(id,0,0).toDataURL());}
 function meubleZone(x,y,salle){
   if(salle&&x>SALLE.x0&&x<=SALLE.x1&&y>=1&&y<=VHI-2)return !(x===SALLE.x1&&SALLE.porte.includes(y)); // la salle en plus (on laisse libre la case devant la porte)
-  if(!(x>=1&&x<=25&&y>=1&&y<=16))return false;if(x>=11&&x<=13)return false;if(x>=LAKE.x0&&x<=LAKE.x1&&y>=LAKE.y0&&y<=LAKE.y1)return false;if(CHESTS.some(c=>c.x===x&&c.y===y))return false;
+  if(!(x>=1&&x<=25&&y>=1&&y<=VHI-2))return false;if(x>=11&&x<=13)return false;if(x>=LAKE.x0&&x<=LAKE.x1&&y>=LAKE.y0&&y<=LAKE.y1)return false;if(CHESTS.some(c=>c.x===x&&c.y===y))return false;
   if(x===1&&SALLE.porte.includes(y))return false;
   for(const o of [PRESNPC,HDECO,FBOARD,PSIGN])if(Math.abs(x+.5-o.x)<1.3&&Math.abs(y+.5-o.y)<1.3)return false;return true;}
 const ownM=()=>(save.house&&Array.isArray(save.house.m))?save.house.m:[];
@@ -3727,7 +3745,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000090;let newerWarned=false;
+const NETV=2,BUILD=2600000091;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -3855,7 +3873,8 @@ function gardienFiltre(peer,m,d,id,tot){const r=remotes.get(peer);let vu=G_VU.ge
   const dispo=Math.max(0,b.v),ok=Math.min(d,dispo+libre),pris=Math.min(ok,dispo);b.v=Math.max(0,b.v-pris);if(q)q.v=Math.max(0,q.v-(ok-pris));if(d-ok>0&&neuf)gSuivi(peer).clip+=d-ok;return ok;}
 function applyHits(peer,s){
   let mp=applied.get(peer);if(!mp){mp=new Map();applied.set(peer,mp);}
-  for(const [id,tot] of parseHits(s)){const prev=mp.get(id)||0;if(tot<=prev)continue;const m=monsters.find(q=>q.id===id);if(!m||m.hp<=0){mp.set(id,tot);continue;}let dd=Math.min(tot-prev,200000);
+  for(const [id,tot] of parseHits(s)){let prev=mp.get(id)||0;if(tot===prev)continue;if(tot<prev)prev=0; // total reparti de zéro (le joueur avait cessé de taper ce monstre plus de 30 s) : ses nouveaux coups comptent, au lieu d'être ignorés jusqu'à dépasser l'ancien total
+    const m=monsters.find(q=>q.id===id);if(!m||m.hp<=0){mp.set(id,tot);continue;}let dd=Math.min(tot-prev,200000);
     // ce qui dépasse le plafond n'est pas perdu : on ne note que ce qui a été appliqué, le reste sera repris au prochain message
     if(window.GARDIEN_MODE)gardienFiltre(peer,m,dd,id,tot); // observation seulement : les dégâts passent toujours (plus de monstres qui « se soignent »)
     mp.set(id,tot);
@@ -3883,7 +3902,7 @@ function syncFromHost(){
       keep.add(id);let m=monsters.find(q=>q.id===id);
       if(!m){if(handled.has(id))continue;m=addMon(k,x,y,regionAt(x,y),id,hp);}
       if(k==='maudit'&&!m.sk&&f[8]){const q=f[8].split('.');mauditHabille(m,MKEYS[parseInt(q[0],36)],[...(q[1]||'')].map(Number));}
-      const grew=mx0!==m.max;m.max=mx0;m.inv=f[6]==='1'?1:0;m.sf=f[7]||'';m.tx=x;m.ty=y;m.hh=hp;m.vuT=time;if(!m.pend||time-m.pend>1.2){const dt0=dmgTot.get(id);m.hp=(!m.pend&&!grew&&dt0&&time-dt0.t<4&&hp-m.hp<m.max*0.08)?Math.min(m.hp,hp):hp;m.pend=0;}
+      const grew=mx0!==m.max;m.max=mx0;m.inv=f[6]==='1'?1:0;m.sf=f[7]||'';m.tx=x;m.ty=y;m.hh=hp;m.vuT=time;if(!m.pend||time-m.pend>2){const dt0=dmgTot.get(id);m.hp=(!m.pend&&!grew&&dt0&&time-dt0.t<4&&hp-m.hp<m.max*0.08)?Math.min(m.hp,hp):hp;m.pend=0;}
     }
     monsters=monsters.filter(m=>keep.has(m.id)||(m.hp>0&&(Math.hypot(m.x-P.x,m.y-P.y)>=10||P.invis>0||admInv||(m.d.boss&&time-(m.vuT==null?(m.vuT=time):m.vuT)<3))));
   }
@@ -3894,7 +3913,7 @@ function syncFromHost(){
   }
   if(scene==='dungeon'&&typeof p.X==='string'&&p.X!==lastHostX){lastHostX=p.X;const n=MAP.nInit|0;
     for(const m of monsters){if(m.id>n||m.hp<=0)continue;const c=parseInt(p.X[(m.id-1)>>2],16);if(c&(1<<((m.id-1)&3))){m.hp=0;handled.add(m.id);}}
-    monsters=monsters.filter(m=>m.hp>0||(m.pend&&time-m.pend<1.2));}
+    monsters=monsters.filter(m=>m.hp>0||(m.pend&&time-m.pend<2));}
   if(scene==='dungeon'&&typeof p.S==='number')setStars(p.S);
   if(scene==='dungeon'&&typeof p.F==='number')setFight(p.F);
   if(typeof p.B==='string'&&p.B!==lastHostB){lastHostB=p.B;showBossBoard(p.B);}
@@ -3914,7 +3933,7 @@ function encMonsters(budget){
   let s='';for(const [,m] of list){const e=m.id.toString(36)+','+MKEYS.indexOf(m.key)+','+Math.round(m.x*10)+','+Math.round(m.y*10)+','+Math.max(1,Math.round(clamp(m.hp/m.max,0,1)*1000))+(m.key==='maudit'||m.max!==m.d.hp||m.inv||m.parT>time||m.abT>time||m.miniT>time||m.wkT>time?','+Math.round(m.max).toString(36)+','+(m.inv?1:0)+(m.key==='maudit'||m.parT>time||m.abT>time||m.miniT>time||m.wkT>time?','+(m.parT>time?'P':'')+(m.abT>time?'B':'')+(m.miniT>time?'M':'')+(m.wkT>time?'W':''):'')+(m.key==='maudit'?','+MKEYS.indexOf(m.sk).toString(36)+'.'+(m.pats||[]).join(''):''):'');if(s.length+e.length+1>budget)break;s+=(s?';':'')+e;}
   return s;
 }
-function encHits(){const out=[];for(const [id,v] of dmgTot){if(time-v.t>30){dmgTot.delete(id);continue;}if(time-v.t<20)out.push(id.toString(36)+':'+Math.round(v.tot).toString(36));}return out.slice(-50).join(';');}
+function encHits(){const out=[];let vivants=null;for(const [id,v] of dmgTot){if(time-v.t>30){if(!vivants)vivants=new Set(monsters.filter(m=>m.hp>0||m.pend).map(m=>m.id));if(!vivants.has(id)||time-v.t>600){dmgTot.delete(id);continue;}continue;}if(time-v.t<20)out.push(id.toString(36)+':'+Math.round(v.tot).toString(36));}return out.slice(-50).join(';');}
 const enc=new TextEncoder();
 function sendPresence(){
   if(!room||!save.current)return;
@@ -4243,7 +4262,7 @@ function beachSpot(){const slot=Math.floor((Date.now()+CLK)/60000),R=mulberry(sl
   return best;}
 function enterRealm(dest){
   if(!realm)realm=genRealm();sfx('portal');
-  scene='realm';MAP=realm;if(dest==='camp'){const a=Math.random()*TAU;P.x=CAMP.x+Math.cos(a)*2.5;P.y=CAMP.y+Math.sin(a)*2.5;}else if(dest==='colosses'){const a=Math.random()*TAU;P.x=SPAWN2.x+Math.cos(a)*2;P.y=SPAWN2.y+Math.sin(a)*1.5;}else if(dest==='trou'){P.x=TROU.x;P.y=TROU.y+2.2;}else{const b=beachSpot();P.x=b.x;P.y=b.y;}P.invul=2.5;resetScene();curZone=-2;sceneT=Date.now();
+  scene='realm';MAP=realm;if(dest==='camp'){const a=Math.random()*TAU;P.x=CAMP.x+Math.cos(a)*2.5;P.y=CAMP.y+Math.sin(a)*2.5;}else if(dest==='camp2'){const a=Math.PI*(0.7+Math.random()*0.6);P.x=CAMP2.x+Math.cos(a)*2.6;P.y=CAMP2.y+Math.sin(a)*2.2;}else if(dest==='colosses'){const a=Math.random()*TAU;P.x=SPAWN2.x+Math.cos(a)*2;P.y=SPAWN2.y+Math.sin(a)*1.5;}else if(dest==='trou'){P.x=TROU.x;P.y=TROU.y+2.2;}else{const b=beachSpot();P.x=b.x;P.y=b.y;}P.invul=2.5;resetScene();curZone=-2;sceneT=Date.now();
   amHost=computeHostIsMe();
   if(amHost)populateRealm();
   else showBanner('Plaines partagées',hostName()+' fait tourner les monstres','#8fd0ff');
@@ -4574,11 +4593,11 @@ function colisTout(){const L=colis().filter(Boolean),ch=C();let n=0;while(L.leng
 document.getElementById('vaultBox').addEventListener('click',e=>{if(e.target.closest('#colisAll'))colisTout();});
 function nearChest(){if(nearColis())return -1;let best=-1,bd=1.8;CHESTS.forEach((c,i)=>{const d=Math.hypot(P.x-(c.x+.5),P.y-(c.y+.5));if(d<bd){bd=d;best=i;}});return best;}
 function tryUnlock(i){
-  const price=VAULT_PRICES[i];
+  const pr=vaultPrix(i),cu=pr.cu!=null,price=cu?pr.cu:pr.or,mon=cu?'Cursite':'pièces',dispo=cu?save.cursite:save.gold;
   if(i!==save.vault.n){note('Débloque d\'abord le coffre '+(save.vault.n+1));return;}
-  if(save.gold<price){note('Il te faut '+price+' pièces (tu en as '+save.gold+')');sfx('deny');return;}
-  if(unlockArm!==i||time-unlockT>3){unlockArm=i;unlockT=time;note('Appuie encore sur E pour payer '+price+' pièces');return;}
-  save.gold-=price;save.vault.n++;unlockArm=-1;persist();sfx('buy');
+  if(dispo<price){note('Il te faut '+price+' '+mon+' (tu en as '+dispo+')');sfx('deny');return;}
+  if(unlockArm!==i||time-unlockT>3){unlockArm=i;unlockT=time;note('Appuie encore sur E pour payer '+price+' '+mon);return;}
+  if(cu)save.cursite-=price;else save.gold-=price;save.vault.n++;unlockArm=-1;persist();if(cu)pushSave(true);sfx('buy');
   const c=CHESTS[i];burst(c.x+.5,c.y+.5,'#ffd96a',30,3);showBanner('Coffre '+(i+1)+' débloqué !',(10-save.vault.n)+' restant'+(10-save.vault.n>1?'s':''),'#ffd96a');invDirty=true;
 }
 /* ---------- arène de la Liche ---------- */
@@ -4629,7 +4648,7 @@ let zoneCapCache={};
 function zoneCap(r){if(zoneCapCache[r]!=null)return zoneCapCache[r];let n=0;for(let i=0;i<RW*RH;i++)if(realm.reg[i]===r&&!realm.sol[i])n++;return zoneCapCache[r]=Math.round(n/(r===6?150:190)*1.15);}
 function spawnIn(r){
   const pl=sceneAll();
-  for(let k=0;k<40;k++){const {tx,ty}=zoneTir(r),i=ty*RW+tx;if(realm.sol[i]||realm.reg[i]!==r)continue;const x=tx+.5,y=ty+.5;if(pl.some(p=>Math.hypot(x-p.x,y-p.y)<24)||Math.hypot(x-SPAWN.x,y-SPAWN.y)<10||Math.hypot(x-SPAWN2.x,y-SPAWN2.y)<14||Math.hypot(x-TROU.x,y-TROU.y)<9||Math.hypot(x-CAMP.x,y-CAMP.y)<24)continue;addMon(pick(ZONES[r].pool),x,y,r);return;}
+  for(let k=0;k<40;k++){const {tx,ty}=zoneTir(r),i=ty*RW+tx;if(realm.sol[i]||realm.reg[i]!==r)continue;const x=tx+.5,y=ty+.5;if(pl.some(p=>Math.hypot(x-p.x,y-p.y)<24)||Math.hypot(x-SPAWN.x,y-SPAWN.y)<10||Math.hypot(x-SPAWN2.x,y-SPAWN2.y)<14||Math.hypot(x-TROU.x,y-TROU.y)<9||Math.hypot(x-CAMP.x,y-CAMP.y)<24||Math.hypot(x-CAMP2.x,y-CAMP2.y)<22)continue;addMon(pick(ZONES[r].pool),x,y,r);return;}
 }
 function addMon(key,x,y,r,id,hp){const d=MON[key];const m={id:id||(++monId),key,d,x,y,tx:x,ty:y,hx:x,hy:y,r,hp:hp==null?d.hp:hp,max:d.hp,cd:rnd(0.5,1.5),wt:0,wx:0,wy:0,dir:Math.random()<.5?1:-1,flash:0,spin:0,phase:0,pend:0,bq:0,bt:0,ba:0,dash:0,dcd:rnd(1,3),seed:Math.random()*10};monsters.push(m);return m;}
 function spawnBoss(key){for(let k=0;k<300;k++){const {tx,ty}=zoneTir(Math.random()<0.45?5:6),i=ty*RW+tx;if(realm.sol[i]||realm.reg[i]<5)continue;const x=tx+.5,y=ty+.5;let ok=Math.hypot(x-CAMP.x,y-CAMP.y)>60;for(let q=0;q<16&&ok;q++){const a=q*TAU/16;if(solidAt(x+Math.cos(a)*3,y+Math.sin(a)*3))ok=false;}if(!ok)continue;const m=addMon(key,x,y,regionAt(x,y));m.hx=x;m.hy=y;return m;}return null;}
@@ -5331,6 +5350,7 @@ function handleDeath(id,key,x,y){
   if(scene==='tuto'&&key==='tuteur'){TU.boss=1;exitOpen=true;MAP.bossExit={x,y};for(const q of monsters)if(q.key==='invoc')q.hp=0;setTimeout(()=>showBanner('Bravo !','Le portail Village est ouvert : il termine le tutoriel','#7ed957'),1500);}
   const mine=dmgTot.has(id)||Math.hypot(x-P.x,y-P.y)<12;
   if(!mine)return;
+  if(scene==='realm')ileqKill(key);petLegXp(key);
   {const Q=dailyQuests();if(Q[0].k===key)questAdd(0,1);if(scene==='dungeon'&&MAP.bossKey===key&&Q[2].k===dungeonT)questAdd(2,1);
     if(!d.tuto){wqAdd('kill',1);if(d.boss)wqAdd('boss',1);if(scene==='dungeon'&&MAP.bossKey===key)wqAdd('dun',1);}if(scene==='dungeon'&&(MAP.bossKey===key||MAP.bossKey2===key))colTue(MAP.bossKey);}
   // le butin, l'XP et les pièces sont tirés par le serveur (anti-triche) : on lui signale la mort
@@ -5889,6 +5909,25 @@ function campTick(dt){if(scene!=='realm')return;const pres=window.GARDIEN_MODE||
     if(!window.GARDIEN_MODE){CAMP_FX.push({x0:g.x,y0:g.y-0.5,x1:c.x,y1:c.y,t:time});if(Math.hypot(P.x-g.x,P.y-g.y)<16){burst(c.x,c.y,'#ffd23f',6,2.5);sfx('zap',0.18);}}
     if(amHost){c.hp-=Math.max(40,Math.round(c.max*0.22));c.flash=0.1;if(c.hp<=0){c.hp=1;c.perdu=1;}}}
   if(CAMP_FX.length)CAMP_FX=CAMP_FX.filter(q=>time-q.t<0.22);}
+// Camp des Colosses : l'hôte repousse les monstres hors de la cour ; le joueur qui y entre ouvre le portail du Village vers le camp (pour tout son compte)
+function camp2Tick(dt){if(scene!=='realm')return;
+  if(amHost&&(window.GARDIEN_MODE||Math.abs(P.y-CAMP2.y)<60)){for(const m of monsters){if(m.hp<=0||Math.abs(m.x-CAMP2.x)>CAMP2.r+14||Math.abs(m.y-CAMP2.y)>CAMP2.r+14)continue;const dx=m.x-CAMP2.x,dy=m.y-CAMP2.y,d=Math.hypot(dx,dy)||0.01,lim=CAMP2.r+2.4+m.d.sz*0.45;if(d<lim){m.x=CAMP2.x+dx/d*lim;m.y=CAMP2.y+dy/d*lim;m.tx=m.x;m.ty=m.y;}}}
+  if(window.GARDIEN_MODE||!save.current||camp2Ouvert())return;
+  if(Math.hypot(P.x-CAMP2.x,P.y-CAMP2.y)<CAMP2.r){save.portails=save.portails||{};save.portails.camp2=1;persist();pushSave(true);showBanner('Camp des Colosses découvert !','Le troisième portail du Village t\'y amène désormais ('+CAMP2_PRIX+' pièces)','#8fd0f0');sfx('relic');}}
+function drawCamp2(){if(scene!=='realm'||Math.abs(P.x-CAMP2.x)>34||Math.abs(P.y-CAMP2.y)>26)return;
+  const X=sx(CAMP2.x),Y=sy(CAMP2.y),R0=CAMP2.r*TS,pu=0.5+0.5*Math.sin(time*2),u=TS/16;
+  ctx.save();ctx.lineWidth=Math.max(2,TS*0.07);ctx.strokeStyle='rgba(143,208,240,'+(0.3+0.22*pu)+')';ctx.setLineDash([TS*0.35,TS*0.22]);ctx.lineDashOffset=-time*TS*0.4;ctx.beginPath();ctx.arc(X,Y,R0,0,TAU);ctx.stroke();ctx.setLineDash([]);
+  {const g=ctx.createRadialGradient(X,Y,R0*0.2,X,Y,R0);g.addColorStop(0,'rgba(143,208,240,0)');g.addColorStop(1,'rgba(143,208,240,'+(0.06+0.05*pu)+')');ctx.fillStyle=g;ctx.beginPath();ctx.arc(X,Y,R0,0,TAU);ctx.fill();}ctx.restore();
+  // tentes de peaux, feu de camp, râtelier
+  const tente=(tx,ty,c1,c2)=>up(tx,ty,()=>{const x=Math.floor(sx(tx)),y=Math.floor(sy(ty)),u=TS/8;ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(x,y+u*3,u*12,u*3,0,0,TAU);ctx.fill();
+    for(let i=0;i<14;i++){const w=(14-i)*u*0.85;R(x-w,y+u*2-i*u*1.4,w*2,u*1.5,i%3===0?c2:c1);}R(x-u*2.5,y-u*6,u*5,u*8,'#2a1c14');R(x-u*0.5,y-u*21,u,u*3,'#6a4424');R(x+u*0.5,y-u*22,u*3,u*2,'#c9973c');});
+  tente(CAMP2.x-4.2,CAMP2.y-2.6,'#8a6a4a','#b0905a');tente(CAMP2.x+4.4,CAMP2.y+2.2,'#6a7a8a','#9aa8b8');
+  up(CAMP2.x,CAMP2.y+0.4,()=>{const x=Math.floor(X),y=Math.floor(Y+0.4*TS);ctx.fillStyle='rgba(255,170,60,'+(0.16+0.08*pu)+')';ctx.beginPath();ctx.arc(x,y,TS*1.6,0,TAU);ctx.fill();
+    for(let i=0;i<6;i++){const a=i*TAU/6;R(x+Math.cos(a)*u*5-u*1.5,y+Math.sin(a)*u*2.2-u,u*3,u*2,'#6a6c7a');}R(x-u*4,y-u,u*8,u*1.5,'#5a3a20');R(x-u,y-u*3,u*2,u*4,'#5a3a20');
+    const f=Math.floor(time*8)%2;R(x-u*3,y-u*4-f*u,u*6,u*3,'#ff7a2a');R(x-u*2,y-u*7+f*u,u*4,u*3,'#ffb04a');R(x-u,y-u*9,u*2,u*2+f*u,'#ffe27a');
+    if(Math.random()<0.25)parts.push({x:CAMP2.x+rnd(-.15,.15),y:CAMP2.y+0.1,vx:rnd(-.2,.2),vy:-rnd(0.8,1.6),life:rnd(.4,.8),col:Math.random()<.5?'#ffb04a':'#ffe27a',s:0.06});
+    label('Camp des Colosses',x,y-TS*3.1,'#8fd0f0',Math.round(TS*0.3),700);label(auCamp(P.x,P.y)?'Zone sûre · aucun monstre n\'entre ici':'Zone sûre',x,y-TS*3.1+TS*0.36,'#e8dcc0',Math.round(TS*0.24));});
+  drawPnj('brunhild',CAMP2NPC.x,CAMP2NPC.y,'Brunhild · quêtes de l\'île','#8fd0f0',ileqPret()?'!':null);}
 function drawCamp(){if(scene!=='realm'||Math.abs(P.x-CAMP.x)>34||Math.abs(P.y-CAMP.y)>26)return;
   const X=sx(CAMP.x),Y=sy(CAMP.y),R0=CAMP.r*TS,pu=0.5+0.5*Math.sin(time*2);
   ctx.save();ctx.lineWidth=Math.max(2,TS*0.07);ctx.strokeStyle='rgba(255,210,63,'+(0.28+0.22*pu)+')';ctx.setLineDash([TS*0.35,TS*0.22]);ctx.lineDashOffset=-time*TS*0.4;ctx.beginPath();ctx.arc(X,Y,R0,0,TAU);ctx.stroke();ctx.setLineDash([]);
@@ -5905,22 +5944,22 @@ function drawCamp(){if(scene!=='realm'||Math.abs(P.x-CAMP.x)>34||Math.abs(P.y-CA
 // ===== Les portails des Plaines Sauvages : la liste s'ouvre devant le portail du Village =====
 const PORTAILS=[{id:'plage',nom:'Plage des Naufragés',niv:'Niveaux 1 à 3',txt:'Le point de départ de l\'île, tout au sud. La route de briques remonte de là jusqu\'aux Terres Désolées.',col:'#d6c089'},
   {id:'camp',nom:'Avant-poste des Terres Désolées',niv:'Niveaux 18 à 20',txt:'Tu arrives tout au nord, dans une zone sûre tenue par quatre gardes invincibles qui abattent les monstres trop curieux. On n\'y est jamais blessé, mais on ne s\'y bat pas non plus.',col:'#8a7fb8',niv:'Niveaux 18 à 20',niv20:1,peage:20},
-  {id:'colosses',nom:'Portail scellé',niv:'???',txt:'Futures zones à venir',col:'#5a5668',ferme:1,colq:1,nom2:'Île aux Colosses',niv2:'Niveaux 25 à 30',txt2:'Au-delà de la grotte de glace. Là-bas, tout est plus grand, plus fort et plus lent à mourir : ton équipement d\'ici ne suffira pas longtemps.',col2:'#ff7a2a'}];
+  {id:'colosses',nom:'Portail scellé',niv:'???',txt:'Futures zones à venir',col:'#5a5668',ferme:1,colq:1,nom2:'Île aux Colosses',niv2:'Niveaux 25 à 30',txt2:'Le portail mène au Camp des Colosses, au cœur de l\'île. Découvre-le d\'abord en passant par la grotte de glace : à l\'arrivée, tu es protégé 5 s (ou jusqu\'à ton premier tir).',col2:'#ff7a2a'}];
 // l'Avant-poste s'ouvre pour tout le compte dès qu'un héros a atteint le niveau 20 (et le reste, même si ce héros meurt) ; chaque passage coûte quelques pièces
 function portNiv20(){if(save.portails&&save.portails.camp)return true;if((save.capLvl|0)>20||Object.values(save.caps||{}).some(v=>(v|0)>20)||Object.values(save.chars||{}).some(ch=>ch&&(ch.lvl|0)>=20)){save.portails=save.portails||{};save.portails.camp=1;persist();return true;}return false;}
 const portOuvert=p=>!p.ferme&&(!p.niv20||portNiv20());
 const portEl=document.createElement('div');portEl.className='overlay';portEl.id='portWin';portEl.hidden=true;portEl.innerHTML='<div class="shop-inner" role="dialog" aria-label="Portails des Plaines Sauvages" style="max-width:640px;max-height:94vh;overflow:auto;border-color:#a45be8"><div id="portBody"></div></div>';$('#pets').after(portEl);
 function renderPortails(){let h='<h2 style="color:#c89bff">Portails des Plaines Sauvages</h2><div style="display:grid;gap:10px;margin:10px 0 14px">';
-  for(const p0 of PORTAILS){const p=p0.colq&&colEtape()>=4?Object.assign({},p0,{ferme:0,nom:p0.nom2,niv:p0.niv2,txt:p0.txt2,col:p0.col2}):p0,ok=portOuvert(p);
+  for(const p0 of PORTAILS){const p=p0.colq&&colEtape()>=4?Object.assign({},p0,{ferme:0,nom:p0.nom2,niv:p0.niv2,txt:p0.txt2,col:p0.col2,peage:CAMP2_PRIX,camp2:1}):p0,ok=portOuvert(p)&&(!p.camp2||camp2Ouvert());
     h+='<div style="display:flex;gap:12px;align-items:center;border:2px solid '+(p.ferme?'#3a3648':p.col)+';background:rgba(255,255,255,.04);padding:10px 12px;'+(p.ferme?'opacity:.6':'')+'"><div style="flex:none;width:34px;height:46px;border-radius:50%;background:radial-gradient(ellipse at center,'+(p.ferme?'#2a2636,#15131c':'#fff,'+p.col+' 45%,#2a1c40')+');border:2px solid '+(p.ferme?'#4a4658':'#e8dcff')+'"></div>'
       +'<div style="flex:1;display:grid;gap:3px"><b style="color:'+(p.ferme?'#9a94b0':'#fff')+'">'+p.nom+' <span style="font-weight:400;color:#ffe9a8">· '+p.niv+'</span></b><span style="color:'+(p.ferme?'#ffd23f':'#cfc8e0')+';font-size:'+(p.ferme?'16':'13')+'px">'+p.txt+'</span></div>'
-      +(p.ferme?'<button type="button" class="act" disabled>Verrouillé</button>':ok?'<button type="button" class="act'+(!p.peage||save.gold>=p.peage?' main':'')+'" data-port="'+p.id+'">Entrer'+(p.peage?' · '+p.peage+' pièces':'')+'</button>':'<button type="button" class="act" disabled>Un héros niveau 20</button>')+'</div>';}
-  h+='</div><div class="shop-foot"><span class="hint">L\'Avant-poste s\'ouvre à tous tes héros dès que l\'un d\'eux atteint le niveau 20. Chaque passage coûte 20 pièces. Tu as '+fmtN(save.gold)+' pièces.</span><button type="button" class="act" data-port="non">Fermer</button></div>';
+      +(p.ferme?'<button type="button" class="act" disabled>Verrouillé</button>':ok?'<button type="button" class="act'+(!p.peage||save.gold>=p.peage?' main':'')+'" data-port="'+p.id+'">Entrer'+(p.peage?' · '+p.peage+' pièces':'')+'</button>':'<button type="button" class="act" disabled>'+(p.camp2?'Trouve le camp sur l\'île':'Un héros niveau 20')+'</button>')+'</div>';}
+  h+='</div><div class="shop-foot"><span class="hint">L\'Avant-poste s\'ouvre à tous tes héros dès que l\'un d\'eux atteint le niveau 20. Chaque passage coûte 20 pièces'+(colEtape()>=4?' (Camp des Colosses : '+CAMP2_PRIX+' pièces)':'')+'. Tu as '+fmtN(save.gold)+' pièces.</span><button type="button" class="act" data-port="non">Fermer</button></div>';
   $('#portBody').innerHTML=h;}
 function openPortails(){renderPortails();portEl.hidden=false;paused=true;keys.clear();mouse.down=false;sfx('portal',0.4);}
 function closePortails(){portEl.hidden=true;paused=false;cv.focus();}
 portEl.addEventListener('click',e=>{if(e.target===portEl){closePortails();return;}const b=e.target.closest('[data-port]');if(!b)return;const id=b.dataset.port;if(id==='non'){closePortails();return;}
-  const p=PORTAILS.find(q=>q.id===id);if(!p||(p.ferme&&!(p.colq&&colEtape()>=4)))return;if(p.colq){closePortails();enterRealm('colosses');return;}
+  const p=PORTAILS.find(q=>q.id===id);if(!p||(p.ferme&&!(p.colq&&colEtape()>=4)))return;if(p.colq){if(!camp2Ouvert()){note('Découvre d\'abord le Camp des Colosses, au cœur de l\'île (par la grotte de glace)');sfx('deny');return;}if(save.gold<CAMP2_PRIX){note('Il te faut '+CAMP2_PRIX+' pièces pour passer');sfx('deny');return;}save.gold-=CAMP2_PRIX;persist();pushSave(true);invDirty=true;closePortails();enterRealm('camp2');P.invul=5;P.backProt=1;note('Protégé 5 s · ton premier tir annule la protection');return;}
   if(!portOuvert(p)){note('Il faut qu\'un de tes héros ait atteint le niveau 20');sfx('deny');return;}
   if(p.peage){if(save.gold<p.peage){note('Il te faut '+p.peage+' pièces pour passer');sfx('deny');return;}save.gold-=p.peage;persist();pushSave(true);invDirty=true;}
   closePortails();enterRealm(p.id==='camp'?'camp':undefined);});
@@ -6034,6 +6073,34 @@ function wqState(){const wk=weekKey();if(!save.wquests||save.wquests.week!==wk)s
 function wqAdd(t,v){const W=weeklyQuests(),st=wqState();W.forEach((q,i)=>{if(q.t!==t||st.got[i])return;const was=st.prog[i];st.prog[i]=Math.min(q.n,st.prog[i]+v);if(was<q.n&&st.prog[i]>=q.n){showBanner('Quête de la semaine terminée !',q.txt+' · va voir le maître des quêtes','#7df0e0');sfx('level');}});}
 let walkAcc=0;
 function questWalk(d){walkAcc+=d;if(walkAcc>=1){const n=Math.floor(walkAcc);walkAcc-=n;const Q=dailyQuests();if(Q[1].t==='walk')questAdd(1,n);wqAdd('walk',n);}}
+// Quêtes de l'Île aux Colosses : 3 par jour (les mêmes pour tous), données et récompensées au camp par Brunhild
+const ILEQ_BONUS=75;
+function ileQuests(){const R=mulberry(dayKey()*313+71),q=[];
+  const z=7+Math.floor(R()*3),pool=ZONES[z].pool,k=pool[Math.floor(R()*pool.length)],need=[30,22,15][z-7];
+  q.push({t:'kill',k,n:need,g:[400,500,600][z-7],txt:'Élimine '+need+' × '+MON[k].nom,sub:ZONES[z].nom});
+  const n2=[80,100,120][Math.floor(R()*3)];q.push({t:'ile',n:n2,g:600,txt:'Élimine '+n2+' monstres de l\'île',sub:'Toutes les zones de l\'Île aux Colosses'});
+  const c=Math.floor(R()*3);q.push(c===0?{t:'fishi',n:6,g:700,txt:'Pêche 6 poissons autour de l\'île',sub:'Au bord de la mer de l\'Île aux Colosses'}:c===1?{t:'cimes',n:40,g:700,txt:'Élimine 40 monstres des Cimes des Titans',sub:'Le sommet de l\'île'}:{t:'grotte',n:1,g:700,txt:'Traverse la grotte de glace',sub:'Du Trou des Terres Désolées jusqu\'à la sortie'});
+  return q;}
+function ileqState(){const dk=dayKey();if(!save.iquests||save.iquests.day!==dk)save.iquests={day:dk,prog:[0,0,0],got:[false,false,false],bonus:false};return save.iquests;}
+function ileqAdd(t,v,k){if(!save.current||window.GARDIEN_MODE)return;const Q=ileQuests(),st=ileqState();Q.forEach((q,i)=>{if(st.got[i]||q.t!==t||(t==='kill'&&q.k!==k))return;const was=st.prog[i];st.prog[i]=Math.min(q.n,st.prog[i]+v);if(was<q.n&&st.prog[i]>=q.n){showBanner('Quête de l\'île terminée !',q.txt+' · va voir Brunhild au camp','#8fd0f0');sfx('level');}});}
+function ileqKill(key){const d=MON[key];if(!d||d.ile!==2)return;ileqAdd('kill',1,key);ileqAdd('ile',1);if(ZONES[9].pool.includes(key))ileqAdd('cimes',1);}
+function ileqPret(){try{const Q=ileQuests(),st=ileqState();return Q.some((q,i)=>!st.got[i]&&st.prog[i]>=q.n);}catch(e){return false;}}
+const ileqEl=document.createElement('div');ileqEl.className='overlay';ileqEl.id='ileqWin';ileqEl.hidden=true;ileqEl.innerHTML='<div class="shop-inner" role="dialog" aria-label="Quêtes de l\'île" style="max-width:620px;max-height:94vh;overflow:auto;border-color:#8fd0f0"><div id="ileqBody"></div></div>';
+function openIleQ(){if(!ileqEl.isConnected)$('#pets').after(ileqEl);renderIleQ();ileqEl.hidden=false;paused=true;keys.clear();mouse.down=false;sfx('item');}
+function closeIleQ(){ileqEl.hidden=true;paused=false;cv.focus();}
+function renderIleQ(){const Q=ileQuests(),st=ileqState(),ici=scene==='realm'&&Math.hypot(P.x-CAMP2NPC.x,P.y-CAMP2NPC.y)<3;
+  let h='<div style="display:flex;gap:14px;align-items:center"><img src="'+pnjImg('brunhild').toDataURL()+'" alt="" style="width:64px;height:72px;image-rendering:pixelated"><div><h2 style="color:#8fd0f0;margin:0">Brunhild · éclaireuse du camp</h2><p class="hint" style="margin:4px 0 0">« Les Colosses ne dorment jamais. Chaque jour, j\'ai trois besognes pour qui tient debout ici. »</p></div></div><div style="display:grid;gap:8px;margin:12px 0">';
+  Q.forEach((q,i)=>{const done=st.prog[i]>=q.n,got=st.got[i],pc=Math.min(100,st.prog[i]/q.n*100);
+    h+='<div style="border:2px solid '+(got?'#3a3648':done?'#8fd0f0':'#4a4658')+';padding:8px 10px;background:rgba(255,255,255,.04);display:flex;gap:10px;align-items:center'+(got?';opacity:.6':'')+'"><div style="flex:1;display:grid;gap:3px"><b>'+q.txt+'</b><span class="hint">'+q.sub+' · '+Math.floor(st.prog[i]).toLocaleString('fr-FR')+' / '+q.n.toLocaleString('fr-FR')+' · récompense : '+q.g+' pièces</span><div style="height:6px;background:#1a1626;border:1px solid var(--line2)"><div style="height:100%;width:'+pc+'%;background:#8fd0f0"></div></div></div>'
+      +'<button type="button" class="act'+(done&&!got&&ici?' main':'')+'" data-ileq="'+i+'"'+(!done||got||!ici?' disabled':'')+'>'+(got?'Récupérée':done?(ici?'Récupérer '+q.g:'Au camp'):'En cours')+'</button></div>';});
+  const mid=new Date();mid.setHours(24,0,0,0);const hh=Math.max(0,Math.floor((mid-Date.now())/3600000)),mm=Math.max(0,Math.floor((mid-Date.now())%3600000/60000));
+  h+='</div><div class="shop-foot"><span class="hint">'+(st.bonus?'Bonus du jour reçu : +'+ILEQ_BONUS+' Cursite ✓':'Termine les 3 quêtes : +'+ILEQ_BONUS+' Cursite en bonus ('+st.got.filter(Boolean).length+'/3)')+' · nouvelles quêtes dans '+hh+' h '+String(mm).padStart(2,'0')+'</span><button type="button" class="act" data-ileq="non">Fermer</button></div>';
+  $('#ileqBody').innerHTML=h;}
+ileqEl.addEventListener('click',e=>{if(e.target===ileqEl){closeIleQ();return;}const b=e.target.closest('[data-ileq]');if(!b)return;if(b.dataset.ileq==='non'){closeIleQ();return;}
+  const i=+b.dataset.ileq,Q=ileQuests(),st=ileqState(),q=Q[i];if(!q||st.got[i]||st.prog[i]<q.n||!(scene==='realm'&&Math.hypot(P.x-CAMP2NPC.x,P.y-CAMP2NPC.y)<3))return;
+  st.got[i]=true;save.gold+=q.g;sfx('buy');coinBurst(P.x,P.y-2,q.g);note('+'+q.g+' pièces');
+  if(!st.bonus&&st.got.every(Boolean)){st.bonus=true;save.cursite+=ILEQ_BONUS;showBanner('Les 3 quêtes de l\'île sont terminées !','+'+ILEQ_BONUS+' Cursite','#7df0e0');sfx('relic');}persist();pushSave(true);invDirty=true;renderIleQ();});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ileqEl.hidden)closeIleQ();});
 const qEl=$('#quests');
 $('#questBtn').addEventListener('click',()=>{if(!save.current)return;openQuests(true);});
 setInterval(()=>{try{$('#questDot').hidden=!(save.current&&questReady());}catch(e){}},1000);
@@ -6069,7 +6136,7 @@ $('#qClose').addEventListener('click',closeQuests);qEl.addEventListener('click',
 let SRVT=new Set();const TITLES={alpha:{t:'✦ ALPHA TESTEUR ✦',c:'#ff8ad8'},beta:{t:'★ BETA TESTEUR ★',c:'#ffd23f'},admin:{t:'⚙ ADMIN ⚙',c:'#ff5a5a'},pecheur:{t:'🎣 PÊCHEUR MAUDIT 🎣',c:'#ffd23f'},roipeche:{t:'👑 ROI DE LA PÊCHE 👑',c:'#8fd0ff'},etoiles:{t:'✦ TUEUR D\'ÉTOILES ✦',c:'#c8a0ff'},maitre:{t:'⚔ MAÎTRE DES HÉROS ⚔',c:'#7df0e0'},fleau:{t:'☠ FLÉAU DES MONSTRES ☠',c:'#ff7a5a'},temps:{t:'⌛ MAÎTRE DU TEMPS ⌛',c:'#3ff0ff'}};for(const k in CLASSES)TITLES['m_'+k]={t:'⚜ '+CLASSES[k].nom.toUpperCase()+' MAÎTRISÉ ⚜',c:'#ffd23f'};
 // Succès : chacun débloque un titre (à choisir dans les Options)
 const SUCCES=[
-  {id:'pecheur',ic:'🎣',nom:'Pêcheur maudit',desc:'Pêcher au moins une fois chaque poisson des deux mondes (lac et mer), légendaires compris.',prog:()=>[FISHES.filter(f=>(save.fish||{})[f.id]).length,FISHES.length]},
+  {id:'pecheur',ic:'🎣',nom:'Pêcheur maudit',desc:'Pêcher au moins une fois chaque poisson des deux mondes (lac et mer), légendaires compris.',prog:()=>[FISH_BASE().filter(f=>(save.fish||{})[f.id]).length,FISH_BASE().length]},
   {id:'etoiles',ic:'✦',nom:'Tueur d\'étoiles',desc:'Vaincre 10 fois le Dévoreur d\'Étoiles, le boss de l\'Observatoire Céleste.',prog:()=>[Math.min(10,(save.stats&&save.stats.devo)||0),10]},
   {id:'maitre',ic:'⚔',nom:'Maître des héros',desc:'Avoir tous les héros au niveau 20 (ou plus) en même temps.',prog:()=>{const k=Object.keys(CLASSES);return [k.filter(c=>save.chars[c]&&save.chars[c].lvl>=20).length,k.length];}},
   {id:'temps',ic:'⌛',nom:'Maître du Temps',desc:'Vaincre Chronos, l\'Horloger Maudit, au fond de l\'Horloge Brisée (donjon à clef).',prog:()=>[Math.min(1,(save.stats&&save.stats.chrono)||0),1]},
@@ -6175,16 +6242,22 @@ function petFrame(art,k,f){const A=PET_ANIM[k];if(!A||!f)return art;const Wp=art
   g.putImageData(new ImageData(o,Wp,Hp),0,0);return c;}
 function petBase(k,t,f){t=Math.min(2,t||0);f=f||0;const key='b'+k+t+(f?'f'+f:'');if(PET_SPR[key])return PET_SPR[key];let a=PET_ART[k](t);try{a=petFrame(a,k,f);}catch(e){}const c=document.createElement('canvas');c.width=40;c.height=40;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(a,0,0,40,40);return PET_SPR[key]=c;}
 // image du familier selon son tier : plus grand, contour lumineux de la couleur du tier, couronne au tier Épique
-const PET_SIZE=[1.04,1.2,1.35,1.45];
+const PET_SIZE=[1.04,1.2,1.35,1.45,1.55];
 function petSpr(k,t,f,sk){t=PET_TIERS[t]?t:0;f=f||0;if(sk&&!PETSKINS[sk])sk=null;const key=(sk?'S'+sk:k)+t+(f?'f'+f:'');if(PET_SPR[key])return PET_SPR[key];const b=sk?skinBase(sk,f):petBase(k,t,f),S=64,c=document.createElement('canvas');c.width=S;c.height=S;const g=c.getContext('2d');g.imageSmoothingEnabled=false;
-  const sz=Math.round([36,42,48,54][t]),x0=Math.round((S-sz)/2),y0=S-sz-2;
+  const sz=Math.round([36,42,48,54,58][t]),x0=Math.round((S-sz)/2),y0=S-sz-2;
   if(t>=1){const tt=document.createElement('canvas');tt.width=b.width;tt.height=b.height;const tg=tt.getContext('2d');tg.drawImage(b,0,0);tg.globalCompositeOperation='source-in';tg.fillStyle=PET_TIERS[t].col;tg.fillRect(0,0,tt.width,tt.height);
     const o=t>=2?3:2;for(const [dx,dy] of [[-o,0],[o,0],[0,-o],[0,o],[-o+1,-o+1],[o-1,o-1],[-o+1,o-1],[o-1,-o+1]])g.drawImage(tt,x0+dx,y0+dy,sz,sz);}
   g.drawImage(b,x0,y0,sz,sz);
-  if(t>=3){const cx=S/2,cy=y0-1,u=3;g.fillStyle='#0b0a12';g.fillRect(cx-4*u-1,cy-3*u-1,8*u+2,3*u+2);g.fillStyle='#ffd23f';g.fillRect(cx-4*u,cy-u,8*u,u);g.fillRect(cx-4*u,cy-3*u,u,2*u);g.fillRect(cx-u/2,cy-3*u,u,2*u);g.fillRect(cx+3*u,cy-3*u,u,2*u);g.fillStyle=t>=3?'#3ff0ff':'#ff4a6a';g.fillRect(cx-u/2,cy-u,u,u);}
+  if(t>=3){const cx=S/2,cy=y0-1,u=3;g.fillStyle='#0b0a12';g.fillRect(cx-4*u-1,cy-3*u-1,8*u+2,3*u+2);g.fillStyle='#ffd23f';g.fillRect(cx-4*u,cy-u,8*u,u);g.fillRect(cx-4*u,cy-3*u,u,2*u);g.fillRect(cx-u/2,cy-3*u,u,2*u);g.fillRect(cx+3*u,cy-3*u,u,2*u);g.fillStyle=t>=4?'#ff4a6a':'#3ff0ff';g.fillRect(cx-u/2,cy-u,u,u);if(t>=4){g.fillStyle='#ffd23f';g.fillRect(cx-4*u,cy-4*u,u,u);g.fillRect(cx-u/2,cy-4*u,u,u);g.fillRect(cx+3*u,cy-4*u,u,u);}}
   return PET_SPR[key]=c;}
 function petURL(k,t,sk){const c=petSpr(k,t,0,sk);return c._u||(c._u=c.toDataURL());}
 function eqPet(){if(!save.pets||save.petEq==null)return null;return save.pets.find(p=>p.id===save.petEq)||null;}
+const petEveillable=p=>!!p&&((p.t|0)===2||(p.t|0)===3);
+function petLegXp(key){const p=eqPet();if(!petEveillable(p)||(p.x|0)>=PET_LEG_XP)return;const d=MON[key];if(!d||d.tuto||key==='mannequin')return;const g=d.boss?20:d.ile===2?3:1,was=p.x|0;p.x=Math.min(PET_LEG_XP,was+g);
+  if(was<PET_LEG_XP&&p.x>=PET_LEG_XP){showBanner(PET_DEF[p.k].nom+' est prêt à s\'éveiller !','Va voir l\'éleveur du Village : il deviendra Légendaire','#ffb020');sfx('relic');}}
+let petLegT=0;
+function petLegTick(dt){const p=eqPet();if(!p||(p.t|0)<4||!save.current||P.hp<=0||safe()){petLegT=0;return;}petLegT+=dt;if(petLegT<PET_LEG_CD)return;petLegT=0;const mx=S().tot.vie;if(P.hp>=mx)return;const v=Math.max(1,Math.round(mx*PET_LEG_SOIN));P.hp=Math.min(mx,P.hp+v);ft(P.x,P.y-1.2,'+'+v,'#ffb020');burst(P.x,P.y-0.4,'#ffd23f',8,1.6);}
+function petEveiller(){const p=eqPet();if(!petEveillable(p)||(p.x|0)<PET_LEG_XP||scene!=='nexus'){sfx('deny');return;}p.t=4;p.x=0;persist();pushSave(true);statsDirty=true;sendPresence();showBanner(PET_DEF[p.k].nom+' est Légendaire !','×5 et soigne 3 % de ta vie toutes les 5 s','#ffb020');sfx('relic');burst(P.x,P.y-1,'#ffd23f',50,3.5);renderPets();}
 const petsEl=$('#pets');
 function openPets(tab){petTab=typeof tab==='string'?tab:(scene!=='vault'&&C().inv.some(it=>it&&KINDS[it.kind]&&KINDS[it.kind].egg)?'eggs':'list');petsEl.hidden=false;paused=true;keys.clear();mouse.down=false;renderPets();sfx('item');}
 function closePets(){petsEl.hidden=true;paused=false;cv.focus();}
@@ -6220,7 +6293,7 @@ function renderPets(){const eggs=$('#petEggs'),list=$('#petList'),evo=$('#petEvo
   const groups={};for(const p of pets){const g=p.k+':'+(p.t||0);(groups[g]=groups[g]||[]).push(p);}
   const evos=Object.keys(groups).filter(g=>groups[g].length>=3&&+g.split(':')[1]<2);
   // le familier qui te suit
-  {const im=el('img');const d=el('div');if(cur){const T=PET_TIERS[cur.t||0];im.src=petURL(cur.k,cur.t||0,sk);im.dataset.anim=cur.k+'|'+(cur.t||0)+'|'+(sk||'');const b=el('b',null,PET_DEF[cur.k].nom+' ');const tg=el('span',null,'· '+T.nom);tg.style.color=T.col;tg.style.fontSize='14px';b.append(tg);d.append(b,el('span',null,'Te suit · '+PET_TXT(cur.k,cur.t)+' (au-delà du maximum)'),el('span',null,sk?'Apparence : '+PETSKINS[sk].nom:'Apparence d\'origine'));eqB.append(im,d,btn('Renvoyer au parc',()=>{save.petEq=null;persist();statsDirty=true;renderPets();sendPresence();}));}
+  {const im=el('img');const d=el('div');if(cur){const T=PET_TIERS[cur.t||0];im.src=petURL(cur.k,cur.t||0,sk);im.dataset.anim=cur.k+'|'+(cur.t||0)+'|'+(sk||'');const b=el('b',null,PET_DEF[cur.k].nom+' ');const tg=el('span',null,'· '+T.nom);tg.style.color=T.col;tg.style.fontSize='14px';b.append(tg);d.append(b,el('span',null,'Te suit · '+PET_TXT(cur.k,cur.t)+' (au-delà du maximum)'),el('span',null,sk?'Apparence : '+PETSKINS[sk].nom:'Apparence d\'origine'));if((cur.t|0)>=4)d.append(el('span',null,'Légendaire : soigne 3 % de ta vie toutes les 5 s'));else if(petEveillable(cur)){const x=cur.x|0,j=el('div');j.style.cssText='height:7px;background:#1a1626;border:1px solid var(--line2);margin:3px 0';const f=el('div');f.style.cssText='height:100%;width:'+Math.min(100,x/PET_LEG_XP*100)+'%;background:#ffb020';j.append(f);d.append(el('span',null,'Éveil légendaire : '+x.toLocaleString('fr-FR')+' / '+PET_LEG_XP.toLocaleString('fr-FR')+(x>=PET_LEG_XP?(atBreeder?' · prêt !':' · prêt : va voir l\'éleveur du Village'):' (1 par monstre, 3 sur l\'île, 20 par boss)')),j);if(x>=PET_LEG_XP&&atBreeder)d.append(btn('Éveiller · Légendaire',petEveiller,true));}eqB.append(im,d,btn('Renvoyer au parc',()=>{save.petEq=null;persist();statsDirty=true;renderPets();sendPresence();}));}
     else{im.src=icon(mkItem('egg',0));d.append(el('b',null,'Aucun familier ne te suit'),el('span',null,pets.length?'Choisis-en un dans la liste : il te suivra partout et augmentera une caractéristique.':'Fais éclore un œuf chez l\'éleveur du Village pour avoir ton premier familier.'));eqB.append(im,d);}}
   // onglets
   {const tabs=$('#petTabs');tabs.textContent='';for(const [k,t] of [['list','Mes familiers ('+pets.length+')'],['evo','Évolutions'+(evos.length?' ('+evos.length+')':'')],['eggs','Œufs'+(eggIdx.length?' ('+eggIdx.length+')':'')],['skins','Apparences']]){const bt=el('button',petTab===k?'on':'',t);bt.type='button';bt.onclick=()=>{petTab=k;renderPets();};tabs.append(bt);}
@@ -6255,7 +6328,7 @@ function renderPets(){const eggs=$('#petEggs'),list=$('#petList'),evo=$('#petEvo
 // les apparences s'animent dans la fenêtre : on fait défiler leurs images
 setInterval(()=>{if(petsEl.hidden)return;petAnimT++;document.querySelectorAll('#pets img[data-anim]').forEach(im=>{const [k,t,sk]=im.dataset.anim.split('|');if(!sk)return;const c=petSpr(k,+t,petAnimT%4,sk);im.src=c._u||(c._u=c.toDataURL());});},260);
 // relance : 3 familiers au choix (peu importe leur rang) contre 1 nouveau familier commun tiré au hasard · vente : des pièces selon le rang
-let PETSEL=new Set();const PET_PRIX=[40,150,600,2500];
+let PETSEL=new Set();const PET_PRIX=[40,150,600,2500,6000];
 function petReroll(){if(CASE)return;const pets=save.pets||[],ch=pets.filter(p=>PETSEL.has(p.id)&&p.id!==save.petEq);if(ch.length!==3){note('Choisis exactement 3 familiers (pas celui qui te suit)');sfx('deny');return;}
   if(ch.some(p=>(p.t||0)>=2)&&!confirm('Tu vas relancer un familier Épique ou Ultime. Continuer ?'))return;
   save.pets=pets.filter(p=>!ch.includes(p));PETSEL.clear();const p={id:Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36),k:pick(PET_KEYS),t:0};save.pets.push(p);if(save.petEq==null)save.petEq=p.id;persist();statsDirty=true;renderPets();openCase(p);}
@@ -6282,6 +6355,7 @@ function drawPet(k,x,y,seed,t,face,mv,sk){t=PET_TIERS[t]?t:0;if(!PET_DEF[k])retu
   // image : au repos la tête bouge doucement ; en marche les pattes alternent ; le colibri bat toujours des ailes
   const f=sk&&vol?Math.floor(time*A.hz+seed)%4:vol?2+(Math.floor(time*A.hz+seed)%2):mv?2+(Math.floor(time*A.hz+seed)%2):(Math.floor(time*1.6+seed)%4===0?1:0);
   const b=vol?(Math.sin(time*4+seed)*0.5+0.5)*TS*0.12+TS*0.1:mv?(A.saut?Math.abs(Math.sin(time*A.hz*Math.PI/2+seed))*TS*0.14:Math.abs(Math.sin(time*A.hz*Math.PI+seed))*TS*0.03):0;
+  if(t>=4){const ax=sx(x),ay=sy(y)-s*0.3;ctx.save();ctx.globalAlpha=0.35+0.15*Math.sin(time*3+seed);ctx.strokeStyle='#ffd23f';ctx.lineWidth=Math.max(1.5,TS*0.05);ctx.beginPath();ctx.arc(ax,ay,s*0.55+Math.sin(time*2)*TS*0.04,0,TAU);ctx.stroke();ctx.restore();if(Math.random()<0.18)parts.push({x:x+rnd(-.35,.35),y:y+rnd(-.5,0),vx:0,vy:-rnd(0.4,1),life:rnd(.4,.8),col:Math.random()<.5?'#ffd23f':'#fff3b0',s:0.05});}
   if(t){ctx.fillStyle=PET_TIERS[t].col;ctx.globalAlpha=0.18+0.1*Math.sin(time*4+seed);ctx.beginPath();ctx.arc(sx(x),sy(y)-s*0.3-b,s*0.42,0,TAU);ctx.fill();ctx.globalAlpha=1;if(t>=2&&Math.random()<0.1)parts.push({x:x+rnd(-.25,.25),y:y+rnd(-.3,.1),vx:0,vy:-0.5,life:.6,col:PET_TIERS[t].col,s:.06});}
   ctx.fillStyle='rgba(0,0,0,.28)';ctx.beginPath();ctx.ellipse(sx(x),sy(y)+s*0.18,s*0.24,s*0.06,0,0,TAU);ctx.fill();
   if(sk&&A.fx&&Math.random()<0.07)parts.push({x:x+rnd(-.3,.3),y:y-0.35+rnd(-.25,.2),vx:rnd(-.3,.3),vy:-0.6,life:.5,col:A.fx,s:.06});
@@ -6337,11 +6411,12 @@ let houseTab='meubles';
 function renderHouseWin(){const box=$('#hsList'),hint=$('#hsHint');box.textContent='';for(const b of houseEl.querySelectorAll('[data-hstab]'))b.classList.toggle('on',b.dataset.hstab===houseTab);
   if(houseTab==='meubles'){const h=save.house=save.house||{};h.inv=h.inv||{};hint.innerHTML='Achète des meubles avec tes pièces (<i class="coin"></i> <b>'+save.gold+'</b>), puis pose-les où tu veux (clic droit ou T pour les tourner). Pour visiter une maison : clic sur un joueur dans la liste des joueurs, ou classement « Maisons ».';
     box.innerHTML=MB_ORDRE.map(id=>{const M=MEUBLES[id],n=h.inv[id]|0,st=decoStock(id),sac=M.cu?C().inv.some(it=>it&&it.kind==='cristal'):false;return '<div class="mbcard"'+(M.cu?' style="grid-column:1/-1;border-color:#3ff0ff"':'')+'><img src="'+meubleURL(id)+'" alt=""><div><b>'+M.nom+'</b><span>'+(M.cu?'<i class="cur" style="display:inline-block;width:9px;height:9px;background:#3ff0ff;transform:rotate(45deg);margin-right:5px"></i>'+M.prix+' Cursite (tu en as '+save.cursite+') · rapporte '+CRISTAL_JOUR+' Cursite par jour une fois posé · peut se vendre à l\'hôtel des ventes':'<i class="coin"></i> '+M.prix)+' · possédés : '+n+(n?' (posés : '+(n-st)+')':'')+'</span><div class="acts"><button type="button" class="act main" data-mbuy="'+id+'" '+((M.cu?save.cursite<M.prix:save.gold<M.prix)||n>=20?'disabled':'')+'>Acheter</button><button type="button" class="act" data-mplace="'+id+'" '+(st<1?'disabled':'')+'>Poser</button>'+(M.cu?'<button type="button" class="act" data-msac="1" '+(st<1?'disabled':'')+'>Mettre dans le sac</button><button type="button" class="act" data-msac="0" '+(sac?'':'disabled')+'>Reprendre du sac</button>':'')+'</div></div></div>';}).join('')+'<div class="mbcard" style="grid-column:1/-1;grid-template-columns:1fr"><div class="acts"><button type="button" class="act" data-mplace="">Déplacer ou reprendre des meubles</button><button type="button" class="act" data-mclear="1" '+(ownM().length?'':'disabled')+'>Tout ranger ('+ownM().length+' posés)</button></div></div>';return;}
-  hint.textContent='Sol, murs et ambiance de la maison.';const cur=(save.house&&save.house.skin)||'bois';
+  hint.innerHTML='Sol, murs et ambiance de la maison. Le Chalet est offert, chaque autre style coûte '+HOUSE_PRIX+' Cursite (tu en as <b>'+save.cursite+'</b>).';const cur0=(save.house&&save.house.skin)||'bois',cur=skinMaisonA(cur0)?cur0:'bois';
   for(const k in HOUSE_SKINS){const H=HOUSE_SKINS[k],b=document.createElement('button');b.type='button';b.className='hskin'+(k===cur?' on':'');const sw=document.createElement('div');sw.className='sw';
     for(const c of [H.sw[0],H.sw[1],H.sw[2],H.sw[0]]){const i=document.createElement('i');i.style.background=c;sw.append(i);}
-    const t=document.createElement('div');const bb=document.createElement('b');bb.textContent=H.nom;const sp=document.createElement('span');sp.textContent=H.desc+(k===cur?' · actuel':'');t.append(bb,sp);b.append(sw,t);
-    b.onclick=()=>{save.house=save.house||{};save.house.skin=k;persist();renderHouseWin();sfx('buy');note('Décoration : '+H.nom);};box.append(b);}}
+    const own=skinMaisonA(k),t=document.createElement('div');const bb=document.createElement('b');bb.textContent=H.nom;const sp=document.createElement('span');sp.textContent=H.desc+(k===cur?' · actuel':own?'':' · '+HOUSE_PRIX+' Cursite');if(!own)sp.style.color=save.cursite>=HOUSE_PRIX?'#7df0e0':'#ff8a8a';t.append(bb,sp);b.append(sw,t);
+    b.onclick=()=>{maisonV2();const h=save.house;if(!skinMaisonA(k)){if(save.cursite<HOUSE_PRIX){note('Il te faut '+HOUSE_PRIX+' Cursite pour ce style');sfx('deny');return;}if(houseArm!==k||Date.now()-houseArmT>3000){houseArm=k;houseArmT=Date.now();note('Clique encore pour acheter « '+H.nom+' » ('+HOUSE_PRIX+' Cursite)');return;}save.cursite-=HOUSE_PRIX;h.skins[k]=1;pushSave(true);sfx('relic');}h.skin=k;persist();renderHouseWin();sfx('buy');note('Décoration : '+H.nom);};box.append(b);}}
+let houseArm=null,houseArmT=0;
 houseEl.addEventListener('click',e=>{const t=e.target.closest('[data-hstab]');if(t){houseTab=t.dataset.hstab;renderHouseWin();return;}
   const b=e.target.closest('[data-mbuy]');if(b){const M=MEUBLES[b.dataset.mbuy],h=save.house=save.house||{};h.inv=h.inv||{};if(!M||(M.cu?save.cursite<M.prix:save.gold<M.prix)||(h.inv[M.id]|0)>=20){sfx('deny');return;}if(M.cu)save.cursite-=M.prix;else save.gold-=M.prix;h.inv[M.id]=(h.inv[M.id]|0)+1;persist();invDirty=true;sfx('buy');note(M.nom+' acheté');renderHouseWin();return;}
   const ms=e.target.closest('[data-msac]');if(ms){const h=save.house=save.house||{};h.inv=h.inv||{};const ch=C();
@@ -6353,6 +6428,7 @@ houseEl.addEventListener('click',e=>{const t=e.target.closest('[data-hstab]');if
 });
 $('#hsClose').addEventListener('click',closeHouseWin);houseEl.addEventListener('click',e=>{if(e.target===houseEl)closeHouseWin();});
 /* ================= pêche ================= */
+const FISH_BASE=()=>FISHES.filter(f=>f.site!=='ile');
 const FISH_RAR=[{nom:'Commun',col:'#f4f1e8',w:58,zone:0.34},{nom:'Peu commun',col:'#7ed957',w:27,zone:0.24},{nom:'Rare',col:'#4aa3ff',w:10,zone:0.16},{nom:'Épique',col:'#b16cff',w:4,zone:0.1},{nom:'Légendaire',col:'#ffd23f',w:1,zone:0.085}];
 const FISH_SPR={};
 function fishSpr(id){if(FISH_SPR[id])return FISH_SPR[id];const f=FISHES.find(q=>q.id===id);return FISH_SPR[id]=makeSprite(FISH_TPL[f.tpl],{X:f.c[0],B:f.c[1],F:f.c[2],E:'#0b0a12'},4);}
@@ -6361,7 +6437,7 @@ const fmtKg=w=>w<1?Math.round(w*1000)+' g':w.toLocaleString('fr-FR',{maximumFrac
 function waterAt(x,y){const tx=Math.floor(x),ty=Math.floor(y);if(scene==='nexus')return ty>33&&nLake(tx,ty)&&!nPont(tx,ty);if(scene==='vault')return tx>=LAKE.x0&&tx<=LAKE.x1&&ty>=LAKE.y0&&ty<=LAKE.y1;if(scene==='realm'&&MAP&&MAP.kind==='realm'){if(tx<0||ty<0||tx>=MAP.w||ty>=MAP.h)return false;return MAP.reg[ty*MAP.w+tx]<0;}return false;}
 function nearWater(){let best=null,bd=1.7;for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const x=Math.floor(P.x)+dx+.5,y=Math.floor(P.y)+dy+.5;if(!waterAt(x,y))continue;const d=Math.hypot(x-P.x,y-P.y);if(d<bd){bd=d;best={x,y};}}return best;}
 var FISH=null;
-function startFishing(){const w=nearWater();if(!w)return;const site=scene==='vault'||scene==='nexus'?'lac':'mer';const a=Math.atan2(w.y-P.y,w.x-P.x);
+function startFishing(){const w=nearWater();if(!w)return;const site=scene==='vault'||scene==='nexus'?'lac':surIle2(P.y)?'ile':'mer';const a=Math.atan2(w.y-P.y,w.x-P.x);
   FISH={site,phase:'wait',t:rnd(2,5.5),bx:w.x+Math.cos(a)*0.6,by:w.y+Math.sin(a)*0.6,ox:P.x,oy:P.y,m:0,dir:1};P.face=Math.cos(a)<0?-1:1;sfx('splash',0.5);note('Tu lances ta ligne… attends que ça morde');}
 // métier de pêcheur : des points à chaque prise (plus le poisson est rare, plus il en donne), 60 × niveau pour passer au suivant, jusqu'au niveau 20
 const PECHE_MAX=20,PECHE_XP=[10,15,25,40,80],PECHE_W20=[30,30,22,13,5],PECHE_EXP=[2.2,1.6,1.15,0.85,0.6];
@@ -6377,7 +6453,7 @@ function fishPress(){const F=FISH;if(!F)return;
       if(F.fish.r>=4&&!F.hits){F.hits=1;const z=FISH_RAR[4].zone*0.85;F.z0=rnd(0.08,0.92-z);F.z1=F.z0+z;F.spd*=1.15;sfx('level');burst(P.x,P.y,'#ffd23f',14,3);return;}
       catchFish(F.fish);}else{note('Le poisson s\'est échappé…');sfx('deny');}FISH=null;}}
 function catchFish(f){const r=Math.random(),w=Math.round((f.min+(f.max-f.min)*Math.pow(r,PECHE_EXP[f.r]||1))*1000)/1000;save.fish=save.fish||{};const n0=pecheNiv().n,gx=PECHE_XP[f.r]||10;save.pecheur=save.pecheur||{xp:0};save.pecheur.xp=(save.pecheur.xp|0)+gx;const rec=save.fish[f.id]||{n:0,best:0};const first=!rec.n,best=w>rec.best;rec.n++;if(best)rec.best=w;save.fish[f.id]=rec;persist();
-  const R=FISH_RAR[f.r];showBanner((first?'Nouveau poisson ! ':'')+f.nom,fmtKg(w)+' · '+R.nom+(best&&!first?' · nouveau record !':''),R.col);sfx(f.r>=3?'relic':f.r>=1?'level':'coin');burst(P.x,P.y,R.col,f.r>=3?40:18,3);wqAdd('fish',1);fishVengeance();if(((TOUR&&TOUR.actif)||f.r>=4)&&ONLINE&&AUTH.ok&&room&&room.raw)room.raw({t:'tournoi',f:f.id,w});
+  const R=FISH_RAR[f.r];showBanner((first?'Nouveau poisson ! ':'')+f.nom,fmtKg(w)+' · '+R.nom+(best&&!first?' · nouveau record !':''),R.col);sfx(f.r>=3?'relic':f.r>=1?'level':'coin');burst(P.x,P.y,R.col,f.r>=3?40:18,3);wqAdd('fish',1);if(f.site==='ile')ileqAdd('fishi',1);fishVengeance();if(((TOUR&&TOUR.actif)||f.r>=4)&&ONLINE&&AUTH.ok&&room&&room.raw)room.raw({t:'tournoi',f:f.id,w});
   if(f.r>=4)sendChat('🎣 a pêché un poisson Légendaire : '+f.nom+' de '+fmtKg(w)+' !');
   ft(P.x,P.y-1.1,'+'+gx+' pêche','#8fd0ff');const n1=pecheNiv().n;if(n1>n0)setTimeout(()=>{showBanner('Pêcheur niveau '+n1+' !',n1>=PECHE_MAX?'Niveau maximum atteint':'Tes chances de poissons rares augmentent','#8fd0ff');sfx('level');},2600);persist();}
 function fishTick(dt){const F=FISH;if(!F)return;if(Math.hypot(P.x-F.ox,P.y-F.oy)>0.4){FISH=null;note('Tu ranges ta canne');return;}
@@ -6394,7 +6470,8 @@ function drawWater(X,Y,tx,ty,u,l,r,t,b){R(X,Y,TS+1,TS+1,'#2f6fb8');const k=(tx*7
   const e='#c9b98a';if(l)R(X,Y,u*2,TS+1,e);if(r)R(X+TS-u*2,Y,u*2,TS+1,e);if(t)R(X,Y,TS+1,u*2,e);if(b)R(X,Y+TS-u*2,TS+1,u*2,e);}
 // tableau de pêche
 const fishEl=$('#fishWin');let fishTab='lac';
-function openFishWin(){fishEl.hidden=false;paused=true;keys.clear();mouse.down=false;renderFishWin();sfx('item');}
+const fishIleVue=()=>Object.values(save.colosse||{}).some(q=>q&&(q.s|0)>=4)||FISHES.some(f=>f.site==='ile'&&(save.fish||{})[f.id]);
+function openFishWin(){if(fishTab==='ile'&&!fishIleVue())fishTab='lac';fishEl.hidden=false;paused=true;keys.clear();mouse.down=false;renderFishWin();sfx('item');}
 function closeFishWin(){fishEl.hidden=true;paused=false;cv.focus();}
 function renderFishWin(){{const N=pecheNiv(),W=pecheW(N.n),tot=W.reduce((a,w)=>a+w,0);document.getElementById('fishNiv').innerHTML='<b style="color:#8fd0ff">Pêcheur · niveau '+N.n+'</b>'+(N.need?' <span class="hint">'+N.xp+' / '+N.need+' points</span><div style="height:6px;background:#1a1626;border:1px solid var(--line2);margin:4px 0"><div style="height:100%;width:'+Math.round(N.xp/N.need*100)+'%;background:#8fd0ff"></div></div>':' <span class="hint">niveau maximum</span>')+'<p class="hint" style="margin:2px 0 6px">Tes chances : '+FISH_RAR.map((r,i)=>'<span style="color:'+r.col+'">'+r.nom+' '+(W[i]/tot*100).toLocaleString('fr-FR',{maximumFractionDigits:1})+' %</span>').join(' · ')+'. Plus un poisson est rare, plus il a de chances d\'être gros.</p>';}
   document.querySelectorAll('#fishTabs button').forEach(b=>b.classList.toggle('on',b.dataset.f===fishTab));const g=$('#fishGrid');g.textContent='';const got=save.fish||{};
@@ -6402,7 +6479,8 @@ function renderFishWin(){{const N=pecheNiv(),W=pecheW(N.n),tot=W.reduce((a,w)=>a
     const im=document.createElement('img');im.src=fishURL(f.id);const b=document.createElement('b');b.textContent=rec?f.nom:'???';const r=document.createElement('span');r.className='fr';r.textContent=R.nom;const w=document.createElement('span');w.className='fw';w.textContent=rec?'Record : '+fmtKg(rec.best)+' · pêché ×'+rec.n:'Poids : '+fmtKg(f.min)+' à '+fmtKg(f.max);c.append(im,b,r,w);g.append(c);}
   {let q=document.getElementById('fishTour');if(!q){q=document.createElement('p');q.id='fishTour';q.className='hint';$('#fishQuest').after(q);}const nomP=id=>{const f=FISHES.find(x=>x.id===id);return f?f.nom:'?';};
     q.textContent=!TOUR?'':TOUR.actif?'🏆 Tournoi de pêche aujourd\'hui ! Plus gros poisson : '+(TOUR.top.length?TOUR.top.slice(0,3).map((e,i)=>(i+1)+'. '+clean(e.n)+' ('+nomP(e.f)+', '+fmtKg(e.w)+')').join(' · '):'personne pour l\'instant, à toi de jouer'):'🏆 Tournoi de pêche chaque dimanche : le plus gros poisson de la journée gagne le titre '+TITLES.roipeche.t+' pour la semaine.'+(TOUR.roi?' Roi actuel : '+clean(TOUR.roi.n)+' ('+nomP(TOUR.roi.f)+', '+fmtKg(TOUR.roi.w)+').':'');q.style.color='#8fd0ff';}
-  const n=FISHES.filter(f=>got[f.id]).length;{const ok=(save.titles||[]).includes('pecheur')||n>=FISHES.length;$('#fishQuest').textContent=ok?'Quête du pêcheur accomplie : tu portes le titre '+TITLES.pecheur.t+' (à choisir dans les Options).':'Quête du pêcheur : attrape au moins une fois chaque poisson, au lac et à la mer, légendaires compris. Récompense : le titre exclusif '+TITLES.pecheur.t+'. Progression : '+n+' / '+FISHES.length+'.';$('#fishQuest').style.color=ok?'#7ed957':'#ffd96a';}$('#fishFoot').textContent=n+' / '+FISHES.length+' espèces pêchées · '+(fishTab==='lac'?'pêche au bord du lac de ta maison':'pêche au bord de la mer, sur la plage des Plaines Sauvages');}
+  const n=FISH_BASE().filter(f=>got[f.id]).length;{const ok=(save.titles||[]).includes('pecheur')||n>=FISH_BASE().length;$('#fishQuest').textContent=ok?'Quête du pêcheur accomplie : tu portes le titre '+TITLES.pecheur.t+' (à choisir dans les Options).':'Quête du pêcheur : attrape au moins une fois chaque poisson, au lac et à la mer, légendaires compris. Récompense : le titre exclusif '+TITLES.pecheur.t+'. Progression : '+n+' / '+FISH_BASE().length+'.';$('#fishQuest').style.color=ok?'#7ed957':'#ffd96a';}{const ni=FISHES.filter(f=>f.site==='ile'&&got[f.id]).length,nI=FISHES.filter(f=>f.site==='ile').length;$('#fishFoot').textContent=(fishTab==='ile'?ni+' / '+nI+' espèces de l\'île pêchées · pêche au bord de la mer, autour de l\'Île aux Colosses (jusqu\'à 5 % plus gros)':n+' / '+FISH_BASE().length+' espèces pêchées · '+(fishTab==='lac'?'pêche au bord du lac de ta maison':'pêche au bord de la mer, sur la plage des Plaines Sauvages'));}
+  {const b=document.querySelector('#fishTabs [data-f="ile"]');if(b)b.hidden=!fishIleVue();}}
 $('#fishTabs').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){fishTab=b.dataset.f;renderFishWin();}});
 $('#fishClose').addEventListener('click',closeFishWin);fishEl.addEventListener('click',e=>{if(e.target===fishEl)closeFishWin();});
 /* ================= groupe ================= */
@@ -6755,7 +6833,7 @@ function renderItems(){const box=$('#itGrid');if(box.childElementCount)return;co
     r.append(l,d);box.append(r);};
   // une ligne par type : T0 à T6, puis T7 (gris-noir), Relique (turquoise), Reliques de Chronos (or)
   row('Meubles',[['cristal',0]]);
-  for(const k of kinds.filter(k=>!KINDS[k].base)){const K=KINDS[k],l=[0,1,2,3,4,5,6].map(t=>[k,t]);if(KINDS[k+'7'])l.push([k+'7',6]);l.push([k,7]);for(const a of kinds)if(KINDS[a].alt&&!KINDS[a].art&&KINDS[a].base===k)l.push([a,7]);for(const a of kinds)if(KINDS[a].art&&KINDS[a].base===k)l.push([a,7]);
+  for(const k of kinds.filter(k=>!KINDS[k].base)){const K=KINDS[k],l=[0,1,2,3,4,5,6].map(t=>[k,t]);if(KINDS[k+'7'])l.push([k+'7',6]);if(KINDS[k+'8'])l.push([k+'8',6]);l.push([k,7]);for(const a of kinds)if(KINDS[a].alt&&!KINDS[a].art&&KINDS[a].base===k)l.push([a,7]);for(const a of kinds)if(KINDS[a].art&&KINDS[a].base===k)l.push([a,7]);
     row(K.type+(K.cls&&K.slot!=='anneau'?' · '+K.cls.map(c=>CLASSES[c].nom).join(', '):''),l);}
   row('Consommables',Object.keys(KINDS).filter(k=>KINDS[k].slot==='conso'&&!KINDS[k].legacy).map(k=>[k,0]));
   const suite=()=>{for(let n=0;n<2&&file.length;n++){const [l,it]=file.shift();row1(l,it);}if(file.length)setTimeout(suite,16);};suite();}
@@ -7035,6 +7113,7 @@ function interact(){
     if(Math.hypot(P.x-RA.back.x,P.y-RA.back.y)<1.4){enterGuildHall();return;}
   }else if(scene==='realm'){
     if(trouE())return;
+    if(Math.hypot(P.x-CAMP2NPC.x,P.y-CAMP2NPC.y)<1.7){openIleQ();return;}
     const d=nearDPortal();if(d){enterDungeon(d.id,d.t);return;}
     if(!groundBag&&nearWater()){startFishing();return;}
   }else if(scene==='dungeon'){
@@ -7296,7 +7375,7 @@ function update(dt){
     }
   }
   if(!safe()&&!amHost)syncFromHost();
-  campTick(dt);mauditTick();brecheTick();
+  campTick(dt);camp2Tick(dt);petLegTick(dt);mauditTick();brecheTick();
   // monstres
   if(!safe()){
     const pl=scenePlayers(),GJ=grilleJ(pl,32),ghosts=[];{const k=sceneKey();if(P.invis>0&&!admInv)ghosts.push({x:P.x,y:P.y});for(const r of remotes.values())if(activeIn(r,k)&&r.p.as)ghosts.push({x:r.x,y:r.y});}
@@ -7359,7 +7438,7 @@ function update(dt){
       m.tx=m.x;m.ty=m.y;
     }
     if(amHost)monsters=monsters.filter(m=>m.hp>0);
-    else monsters=monsters.filter(m=>m.hp>0||(m.pend&&time-m.pend<1.2));
+    else monsters=monsters.filter(m=>m.hp>0||(m.pend&&time-m.pend<2));
     if(amHost&&scene==='dungeon')arenaHost(dt);
     if(amHost){scaleT-=dt;if(scaleT<=0){scaleT=1;const sk2=sceneKey(),pl2=[];if(!window.GARDIEN_MODE)pl2.push({x:P.x,y:P.y,id:'#moi'});for(const r of remotes.values())if(activeIn(r,sk2))pl2.push({x:r.x,y:r.y,id:String(r.p.n||r.peer)});
       for(const m of monsters){if(!m.d.boss||m.hp<=0||m.d.tuto)continue;const are=scene==='dungeon'&&MAP.arena&&inArena(m.x,m.y);if(!m.vus)m.vus=new Set();
@@ -7376,7 +7455,7 @@ function update(dt){
   // projectiles ennemis
   const TZ=scene==='dungeon'&&dungeonT==='h'&&MAP&&MAP.mech,DEFS=defenders();
   for(const b of eb){
-    b.t+=dt;if(scene==='realm'&&Math.hypot(b.x-CAMP.x,b.y-CAMP.y)<CAMP.r+0.5){b.life=0;continue;} // l'avant-poste arrête les tirs des monstres
+    b.t+=dt;if(scene==='realm'&&(Math.hypot(b.x-CAMP.x,b.y-CAMP.y)<CAMP.r+0.5||Math.hypot(b.x-CAMP2.x,b.y-CAMP2.y)<CAMP2.r+0.5)){b.life=0;continue;} // l'avant-poste arrête les tirs des monstres
     if(b.hom){const want=Math.atan2(P.y-b.y,P.x-b.x),cur=Math.atan2(b.vy,b.vx);let df=((want-cur+Math.PI*3)%TAU)-Math.PI;const turn=clamp(df,-b.hom*dt,b.hom*dt);const sp=Math.hypot(b.vx,b.vy),na=cur+turn;b.vx=Math.cos(na)*sp;b.vy=Math.sin(na)*sp;}
     if(b.dec){const k=Math.exp(-b.dec*dt);b.vx*=k;b.vy*=k;}
     let kz=1;if(TZ){const mz=MAP.mech[Math.floor(b.by)*MAP.w+Math.floor(b.bx)];if(mz===1)kz=0.4;else if(mz===2)kz=1.7;}
@@ -7915,9 +7994,7 @@ function drawNexus(x0,x1,y0,y1){
   {const X=sx(STATUE.x),Y=sy(STATUE.y);R(X-8*u,Y+4*u,16*u,4*u,'#6d6a78');R(X-8*u,Y+4*u,16*u,u,'#9a97a6');R(X-6*u,Y+2*u,12*u,2*u,'#8a8794');R(X-6*u,Y+2*u,12*u,u*0.6,'#b0adbc');const st=heroSprite(save.current||'guerrier',mySkin(),C()&&C().equip[0]?C().equip[0].kind:null,0,'idle'),k=TS*0.85/52;ctx.drawImage(stoneImg(st,1.15,1),X-26*k,Y-32*k-TS*0.28,st.width*k,st.height*k);
     const gl=0.5+0.5*Math.sin(time*2);ctx.globalAlpha=0.3*gl;ctx.fillStyle='#7df0e0';ctx.beginPath();ctx.arc(X,Y-TS*0.2,TS*0.6,0,TAU);ctx.fill();ctx.globalAlpha=1;label('Skins',X,Y-TS*1.15,'#7df0e0',Math.round(TS*0.3));}
   // guide du tutoriel
-  {const X=sx(GUIDE.x),Y=sy(GUIDE.y),b=Math.abs(Math.sin(time*2))*u;const g=HERO_SPR.pretre?heroSprite('archer',null,'arc',2,'idle'):null;if(g){const kk=TS*0.9/52;ctx.drawImage(g,X-26*kk,Y-32*kk-b,g.width*kk,g.height*kk);}
-    R(X+5*u,Y-9*u,u*1.4,12*u,'#6a4424');R(X+3.5*u,Y-11*u,4.5*u,3*u,'#ffd23f');label('?',X+5.6*u,Y-9.6*u,'#0b0a12',Math.round(TS*0.22),700);
-    label('Guide · tutoriel',X,Y-TS*1.05,'#7ed957',Math.round(TS*0.3));}
+  drawPnj('alberic',GUIDE.x,GUIDE.y,'Maître Albéric · tutoriel','#7ed957',null);
   // échoppe : comptoir, marchand, étals garnis
   {const u2=u;
     for(let tx=35;tx<=40;tx++){const X=sx(tx),Y=sy(12);R(X,Y,TS+1,TS,'#6a4424');R(X,Y,TS+1,3*u2,'#a86a3a');R(X,Y,TS+1,u2,'#c88a52');R(X,Y+TS-2*u2,TS+1,2*u2,'#3a2414');R(X+TS/2,Y+4*u2,u2*0.6,TS-6*u2,'#5a3a1e');}
@@ -8172,7 +8249,8 @@ const HOUSE_SKINS={
     wall:v=>mkTex('hdw'+v,(x,y)=>{if(y<4)return y===0?'#3a2a4a':'#1e1628';if(y===8&&x%8===3)return '#8a1a2a';return brick(x,y,v,342,'#121218','#18181f','#050508');}),carpet:['#4a0a14','#5a0e1a','#8a6a2a'],tint:'rgba(10,0,20,.3)',sw:['#16161e','#050508','#5a0e1a']},
   paradis:{nom:'Paradis',desc:'Marbre blanc, or et ciel clair',floor:v=>mkTex('hp'+v,(x,y)=>{if(x%8===0||y%8===0)return '#e4dcc4';const n=hx(x,y,350+v);if(n<0.05)return '#dfe6f0';if(n>0.965)return '#ffe9a0';return ((x>>3)+(y>>3)+v)%2?'#fbfaf6':'#f2f0ea';}),
     wall:v=>mkTex('hpw'+v,(x,y)=>{if(y<4)return y===0?'#ffd23f':'#f4e6b0';if(y===10)return '#e8c870';return brick(x,y,v,352,'#f6f4ee','#ecebe4','#d8d4c4');}),carpet:['#7ab0e8','#9ac8f4','#ffd23f'],tint:'rgba(255,250,230,.12)',sw:['#fbfaf6','#e8c870','#9ac8f4']}};
-function houseSkin(){const k=VIS?VIS.skin:save.house&&save.house.skin;return HOUSE_SKINS[k==='sylve'?'sombre':k==='astral'?'paradis':k]||HOUSE_SKINS.bois;}
+const skinMaisonA=k=>k==='bois'||!!(save.house&&save.house.skins&&save.house.skins[k]);
+function houseSkin(){let k=VIS?VIS.skin:save.house&&save.house.skin;k=k==='sylve'?'sombre':k==='astral'?'paradis':k;if(!VIS&&!skinMaisonA(k))k='bois';return HOUSE_SKINS[k]||HOUSE_SKINS.bois;}
 function drawVault(x0,x1,y0,y1){const HS=houseSkin();
   const u=TS/16;
   for(let ty=y0;ty<=y1;ty++)for(let tx=x0;tx<=x1;tx++){
@@ -8185,13 +8263,13 @@ function drawVault(x0,x1,y0,y1){const HS=houseSkin();
     if(tx>=PARK.x0-1&&tx<=PARK.x1+1&&ty>=PARK.y0-1&&ty<=PARK.y1+1){T16(grassTex(v),X,Y);const edge=tx===PARK.x0-1||tx===PARK.x1+1||ty===PARK.y0-1||ty===PARK.y1+1;if(edge&&!(tx===PARK.x0-1&&PARK.gate.includes(ty))){R(X,Y+5*u,TS+1,u*1.5,'#b07a3a');R(X,Y+10*u,TS+1,u*1.5,'#b07a3a');R(X+2*u,Y+2*u,u*2,TS-3*u,'#6a4424');R(X+12*u,Y+2*u,u*2,TS-3*u,'#6a4424');}else if(!edge&&hx(tx,ty,340)>0.93){R(X+6*u,Y+6*u,u*2,u*2,['#ff9ad0','#ffd23f','#fff'][Math.floor(hx(tx,ty,341)*3)]);}continue;}
     if(tx>=LAKE.x0&&tx<=LAKE.x1&&ty>=LAKE.y0&&ty<=LAKE.y1){drawWater(X,Y,tx,ty,u,tx===LAKE.x0,tx===LAKE.x1,ty===LAKE.y0,ty===LAKE.y1);continue;}
     T16(HS.floor(v),X,Y);
-    if(tx===12&&ty>=2&&ty<=16){R(X-u*4,Y,TS+8*u,TS+1,HS.carpet[0]);for(let i=0;i<4;i++)R(X-3*u+((ty*2+i)%4)*6*u,Y+i*4*u,u*1.5,u*1.5,HS.carpet[1]);R(X-u*4,Y,u*1.4,TS+1,HS.carpet[2]);R(X+TS+u*2.6,Y,u*1.4,TS+1,HS.carpet[2]);}
+    if(tx===12&&ty>=2&&ty<=VHI-2){R(X-u*4,Y,TS+8*u,TS+1,HS.carpet[0]);for(let i=0;i<4;i++)R(X-3*u+((ty*2+i)%4)*6*u,Y+i*4*u,u*1.5,u*1.5,HS.carpet[1]);R(X-u*4,Y,u*1.4,TS+1,HS.carpet[2]);R(X+TS+u*2.6,Y,u*1.4,TS+1,HS.carpet[2]);}
   }
   for(const tx of [3,7,11,15,19,23,31,35])drawTorch(sx(tx+.5),sy(0.75),tx);
   if(houseSalle())for(const tx of [-13,-9,-5])drawTorch(sx(tx+.5),sy(0.75),tx);
   else if(!VIS){const X=Math.floor(sx(0)),Y=Math.floor(sy(SALLE.porte[0]));R(X+2*u,Y+u,12*u,TS*2-2*u,'#5a3a20');R(X+3*u,Y+2*u,10*u,TS*2-4*u,'#8a5a2b');R(X+7.5*u,Y+2*u,u,TS*2-4*u,'#5a3a20');R(X+11*u,Y+TS-u,2*u,2*u,'#ffd23f');label('Agrandir · '+SALLE.prix+' pièces',X+TS*1.6,Y-TS*0.2,'#ffd96a',Math.round(TS*0.28));}
   drawMeubles();
-  for(const [gx,gy] of [[22,15],[2,2],[22,2]]){const gp=dspr('gold',DPAL.gold);drawD16(gp,sx(gx),sy(gy));if(Math.sin(time*3+gx)>0.9)R(sx(gx)+8*u,sy(gy)+5*u,u,u,'#fff');}
+  for(const [gx,gy] of [[22,21],[2,2],[22,2]]){const gp=dspr('gold',DPAL.gold);drawD16(gp,sx(gx),sy(gy));if(Math.sin(time*3+gx)>0.9)R(sx(gx)+8*u,sy(gy)+5*u,u,u,'#fff');}
   CHESTS.forEach((c,i)=>{
     const vn=VIS?VIS.coffres:save.vault.n,X=sx(c.x+.5),Y=sy(c.y+.5),s=TS*0.95,unl=i<vn,isOpen=!VIS&&unl&&openChest===i;
     const img=!unl?CHEST_LOCK:isOpen?CHEST_OPEN:CHEST;const bob=isOpen?Math.sin(time*4)*u*0.6:0;
@@ -8199,7 +8277,7 @@ function drawVault(x0,x1,y0,y1){const HS=houseSkin();
     ctx.drawImage(img,X-s/2,Y-s/2-bob,s,s);
     if(isOpen){ctx.fillStyle=`rgba(255,217,106,${0.15+0.1*Math.sin(time*5)})`;ctx.beginPath();ctx.arc(X,Y,TS*0.8,0,TAU);ctx.fill();}
     if(!unl){R(X-u*2.4,Y-u,u*4.8,u*4,'#c9973c');R(X-u*0.6,Y+u*0.2,u*1.2,u*1.6,'#3a2a10');ctx.strokeStyle='#c9973c';ctx.lineWidth=Math.max(2,u*1.2);ctx.strokeRect(X-u*1.4,Y-u*3.2,u*2.8,u*2.4);
-      label(!VIS&&i===vn?VAULT_PRICES[i]+' pièces':'🔒',X,Y+TS*0.75,!VIS&&i===vn?'#ffd96a':'#8a8494',Math.round(TS*0.3));}
+      label(!VIS&&i===vn?(i>=5?VAULT_CU[i-5]+' Cursite':VAULT_PRICES[i]+' pièces'):'🔒',X,Y+TS*0.75,!VIS&&i===vn?(i>=5?'#7df0e0':'#ffd96a'):'#8a8494',Math.round(TS*0.3));}
     label('Coffre '+(i+1),X,Y-TS*0.8,unl?'#ffe0a0':'#8a8494',Math.round(TS*0.28));
   });
   {const n=VIS?0:colis().length,X=sx(COLIS.x+.5),Y=sy(COLIS.y+.5),sz=TS*0.95,bob=n?Math.abs(Math.sin(time*3))*u*1.2:0;
@@ -8211,12 +8289,9 @@ function drawVault(x0,x1,y0,y1){const HS=houseSkin();
   drawPortal(VBACK.x,VBACK.y,'#3f7fe0','#8fd0ff','Village');
   // tableau de pêche
   {const X=sx(FBOARD.x),Y=sy(FBOARD.y);R(X-u,Y,u*2,7*u,'#5a3a22');R(X-9*u,Y-10*u,18*u,11*u,'#6a4424');R(X-8*u,Y-9*u,16*u,9*u,'#2a3a4a');const fs=fishSpr('gardon');ctx.drawImage(fs,X-6*u,Y-8*u,7*u,7*u);ctx.drawImage(fishSpr('brochet'),X,Y-7*u,7*u,7*u);
-    const n=FISHES.filter(f=>(save.fish||{})[f.id]).length;label(VIS?'Pêche':'Pêche · '+n+'/'+FISHES.length,X,Y-TS*0.95,'#8fd0ff',Math.round(TS*0.28));}
+    const n=FISH_BASE().filter(f=>(save.fish||{})[f.id]).length;label(VIS?'Pêche':'Pêche · '+n+'/'+FISH_BASE().length,X,Y-TS*0.95,'#8fd0ff',Math.round(TS*0.28));}
   // pupitre de décoration
-  {const X=sx(PRESNPC.x),Y=sy(PRESNPC.y),gl=0.5+0.5*Math.sin(time*2);ctx.fillStyle='rgba(255,210,63,'+(0.12+0.1*gl)+')';ctx.beginPath();ctx.ellipse(X,Y+TS*0.3,TS*0.8,TS*0.3,0,0,TAU);ctx.fill();
-    const g=heroSprite('pretre',null,'baguette',7,'idle'),kk=TS*1.05/52,b=Math.sin(time*1.6)*u;ctx.drawImage(g,X-26*kk,Y-34*kk-b,g.width*kk,g.height*kk);
-    for(let i=0;i<3;i++){const a=time*1.3+i*TAU/3;R(X+Math.cos(a)*TS*0.55-u,Y-TS*0.35+Math.sin(a)*TS*0.2-u,2*u,2*u,'#ffd23f');}
-    label('Gardien du Prestige',X,Y-TS*1.15,'#ffd23f',Math.round(TS*0.28));}
+  drawPnj('oracle',PRESNPC.x,PRESNPC.y,'L\'Oracle · gardien du prestige','#ffd23f',null);
   {const X=sx(HDECO.x),Y=sy(HDECO.y);R(X-5*u,Y-2*u,10*u,8*u,'#6a4424');R(X-6*u,Y-6*u,12*u,5*u,'#8a5a2b');R(X-4*u,Y-5.5*u,8*u,3*u,'#f4f1e8');const sw=houseSkin().sw;sw.forEach((c,i)=>R(X-4*u+i*3*u,Y-5*u,2*u,2*u,c));label(VIS?'♥ '+VIS.coeurs+' · Livre d\'or':'Décoration',X,Y-TS*0.75,VIS?'#ff7ab0':'#ffd96a',Math.round(TS*0.28));}
   // panneau du parc
   {const X=sx(PSIGN.x),Y=sy(PSIGN.y);R(X-u,Y-2*u,u*2,9*u,'#6a4424');R(X-7*u,Y-9*u,14*u,8*u,'#b07a3a');R(X-6*u,Y-8*u,12*u,6*u,'#d8a860');label('🐾',X,Y-5*u,'#3a2616',Math.round(TS*0.3));label('Parc des familiers',X,Y-TS*0.85,'#9fe07a',Math.round(TS*0.28));}
@@ -8649,7 +8724,7 @@ function render(){
   const x0=Math.floor(P.x-rw)-1,x1=Math.ceil(P.x+rw)+1,y0=Math.floor(P.y-rh)-1,y1=Math.ceil(P.y+rh)+1;
   ctx.save();if(camA){ctx.translate(W/2,H/2);ctx.rotate(camA);ctx.translate(-W/2,-H/2);}inWorld=true;
   if(scene==='realm'){drawRealm(x0,x1,y0,y1);drawHerbes(x0,x1,y0,y1);}else if(scene==='dungeon'){drawDungeon(x0,x1,y0,y1);drawLys();}else if(scene==='vault')drawVault(x0,x1,y0,y1);else if(scene==='hub')drawHub(x0,x1,y0,y1);else if(scene==='tuto')drawTuto(x0,x1,y0,y1);else if(scene==='tour')drawTour(x0,x1,y0,y1);else if(scene==='arena')drawArena(x0,x1,y0,y1);else if(scene==='ghall')drawGHall(x0,x1,y0,y1);else if(scene==='raid')drawRaid(x0,x1,y0,y1);else drawNexus(x0,x1,y0,y1);
-  drawTombs();drawCamp();drawTrou();drawSummons();
+  drawTombs();drawCamp();drawCamp2();drawTrou();drawSummons();
   for(const k of keyPortals()){const rem=Math.max(0,Math.ceil((k.fin-Date.now())/1000))+' s';if(k.ty==='v')drawPortal(k.x,k.y,'#0a4a5a','#ffd23f','La Vengeance sous-marine','Donjon rare · '+rem,{scale:1.35,fast:true});else drawPortal(k.x,k.y,'#141034','#3ff0ff',"L'Horloge Brisée",'Donjon à clef · '+rem,{scale:1.35,fast:true,clock:true});}
   if(scene==='realm'){for(const d of dportals){const T=DTYPES[d.t||'c'];drawPortal(d.x,d.y,T.col[0],T.col[1],T.nom,(d.t==='a'?'World boss · ':'')+Math.ceil(d.life)+' s',d.t==='a'?{scale:1.45,world:true,fast:true,th:'a'}:{th:d.t});}}
   for(const b of bags)up(b.x,b.y,()=>{const s=TS*0.62,X=sx(b.x),Y=sy(b.y)+Math.sin(time*3+b.x)*2;if(b.kind==='blanc'||b.kind==='relique'){ctx.fillStyle=b.kind==='relique'?`hsla(${(time*120)%360},100%,65%,.35)`:'rgba(255,240,180,.25)';ctx.beginPath();ctx.arc(X,Y,s*(0.8+0.1*Math.sin(time*5)),0,TAU);ctx.fill();}ctx.drawImage(BAGS[b.kind],X-s/2,Y-s/2,s,s);});
@@ -8775,14 +8850,15 @@ function render(){
   if(nearKeyPortal())prompt=nearKeyPortal().ty==='v'?'E · Plonger dans La Vengeance sous-marine':'E · Entrer dans l\'Horloge Brisée (donjon à clef)';
   else if(scene==='nexus'&&Math.hypot(P.x-KPORT.x,P.y-KPORT.y)<1.5)prompt=C().inv.some(it=>it&&it.kind==='cle_tour')?'E · Tour des Chevaliers : utiliser une Clef de la Tour':'Tour des Chevaliers · scellée (il faut une Clef de la Tour)';
   else if(scene==='nexus'&&Math.hypot(P.x-GPORT.x,P.y-GPORT.y)<1.5)prompt=GUILD?'E · Hall de guilde ['+GUILD.tag+']':'E · Guildes : créer ou rejoindre';
-  else if(scene==='nexus'){if(Math.hypot(P.x-NPORT.x,P.y-NPORT.y)<1.6)prompt='E · Portails des Plaines Sauvages';else if(nearAltarObj())prompt={maudit:'E · Parler au Passeur',breche:'E · Parler au Veilleur de la Brèche',navig:'E · Parler au Vieux Navigateur',pup:'E · Changer de pseudo',statue:'E · Choisir un skin',altar:'E · Changement de classe',guide:'E · Parler au guide (refaire le tutoriel)',quest:'E · Quêtes du jour',eleveur:'E · Éleveur de familiers (faire éclore les œufs)',srv:'E · Fontaine : changer de serveur',pecheur:'E · Parler au pêcheur (quête : tous les poissons)',table:'E · Table à dessin (1 pixel par minute)',craft:'E · Table enchantée (fabriquer un talisman)',hv:'E · Hôtel des ventes (acheter et vendre entre joueurs)',herbo:'E · Atelier de l\'herboriste (fabriquer des potions avec tes plantes)',forge:'E · Forgeron (améliorer ton équipement)'}[nearAltarObj()];else if(Math.hypot(P.x-SHOP.x,P.y-SHOP.y)<1.9)prompt='E · Parler au marchand';else if(Math.hypot(P.x-VPORT.x,P.y-VPORT.y)<1.5)prompt='E · Salle des coffres';else if(groundBag)prompt='G · Tout ramasser';else if(!FISH&&nearWater())prompt='E · Pêcher dans l\'étang';}
+  else if(scene==='nexus'){if(Math.hypot(P.x-NPORT.x,P.y-NPORT.y)<1.6)prompt='E · Portails des Plaines Sauvages';else if(nearAltarObj())prompt={maudit:'E · Parler au Passeur',breche:'E · Parler au Veilleur de la Brèche',navig:'E · Parler au capitaine Morvan, le vieux navigateur',pup:'E · Changer de pseudo',statue:'E · Choisir un skin',altar:'E · Changement de classe',guide:'E · Parler à Maître Albéric (refaire le tutoriel)',quest:'E · Quêtes du jour',eleveur:'E · Éleveur de familiers (faire éclore les œufs)',srv:'E · Fontaine : changer de serveur',pecheur:'E · Parler au pêcheur (quête : tous les poissons)',table:'E · Table à dessin (1 pixel par minute)',craft:'E · Table enchantée (fabriquer un talisman)',hv:'E · Hôtel des ventes (acheter et vendre entre joueurs)',herbo:'E · Atelier de l\'herboriste (fabriquer des potions avec tes plantes)',forge:'E · Forgeron (améliorer ton équipement)'}[nearAltarObj()];else if(Math.hypot(P.x-SHOP.x,P.y-SHOP.y)<1.9)prompt='E · Parler au marchand';else if(Math.hypot(P.x-VPORT.x,P.y-VPORT.y)<1.5)prompt='E · Salle des coffres';else if(groundBag)prompt='G · Tout ramasser';else if(!FISH&&nearWater())prompt='E · Pêcher dans l\'étang';}
   else if(scene==='vault'&&VIS){if(Math.hypot(P.x-VBACK.x,P.y-VBACK.y)<1.4)prompt='E · Retour au Village';else if(Math.hypot(P.x-HDECO.x,P.y-HDECO.y)<1.6)prompt=VIS.aime?'Tu as déjà laissé un cœur ici ♥':'E · Laisser un cœur ♥ à '+VIS.n;else if(!FISH&&nearWater())prompt='E · Pêcher dans le lac';}
-  else if(scene==='vault'){const c=nearChest();if(DECO.on)prompt=null;else if(Math.hypot(P.x-VBACK.x,P.y-VBACK.y)<1.4)prompt='E · Retour au Village';else if(Math.hypot(P.x-HDECO.x,P.y-HDECO.y)<1.6)prompt='E · Décorer la maison, acheter des meubles';else if(nearSalleDoor())prompt='E · Agrandir la maison : une salle en plus ('+SALLE.prix+' pièces)';else if(Math.hypot(P.x-PRESNPC.x,P.y-PRESNPC.y)<1.6)prompt='E · Gardien du Prestige (niveau maximum)';else if(Math.hypot(P.x-FBOARD.x,P.y-FBOARD.y)<1.5)prompt='E · Tableau de pêche';else if(!FISH&&nearWater())prompt='E · Pêcher dans le lac';else if(Math.hypot(P.x-PSIGN.x,P.y-PSIGN.y)<1.6||inPark(P.x,P.y))prompt='E · Gérer mes familiers';else if(nearColis())prompt=colis().length?'Coffre de livraison ouvert · '+colis().length+' objet'+(colis().length>1?'s':'')+' à prendre (clic ou glisser vers ton sac)':'Coffre de livraison · vide. Tes cadeaux du jour et tes achats de la boutique arrivent ici.';else if(c>=save.vault.n)prompt=c===save.vault.n?'E · Débloquer le coffre '+(c+1)+' · '+VAULT_PRICES[c]+' pièces':'Coffre '+(c+1)+' verrouillé';else if(c>=0)prompt='Coffre '+(c+1)+' ouvert · glisse tes objets dans le panneau';else if(groundBag)prompt='G · Tout ramasser';}
+  else if(scene==='vault'){const c=nearChest();if(DECO.on)prompt=null;else if(Math.hypot(P.x-VBACK.x,P.y-VBACK.y)<1.4)prompt='E · Retour au Village';else if(Math.hypot(P.x-HDECO.x,P.y-HDECO.y)<1.6)prompt='E · Décorer la maison, acheter des meubles';else if(nearSalleDoor())prompt='E · Agrandir la maison : une salle en plus ('+SALLE.prix+' pièces)';else if(Math.hypot(P.x-PRESNPC.x,P.y-PRESNPC.y)<1.6)prompt='E · L\'Oracle, gardien du prestige (niveau maximum)';else if(Math.hypot(P.x-FBOARD.x,P.y-FBOARD.y)<1.5)prompt='E · Tableau de pêche';else if(!FISH&&nearWater())prompt='E · Pêcher dans le lac';else if(Math.hypot(P.x-PSIGN.x,P.y-PSIGN.y)<1.6||inPark(P.x,P.y))prompt='E · Gérer mes familiers';else if(nearColis())prompt=colis().length?'Coffre de livraison ouvert · '+colis().length+' objet'+(colis().length>1?'s':'')+' à prendre (clic ou glisser vers ton sac)':'Coffre de livraison · vide. Tes cadeaux du jour et tes achats de la boutique arrivent ici.';else if(c>=save.vault.n)prompt=c===save.vault.n?'E · Débloquer le coffre '+(c+1)+' · '+VAULT_PRICES[c]+' pièces':'Coffre '+(c+1)+' verrouillé';else if(c>=0)prompt='Coffre '+(c+1)+' ouvert · glisse tes objets dans le panneau';else if(groundBag)prompt='G · Tout ramasser';}
   else if(scene==='tuto'){if(exitOpen&&MAP.bossExit&&Math.hypot(P.x-MAP.bossExit.x,P.y-MAP.bossExit.y)<1.6)prompt='E · Village (terminer le tutoriel)';else if(groundBag)prompt='G · Tout ramasser';}
   else if(scene==='ghall'){if(Math.hypot(P.x-GH.back.x,P.y-GH.back.y)<1.4)prompt='E · Retour au Village';else if(Math.hypot(P.x-GH.raid.x,P.y-GH.raid.y)<1.6)prompt=raidOn()&&raidCdLeft()>0?'Retour au combat dans '+raidCdLeft()+' s':raidOn()?(dragonUp()?'E · Raid : affronter le Dragon ('+raidLeft()+')':'E · Raid : le Dragon arrive dans '+spawnLeft()+' s'):'Portail du raid fermé · le Dragon est annoncé par les admins';else if(Math.hypot(P.x-GH.board.x,P.y-GH.board.y)<1.6)prompt='E · Tableau de guilde';else if(Math.hypot(P.x-GH.chest.x,P.y-GH.chest.y)<1.6)prompt=GUILD&&GUILD.raid&&GUILD.raid.dernier&&GUILD.raid.dernier.part&&!GUILD.raid.dernier.recu&&!raidOn()?'E · Récupérer la récompense du raid !':'Coffre du raid · récompense selon le classement de ta guilde';}
   else if(scene==='raid'){if(Math.hypot(P.x-RA.back.x,P.y-RA.back.y)<1.4)prompt='E · Retour au hall de guilde';}
   else if(scene==='hub'){const p=nearHubPort();if(Math.hypot(P.x-HBACK.x,P.y-HBACK.y)<1.4)prompt='E · Retour au Village';else if(p)prompt='E · Tester : '+DTYPES[p.t].nom;}
   else if(scene==='realm'&&trouPrompt())prompt=trouPrompt();
+  else if(scene==='realm'&&Math.hypot(P.x-CAMP2NPC.x,P.y-CAMP2NPC.y)<1.7)prompt='E · Parler à Brunhild (quêtes de l\'île)';
   else if(scene==='realm'){const d=nearDPortal();if(d)prompt='E · Entrer : '+DTYPES[d.t||'c'].nom+(d.t==='a'?' (très difficile)':'');else if(groundBag)prompt='G · Tout ramasser';else if(!FISH&&nearWater())prompt='E · Pêcher en mer';}
   else if(scene==='dungeon'&&brechePrompt())prompt=brechePrompt();
   else if(scene==='dungeon'&&grottePrompt())prompt=grottePrompt();
@@ -8822,7 +8898,7 @@ function drawMini(){
     const {ox,oy,k,v}=realmView(),mx=x=>(x-ox)*k,my=y=>(y-oy)*k,ms=miniZoom>=4?2:1;
     {const x0=Math.max(0,ox),x1=Math.min(RW,ox+v),y0=Math.max(0,oy),y1=Math.min(RH,oy+v);mctx.fillStyle='#1d3a5c';mctx.fillRect(0,0,Wm,Wm);mctx.drawImage(realmImg,x0,y0,x1-x0,y1-y0,(x0-ox)*k,(y0-oy)*k,(x1-x0)*k,(y1-y0)*k);if(fogCv&&!devMode)mctx.drawImage(fogCv,x0/FOG_K,y0/FOG_K,(x1-x0)/FOG_K,(y1-y0)/FOG_K,(x0-ox)*k,(y0-oy)*k,(x1-x0)*k,(y1-y0)*k);}
     {const mc=mauditInfo();if(mc){const pu=4+2.5*Math.sin(time*5);mctx.save();mctx.translate(mx(mc.x),my(mc.y));mctx.rotate(Math.PI/4);mctx.fillStyle='#0b0a12';mctx.fillRect(-pu-2,-pu-2,pu*2+4,pu*2+4);mctx.fillStyle='#b45aff';mctx.fillRect(-pu,-pu,pu*2,pu*2);mctx.fillStyle='#fff';mctx.fillRect(-1.5,-1.5,3,3);mctx.restore();}}
-    {const pu=3+Math.sin(time*3);mctx.fillStyle='#ffd23f';mctx.fillRect(mx(CAMP.x)-pu,my(CAMP.y)-pu,pu*2,pu*2);mctx.fillStyle='#fff';mctx.fillRect(mx(CAMP.x)-1,my(CAMP.y)-1,2,2);}
+    {const pu=3+Math.sin(time*3);mctx.fillStyle='#ffd23f';mctx.fillRect(mx(CAMP.x)-pu,my(CAMP.y)-pu,pu*2,pu*2);mctx.fillStyle='#fff';mctx.fillRect(mx(CAMP.x)-1,my(CAMP.y)-1,2,2);mctx.fillStyle='#8fd0f0';mctx.fillRect(mx(CAMP2.x)-pu,my(CAMP2.y)-pu,pu*2,pu*2);mctx.fillStyle='#fff';mctx.fillRect(mx(CAMP2.x)-1,my(CAMP2.y)-1,2,2);}
     {const cb=centralBoss();if(cb){const pu=4+2*Math.sin(time*6);mctx.fillStyle='#ff3b4a';mctx.fillRect(mx(cb.x)-pu,my(cb.y)-pu,pu*2,pu*2);mctx.fillStyle='#ffd23f';mctx.fillRect(mx(cb.x)-2,my(cb.y)-2,4,4);}}
     for(const m of monsters){if(m.d.boss){mctx.fillStyle='#ffd23f';mctx.fillRect(mx(m.x)-3,my(m.y)-3,6,6);}else if(Math.hypot(m.x-P.x,m.y-P.y)<16*miniZoom){mctx.fillStyle='#ff4d5e';mctx.fillRect(mx(m.x)-ms,my(m.y)-ms,2*ms,2*ms);}}
     for(const d of dportals){mctx.fillStyle=(DTYPES[d.t]||DTYPES.c).col[1];mctx.fillRect(mx(d.x)-2,my(d.y)-2,4,4);}
@@ -9096,7 +9172,7 @@ function colBosses(){return HPORTS.map(p=>p.t).filter(t=>DTYPES[t]&&(DTYPES[t].b
 function navigLa(){return !!(save.current&&C()&&(Object.values(save.chars||{}).some(c=>c&&(c.lvl|0)>=25)||Object.values(save.colosse||{}).some(q=>q&&(q.s|0)>0)));}
 function colTue(key){if(!save.current||colEtape()!==1)return;const q=COLQ(),l=colBosses();if(q.b[key]||!l.some(b=>b.k===key))return;q.b[key]=1;persist();pushSave(true);const n=l.filter(b=>q.b[b.k]).length;
   if(n>=l.length){showBanner('Tous les maîtres sont tombés','Retourne voir le Vieux Navigateur, au Village','#8fd0f0');sfx('level');}else note('Quête du Navigateur : '+n+' / '+l.length+' maîtres de donjon');}
-function renderNavig(){const q=COLQ(),ch=C(),l=colBosses(),n=l.filter(b=>q.b[b.k]).length,col='#8fd0f0';let h='<h2 style="color:'+col+'">Le Vieux Navigateur</h2>';
+function renderNavig(){const q=COLQ(),ch=C(),l=colBosses(),n=l.filter(b=>q.b[b.k]).length,col='#8fd0f0';let h='<h2 style="color:'+col+'">Capitaine Morvan · le vieux navigateur</h2>';
   const dit=t=>'<p style="border-left:3px solid '+col+';padding:6px 12px;margin:8px 0;font-size:15px;line-height:1.5">'+t+'</p>';
   if(q.s===0){h+=dit('« Tu as tout vu de cette île, pas vrai ? Moi aussi. Mais mes vieilles cartes jurent qu\'il y a autre chose, plus loin. Avant de t\'en dire plus, prouve-moi que tu es de taille : abats, une fois chacun, les maîtres des donjons. »');
     h+='<div class="shop-foot"><span class="hint">'+(ch.lvl>=25?l.length+' maîtres de donjon à vaincre avec ce héros.':'Il faut que ce héros soit niveau 25.')+'</span><span><button type="button" class="act main" data-nv="go" '+(ch.lvl>=25?'':'disabled')+'>Accepter</button> <button type="button" class="act" data-nv="non">Plus tard</button></span></div>';}
@@ -9115,13 +9191,30 @@ navEl.addEventListener('click',e=>{if(e.target===navEl){closeNavig();return;}con
   if(a==='go'&&q.s===0&&C().lvl>=25){q.s=1;persist();pushSave(true);sfx('level');renderNavig();return;}
   if(a==='fini'&&q.s===1&&colBosses().every(x=>q.b[x.k])){q.s=2;persist();pushSave(true);sfx('relic');renderNavig();return;}});
 window.addEventListener('keydown',e=>{if(e.key==='Escape'&&navEl&&!navEl.hidden)closeNavig();});
-function drawNavig(){if(!navigLa()||scene!=='nexus')return;const X=sx(NAVIG.x),Y=sy(NAVIG.y),u=TS/16,q=TS*1.15,bb=Math.sin(time*1.4)*u*0.6;let im=null;try{im=heroSprite('archer',null,'arc',2,'idle');}catch(e){}
-  up(NAVIG.x,NAVIG.y,()=>{ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(X,Y+TS*0.32,TS*0.5,TS*0.18,0,0,TAU);ctx.fill();
-    if(im)ctx.drawImage(im,X-q/2,Y-q*0.7-bb,q,q);
-    R(X-6*u,Y-q*0.7-bb+1*u,12*u,2.4*u,'#1c3a5a');R(X-4*u,Y-q*0.7-bb-1.6*u,8*u,3*u,'#24507a');R(X-1*u,Y-q*0.7-bb-0.6*u,2*u,1.6*u,'#ffd23f'); // tricorne
-    R(X+3*u,Y-q*0.2-bb,6*u,1.6*u,'#8a6a2a');R(X+8*u,Y-q*0.2-bb-0.4*u,1.4*u,2.4*u,'#ffd23f');                                         // longue-vue
-    const st=colEtape(),alerte=!save.navigLu||(st===1&&colBosses().every(x=>COLQ().b[x.k]));if(alerte)label(st===1?'!':'?',X,Y-TS*1.25-Math.abs(Math.sin(time*3))*u*2,'#8fd0f0',Math.round(TS*0.5),700);
-    label('Vieux Navigateur',X,Y-TS*0.95,'#8fd0f0',Math.round(TS*0.28));});}
+// PNJ dessinés pour eux seuls (16 × 18 pixels) : chacun a sa silhouette, plus aucun n'emprunte l'apparence d'un héros
+const PNJ_ART={
+  // Albéric, le vieux maître qui guide les nouveaux venus : capuche verte, barbe blanche, bâton à lanterne
+  alberic:{rows:['............K...','....HHHH...LlL..','...HhhhhH..LlL..','..HhhhhhhH.LLL..','..HhSSSShH..T...','..HSESSESH..T...','..HSSSSSSH..T...','...WWSSWW...T...','..RWWWWWWR..T...','.RRwWWWWwRR.T...','.RRRwWWwRRRST...','.SRRRwwRRRR.T...','..RYYYYYYR..T...','..RRRBRRRR..T...','..RRRRRRRR..T...','..RrRRRRrR..T...','..RRRRRRRR..T...','...KK..KK...T...'],
+    pal:{K:'#2a1c10',H:'#2f5a2d',h:'#4f8a3f',S:'#f0c8a0',E:'#1a1420',W:'#eeeae0',w:'#c8c4b8',R:'#7a5a34',r:'#5a4024',Y:'#ffd23f',B:'#c9973c',T:'#6a4424',L:'#ffd23f',l:'#fff3b0'},h:18},
+  // le capitaine Morvan, vieux navigateur : tricorne, bandeau sur l'œil, barbe grise, manteau bleu à boutons d'or, jambe de bois, longue-vue
+  morvan:{rows:['................','.....NNNNNN.....','..NNNnnnnnnNNN..','.NnnnnnYnnnnnnN.','...NNNNNNNNNN...','....SSSSSSSS....','....SPPSSESS....','....SPSSSSSS....','....GSSSSSSG....','....GGGSSGGG....','...CCGGGGGGCC...','..CCcWGGGGWcCC..','..CcCWYWWYWCcCQQ','..SCCCWYYWCCCSQ.','...CCCCYYCCCC...','...BBBB..BBBB...','...BBB....TT....','...KKK....TT....'],
+    pal:{N:'#1c3a5a',n:'#24507a',Y:'#ffd23f',S:'#e8b890',E:'#1a1420',P:'#0b0a12',G:'#a8a4b0',C:'#2a4a7a',c:'#3a6a9a',W:'#e8e4f0',B:'#4a3a2a',K:'#1e1610',T:'#8a6a3a',Q:'#c9973c'},h:18},
+  // l'Oracle aux mille vies, gardien du prestige : il flotte, masque d'or, robe pourpre semée d'étoiles
+  oracle:{rows:['.......M........','......MMM.......','.....VVVVV......','....VvvvvvV.....','...VvVMMMVvV....','...VvMOMOMvV....','...VvMMMMMvV....','...VvVmMmVvV....','..VVvvVVVvvVV...','.MVvvuvvvuvvVM..','.MVvuuvYvuuvVM..','..VvvuvYvXvvV...','..VvvvvYvvvvV...','..VXvvvYvvvvV...','..VvvvvYvvvXV...','...VVvvYvvVV....','....VVVVVVV.....','.....VVVVV......'],
+    pal:{M:'#ffd23f',m:'#c9973c',V:'#3a1a5a',v:'#5a2a8a',u:'#7a4ab0',O:'#7df0e0',Y:'#ffd23f',X:'#fff3b0'},h:18,vol:1},
+  // Brunhild, éclaireuse du Camp des Colosses : casque à cornes, tresses rousses, cape de fourrure, lance
+  brunhild:{rows:['............P...','...O......O.P...','...OIIIIIIO.P...','....IiiiiI..T...','...BSSSSSSB.T...','...BSESSESB.T...','...BSSSSSSB.T...','...B.SrrS.B.T...','..FFfFFFFfFFT...','.FFfGGGGGGfFS...','.F.GGgGGgGG.T...','.S.GGLLLLGG.T...','...GGGYGGGG.T...','...GGGGGGGG.T...','...gGGGGGGg.T...','...FF....FF.T...','...FF....FF.T...','...KK....KK.T...'],
+    pal:{P:'#dfe6f0',O:'#e8e0c8',I:'#8a90a4',i:'#b8c0d0',B:'#d0702a',S:'#f0c8a0',E:'#1a1420',r:'#c86a5a',F:'#8a6a4a',f:'#b0905a',G:'#3a5a6a',g:'#2a4250',L:'#5a3a20',Y:'#ffd23f',T:'#6a4424',K:'#2a1c10'},h:18}};
+const PNJ_IMG={};
+function pnjImg(id){if(PNJ_IMG[id])return PNJ_IMG[id];const A=PNJ_ART[id];return PNJ_IMG[id]=makeSprite(A.rows,A.pal,4);}
+function drawPnj(id,x,y,nom,col,mark){const X=sx(x),Y=sy(y),u=TS/16,A=PNJ_ART[id];if(X<-TS*3||X>W+TS*3||Y<-TS*3||Y>H+TS*3)return;
+  up(x,y,()=>{const im=pnjImg(id),q=TS*1.2,hh=q*A.h/16,b=A.vol?Math.sin(time*1.8)*u*1.6+u*3:Math.abs(Math.sin(time*1.6))*u*0.6;
+    ctx.fillStyle='rgba(0,0,0,.33)';ctx.beginPath();ctx.ellipse(X,Y+TS*0.32,TS*(A.vol?0.32:0.42),TS*0.13,0,0,TAU);ctx.fill();
+    if(A.vol){const g=0.5+0.5*Math.sin(time*2);ctx.fillStyle='rgba(255,210,63,'+(0.1+0.1*g)+')';ctx.beginPath();ctx.ellipse(X,Y+TS*0.3,TS*0.8,TS*0.3,0,0,TAU);ctx.fill();for(let i=0;i<3;i++){const a=time*1.3+i*TAU/3;R(X+Math.cos(a)*TS*0.6-u,Y-TS*0.4+Math.sin(a)*TS*0.22-u,2*u,2*u,'#ffd23f');}}
+    ctx.drawImage(im,Math.round(X-q/2),Math.round(Y+TS*0.36-hh-b),q,hh);
+    if(mark)label(mark,X,Y-hh-TS*0.15-Math.abs(Math.sin(time*3))*u*2,col,Math.round(TS*0.5),700);
+    label(nom,X,Y+TS*0.36-hh-b-TS*0.12,col,Math.round(TS*0.28));});}
+function drawNavig(){if(!navigLa()||scene!=='nexus')return;const st=colEtape(),alerte=!save.navigLu||(st===1&&colBosses().every(x=>COLQ().b[x.k]));drawPnj('morvan',NAVIG.x,NAVIG.y,'Capitaine Morvan · vieux navigateur','#8fd0f0',alerte?(st===1?'!':'?'):null);}
 // ---------- le point qui brille, puis le trou, au nord des Terres Désolées (chaque héros voit le sien) ----------
 function trouProche(r){return scene==='realm'&&Math.hypot(P.x-TROU.x,P.y-TROU.y)<(r||2.6);}
 function trouPrompt(){const s=colEtape();if(s<2||!trouProche())return null;return s===2?'E · Creuser là où le sol brille':'E · Descendre dans la grotte de glace';}
@@ -9153,7 +9246,7 @@ function genGrotte(seed){const w=300,h=64,sol=new Uint8Array(w*h).fill(1),sd=((s
 function enterGrotte(){if(!save.current)return;enterDungeon(1+Math.floor((Date.now()+CLK)/900000)%1000000,'i');}
 function grottePrompt(){const d=MAP;if(scene!=='dungeon'||!d||!d.grotte)return null;if(Math.hypot(P.x-d.sortie.x,P.y-d.sortie.y)<2)return 'E · Sortir vers la lumière';return null;}
 function grotteE(){const d=MAP;if(scene!=='dungeon'||!d||!d.grotte)return false;if(Math.hypot(P.x-d.sortie.x,P.y-d.sortie.y)<2){const q=COLQ(),neuf=q.s<4;if(neuf){q.s=4;persist();pushSave(true);}
-    enterRealm('colosses');P.invul=5;P.backProt=1;showBanner('L\'ÎLE AUX COLOSSES',neuf?'Le troisième portail du Village est ouvert pour ton '+CLASSES[save.current].nom:'Ici, tout est plus grand que toi',T8_COL);sfx('boss',0.6);return true;}
+    enterRealm('colosses');P.invul=5;P.backProt=1;showBanner('L\'ÎLE AUX COLOSSES',neuf?'Trouve le Camp des Colosses, au cœur de l\'île : il ouvre le portail du Village':'Ici, tout est plus grand que toi',T8_COL);ileqAdd('grotte',1);sfx('boss',0.6);return true;}
   return false;}
 function drawGrotteMonde(d){if(!d||!d.grotte)return;const X=sx(d.sortie.x),Y=sy(d.sortie.y),u=TS/16,p=0.5+0.5*Math.sin(time*2);
   const g=ctx.createRadialGradient(X+TS,Y,TS*0.2,X+TS,Y,TS*5.5);g.addColorStop(0,'rgba(255,250,225,'+(0.85+0.1*p)+')');g.addColorStop(0.35,'rgba(255,236,180,.35)');g.addColorStop(1,'rgba(255,236,180,0)');ctx.fillStyle=g;ctx.fillRect(X-TS*5,Y-TS*5.5,TS*11,TS*11);

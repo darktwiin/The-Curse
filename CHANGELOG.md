@@ -1,5 +1,20 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.91 (index.html, server.js, arbitre.js ; outils/generer-wiki.js ; wiki.html régénéré)
+- **Correctif : les monstres ne disparaissent plus pour réapparaître après avoir pris des dégâts.** Quand on cessait de frapper un monstre plus de 30 secondes (les gros boss, les monstres très résistants), les coups suivants n'étaient plus comptés par l'hôte : le monstre semblait mourir, puis revenait. C'est réparé.
+- **Les familiers se font sentir** : bonus de base relevés (vie et mana 90, puissance 10, vitesse d'attaque 9, vitesse 8, armure 10, avant les multiplicateurs de rang).
+- **Nouvelle rareté : Légendaire.** Un familier Épique qui te suit gagne des points d'éveil à chaque monstre tué (1 par monstre, 20 par boss). À 5 000 points, l'éleveur du Village l'éveille : bonus ×5 et il te soigne de 3 % de ta vie toutes les 5 secondes, avec une aura dorée.
+- **La maison s'agrandit** : 6 rangées de plus vers le haut, les coffres sont repoussés tout en haut et l'entrée a enfin de la place (tes meubles suivent automatiquement).
+- **Coffres de la maison** : la rangée du bas (coffres 1 à 5) s'ouvre toujours en pièces, la rangée du haut (6 à 10) en Cursite : 50, 150, 200, 300 puis 500.
+- **Styles de maison** : le Chalet est offert, chaque autre style coûte 200 Cursite. Le style que tu portais déjà reste à toi.
+- **Les PNJ ont leur propre visage** : Maître Albéric (le guide), le vieux navigateur et l'Oracle, gardien du prestige, ne portent plus l'apparence d'un héros.
+- Au-delà de la mer, quelqu'un a allumé un feu de camp… et les pêcheurs jurent avoir vu des poissons qu'aucun livre ne connaît.
+- (interne) Camp des Colosses (CAMP2, entre la Steppe et les Cimes) : zone sûre sans gardes, aucun monstre n'y naît ni n'y reste, tirs arrêtés au bord ; y entrer ouvre le portail du Village vers le camp (50 pièces, protégé 5 s ou jusqu'au premier tir). Le portail ne mène plus à la grève (la grotte de glace y mène toujours).
+- (interne) Brunhild, au camp : 3 quêtes du jour de l'île (400 à 700 pièces chacune, +75 Cursite pour les 3) ; onglet de pêche « Île aux Colosses » : 11 poissons, mêmes raretés que la mer, jusqu'à 5 % plus lourds (hors quête du pêcheur et hors wiki).
+- (interne) Panel admin : le Tier 8 est sur la ligne de chaque type d'objet.
+- (interne) Hôte : un total de coups qui repart de zéro est compté (avant : ignoré jusqu'à dépasser l'ancien total) ; les totaux sont gardés tant que le monstre vit ; 2 s pour confirmer une mort prévue.
+- (interne) Arbitre : coffres 6-10 et styles de maison payés en Cursite, rang de familier figé sauf éveil (jauge pleine, Épique/Ultime -> Légendaire), jauge d'éveil limitée aux monstres tués, quêtes de l'île (or et bonus), familier dans le plafond de dégâts. Serveur : visites de maison décalées pour les sauvegardes pas encore migrées, poissons de l'île reconnus.
+
 ## ver.0.0.90 (index.html, server.js ; wiki.html régénéré)
 - **Raid du Dragon : départ cette nuit à 0h45 !** Le raid se lance tout seul à l'heure prévue ; l'affiche affiche le compte à rebours.
 - (interne) Raids programmés côté serveur (RAID_PROGRAMMES, rattrapage 30 min, jamais deux fois) ; commande admin « raid N » = départ dans N minutes.
