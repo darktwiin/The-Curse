@@ -470,8 +470,8 @@ function envoyer(ws, msg) {
    L'hôte d'une scène (le Gardien, ou le joueur qui fait vivre les monstres) est toujours relayé à plein rythme, et sa liste de monstres est
    réduite pour chacun à ce qui se trouve à 36 cases de lui. Le chat et les événements partent tout de suite pour tout le monde. */
 const PRES_DE = 300, LOIN = 360; // en dixièmes de case : « tout près » dans les Plaines, et portée de la liste de monstres
-const CLES_HOTE = ['M', 'D', 'G', 'X', 'h', 'pz'];
-function etatLeger(e) { if (!e || (e.M == null && e.D == null && e.h == null && e.G == null && e.X == null && e.pz == null)) return e; const o = Object.assign({}, e); for (const k of CLES_HOTE) delete o[k]; return o; }
+const CLES_HOTE = ['M', 'D', 'G', 'X', 'h', 'pz', 'ag', 'AG', 'BM'];
+function etatLeger(e) { if (!e || (e.M == null && e.D == null && e.h == null && e.G == null && e.X == null && e.pz == null && e.ag == null && e.AG == null && e.BM == null)) return e; const o = Object.assign({}, e); for (const k of CLES_HOTE) delete o[k]; return o; }
 function intervalleRelais(j, p) {
   const sj = j.etat.s, sp = p.etat.s;
   if (sj !== sp) return j.gardien ? -1 : 1000; // une copie du Gardien n'a que faire des joueurs des autres scènes
@@ -1051,10 +1051,12 @@ const BRECHES = new Map(); // `${salle}|${course}` -> { t0, d, fin }
 setInterval(() => { const lim = Date.now() - 2 * 3600000; for (const [k, B] of BRECHES) if (B.t0 < lim) BRECHES.delete(k); }, 600000).unref();
 const chanceRune = (niv, d) => { const e = niv - d; return e <= 0 ? 1 : e === 1 ? 0.2 : e === 2 ? 0.05 : 0; };
 // niveaux des runes d'une classe : la sauvegarde enregistrée au premier appel, puis ce que le serveur a lui-même accordé
+// runes communes au compte (0.0.92) : chaque rune vaut son plus haut niveau parmi tous les héros ; la difficulté et le niveau restent ceux du héros
 function runesDe(moi, cls) { const cpt = moi.cpt; cpt.brNiv = cpt.brNiv || {}; if (cpt.brNiv[cls]) return cpt.brNiv[cls];
   let sv = null; try { const r = sql.parId.get(moi.compte.id); sv = r && r.save ? JSON.parse(r.save) : null; } catch {}
-  const b = (sv && sv.breche && sv.breche[cls]) || {}, niv = {}; for (const k of RUNES_BRECHE) { const n = (b.runes && b.runes[k]) | 0; if (n > 0) niv[k] = Math.min(20, n); }
-  return (cpt.brNiv[cls] = { niv, diff: Math.max(0, Math.min(20, b.diff | 0)), lvl: (sv && sv.chars && sv.chars[cls] && sv.chars[cls].lvl) | 0 }); }
+  if (!cpt.brRunes) { const niv = {}; for (const b of Object.values((sv && sv.breche && typeof sv.breche === 'object' && sv.breche) || {})) for (const k of RUNES_BRECHE) { const n = (b && b.runes && b.runes[k]) | 0; if (n > 0) niv[k] = Math.max(niv[k] | 0, Math.min(20, n)); } cpt.brRunes = niv; }
+  const b = (sv && sv.breche && sv.breche[cls]) || {};
+  return (cpt.brNiv[cls] = { niv: cpt.brRunes, diff: Math.max(0, Math.min(20, b.diff | 0)), lvl: (sv && sv.chars && sv.chars[cls] && sv.chars[cls].lvl) | 0 }); }
 function breche(moi, m, salle) {
   if (!moi.compte) return; const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)), R = arbitre.regles();
   const refus = msg => envoyer(moi.ws, { t: 'breche', a: 'refus', msg, e: m.a === 'entrer' ? 1 : 0 }); // e : entrée refusée, le jeu ressort le joueur

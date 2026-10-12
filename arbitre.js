@@ -44,6 +44,7 @@ function chargerRegles(html) {
   { const m = html.match(/HOUSE_PRIX=(\d+)/); R.HOUSE_PRIX = m ? +m[1] : 200; }
   { const m = html.match(/ILEQ_BONUS=(\d+)/); R.ILEQ_BONUS = m ? +m[1] : 75; }
   { const m = html.match(/PET_LEG_XP=(\d+)/); R.PET_LEG_XP = m ? +m[1] : 5000; }
+  { const m = html.match(/TALIS_COUT=(\d+)/); R.TALIS_COUT = m ? +m[1] : 10; }
   return R;
 }
 
@@ -273,6 +274,11 @@ function verifier(ancien, nouveau, ctx) {
   { const cj0 = (ancien.house && ancien.house.cj) | 0, cj1 = (nouveau.house && nouveau.house.cj) | 0;
     if (cj1 !== cj0) { if (cj1 < cj0 || Math.abs(cj1 - today) > 1) pb.push('production de cristal trafiquée');
       else bonusCursite += 10 * Math.min(crH1, ((nouveau.house && Array.isArray(nouveau.house.m) && nouveau.house.m) || []).filter(e => Array.isArray(e) && e[0] === 'cristal').length); } }
+  // --- bourriche du pêcheur : chaque poisson vient d'une prise ; un nouveau plat consomme des poissons et dure 15 min au plus ---
+  { const f0 = ancien.fish || {}, f1 = nouveau.fish || {}, i0 = (ancien.fishInv && typeof ancien.fishInv === 'object') ? ancien.fishInv : {}, i1 = (nouveau.fishInv && typeof nouveau.fishInv === 'object') ? nouveau.fishInv : {};
+    if (nouveau.fishInv != null && (typeof nouveau.fishInv !== 'object' || Array.isArray(nouveau.fishInv) || Object.keys(i1).length > 60)) pb.push('bourriche illisible');
+    else { let mange = 0; for (const k of new Set([...Object.keys(i0), ...Object.keys(i1)])) { if (!estEntier(i1[k] ?? 0, 0, 99999)) { pb.push('bourriche impossible'); break; } const d1 = (i1[k] | 0) - (i0[k] | 0), pris = Math.max(0, ((f1[k] && f1[k].n) | 0) - ((f0[k] && f0[k].n) | 0)); if (d1 > pris) { pb.push('poisson injustifié dans la bourriche'); break; } if (d1 < pris) mange += pris - d1; }
+      for (const [cls, ch1] of Object.entries(nouveau.chars)) { const p1 = ch1 && ch1.plat, p0 = ancien.chars[cls] && ancien.chars[cls].plat; if (!p1) continue; if (typeof p1 !== 'object' || !(+p1.fin <= Date.now() + 16 * 60000)) { pb.push('plat impossible'); continue; } if ((+p1.fin || 0) > ((p0 && +p0.fin) || 0) + 1000 && mange < 1) pb.push('plat cuisiné sans poisson'); } } }
   { const nbP = sv => Object.values(sv.fish || {}).reduce((a, r) => a + Math.max(0, (r && r.n) | 0), 0), x0 = (ancien.pecheur && ancien.pecheur.xp) | 0, x1 = (nouveau.pecheur && nouveau.pecheur.xp) | 0;
     if (!estEntier((nouveau.pecheur && nouveau.pecheur.xp) ?? 0, 0, 1000000)) pb.push('métier de pêcheur impossible'); else if (x1 - x0 > 80 * Math.max(0, nbP(nouveau) - nbP(ancien))) pb.push('expérience de pêcheur injustifiée'); }
   if ((nouveau.titles || []).includes('beta') && !(ancien.titles || []).includes('beta') && (L1.n | 0) < 7 && !(L1.day !== L0.day)) pb.push('titre bêta injustifié');
@@ -301,10 +307,13 @@ function verifier(ancien, nouveau, ctx) {
     for (const cls of Object.keys(nouveau.unlock || {})) if (nouveau.unlock[cls] && R.CLASSES[cls] && !dq(cls)) pb.push('déblocage de héros injustifié'); }
   // --- la Brèche : runes, arbre et difficulté, par classe. Tout vient du serveur (dons.breche : « classe|r|rune|niveau » et « classe|d|difficulté »). ---
   { const RK = ['longue', 'veloce', 'puissant', 'carnivore', 'ami', 'savant', 'duc', 'mille', 'phantom', 'pape'], accord = new Set(dons.breche || []), b1 = nouveau.breche, b0 = (ancien.breche && typeof ancien.breche === 'object' && ancien.breche) || {};
+    const runeMax0 = {}; for (const x of Object.values(b0)) if (x && x.runes && typeof x.runes === 'object') for (const k of RK) runeMax0[k] = Math.max(runeMax0[k] | 0, Math.min(20, x.runes[k] | 0));
+    const accordR = new Set(); for (const e of accord) { const p = String(e).split('|'); if (p[1] === 'r') accordR.add(p[2] + '|' + p[3]); }
     if (b1 != null) { if (typeof b1 !== 'object' || Array.isArray(b1)) pb.push('Brèche illisible'); else for (const cls of Object.keys(b1)) {
       const n = b1[cls], a0 = (b0[cls] && typeof b0[cls] === 'object' && b0[cls]) || {}; if (!R.CLASSES[cls] || !n || typeof n !== 'object') { pb.push('Brèche : classe inconnue'); continue; }
       const r1 = (n.runes && typeof n.runes === 'object' && n.runes) || {}, r0 = (a0.runes && typeof a0.runes === 'object' && a0.runes) || {};
-      for (const k of Object.keys(r1)) { if (!RK.includes(k) || !estEntier(r1[k], 0, 20)) { pb.push('rune impossible'); continue; } for (let L = (r0[k] | 0) + 1; L <= (r1[k] | 0); L++) if (!accord.has(cls + '|r|' + k + '|' + L)) { pb.push('rune non accordée par le serveur (' + k + ' ' + L + ')'); break; } }
+      // runes communes au compte : un niveau déjà atteint par n'importe quel héros vaut pour tous ; au-delà, chaque niveau doit venir du serveur (pour n'importe quel héros)
+      for (const k of Object.keys(r1)) { if (!RK.includes(k) || !estEntier(r1[k], 0, 20)) { pb.push('rune impossible'); continue; } for (let L = Math.max(r0[k] | 0, runeMax0[k] | 0) + 1; L <= (r1[k] | 0); L++) if (!accordR.has(k + '|' + L)) { pb.push('rune non accordée par le serveur (' + k + ' ' + L + ')'); break; } }
       if (n.eq != null && !(RK.includes(n.eq) && (r1[n.eq] | 0) > 0)) pb.push('rune sertie sans la posséder');
       if (!estEntier(n.diff ?? 0, 0, 20)) pb.push('difficulté impossible'); else for (let d = (a0.diff | 0) + 1; d <= (n.diff | 0); d++) if (!accord.has(cls + '|d|' + d) && d === (n.diff | 0)) pb.push('difficulté de Brèche non terminée (' + d + ')');
       if (n.arbre != null) { if (!Array.isArray(n.arbre) || n.arbre.length > 15 || new Set(n.arbre).size !== n.arbre.length || n.arbre.some(id => typeof id !== 'string' || !/^-?[0-4],-?[0-4]$/.test(id))) pb.push('arbre impossible'); }
@@ -476,7 +485,7 @@ function verifier(ancien, nouveau, ctx) {
     for (const t of new Set([...Object.keys(r1), ...Object.keys(t1)])) {
       if (!R.TALIS || !R.TALIS[t]) { pb.push('ressource inconnue'); continue; }
       const n1 = r1[t] | 0; if (!estEntier(r1[t] ?? 0, 0, 99999)) { pb.push('ressource impossible'); continue; }
-      const gain = (n1 - (r0[t] | 0)) + (t1[t] && !t0[t] ? 10 : 0);
+      const gain = (n1 - (r0[t] | 0)) + (t1[t] && !t0[t] ? R.TALIS_COUT : 0);
       if (gain > (resReste[t] | 0)) pb.push('ressource de boss injustifiée'); else if (gain > 0) resReste[t] = (resReste[t] | 0) - gain;
     }
     if (nouveau.talisEq != null && !(t1[nouveau.talisEq] && R.TALIS && R.TALIS[nouveau.talisEq])) pb.push('talisman non possédé'); }
@@ -512,7 +521,7 @@ function degatsMax(s) {
   // miroir du Mystificateur équipé : bonus offensif (voir prisOff dans le jeu)
   const pc = (ch.equip || [])[1], po = pc && R.prisOff && R.KINDS[pc.kind] && (R.KINDS[pc.kind].base || pc.kind) === 'prisme' ? R.prisOff(pc) : null, prisme = k => (po && po[k]) || 0;
   const pe = (s.pets || []).find(p => p && p.id === s.petEq), petB = k => pe && pe.k === k ? Math.ceil({ puissance: 10, vatt: 9 }[k] * [1, 1.6, 2.4, 3.5, 5][Math.min(4, pe.t | 0)] * 1.25) : 0;
-  const stat = k => petB(k) + c.base[k] + c.gain[k] * (lvl - 1) + (((ch.sp || {})[k] | 0) * ((R.SP_DEF[k] || {}).step || 1)) + (((ch.sp2 || {})[k] | 0) * 5) + (ch.equip || []).reduce((a, it) => a + ((it && it.stats && it.stats[k]) || 0), 0) + 30 + prisme(k) + ((s.talisEq && s.talis && s.talis[s.talisEq] && R.TALIS && R.TALIS[s.talisEq] && R.TALIS[s.talisEq].st[k]) || 0);
+  const stat = k => petB(k) + c.base[k] + c.gain[k] * (lvl - 1) + (((ch.sp || {})[k] | 0) * ((R.SP_DEF[k] || {}).step || 1)) + (((ch.sp2 || {})[k] | 0) * 5) + (ch.equip || []).reduce((a, it) => a + ((it && it.stats && it.stats[k]) || 0), 0) + 30 + prisme(k) + Object.keys(s.talis || {}).reduce((a, t) => a + ((s.talis[t] && R.TALIS && R.TALIS[t] && R.TALIS[t].st[k]) || 0), 0) + ((s.chars && s.chars[s.current] && s.chars[s.current].plat && (s.chars[s.current].plat.fin || 0) > Date.now() - 60000) ? 25 : 0);
   if (!w || !Array.isArray(w.dmg) || !R.WB || !R.WB[w.kind]) return 25000;
   const mult = (0.5 + stat('puissance') / 50) * 1.45 * 1.3, cadence = (1.5 + 6.5 * stat('vatt') / 75) * 1.5 * Math.max(1, R.WB[w.kind].rk || 1) * 2 /* frénésie */;
   // Démoniste : ce sont ses démons qui frappent, jusqu'à 5 à la fois (le sien et 4 du pacte, forgés), plus le démon de hâte ; la Gemme de la Nova tire 12 projectiles par attaque

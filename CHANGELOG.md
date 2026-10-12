@@ -1,5 +1,22 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.93 (index.html, butin.js ; wiki.html régénéré)
+- **Talismans** : on garde le rythme d'avant, 20 % de chance de ressource sur le boss et 10 ressources par talisman. Le bonus permanent sur tout le compte et le titre restent.
+
+## ver.0.0.92 (index.html, server.js, arbitre.js, butin.js ; wiki.html régénéré)
+- **Nouveau système d'aggro, façon MMO.** Chaque coup donne de l'aggro : 1 dégât = 1 point, mais un coup d'épée en donne 30 fois plus et la vague du bouclier du Porte-bouclier 1 000 fois plus. Les monstres visent celui qui a le plus d'aggro (il faut le dépasser de 10 % pour le lui prendre). Le nom de celui qui tient l'aggro s'affiche sous chaque boss.
+- **Tous les boss ont de nouvelles mécaniques annoncées au sol** : cônes devant eux, gros coups sur le tank, zones sous les autres joueurs, novas, anneaux où il faut se coller au boss, charges en ligne, croix… Chacun a les siennes, et elles s'accélèrent sous 50 % et 25 % de vie. Le tank tient le boss, le soigneur reste derrière lui, les dégâts se placent de l'autre côté.
+- **Orientation des boss** : un chevron au sol montre vers où chaque boss frappe.
+- **Runes de la Brèche communes à tout le compte** : chaque rune garde son plus haut niveau atteint par n'importe lequel de tes héros.
+- **Points de l'arbre de la Brèche** : 1 par niveau de 21 à 25 du héros, plus 1 par héros niveau 25 sur ton compte. Les runes au niveau 20 n'en donnent plus.
+- **Potions** : la potion de vie rend 100 PV + 10 % de ta vie maximum, la grande 300 PV + 25 %.
+- **Cuisine du pêcheur** : tes poissons vont maintenant dans une bourriche (onglet « Bourriche et cuisine » du tableau de pêche). Plats : 1 poisson commun = +1 à tout pendant 3 min (niveau 1) · 5 peu communs = +5 pendant 5 min (niveau 5) · 10 rares = +10 pendant 8 min (niveau 10) · 15 épiques = +15 pendant 10 min (niveau 15) · au niveau 20, 5 poissons légendaires = +20 à tout et +5 en puissance (Poisson-lune) ou en vitesse d'attaque (Carpe koï), pendant 15 min.
+- **Talismans** : chaque talisman fabriqué reste actif pour toujours sur tout le compte (leurs bonus s'additionnent). Nouveau titre : **✧ Chercheur de talismans ✧**, pour les avoir tous. La ressource de l'Observatoire tombe enfin sur le Dévoreur d'Étoiles.
+- Au-delà de la mer, les colosses rapportent désormais bien plus d'expérience…
+- (interne) Île aux Colosses et grotte de glace : expérience +50 % ; plat légendaire de l'île (5 Cœlacanthes : +20 à tout, +5 armure, 15 min, seulement si l'île est atteinte).
+- (interne) Aggro : chaque client envoie son total (« ag ») ; l'hôte désigne le porteur (« AG ») et décide des mécaniques (« BM »), que chacun subit chez lui. Le serveur ne relaie pas ces champs aux autres scènes.
+- (interne) Arbitre : runes au niveau maximum du compte (au-delà, accordées par le serveur pour n'importe quel héros), bourriche limitée aux prises, plat qui consomme des poissons (15 min au plus), coût du talisman lu dans le jeu, plafond de dégâts avec tous les talismans et le plat. La bourriche démarre vide (les anciennes prises n'y sont pas).
+
 ## ver.0.0.91 (index.html, server.js, arbitre.js ; outils/generer-wiki.js ; wiki.html régénéré)
 - **Correctif : les monstres ne disparaissent plus pour réapparaître après avoir pris des dégâts.** Quand on cessait de frapper un monstre plus de 30 secondes (les gros boss, les monstres très résistants), les coups suivants n'étaient plus comptés par l'hôte : le monstre semblait mourir, puis revenait. C'est réparé.
 - **Les familiers se font sentir** : bonus de base relevés (vie et mana 90, puissance 10, vitesse d'attaque 9, vitesse 8, armure 10, avant les multiplicateurs de rang).
