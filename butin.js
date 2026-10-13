@@ -223,7 +223,7 @@ function reclamer(moi, m, ctx) {
   if (ctx.rune && ctx.rune.k === 'savant') r.xp = Math.round(r.xp * (1 + 0.0125 * ctx.rune.n));
   if (ctx.rune && ctx.rune.k === 'duc' && r.or) { const v = r.or * (1 + 0.0125 * ctx.rune.n); r.or = Math.floor(v) + (Math.random() < v - Math.floor(v) ? 1 : 0); }
   const dons = ctx.dons; nettoyer(dons);
-  dons.xp += r.xp; dons.kills += 1; dons.boss += r.b; dons.or += r.or;
+  dons.xp += r.xp; if (R.MON[key] && R.MON[key].ile === 2) dons.xpI = (dons.xpI || 0) + r.xp; dons.kills += 1; dons.boss += r.b; dons.or += r.or;
   for (const it of [...r.it, ...r.spg, ...r.sp]) noter(dons, it);
   if (r.res) { dons.res = dons.res || {}; dons.res[r.res] = (dons.res[r.res] || 0) + 1; }
   const x = Math.round((Number(m.x) || 0) * 10) / 10, y = Math.round((Number(m.y) || 0) * 10) / 10;

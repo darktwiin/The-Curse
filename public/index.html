@@ -478,11 +478,12 @@ body.ton #opts{position:fixed;z-index:120}
       </div>
     </div>
     <div class="hudtl" id="hudTL">
-      <div class="brand" title="ver.0.0.93"><h1>The Curse</h1></div>
+      <div class="brand" title="ver.0.0.94"><h1>The Curse</h1></div>
       <canvas id="mini" width="120" height="120"></canvas>
       <div id="zone">Village</div>
       <div id="zoneLvl">Zone sûre</div>
       <div id="platT" hidden style="font-size:12px;color:#ffd96a;margin-top:2px"></div>
+      <div id="pilT" hidden style="font-size:12px;color:#7df0e0;margin-top:2px"></div>
       <div class="cur"><span class="gold" title="Pièces"><i class="coin"></i><span id="goldT">0</span></span><span class="gold prest" title="Prestige"><i class="pstar"></i><span id="presT">0</span></span><span class="gold curs" title="Cursite"><i class="cgem"></i><span id="cursT">0</span></span><span class="gold sangc" title="Pièces de sang" style="display:none"><i class="bcoin"></i><span id="sangT">0</span></span></div>
     </div>
     <div class="hudbot" id="hudBot">
@@ -496,7 +497,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="bar xp mait" id="mxBar" hidden><i id="mxF"></i><span><em>Maîtrise</em><b id="mxT">0/0</b></span></div>
       </div>
     </div>
-    <div class="verTag" id="verTag">ver.0.0.93</div>
+    <div class="verTag" id="verTag">ver.0.0.94</div>
     <button type="button" class="sidetog" id="sideTog" aria-label="Replier le menu" title="Replier / déplier le menu">▶</button>
     <button type="button" class="gear" id="gear" aria-label="Options (touche O)" title="Options (O)"><img id="gearImg" alt=""></button>
     <button type="button" class="gear dailyb" id="dailyBtn" hidden aria-label="Récompenses de connexion" title="Récompenses de connexion"><img id="dailyImg" alt=""><i class="dot" id="dailyDot" hidden></i></button>
@@ -673,7 +674,7 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="opt"><label>Touches</label><div class="curnow"><button type="button" class="act main" id="kbOpen">⌨ Touches et souris…</button></div><span></span></div>
         <div class="opt"><label for="titleSel">Titre</label><select id="titleSel"></select><span></span></div>
         <div class="opt"><label>Compte</label><button type="button" class="act" id="logoutBtn">Se déconnecter</button><span id="acctName"></span></div>
-        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.93</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
+        <div class="shop-foot"><span class="hint">Touche O pour ouvrir ce menu · ver.0.0.94</span><button type="button" class="act" id="optClose">Fermer · Échap</button></div>
       </div>
     </div>
     <div class="overlay" id="kbWin" hidden>
@@ -715,7 +716,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="select" hidden>
       <div class="sel-inner">
         <h2>Choisis ton héros</h2>
-        <p class="hint" style="color:#7ed957">ver.0.0.93</p>
+        <p class="hint" style="color:#7ed957">ver.0.0.94</p>
         <p>Chaque classe garde son propre niveau, son équipement et son sac. Tu peux en changer à l'autel du Village.</p>
         <div class="pseudo"><label for="pseudoIn">Ton pseudo</label><input id="pseudoIn" maxlength="16" placeholder="Héros"><span class="hint" id="pseudoHint"></span></div>
         <div class="cards" id="cards"></div>
@@ -742,7 +743,8 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="lb" hidden>
       <div class="shop-inner lbw" role="dialog" aria-label="Classement">
         <h2>Classement</h2>
-        <div class="lbtabs" id="lbTabs"><button type="button" data-lb="or" class="on">Top Or</button><button type="button" data-lb="prestige">Top Prestige gagné</button><button type="button" data-lb="kills">Top Monstres tués</button><button type="button" data-lb="precision">Top Précision</button><button type="button" data-lb="maisons">Maisons ♥</button></div>
+        <div class="lbtabs" id="lbTabs"><button type="button" data-lb="or" class="on">Top Or</button><button type="button" data-lb="prestige">Top Prestige gagné</button><button type="button" data-lb="kills">Top Monstres tués</button><button type="button" data-lb="precision">Top Précision</button><button type="button" data-lb="maisons">Maisons ♥</button><button type="button" data-lb="tour">🏰 TOUR</button></div>
+        <div class="lbtabs" id="lbTourCls" hidden></div>
         <div class="lbwrap"><table class="lbt"><thead><tr><th>#</th><th>Joueur</th><th>Héros</th><th id="lbCol">Pièces</th></tr></thead><tbody id="lbBody"></tbody></table></div>
         <p class="hint" id="lbNote"></p>
         <div class="shop-foot"><span class="hint" id="lbState"></span><button type="button" class="act" id="lbClose">Fermer · Échap</button></div>
@@ -1138,7 +1140,7 @@ const PET_DEF={
   puissance:{nom:'Petit golem',amt:10,col:'#ff9a3c',spr:['..XXXX..','.XYYYYX.','.XEYYEX.','XXYYYYXX','XYXXXXYX','.XYYYYX.','.XY..YX.','.XX..XX.'],pal:{X:'#8a5a2b',Y:'#d09a5a',E:'#ff9a3c'}},
   vatt:{nom:'Colibri',amt:9,col:'#b16cff',spr:['........','.XX...X.','XXYX.XX.','.XEYXX..','..XYYX..','..XYYYXW','...XX..W','...X....'],pal:{X:'#6a3ab0',Y:'#c89aff',E:'#1a1420',W:'#ffd23f'}},
   vdep:{nom:'Lièvre des vents',amt:8,col:'#3ff0ff',spr:['.X..X...','.XY.XY..','.XY.XY..','.XXXXX..','XEYYEYX.','XYYYYYX.','.XYYYYXX','..XX.XX.'],pal:{X:'#8a9aa8',Y:'#eef6ff',E:'#1a1420'}},
-  armure:{nom:'Tortue de pierre',amt:10,col:'#7ed957',spr:['........','..XXXX..','.XYXYYX.','XYYXYYXS','XYXYYXYS','.XXXXXX.','.S.SS.S.','........'],pal:{X:'#3f7a4a',Y:'#7ed957',S:'#c9b98a'}}};
+  armure:{nom:'Tortue de pierre',amt:8.5,col:'#7ed957',spr:['........','..XXXX..','.XYXYYX.','XYYXYYXS','XYXYYXYS','.XXXXXX.','.S.SS.S.','........'],pal:{X:'#3f7a4a',Y:'#7ed957',S:'#c9b98a'}}};
 // Familiers v2 : 20×20 pixels, dessinés au pixel près, 3 stades d'évolution par espèce
 function petCanvas(){const c=document.createElement('canvas');c.width=20;c.height=20;const g=c.getContext('2d');
   const P=(x,y,col)=>{g.fillStyle=col;g.fillRect(Math.round(x),Math.round(y),1,1);};
@@ -1750,10 +1752,20 @@ MON.maudit={nom:'Monstre maudit',hp:MON.devoreur.hp,xp:MON.devoreur.xp,spd:MON.d
     c_orage:C("Colosse d'orage",440000,660,3,780,1.5,'sniper',14,2.5,8.5,'#ffe27a',8,0.03,'col_foudre','burn/3',{n:3,br:12,mv:'erratic'})});}                // foudre : brûlure
 for(const k in MON)MON[k].pref=Math.round(MON[k].pref*80)/100; // tous les monstres cherchent à se tenir 20 % plus près du joueur
 for(const k in MON)MON[k].sz=Math.round(MON[k].sz*(MON[k].boss?1.1:1.25)*100)/100; // monstres un peu plus grands à l'écran
+// 0.0.94 : Horloge Brisée et Observatoire Céleste : vie -20 %, dégâts -10 %
+for(const k of ['rouage','pendule','sablier','coucou','chronos','g_belier','g_scorpion','g_serpent','g_lion','devoreur'])if(MON[k]){MON[k].hp=Math.round(MON[k].hp*0.8);MON[k].dmg=Math.round(MON[k].dmg*0.9);}
+// 0.0.94 : dans chaque donjon, un monstre de mêlée : il fonce au corps à corps et frappe au contact (dégâts selon le donjon), sans tirer
+const CAC_DEF={c:['armure','Armure possédée'],s:['momie','Momie furieuse'],o:['requin','Requin vorace'],p:['griffon','Griffon chargeur'],e:['cerbere','Molosse infernal'],b:['gob_eclaireur','Gobelin cogneur'],r:['loup_ronce','Loup sauvage des ronces'],k:['hibou','Hibou rapace'],m:['mineur','Mineur fou'],f:['automate','Automate broyeur'],g:['yeti','Yéti enragé'],v:['v_rouget','Rouget cogneur'],h:['pendule','Balancier fou'],i:['gl_golem','Golem broyeur'],u:['br_sentinelle','Sentinelle runique'],w:['br_larve','Larve vorace'],z:['br_etincelle','Étincelle folle']};
+for(const t in CAC_DEF){const [src,nom]=CAC_DEF[t],S0=MON[src];if(!S0)continue;MON['cac_'+t]=Object.assign({},S0,{nom,hp:Math.round(S0.hp*0.9),dmg:Math.round(S0.dmg*1.4),spd:Math.round(Math.max(S0.spd||2,3)*1.25*10)/10,pref:0,pat:'cac',cd:1,mv:null,cac:1,ai:1,boss:false,eff:null,n:1,bc:'#ff5a3a'});if(MON_SPR[src])MON_SPR['cac_'+t]=MON_SPR[src];}
+// 0.0.94 : les classes de mêlée frappent plus fort : épées +40 %, dagues +20 % (toutes les versions, reliques et Tier 7/8 comprises)
+for(const k in WB){const K=KINDS[k];if(!K)continue;const b=K.base||k.replace(/[78]$/,'');if(b==='epee')WB[k].dm=(WB[k].dm||1)*1.4;else if(b==='dague')WB[k].dm=(WB[k].dm||1)*1.2;}
 const MKEYS=Object.keys(MON);
 for(const k in MON)if(!MON_SPR[k])MON_SPR[k]=MON_SPR.squelette; // les chevaliers de la tour n'ont qu'un dessin en 32 pixels
 MON_SPR.maudit=MON_SPR.spectre_vide;for(const k in MON)if(MON[k].br_)MON_SPR[k]=MON_SPR.spectre_vide;
 const MSPR={};for(const k in MON)MSPR[k]=makeSprite(MON_SPR[k][0],MON_SPR[k][1],6);
+// teinte rouge des monstres de mêlée (même silhouette que leur cousin du donjon)
+function teinteCac(c){const o=document.createElement('canvas');o.width=c.width;o.height=c.height;const g=o.getContext('2d');g.drawImage(c,0,0);g.globalCompositeOperation='source-atop';g.fillStyle='rgba(255,40,30,.38)';g.fillRect(0,0,o.width,o.height);return o;}
+for(const k in MON)if(MON[k].cac&&MSPR[k])MSPR[k]=teinteCac(MSPR[k]);
 // Dragon en pixel art dessiné par code : 72×64 pixels logiques, palette limitée, contour sombre
 function makeDragonFrame(f,part){part=part||'all'; // f: 0 repos ailes basses, 1 ailes hautes, 2 attaque (gueule ouverte, flammes)
   const Wd=76,Hd=76,c=document.createElement('canvas');c.width=Wd;c.height=Hd;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.translate(2,10);
@@ -3182,6 +3194,7 @@ Object.assign(MON_ART,{
     poly([[11,3],[13,-1],[15,3]],Y);poly([[17,3],[19,-1],[21,3]],Y);
     if(atk)ell(16,17,9,9,'rgba(255,226,122,.3)');}});
 for(const k in MON_ART)if(MON[k]){MFR[k]=[0,1,2].map(f=>{const o=bc32();MON_ART[k](o,f);return pix32(o.c,[11,10,18]);});MSPR[k]=MFR[k][0];if(BOSS_ATK[k])BOSS_ATK[k]=MFR[k][2];}
+for(const t in CAC_DEF){const k='cac_'+t,src=CAC_DEF[t][0];if(MON[k]&&MFR[src]){MFR[k]=MFR[src].map(teinteCac);MFR[k].hz=MFR[src].hz;MSPR[k]=MFR[k][0];}}
 MFR.dieu_fou=[0,1,2].map(makeJester);MSPR.dieu_fou=MFR.dieu_fou[0];BOSS_ALT.dieu_fou=MFR.dieu_fou[1];
 // ---------- animation de tous les autres monstres : une deuxième image et une image d'attaque fabriquées à partir du dessin d'origine ----------
 // marche : une patte se lève · vol : les ailes s'abaissent · flotte : le bas ondule · respire : le haut s'affaisse · pulse : le corps gonfle
@@ -3348,7 +3361,7 @@ const ALCOVE=(x,y)=>(y===VHI-1&&x===12)||(y===VHI&&x>=11&&x<=13);
 const LAKE={x0:2,y0:18,x1:7,y1:21},FBOARD={x:9.5,y:17.3},PARK={x0:27,y0:9,x1:37,y1:20,gate:[14,15]},HDECO={x:20.5,y:20.5},PSIGN={x:24.5,y:12.5},PRESNPC={x:24,y:17.4};
 // plafond de niveau débloquable avec le prestige (commun à tous les héros du compte)
 // Niveau maximum : il se débloque classe par classe (save.caps), avec les points de prestige du compte. L'ancien déblocage valait pour tout le compte (save.capLvl) : il reste acquis à toutes les classes.
-const CAP_COST={21:200,22:300,23:400,24:500,25:1000};const maxLvl=cls=>clamp(Math.max(save.capLvl|0||20,(save.caps&&save.caps[cls||save.current])|0||20),20,25);
+const CAP_COST={21:200,22:300,23:400,24:500,25:1000};const maxLvl=cls=>{cls=cls||save.current;const c=clamp(Math.max(save.capLvl|0||20,(save.caps&&save.caps[cls])|0||20),20,25);return c>=25&&(save.titles||[]).includes('m_'+cls)?30:c;}; // 26 à 30 : il faut avoir maîtrisé la classe
 const TPORT={x:23,y:2.6},HW=62,HH=13,HSPAWN={x:31,y:9.2},HBACK={x:31,y:11.2};
 const HPORTS=['b','r','k','m','f','v','s','o','p','e','g','c','a','h'].map((t,i)=>({t,x:3.7+i*4.2,y:4.6}));
 const HPALIERS=[['Débutant',0,0,'#9fd06a'],['Intermédiaire',1,5,'#ffd23f'],['Difficile · dernières zones',6,11,'#ff9a3c'],['Très difficile',12,12,'#ff5a6a'],['À clef',13,13,'#3ff0ff']];
@@ -3443,7 +3456,7 @@ function forgeSolid(x,y){return (y===12&&x!==-12&&x!==-1)||(y===11)||(x===-12&&y
 function genDungeon(seed,t){
   t=DTYPES[t]&&t!=='a'?t:'c';const ck=t+seed;if(dungeonCache.has(ck))return dungeonCache.get(ck);
   if(t==='i'){const d=genGrotte(seed);dungeonCache.set(ck,d);return d;}
-  if(DTYPES[t].breche){let d=null;for(let k=0;k<200&&!d;k++)d=genMazeTry(seed*31+k,{GW:6,GH:4,vides:2,salles:15,dist:5,culs:2,boucles:3});if(d){d=themeDungeon(d,t,seed);d.breche=true;d.etage=((seed%8)+8)%8||1;d.down=d.etage<BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.brBoss=d.etage>=BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.brSalle=d.brBoss&&d.boss&&d.boss.w>0?{x:d.boss.x+.5,y:d.boss.y+.5,w:d.boss.w,h:d.boss.h}:null;d.altar={x:-999,y:-999};d.doors=[];d.arena=null;dungeonCache.set(ck,d);return d;}}
+  if(DTYPES[t].breche){let d=null;for(let k=0;k<200&&!d;k++)d=genMazeTry(seed*31+k,{GW:6,GH:4,vides:2,salles:15,dist:5,culs:2,boucles:3});if(d){d=themeDungeon(d,t,seed);d.breche=true;d.etage=((seed%8)+8)%8||1;d.down=d.etage<BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.brBoss=d.etage>=BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.brSalle=d.brBoss&&d.boss&&d.boss.w>0?{x:d.boss.x+.5,y:d.boss.y+.5,w:d.boss.w,h:d.boss.h}:null;d.altar={x:-999,y:-999};d.doors=[];d.arena=null;d.piliers=brPiliers(d,seed);dungeonCache.set(ck,d);return d;}}
   if(t==='h'){let d=null;for(let k=0;k<80&&!d;k++)d=genMazeTry(seed*31+k);if(d){d=themeDungeon(d,t,seed);dungeonCache.set(ck,d);return d;}} // Horloge Brisée : un vrai labyrinthe
   let d=null;for(let k=0;k<120;k++){d=genDungeonTry(seed*31+k);if(d.rooms.length>=10&&d.boss.w>=21&&Math.hypot(d.boss.x-d.start.x,d.boss.y-d.start.y)>=48)break;} // on exige toutes les salles et une grande arène
   d=themeDungeon(d,t,seed);dungeonCache.set(ck,d);return d;
@@ -3639,6 +3652,7 @@ const TALIS={b:{res:'Dent du Roi Gobelin',nom:'Talisman du Terrier',st:{vie:20},
   p:{res:'Plume déchue',nom:'Talisman Céleste',st:{vatt:5},ic:'plume'},e:{res:'Braise éternelle',nom:'Talisman de la Fournaise',st:{vie:80},ic:'braise'},g:{res:'Cristal de givre',nom:'Talisman de Givre',st:{armure:6},ic:'glace'},
   a:{res:'Poussière d\'étoile',nom:'Talisman des Étoiles',st:{puissance:5,vatt:5},ic:'etoile'},h:{res:'Sable du temps',nom:'Talisman de Chronos',st:{puissance:6,vatt:6,vie:60},ic:'grain_sablier'},
   j:{res:'Grelot du Bouffon',nom:'Talisman du Roi Bouffon',st:{vatt:6,vdep:4},ic:'grelot'},x:{res:'Cœur d\'obsidienne',nom:'Talisman du Béhémoth',st:{vie:100,puissance:4},ic:'obsidienne'}},TALIS_COUT=10,TALIS_ORDRE='brkmfvcsopegjxah';
+for(const t in CAC_DEF)if(DTYPES[t]&&Array.isArray(DTYPES[t].pool)&&MON['cac_'+t]&&!DTYPES[t].pool.includes('cac_'+t))DTYPES[t].pool.push('cac_'+t);
 const REG_DUN='csopeg',MID_DUN='rkmf';
 for(const t of REG_DUN){for(const k of DTYPES[t].pool)MON[k].ai=2;MON[DTYPES[t].bk].ai=2;}
 const cap1=s=>s.charAt(0).toUpperCase()+s.slice(1);
@@ -3747,7 +3761,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000093;let newerWarned=false;
+const NETV=2,BUILD=2600000094;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -3898,7 +3912,7 @@ function makeNetRoom(){
       else if(m.t==='p'){other(m.peer,m.presence);schedule();}
       else if(m.t==='join'){other(m.peer,{});schedule();}
       else if(m.t==='leave'){others.delete(m.peer);schedule();}
-      else if(m.t==='top'||m.t==='dev'||m.t==='devres'||m.t==='tr'||m.t==='g'||m.t==='authres'||m.t==='authout'||m.t==='savefix'||m.t==='butin'||m.t==='breche'||m.t==='serveurs'||m.t==='maj'||m.t==='cle'||m.t==='vengeance'||m.t==='concours'||m.t==='bienvenue'||m.t==='dessin'||m.t==='px'||m.t==='objectif'||m.t==='tournoi'||m.t==='hv'||m.t==='parr'||m.t==='maison'||m.t==='titres'||m.t==='guerre'||m.t==='pack'||m.t==='colis'||m.t==='discord'){for(const f of rawH){try{f(m);}catch(err){console.error('message '+m.t,err&&err.message);}}}};
+      else if(m.t==='top'||m.t==='dev'||m.t==='devres'||m.t==='tr'||m.t==='g'||m.t==='authres'||m.t==='authout'||m.t==='savefix'||m.t==='butin'||m.t==='breche'||m.t==='serveurs'||m.t==='maj'||m.t==='cle'||m.t==='vengeance'||m.t==='concours'||m.t==='bienvenue'||m.t==='dessin'||m.t==='px'||m.t==='objectif'||m.t==='tournoi'||m.t==='hv'||m.t==='parr'||m.t==='maison'||m.t==='titres'||m.t==='guerre'||m.t==='pack'||m.t==='colis'||m.t==='discord'||m.t==='tourcl'){for(const f of rawH){try{f(m);}catch(err){console.error('message '+m.t,err&&err.message);}}}};
     ws.onmessage=e=>{let d;try{d=JSON.parse(e.data);}catch(err){return;}if(Array.isArray(d)){for(const m of d){try{recu(m);}catch(err){console.error(err);}}}else recu(d);};
     ws.onclose=e=>{if(e.code===4004){setConn(false);others.clear();me=null;emitPeers();authKicked();return;}if(e.code===4002||e.code===4003){setConn(false);others.clear();me=null;emitPeers();kickedScreen(e.code);return;}const full=e.code===4001;setConn(false);others.clear();me=null;emitPeers();if(full)note('Salle pleine (16 joueurs)');setTimeout(connect,full?15000:2000);};
     ws.onerror=()=>{};
@@ -3917,7 +3931,7 @@ async function initRoom(){
   if(!room){if(!/^https?:$/.test(location.protocol))return;room=makeNetRoom();}
   room.onConnection(c=>{netOn=c;if(c)setTimeout(sendScore,1000);},()=>{netOn=false;room=null;});
   if(room.onRaw)room.onRaw(m=>{if((window.GARDIEN_MODE||window.BOT_MODE)&&(m.t==='objectif'||m.t==='tournoi'||m.t==='hv'||m.t==='parr'||m.t==='maison'||m.t==='guerre'||m.t==='titres'||m.t==='pack'||m.t==='colis'||m.t==='discord'))return; // le Gardien et les bots n'ont pas d'interface
-    if(m.t==='authres'||m.t==='authout'){onAuthRes(m);return;}if(m.t==='savefix'){onSaveFix(m);return;}if(m.t==='butin'){onButin(m);return;}if(m.t==='breche'){onBreche(m);return;}if(m.t==='maj'){onMaj(m);return;}if(m.t==='cle'){onCle(m);return;}if(m.t==='vengeance'){openFishPortal(m.id);return;}if(m.t==='bienvenue'){onBienvenue(m);return;}if(m.t==='dessin'||m.t==='px'){onPix(m);return;}if(m.t==='objectif'){onObjectif(m);return;}if(m.t==='tournoi'){onTournoi(m);return;}if(m.t==='hv'){onHV(m);return;}if(m.t==='pack'){onPack(m);return;}if(m.t==='discord'){onDiscord(m);return;}if(m.t==='colis'){onColis(m);return;}if(m.t==='parr'){onParr(m);return;}if(m.t==='maison'){onMaison(m);return;}if(m.t==='guerre'){onGuerre(m);return;}if(m.t==='titres'){SRVT=new Set((Array.isArray(m.l)?m.l:[]).filter(k=>TITLES[k]));try{fillTitles();}catch(e){}if(SRVT.size&&!save.title){note('Nouveau titre disponible : '+TITLES[[...SRVT][0]].t+' (Options → Titre)');}return;}if(m.t==='concours'){onConcours(m);return;}if(m.t==='serveurs'){srvData=m;if(!srvEl.hidden)renderServeurs();return;}
+    if(m.t==='authres'||m.t==='authout'){onAuthRes(m);return;}if(m.t==='savefix'){onSaveFix(m);return;}if(m.t==='butin'){onButin(m);return;}if(m.t==='breche'){onBreche(m);return;}if(m.t==='maj'){onMaj(m);return;}if(m.t==='cle'){onCle(m);return;}if(m.t==='vengeance'){openFishPortal(m.id);return;}if(m.t==='bienvenue'){onBienvenue(m);return;}if(m.t==='dessin'||m.t==='px'){onPix(m);return;}if(m.t==='objectif'){onObjectif(m);return;}if(m.t==='tournoi'){onTournoi(m);return;}if(m.t==='hv'){onHV(m);return;}if(m.t==='pack'){onPack(m);return;}if(m.t==='discord'){onDiscord(m);return;}if(m.t==='colis'){onColis(m);return;}if(m.t==='tourcl'){onTourCl(m);return;}if(m.t==='parr'){onParr(m);return;}if(m.t==='maison'){onMaison(m);return;}if(m.t==='guerre'){onGuerre(m);return;}if(m.t==='titres'){SRVT=new Set((Array.isArray(m.l)?m.l:[]).filter(k=>TITLES[k]));try{fillTitles();}catch(e){}if(SRVT.size&&!save.title){note('Nouveau titre disponible : '+TITLES[[...SRVT][0]].t+' (Options → Titre)');}return;}if(m.t==='concours'){onConcours(m);return;}if(m.t==='serveurs'){srvData=m;if(!srvEl.hidden)renderServeurs();return;}
     if(m.t==='tr'){tradeMsg(m);return;}
     if(m.t==='g'){guildMsg(m);return;}
     if(m.t==='dev'&&m.cmd==='party'){startParty(m.arg);return;}
@@ -4049,7 +4063,7 @@ function sendPresence(){
   if(!room||!save.current)return;
   const st=S(),ch=C(),w=ch.equip[0];
   const sh=(canFight()&&(mouse.down||P.auto||aimTouch)&&w)?(()=>{const a=aimWorld();return Math.round(Math.atan2(a.y-P.y,a.x-P.x)*100);})():null;
-  const o={v:NETV,n:pseudo,c:save.current,l:ch.lvl,s:sceneKey(),rt:sceneT,tk:Math.floor(Date.now()/500),x:Math.round(P.x*10),y:Math.round(P.y*10),hp:Math.round(clamp(P.hp/st.tot.vie,0,1)*100),sh,w:w?w.kind:null,wt:w?w.tier:0,sk:mySkin(),au:shownAura()?(a=>[a.k,a.s,a.c,a.o?1:0].join('|'))(shownAura()):null,r:Math.round(st.rate*10),f:P.face,b:P.berserk>0?1:0,mv:P.moving?1:0,m:myMsg,hl:myHeal,ev:myEv,dd:scene==='arena'?Math.round((st.dmg[0]+st.dmg[1])/2*0.6):null,su:SUM.length?SUM.slice(0,8).map(z=>Math.round(z.x*10)+','+Math.round(z.y*10)+','+(z.def?'d':z.haste?'a':z.heal?'h':z.main?'m':'e')+','+((C().equip[0]||{}).tier|0)).join(';'):null,kp:KP&&KP.fin>Date.now()?[KP.s,Math.round(KP.x*10),Math.round(KP.y*10),KP.id.toString(36),Math.ceil((KP.fin-Date.now())/1000),KP.ty||'h'].join('|'):null,iv:P.invis>0||admInv?1:0,hid:admInv?1:0,gd:window.GARDIEN_MODE?1:null,bv:BUILD,gi:myGid,gt:GUILD?GUILD.tag:null,md:ch.maudit?1:null,pe:eqPet()?eqPet().k:null,ps:eqPet()?myPetSkin():null,nc:myNameCol(),pt:eqPet()?(eqPet().t||0):0,ti:myTitle(),mo:morphKey,as:P.invis>0&&!admInv?1:0,sf:myStates()||null,fi:FISH?Math.round(FISH.bx*10)+','+Math.round(FISH.by*10):null,pz:parQ.length?parSeq+'|'+parQ.join(';'):null,h:!safe()?encHits():null,ag:!safe()?encAgg():null,M:null,D:null,G:null,F:scene==='dungeon'&&amHost?fight:null,S:scene==='dungeon'&&amHost?stars:null,B:amHost&&bossBoardT>time?bossBoardStr:null,bi:BRI&&BRI.chef?[BRI.run,BRI.d,BRI.th,BRI.t0].join('|'):null,bj:BRI&&!BRI.chef?BRI.run:null,bk:BR?BR.run+':'+BR.etat+':'+BR.d+':'+BR.n+':'+BR.fl.join('.'):null,bh:amHost&&scene==='dungeon'&&MAP&&MAP.breche?Math.floor(dungeonId/8)+':'+(MAP.etage||1)+':'+(MAP.brKills|0)+':'+(MAP.brEtat|0):null,bx:amHost&&scene==='dungeon'&&MAP&&MAP.brFin?MAP.brFin:null,MC:scene==='realm'&&amHost?mauditCode():null,mp:amHost&&maudPartsT>time?maudParts:null,bq:scene==='dungeon'?bossReq:null,RB:scene==='realm'&&amHost?(()=>{const l=monsters.filter(q=>CENTRAL.includes(q.key)&&q.hp>0).map(b=>b.key+','+Math.round(b.x*10)+','+Math.round(b.y*10));return l.length?l.join(';'):null;})():null,RK:scene==='realm'&&amHost?realmKills:null,X:scene==='dungeon'&&amHost&&MAP.nInit?deadBits():null};
+  const o={v:NETV,n:pseudo,c:save.current,l:ch.lvl,s:sceneKey(),rt:sceneT,tk:Math.floor(Date.now()/500),x:Math.round(P.x*10),y:Math.round(P.y*10),hp:Math.round(clamp(P.hp/st.tot.vie,0,1)*100),sh,w:w?w.kind:null,wt:w?w.tier:0,sk:mySkin(),au:shownAura()?(a=>[a.k,a.s,a.c,a.o?1:0].join('|'))(shownAura()):null,r:Math.round(st.rate*10),f:P.face,b:P.berserk>0?1:0,mv:P.moving?1:0,m:myMsg,hl:myHeal,ev:myEv,dd:scene==='arena'?Math.round((st.dmg[0]+st.dmg[1])/2*0.6):null,su:SUM.length?SUM.slice(0,8).map(z=>Math.round(z.x*10)+','+Math.round(z.y*10)+','+(z.def?'d':z.haste?'a':z.heal?'h':z.main?'m':'e')+','+((C().equip[0]||{}).tier|0)).join(';'):null,kp:KP&&KP.fin>Date.now()?[KP.s,Math.round(KP.x*10),Math.round(KP.y*10),KP.id.toString(36),Math.ceil((KP.fin-Date.now())/1000),KP.ty||'h'].join('|'):null,iv:P.invis>0||admInv?1:0,hid:admInv?1:0,gd:window.GARDIEN_MODE?1:null,bv:BUILD,gi:myGid,gt:GUILD?GUILD.tag:null,md:ch.maudit?1:null,pe:eqPet()?eqPet().k:null,ps:eqPet()?myPetSkin():null,nc:myNameCol(),pt:eqPet()?(eqPet().t||0):0,ti:myTitle(),mo:morphKey,as:P.invis>0&&!admInv?1:0,sf:myStates()||null,fi:FISH?Math.round(FISH.bx*10)+','+Math.round(FISH.by*10):null,pz:parQ.length?parSeq+'|'+parQ.join(';'):null,h:!safe()?encHits():null,ag:!safe()?encAgg():null,ce:colEtape(),M:null,D:null,G:null,F:scene==='dungeon'&&amHost?fight:null,S:scene==='dungeon'&&amHost?stars:null,B:amHost&&bossBoardT>time?bossBoardStr:null,bi:BRI&&BRI.chef?[BRI.run,BRI.d,BRI.th,BRI.t0].join('|'):null,bj:BRI&&!BRI.chef?BRI.run:null,bk:BR?BR.run+':'+BR.etat+':'+BR.d+':'+BR.n+':'+BR.fl.join('.'):null,bh:amHost&&scene==='dungeon'&&MAP&&MAP.breche?Math.floor(dungeonId/8)+':'+(MAP.etage||1)+':'+(MAP.brKills|0)+':'+(MAP.brEtat|0):null,bx:amHost&&scene==='dungeon'&&MAP&&MAP.brFin?MAP.brFin:null,MC:scene==='realm'&&amHost?mauditCode():null,mp:amHost&&maudPartsT>time?maudParts:null,bq:scene==='dungeon'?bossReq:null,RB:scene==='realm'&&amHost?(()=>{const l=monsters.filter(q=>CENTRAL.includes(q.key)&&q.hp>0).map(b=>b.key+','+Math.round(b.x*10)+','+Math.round(b.y*10));return l.length?l.join(';'):null;})():null,RK:scene==='realm'&&amHost?realmKills:null,X:scene==='dungeon'&&amHost&&MAP.nInit?deadBits():null};
   if(!safe()&&amHost&&othersInScene()){
     o.D=deaths.slice(window.GARDIEN_MODE?-60:-20).join(';');
     {const ag=encAG();if(ag)o.AG=ag;const bm=encBM();if(bm)o.BM=bm;}
@@ -4100,13 +4114,13 @@ function S(){
   const talis=talisPassif();for(const k in talis){if(k==='armure')bonus.armure=(bonus.armure||0)+talis[k];else{tot[k]+=talis[k];bonus[k]+=talis[k];}} // le talisman aussi
   base.armure=ARM_BASE[save.current]||0;bonus.armure=(bonus.armure||0)+Math.round(armorOf(ch.equip[2])*upK(ch.equip[2]))+(P.guard>0?(P.guardArm||0):0);tot.armure=base.armure+bonus.armure+(pet.armure||0)+clamp(((ch.sp2||{}).armure)|0,0,SP2_MAX)*SP2_STEP.armure;
   const cap=ch.equip[1],bzM=cap&&baseKind(cap.kind)==='casque'?1.2+0.05*cap.tier:1.2;
-  const w=ch.equip[0],bz=P.berserk>0,mult=(0.5+tot.puissance/50)*(bz?bzM:1)*(P.shrineT>0?1.3:1)*(P.surge>0?1.5:1)*(ch.maudit?1.05:1)*runeDmgK();
-  const rate=(1.5+6.5*tot.vatt/75)*(bz?1.5:1)*((w&&WB[w.kind]&&WB[w.kind].rk)||1)*(P.frenzy>0?2:1)*(P.surge>0?1.5:1)*(P.hasteT>time?1.3:1)*runeRateK(),spd=(4+5.6*tot.vdep/75)*(bz?1.2:1);
+  const w=ch.equip[0],bz=P.berserk>0,mult=(pilActif('deg')?1.3:1)*(0.5+tot.puissance/50)*(bz?bzM:1)*(P.shrineT>0?1.3:1)*(P.surge>0?1.5:1)*(ch.maudit?1.05:1)*runeDmgK();
+  const rate=(1.5+6.5*tot.vatt/75)*(bz?1.5:1)*((w&&WB[w.kind]&&WB[w.kind].rk)||1)*(P.frenzy>0?2:1)*(P.surge>0?1.5:1)*(P.hasteT>time?1.3:1)*runeRateK()*(pilActif('cad')?1.3:1),spd=(4+5.6*tot.vdep/75)*(bz?1.2:1)*(pilActif('vit')?1.5:1);
   const wdm=w&&WB[w.kind]&&WB[w.kind].dm||1,dmg=w?[Math.round(w.dmg[0]*upK(w)*wdm*mult),Math.round(w.dmg[1]*upK(w)*wdm*mult)]:[0,0];
   if(pe&&pe.k!=='armure'&&brut[pe.k]!=null)brut[pe.k]+=pet[pe.k];for(const k in talis)if(brut[k]!=null)brut[k]+=talis[k];
   return{base,bonus,pot,tot,brut,mult,rate,spd,dmg,mreg:bonus.mreg,pet};
 }
-const need=l=>(40+l*l*8+l*20)*(l>=20?2:1);
+const need=l=>l>=25?[100000,150000,200000,250000,300000][Math.min(4,l-25)]:(40+l*l*8+l*20)*(l>=20?2:1);
 
 /* ================= effets ================= */
 function ft(x,y,t,col,big){texts.push({x,y,t,col,life:big?1.6:0.9,max:big?1.6:0.9,big});}
@@ -4583,13 +4597,14 @@ const TOUR_TYPES=[['tr_ecuyer',1],['tr_arbaletrier',2],['tr_lancier',3],['tr_che
 const TOUR_BOSS=['tb_capitaine','tb_bourreau','tb_croise','tb_dame','tb_ecarlate','tb_emeraude','tb_azur','tb_roi','tb_spectre','tb_nuit'];
 // à chaque palier son épreuve : nom affiché, et cadence d'attaque du gardien (les attaques elles-mêmes sont dans PATTERNS.tour_boss)
 const TOUR_PATS=[['La Garde',1.25],['Le Tournoi',0.95],['Le Siège',1.0],['Le Jugement',0.8],['Le Dernier Rempart',0.65]];
-const tourPat=n=>TOUR_PATS[clamp(Math.round(n/5),1,5)-1];
+const tourPat=n=>TOUR_PATS[clamp(Math.round(tourEff(n)/5),1,5)-1];
 // renforts appelés par le gardien : des chevaliers de l'étage, qui sortent des portes
-function tourRenfort(nb){const T=TOURS;if(!T||scene!=='tour')return;const n=T.vague,hp=Math.pow(1.22,n-1),dm=Math.pow(1.13,n-1),dispo=TOUR_TYPES.filter(t=>n>=t[1]).map(t=>t[0]);
+const tourEff=n=>1+(n-1)*19/34; // 0.0.94 : difficulté étalée (étage 35 = ancien étage 20), sans plafond
+function tourRenfort(nb){const T=TOURS;if(!T||scene!=='tour')return;const n=tourEff(T.vague),hp=Math.pow(1.22,n-1),dm=Math.pow(1.13,n-1),dispo=TOUR_TYPES.filter(t=>n>=t[1]).map(t=>t[0]);
   for(let i=0;i<nb;i++){const k=dispo[dispo.length-1-Math.floor(Math.random()*Math.min(4,dispo.length))],g=TGATES[T.porte++%4],d=Object.assign({},MON[k],{hp:Math.round(MON[k].hp*hp),dmg:Math.round(MON[k].dmg*dm)}),m=addMon(k,g.x+rnd(-0.8,0.8),g.y+rnd(-0.8,0.8),0);m.d=d;m.hp=m.max=d.hp;m.cd=rnd(0.8,1.8);burst(m.x,m.y,'#d8dce8',10,3);}
   showBanner('Des renforts !',nb+' chevaliers accourent','#d8dce8');sfx('boss',0.5);}
-function tourVague(n){const hp=Math.pow(1.22,n-1),dmg=Math.pow(1.13,n-1);
-  if(n%5===0)return{l:[pick(TOUR_BOSS)],hp:hp*0.48,dmg:dmg*0.48,boss:true};
+function tourVague(n0){const n=tourEff(n0),hp=Math.pow(1.22,n-1),dmg=Math.pow(1.13,n-1);
+  if(n0%5===0)return{l:[pick(TOUR_BOSS)],hp:hp*0.48,dmg:dmg*0.48,boss:true};
   const dispo=TOUR_TYPES.filter(t=>n>=t[1]).map(t=>t[0]),nb=Math.min(22,4+Math.floor(n*1.2)),l=[];
   for(let i=0;i<nb;i++){const fort=Math.random()<0.45;l.push(fort?dispo[dispo.length-1-Math.floor(Math.random()*Math.min(3,dispo.length))]:pick(dispo));}
   return{l,hp,dmg};}
@@ -4603,30 +4618,31 @@ const tourEl=document.createElement('div');tourEl.className='overlay';tourEl.id=
 let tourMode='',tourGratis=false;
 const tourOnline=()=>ONLINE&&AUTH.ok&&room&&room.raw;
 function tourTable(p){return '<div style="display:grid;gap:4px;margin:10px 0">'+TOUR_LOTS.map(([n,t])=>'<div style="display:flex;gap:10px;align-items:baseline;padding:6px 10px;border:2px solid '+(n===p?'#ffd23f':'#3a3551')+';background:'+(n<=p?'rgba(126,217,87,.10)':'rgba(11,10,18,.5)')+'"><b style="min-width:92px;color:'+(n<=p?'#7ed957':'#ffd23f')+'">Palier '+n+(n<=p?' ✓':'')+'</b><span style="font-size:14px">'+t+'</span></div>').join('')+'</div>';}
-function tourOuvre(mode){tourMode=mode;const T=TOURS,p=T?T.palier:0;const rouge='border:3px solid #ff3b4a;background:rgba(120,10,20,.35);padding:12px 14px;margin:10px 0;display:grid;gap:4px';let h='';
-  if(mode==='entree'){h='<h2>Tour des Chevaliers</h2><div style="'+rouge+'"><b style="color:#ff5a6a;font-size:19px">⚠ AUCUN RETOUR AU VILLAGE</b><span style="color:#ffb0b8">Dans la Tour, la touche de retour au Village ne fonctionne pas. On n\'en sort qu\'à un palier, tous les 5 étages.</span><b style="color:#ff5a6a;font-size:19px;margin-top:6px">☠ LA MORT EST DÉFINITIVE</b><span style="color:#ffb0b8">Si ton héros tombe dans la Tour, il est perdu pour de bon, avec tout ce qu\'il porte, et tu repars sans aucune récompense.</span></div>'
-    +'<p class="hint" style="color:#ffd23f">Phase de test : pour l\'instant, mourir dans la Tour ne fait rien perdre.</p>'
-    +'<div style="display:flex;gap:14px;align-items:center;border:2px solid #3ff0ff;background:rgba(63,240,255,.08);padding:10px 14px;margin:10px 0"><img src="'+TOUR_REL.toDataURL()+'" alt="" style="width:48px;height:48px;image-rendering:pixelated"><div><b style="color:#3ff0ff">Relique de la Tour</b><br><span style="font-size:14px">Dix-huit reliques violettes qu\'on ne trouve nulle part ailleurs : armes, capacités, armures et anneau. À partir du palier 15… pour ceux qui osent monter jusque-là.</span></div></div>'
-    +'<p class="hint">Les étages sont de plus en plus durs. Tous les 5 étages, un seigneur chevalier garde le palier, et ses attaques changent à chaque palier : une fois vaincu, tu choisis de sortir avec tes récompenses ou de continuer. Les récompenses s\'ajoutent d\'un palier à l\'autre et arrivent dans le coffre de livraison de ta maison.</p>'+tourTable(0)
-    +'<div class="shop-foot"><button type="button" class="act" data-tw="non">Renoncer</button><button type="button" class="act main" data-tw="entrer" style="background:#8a1420;border-color:#ff3b4a;color:#fff">Entrer dans la Tour'+(tourGratis?'':' (utilise la clef)')+'</button></div>';}
-  else{const suiv=TOUR_LOTS.find(l=>l[0]===p+5);h='<h2 style="color:#ffd23f">Palier '+p+' atteint !</h2><p class="hint">Le gardien du palier est vaincu. Tu peux sortir maintenant avec tout ce que tu as gagné, ou tenter le palier suivant.</p>'+tourTable(p)
-    +'<div style="'+rouge+'"><b style="color:#ff5a6a">☠ Si tu continues et que tu meurs avant le palier '+(p+5)+', tu perds tout : tes récompenses… et ton héros.</b>'+(suiv?'<span style="color:#ffb0b8">Palier '+(p+5)+' : '+suiv[1]+'</span>':'<span style="color:#ffb0b8">Au-delà, personne n\'est jamais revenu.</span>')+'</div>'
-    +'<div class="shop-foot"><button type="button" class="act main" data-tw="sortir">Sortir avec mes récompenses</button><button type="button" class="act" data-tw="continuer" style="background:#8a1420;border-color:#ff3b4a;color:#fff">Continuer vers le palier '+(p+5)+'</button></div>';}
+function tourOuvre(mode){tourMode=mode;const T=TOURS,p=T?T.palier:0,r=save.tour,run=save.tourRun&&save.tourRun.c===save.current&&save.tourRun.pause?save.tourRun:null;const bleu='border:2px solid #3ff0ff;background:rgba(63,240,255,.08);padding:10px 14px;margin:10px 0;display:grid;gap:4px';let h='';
+  if(mode==='entree'){h='<h2>Tour des Chevaliers</h2><div style="'+bleu+'"><b style="color:#3ff0ff">🏆 Classement de la saison, par classe</b><span style="font-size:14px">La Tour ne donne plus d\'objets : elle sert au classement. Chaque mois, les 3 meilleurs de chaque classe (l\'étage le plus haut) gagnent un titre et de la Cursite : <b>TOP 1</b> 500 Cursite · <b>TOP 2</b> 250 · <b>TOP 3</b> 100. Classement : onglet « Tour » du Classement.</span></div>'
+    +'<p class="hint">Les étages montent sans fin. Tous les 5 étages, un seigneur chevalier garde le palier : une fois vaincu, tu continues, tu mets ta course en pause (tu la reprends plus tard, ici), ou tu la termines. Pas de retour au Village en cours de route. Tomber termine la course, sans rien perdre.</p>'
+    +(r&&r.v?'<p class="hint">Ton record avec ce héros : étage '+r.v+'.</p>':'')
+    +'<div class="shop-foot"><button type="button" class="act" data-tw="non">Renoncer</button>'+(run?'<button type="button" class="act" data-tw="nouvelle">Nouvelle course</button><button type="button" class="act main" data-tw="reprendre">Reprendre au palier '+run.p+'</button>':'<button type="button" class="act main" data-tw="entrer" style="background:#8a1420;border-color:#ff3b4a;color:#fff">Entrer dans la Tour</button>')+'</div>';}
+  else{h='<h2 style="color:#ffd23f">Palier '+p+' atteint !</h2><p class="hint">Le gardien du palier est vaincu. Ton étage compte déjà pour le classement de la saison.</p>'
+    +'<div style="'+bleu+'"><span>▶ <b>Continuer</b> : le palier suivant est à l\'étage '+(p+5)+'.</span><span>⏸ <b>Pause</b> : tu sors, et tu reprendras ici même, au palier '+p+', avec la vie et le mana d\'un départ.</span><span>■ <b>Terminer</b> : la course s\'arrête là.</span></div>'
+    +'<div class="shop-foot"><button type="button" class="act" data-tw="terminer">Terminer la course</button><button type="button" class="act" data-tw="sortir">⏸ Pause (sortir)</button><button type="button" class="act main" data-tw="continuer" style="background:#8a1420;border-color:#ff3b4a;color:#fff">Continuer vers l\'étage '+(p+5)+'</button></div>';}
   $('#tourBody').innerHTML=h;tourEl.hidden=false;paused=true;keys.clear();mouse.down=false;sfx(mode==='entree'?'boss':'level');}
 function tourFerme(){tourEl.hidden=true;paused=false;cv.focus();}
 tourEl.addEventListener('click',e=>{const b=e.target.closest('[data-tw]');if(!b)return;const a=b.dataset.tw;
   if(a==='non'){tourFerme();return;}
-  if(a==='entrer'){tourFerme();if(!tourGratis){const ch=C(),i=ch.inv.findIndex(it=>it&&it.kind==='cle_tour');if(i<0){note('La Tour est scellée : il faut une Clef de la Tour');sfx('deny');return;}if(tourOnline())room.raw({t:'tour',a:'entrer'});ch.inv[i]=null;persist();pushSave(true);invDirty=true;}else if(tourOnline())room.raw({t:'tour',a:'entrer'});enterTour();return;}
+  if(a==='entrer'||a==='nouvelle'){tourFerme();if(save.tourRun)delete save.tourRun;if(tourOnline())room.raw({t:'tour',a:'entrer',c:save.current});enterTour();return;}
+  if(a==='reprendre'){tourFerme();const r=save.tourRun;if(!r)return;delete r.pause;if(tourOnline())room.raw({t:'tour',a:'reprendre',c:save.current});enterTour(r);return;}
+  if(a==='terminer'){tourFerme();tourTerminer();return;}
   if(a==='continuer'){tourFerme();if(TOURS){TOURS.pause=2.5;tourSauve(0);showBanner('Tu continues','Prochain palier : étage '+(TOURS.palier+5),'#ff5a6a');}return;}
   if(a==='sortir'){tourFerme();tourSortir();}});
 window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!tourEl.hidden&&tourMode==='entree')tourFerme();});
-function tourPorte(){const ch=C();if(!ch.inv.some(it=>it&&it.kind==='cle_tour')){note('La Tour est scellée : il faut une Clef de la Tour');sfx('deny');return;}tourGratis=false;tourOuvre('entree');}
+function tourPorte(){tourGratis=true;tourOuvre('entree');} // 0.0.94 : entrée libre (plus de clef), la Tour sert au classement
 // course en cours : enregistrée à chaque étage, pour reprendre dans la Tour si le jeu est fermé ou la connexion coupée (l'étage recommence, avec la vie et le mana qu'on avait en y arrivant)
 function tourSauve(choix){const T=TOURS;if(!T||!save.current)return;const o=save.tourRun&&save.tourRun.c===save.current?save.tourRun:{};
   const v=choix===0?T.vague+1:Math.max(1,T.vague),garde=choix==null&&o.v===v&&o.hp!=null; // même étage relancé après une reprise : on garde la vie d'origine
   save.tourRun={c:save.current,v,p:T.palier,t:Math.round(T.t),tues:T.tues,hp:garde?o.hp:Math.round(P.hp),mp:garde?o.mp:Math.round(P.mp),choix:choix?1:0};persist();pushSave(true);}
 function tourOublie(){if(save.tourRun){delete save.tourRun;persist();pushSave(true);}}
-setInterval(()=>{try{const r=save.tourRun;if(!r||!save.current||r.c!==save.current||!C()||C().mort||scene==='tour'||scene==='tuto'||TOURS||!$('#select').hidden||!deathEl.hidden||($('#titleScr')&&!$('#titleScr').hidden))return;if(ONLINE&&!AUTH.ok)return;enterTour(r);}catch(e){}},700);
+setInterval(()=>{try{const r=save.tourRun;if(!r||r.pause||!save.current||r.c!==save.current||!C()||C().mort||scene==='tour'||scene==='tuto'||TOURS||!$('#select').hidden||!deathEl.hidden||($('#titleScr')&&!$('#titleScr').hidden))return;if(ONLINE&&!AUTH.ok)return;enterTour(r);}catch(e){}},700);
 function enterTour(run){if(!save.current)return;if(run){document.querySelectorAll('.overlay').forEach(e=>{if(!e.hidden&&e.id!=='titleScr'&&e.id!=='select')e.hidden=true;});paused=false;}tourMap=tourMap||genTour();scene='tour';MAP=tourMap;P.x=TC;P.y=TC;resetScene();sceneT=Date.now();curZone=-2;amHost=true;exitOpen=false;camA=0;
   TOURS={vague:0,t:0,file:[],hp:1,dmg:1,sortT:0,debut:0,pause:2.5,tues:0,porte:0,palier:0,boss:false};const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;P.invul=2;
   const r=save.tour;updZone();
@@ -4641,19 +4657,21 @@ function tourTick(dt){const T=TOURS;if(!T||paused)return;T.t+=dt;
       const bx=T.boss?TC:g.x+rnd(-0.8,0.8),by=T.boss?(P.y>TC?TC-7:TC+7):g.y+rnd(-0.8,0.8);
       const m=addMon(k,bx,by,0);m.d=d;m.hp=m.max=d.hp;m.cd=rnd(0.8,1.8);if(T.boss){m.hx=TC;m.hy=TC;m.cd=2;burst(m.x,m.y,d.bc||'#ff5a6a',50,5);}else burst(m.x,m.y,'#d8dce8',10,3);}return;}
   // palier : le boss (et ce qui restait) est vaincu, on laisse le choix de sortir ou de continuer
-  if(T.vague>0&&T.vague%5===0&&T.palier<T.vague){if(vivants===0){T.pause-=dt;if(T.pause<=0){T.palier=T.vague;tourRecord();tourSauve(1);tourOuvre('palier');}}return;}
+  if(T.vague>0&&T.vague%5===0&&T.palier<T.vague){if(vivants===0){T.pause-=dt;if(T.pause<=0){T.palier=T.vague;tourRecord();tourEtage(T.vague);tourSauve(1);tourOuvre('palier');}}return;}
   // étage suivant : dès que tout est mort (petit répit), ou d'office 40 s après le début de l'étage
-  if(vivants===0||T.t-T.debut>40){T.pause-=dt;if(vivants>0||T.pause<=0){T.vague++;const V=tourVague(T.vague);T.file=V.l;T.hp=V.hp;T.dmg=V.dmg;T.boss=!!V.boss;T.debut=T.t;T.pause=2;T.sortT=V.boss?1.2:0.6;tourSauve();
+  if(vivants===0||T.t-T.debut>40){T.pause-=dt;if(vivants>0||T.pause<=0){T.vague++;tourEtage(T.vague-1);const V=tourVague(T.vague);T.file=V.l;T.hp=V.hp;T.dmg=V.dmg;T.boss=!!V.boss;T.debut=T.t;T.pause=2;T.sortT=V.boss?1.2:0.6;tourSauve();
       const mul='vie × '+(V.hp<10?V.hp.toFixed(1):Math.round(V.hp))+' · dégâts × '+(V.dmg<10?V.dmg.toFixed(1):Math.round(V.dmg));
       if(V.boss)showBanner('Étage '+T.vague+' · '+tourPat(T.vague)[0].toUpperCase(),MON[V.l[0]].nom+' garde le palier · '+mul,'#ff5a6a');else showBanner('Étage '+T.vague,V.l.length+' chevaliers · '+mul,'#d8dce8');sfx('boss',V.boss?1:0.6);}}}
 // sortie à un palier : retour au Village, les récompenses partent au coffre de livraison
-function tourSortir(){const T=TOURS;if(!T)return;const p=T.palier,tx='Palier '+p+' · '+fmtDuree(T.t*1000)+' · '+T.tues+' ennemis vaincus';tourRecord();TOURS=null;delete save.tourRun;enterNexus();P.x=KPORT.x;P.y=KPORT.y+1.6;const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;P.berserk=0;P.invul=2;keys.clear();mouse.down=false;persist();pushSave(true);
-  if(tourOnline())room.raw({t:'tour',a:'sortir',n:p,c:save.current});else livrer(tourLot(p),'Tour des Chevaliers');
-  showBanner('Tu sors vivant de la Tour',tx+' · tes récompenses sont dans le coffre de livraison de ta maison','#ffd23f');sfx('level');}
+function tourEtage(n){if(tourOnline()&&n>0)room.raw({t:'tour',a:'etage',n,c:save.current});}
+function tourSortir(){const T=TOURS;if(!T)return;const p=T.palier;tourRecord();tourEtage(p);save.tourRun={c:save.current,v:p,p,t:Math.round(T.t),tues:T.tues,choix:1,pause:1};TOURS=null;enterNexus();P.x=KPORT.x;P.y=KPORT.y+1.6;const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;P.berserk=0;P.invul=2;keys.clear();mouse.down=false;persist();pushSave(true);
+  if(tourOnline())room.raw({t:'tour',a:'pause',c:save.current});showBanner('Course en pause · palier '+p,'Reprends-la à la porte de la Tour, quand tu veux','#ffd23f');sfx('level');}
+function tourTerminer(){const T=TOURS;if(!T)return;const p=T.palier;tourRecord();tourEtage(p);TOURS=null;tourOublie();if(tourOnline())room.raw({t:'tour',a:'fin'});enterNexus();P.x=KPORT.x;P.y=KPORT.y+1.6;const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;P.berserk=0;P.invul=2;keys.clear();mouse.down=false;
+  showBanner('Course terminée · palier '+p,'Ton étage compte pour le classement de la saison','#ffd23f');sfx('level');}
 // mort dans la Tour — phase de test : rien n'est perdu (plus tard : mort définitive du héros)
-function tourDeath(src){const T=TOURS||{vague:0,t:0,tues:0,palier:0},rec=tourRecord();
+function tourDeath(src){const T=TOURS||{vague:0,t:0,tues:0,palier:0},rec=tourRecord();tourEtage(Math.max(T.palier,T.vague-1));
   const tx='Étage '+T.vague+' · '+fmtDuree(T.t*1000)+' · '+T.tues+' ennemis vaincus';TOURS=null;tourOublie();if(!tourEl.hidden)tourFerme();if(tourOnline())room.raw({t:'tour',a:'fin'});enterNexus();P.x=KPORT.x;P.y=KPORT.y+1.6;const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;P.berserk=0;P.invul=2;keys.clear();mouse.down=false;
-  showBanner(rec?'Nouveau record à la Tour !':'Tu es tombé dans la Tour',tx+' · aucune récompense (phase de test : ton héros est épargné)','#ff5a6a');sfx(rec?'level':'hurt');}
+  showBanner(rec?'Nouveau record à la Tour !':'Tu es tombé dans la Tour',tx+' · ton étage compte pour le classement (ton héros est épargné)','#ff5a6a');sfx(rec?'level':'hurt');}
 function drawTour(x0,x1,y0,y1){const u=TS/16,d=MAP,HS=HOUSE_SKINS.chateau;
   for(let ty=y0;ty<=y1;ty++)for(let tx=x0;tx<=x1;tx++){const X=Math.floor(sx(tx)),Y=Math.floor(sy(ty));
     if(tx<0||ty<0||tx>=d.w||ty>=d.h){R(X,Y,TS+1,TS+1,'#0b0a12');continue;}
@@ -4670,7 +4688,7 @@ function drawTour(x0,x1,y0,y1){const u=TS/16,d=MAP,HS=HOUSE_SKINS.chateau;
 function drawTourHud(){const T=TOURS;if(!T)return;const fs=Math.round(Math.max(14,TS*0.34)),X=(W)/2,Y=58,viv=monsters.filter(m=>m.hp>0).length+T.file.length,r=save.tour;
   ctx.fillStyle='rgba(11,10,18,.72)';ctx.fillRect(X-190,Y-fs*0.95,380,fs*3.1);ctx.strokeStyle='#d8dce8';ctx.lineWidth=2;ctx.strokeRect(X-190,Y-fs*0.95,380,fs*3.1);
   label(T.vague?'ÉTAGE '+T.vague+(T.boss?' · GARDIEN DU PALIER':''):'PRÉPARE-TOI',X,Y,T.boss?'#ff5a6a':'#ffd23f',Math.round(fs*1.15),700);
-  label(fmtDuree(T.t*1000)+' · '+viv+' ennemi'+(viv>1?'s':'')+' · prochain palier : étage '+(T.palier+5),X,Y+fs*1.05,'#ebe6f6',Math.round(fs*0.8));
+  label(fmtDuree(T.t*1000)+' · '+viv+' ennemi'+(viv>1?'s':'')+' · prochain palier : étage '+(Math.floor(T.vague/5)*5+5),X,Y+fs*1.05,'#ebe6f6',Math.round(fs*0.8));
   label(r&&r.v?'Record : étage '+r.v+' ('+fmtDuree(r.t*1000)+')':'Aucun record pour l\'instant',X,Y+fs*1.9,'#9a93ad',Math.round(fs*0.7));}
 function enterTuto(){
   if(!save.current)return;closeAdmin&&closeAdmin();
@@ -5086,7 +5104,7 @@ function aimWorld(){if(FPV)return{x:P.x+Math.cos(fpA)*6,y:P.y+Math.sin(fpA)*6};i
 // Lame de l'Aura : chaque seconde, les 8 monstres les plus proches dans l'aura prennent (dégâts de l'arme × vitesse d'attaque)
 function auraTick(w,b,st){const l=monsters.filter(m=>m.hp>0&&!m.inv&&Math.hypot(m.x-P.x,m.y-P.y)<=b.range+m.d.sz*0.3).sort((p,q)=>Math.hypot(p.x-P.x,p.y-P.y)-Math.hypot(q.x-P.x,q.y-P.y)).slice(0,b.am||8);
   P.auraHit=time;vfx.push({k:'healring',x:P.x,y:P.y,r:b.range,t:0,life:0.5,col:'#e0b8ff'});if(!l.length)return;
-  for(const m of l){burst(m.x,m.y,'#d8a0ff',7,2.5);vfx.push({k:'healring',x:m.x,y:m.y,r:0.9,t:0,life:0.35,col:'#ffffff'});hitMon(m,Math.round(rnd(w.dmg[0],w.dmg[1])*upK(w)*st.mult*st.rate),b.col,aggArme());}
+  for(const m of l){burst(m.x,m.y,'#d8a0ff',7,2.5);vfx.push({k:'healring',x:m.x,y:m.y,r:0.9,t:0,life:0.35,col:'#ffffff'});hitMon(m,Math.round(rnd(w.dmg[0],w.dmg[1])*upK(w)*((WB[w.kind]&&WB[w.kind].dm)||1)*st.mult*st.rate),b.col,aggArme());}
   {const ch=C();ch.shots=(ch.shots||0)+1;ch.hits=(ch.hits||0)+1;}sfx('shoot_guerrier',0.35);if(P.backProt){P.backProt=0;P.invul=0;}}
 function fire(st){
   const w=C().equip[0];if(!w)return;const b=WBr(w.kind),a=aimWorld(),ang=Math.atan2(a.y-P.y,a.x-P.x);
@@ -5321,6 +5339,7 @@ function mauditAura(m){const X=sx(m.x),Y=sy(m.y),r=TS*m.d.sz*0.62,t=time+(m.seed
   for(let i=0;i<6;i++){const a=t*1.3+i*TAU/6,px=X+Math.cos(a)*r*1.0,py=Y+r*0.25+Math.sin(a)*r*0.42,z=Math.max(2,TS*0.07);ctx.fillStyle=i%2?'#ff4fd8':'#d8a8ff';ctx.fillRect(px-z/2,py-z/2-Math.abs(Math.sin(t*3+i))*TS*0.12,z,z);}ctx.restore();
   if(Math.random()<0.55)parts.push({x:m.x+rnd(-.5,.5)*m.d.sz,y:m.y+rnd(-.15,.5)*m.d.sz,vx:rnd(-.25,.25),vy:-rnd(.9,2),life:rnd(.5,.9),col:pick(['#b45aff','#ff4fd8','#6a3ab0','#d8a8ff']),s:rnd(.07,.11)});}
 const PAT={
+  cac:()=>{}, // monstre de mêlée : il ne tire pas, il frappe au contact
   maudit:(m,a,tg)=>{const l=m.pats&&m.pats.length?m.pats:[0,4,2];m.phase=(m.phase||0)+1;MAUDIT_PATS[l[m.phase%l.length]](m,a,tg);},
   vipere:(m,a)=>{m.phase=(m.phase||0)+1;if(m.phase%3===0){for(let i=-2;i<=2;i++)shoot(m,a+i*0.2,{bs:6});}else{shoot(m,a,{bs:9.5,r:0.2});shoot(m,a+0.14,{bs:8,wave:0.5});shoot(m,a-0.14,{bs:8,wave:0.5});}},
   b_ronces:(m,a)=>{m.phase=(m.phase||0)+1;const p=m.phase%3;if(p===0){for(let i=0;i<18;i++)shoot(m,i*TAU/18+m.phase*0.2,{bs:3.5,r:0.26,col:'#b06ad0'});}else if(p===1){for(let i=-2;i<=2;i++)shoot(m,a+i*0.18,{bs:6.5,r:0.22,col:'#7ed957'});}else{if(Math.hypot(P.x-m.x,P.y-m.y)<14)for(let k=0;k<3;k++)strikes.push({x:P.x+rnd(-2,2),y:P.y+rnd(-2,2),t:1.2+k*0.2,r:1.2,dmg:m.d.dmg,src:m.d.nom});}},
@@ -5356,7 +5375,7 @@ const PAT={
     else{ // boules de feu géantes qui explosent en gerbes
       for(let k=-1;k<=1;k++){const an=a+k*0.5;eb.push({x:mouth.x,y:mouth.y,bx:mouth.x,by:mouth.y,vx:Math.cos(an)*5,vy:Math.sin(an)*5,life:1.3,dmg:m.d.dmg*1.3,r:0.6,col:'#ffd23f',src:m.d.nom,pw:true,fl:1,t:0,burstF:1});}}},
   // Gardien de palier : les attaques viennent du palier de la Tour (5, 10, 15, 20, 25…), quel que soit le chevalier
-  tour_boss:(m,a)=>{const n=TOURS?TOURS.vague:5,p=clamp(Math.round(n/5),1,5),f=m.hp/m.max,rage=f<0.35;m.phase=(m.phase||0)+1;const q=m.phase;
+  tour_boss:(m,a)=>{const n=TOURS?tourEff(TOURS.vague):5,p=clamp(Math.round(n/5),1,5),f=m.hp/m.max,rage=f<0.35;m.phase=(m.phase||0)+1;const q=m.phase;
     // renforts : des chevaliers de l'étage accourent quand le gardien faiblit
     if(p>=2&&TOURS){if(!m.r1&&f<0.66){m.r1=1;tourRenfort(1+p);}if(!m.r2&&f<0.33){m.r2=1;tourRenfort(2+p);}}
     if(p===1){ // La Garde : éventail de lames, puis un cercle
@@ -5477,7 +5496,7 @@ function onButin(m){
   if(m&&m.refus&&m.peu){note('Monstre maudit : il fallait lui infliger '+MAUDIT_MIN.toLocaleString('fr-FR')+' dégâts ('+Math.round(m.dg|0).toLocaleString('fr-FR')+' pour toi)');return;}
   if(!m||m.refus||!save.current)return;const d=MON[m.k];if(!d)return;const x=+m.x||P.x,y=+m.y||P.y;
   const fix=it=>{const o=sanitizeLoot(it);return o;};
-  const ch=C();ch.kills++;save.stats.kills=(save.stats.kills||0)+1;if(m.b)ch.bosses=(ch.bosses||0)+1;if(m.k==='devoreur')save.stats.devo=(save.stats.devo||0)+1;if(m.k==='chronos')save.stats.chrono=(save.stats.chrono||0)+1;gainXP(m.xp|0,x,y,m.xm);
+  const ch=C();ch.kills++;save.stats.kills=(save.stats.kills||0)+1;if(m.b)ch.bosses=(ch.bosses||0)+1;if(m.k==='devoreur')save.stats.devo=(save.stats.devo||0)+1;if(m.k==='chronos')save.stats.chrono=(save.stats.chrono||0)+1;gainXP(m.xp|0,x,y,m.xm,!!(MON[m.k]&&MON[m.k].ile===2));
   if(m.tuto){statsDirty=true;persist();return;}
   if(m.res&&TALIS[m.res]){save.res=save.res||{};save.res[m.res]=(save.res[m.res]||0)+1;const n=save.res[m.res];showBanner('Ressource de boss : '+TALIS[m.res].res,n+' / '+TALIS_COUT+(n>=TALIS_COUT&&!(save.talis||{})[m.res]?' · va à la table enchantée de la forge !':' pour le '+TALIS[m.res].nom),'#c8a0ff');sfx('relic');burst(x,y,'#c8a0ff',30,4);}
   const items=(m.it||[]).map(fix).filter(Boolean);
@@ -5514,12 +5533,13 @@ function randomItem(t){
 }
 const GLORY_XP=4000,GLORY_PRES=2;
 // Maîtrise de classe : au niveau 25, l'expérience remplit aussi une jauge qui vaut dix fois le chemin du niveau 1 au niveau 25. Mourir la vide. Pleine, elle donne le titre « <Classe> Maîtrisé », acquis pour toujours.
-const MAITRISE_XP=(()=>{let x=0;for(let l=1;l<25;l++)x+=need(l);return x*10;})();
+const MAITRISE_XP=300000; // 0.0.94 : jauge de maîtrise ramenée à 300 000 ; la maîtrise ouvre les niveaux 26 à 30
 const aMaitrise=cls=>(save.titles||[]).includes('m_'+cls);
 function maitriseGain(ch,n){if(ch.lvl<25||aMaitrise(save.current))return;ch.mxp=Math.min(MAITRISE_XP,(ch.mxp||0)+n);if(ch.mxp>=MAITRISE_XP){const k='m_'+save.current,nom=CLASSES[save.current].nom;save.titles=save.titles||[];if(!save.titles.includes(k))save.titles.push(k);save.title=k;showBanner('⚜ '+nom+' Maîtrisé ⚜','Le titre est à toi, pour toujours','#ffd23f');sfx('relic');burst(P.x,P.y,'#ffd23f',80,6);try{sendChat('⚜ a maîtrisé sa classe : '+nom+' !');}catch(e){}pushSave(true);sendPresence();}}
-function gainXP(n,x,y,nm){
+function gainXP(n,x,y,nm,ile){
   const ch=C();ft(x,y-0.6,'+'+n+' XP','#7ed957');
-  if(ch.lvl>=maxLvl()){maitriseGain(ch,nm>=0?Math.min(n,nm|0):n);ch.gxp=(ch.gxp||0)+n;while(ch.gxp>=GLORY_XP){ch.gxp-=GLORY_XP;ch.gp=(ch.gp||0)+1;ft(P.x,P.y-1.1,'+1 point de gloire ★','#ffd23f',true);sfx('level');burst(P.x,P.y,'#ffd23f',24,3);}statsDirty=true;persist();return;}
+  // au-delà du niveau 25, seule l'expérience de l'Île aux Colosses fait monter de niveau ; le reste nourrit la gloire
+  if(ch.lvl>=maxLvl()||(ch.lvl>=25&&!ile)){maitriseGain(ch,nm>=0?Math.min(n,nm|0):n);ch.gxp=(ch.gxp||0)+n;while(ch.gxp>=GLORY_XP){ch.gxp-=GLORY_XP;ch.gp=(ch.gp||0)+1;ft(P.x,P.y-1.1,'+1 point de gloire ★','#ffd23f',true);sfx('level');burst(P.x,P.y,'#ffd23f',24,3);}statsDirty=true;persist();return;}
   ch.xp+=n;
   while(ch.lvl<maxLvl()&&ch.xp>=need(ch.lvl)){ch.xp-=need(ch.lvl);ch.lvl++;const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;ft(P.x,P.y-1.1,'Niveau '+ch.lvl+' !','#ffd23f',true);sfx('level');burst(P.x,P.y,'#ffd23f',30,4);if(ch.lvl>=UNLOCK_LVL)syncUnlock(true);}
   if(ch.lvl>=maxLvl())ch.xp=0;
@@ -5598,7 +5618,8 @@ function findGround(){let best=null,bd=1.0;for(const b of bags){const d=Math.hyp
 
 /* ================= inventaire ================= */
 let SEL=null,DRAG=null,invDirty=true,statsDirty=true,tab='inv',bagTab=0;
-function usable(it){if(!it)return false;if(it.slot==='conso')return true;return KINDS[it.kind].cls.includes(save.current);}
+function usable(it){if(!it)return false;if(it.slot==='conso')return true;return KINDS[it.kind].cls.includes(save.current)&&!(KINDS[it.kind].t8&&C()&&C().lvl<25);}
+const raisonInus=it=>KINDS[it.kind]&&KINDS[it.kind].t8&&KINDS[it.kind].cls.includes(save.current)?'Il faut être niveau 25 pour porter du Tier 8':'Ta classe ne peut pas équiper : '+it.name;
 function lget(l){if(!l)return null;const ch=C();if(l.w==='eq')return ch.equip[l.i]||null;if(l.w==='inv')return ch.inv[l.i]||null;if(l.w==='bag')return groundBag?groundBag.items[l.i]||null:null;if(l.w==='vault')return openChest==='colis'?colis()[l.i]||null:openChest!=null?save.vault.c[openChest][l.i]||null:null;return null;}
 function lset(l,v){const ch=C();if(l.w==='eq')ch.equip[l.i]=v;else if(l.w==='inv')ch.inv[l.i]=v;else if(l.w==='vault'){if(openChest==='colis'){if(!v)colis()[l.i]=null;}else if(openChest!=null)save.vault.c[openChest][l.i]=v;}else if(l.w==='bag'){if(!groundBag){if(v)addToBag(P.x,P.y,[v],true);return;}if(l.i>=groundBag.items.length){if(v)groundBag.items.push(v);}else groundBag.items[l.i]=v;}}
 function fits(it,l){if(!it)return true;if(l.w==='eq')return it.slot!=='conso'&&SLOT_IDX[it.slot]===l.i&&usable(it);if(l.w==='inv')return l.i<C().inv.length;if(l.w==='vault')return openChest!=null&&openChest!=='colis';return true;}
@@ -5623,7 +5644,7 @@ function equipInv(i){
 // touches 1 à 4 : la case correspondante du sac est bue (potion) ou échangée avec l'équipement porté
 function quickSlot(i){if(!save.current||paused)return;const ch=C(),it=ch.inv[i];if(!it){note('Case '+(i+1)+' du sac vide');return;}
   if(it.slot==='conso'){drink(i);return;}
-  if(!usable(it)){note('Ta classe ne peut pas équiper : '+it.name);sfx('deny');return;}
+  if(!usable(it)){note(raisonInus(it));sfx('deny');return;}
   const sel=SEL;moveItem({w:'inv',i},{w:'eq',i:SLOT_IDX[it.slot]});SEL=sel;invDirty=true;ft(P.x,P.y-1,it.name,itemCol(it));}
 function unequip(s){const f=freeInv();if(f<0){note('Sac à dos plein');return;}moveItem({w:'eq',i:s},{w:'inv',i:f});bagTab=Math.floor(f/8);}
 function take(i){
@@ -5699,7 +5720,7 @@ function renderDetail(){
   for(const k of SK)if(ks.has(k)){if(it.stats[k])h+=statLine(k,it.stats[k],eqd?(eqd.stats[k]||0):null);else h+=`<li><span>${SL[k]}</span><span class="down">(−${eqd.stats[k]})</span></li>`;}
   if(it.up)h+=`<li><span>Forge +${it.up}</span><span class="up">+${it.up*10} % d'efficacité</span></li>`;
   h+='</ul>';
-  if(!usable(it))h+=`<p class="hint warn">Ta classe ne peut pas l'équiper.</p>`;
+  if(!usable(it))h+=`<p class="hint warn">${KINDS[it.kind].t8&&KINDS[it.kind].cls.includes(save.current)?'Il faut être niveau 25 pour porter du Tier 8.':'Ta classe ne peut pas l\'équiper.'}</p>`;
   h+='<div class="acts">';
   if(SEL.w==='inv'){if(it.slot==='conso'&&!K.egg&&!K.food)h+=`<button type="button" class="act main" data-act="use">${K.key?'Ouvrir le portail':'Boire'}</button>`;else if(usable(it))h+=`<button type="button" class="act main" data-act="use">Équiper</button>`;if(openChest!=null&&openChest!=='colis')h+=`<button type="button" class="act" data-act="dep">Ranger au coffre</button>`;h+=`<button type="button" class="act" data-act="drop">Jeter</button>`;}
   else if(SEL.w==='eq'){h+=`<button type="button" class="act main" data-act="use">Retirer</button><button type="button" class="act" data-act="drop">Jeter</button>`;}
@@ -5955,17 +5976,19 @@ $('#bbClose').addEventListener('click',()=>{bbEl.hidden=true;cv.focus();});
 let PID='';try{PID=localStorage.getItem('royaume-maudit-id')||'';}catch(e){}
 if(!/^[a-z0-9]{12,}$/.test(PID)){PID=Array.from({length:16},()=>Math.floor(Math.random()*36).toString(36)).join('');try{localStorage.setItem('royaume-maudit-id',PID);}catch(e){}}
 const lbEl=$('#lb');let lbTab='or',lbData=null,scoreT=25;
-const LB_COL={maisons:'Cœurs',or:'Pièces',prestige:'Prestige gagné',kills:'Monstres tués',precision:'Précision'};
-const LB_NOTE={maisons:'Les maisons qui ont reçu le plus de cœurs. Clique sur « Visiter » pour y aller (depuis le Village ou ta maison).',or:'Pièces actuellement possédées.',prestige:'Tout le prestige gagné depuis le début par les morts définitives, tous héros confondus.',precision:'Tirs qui touchent un monstre, depuis la création du héros actuel (remis à zéro à la mort définitive). 300 tirs minimum pour être classé.',kills:'Monstres tués depuis le début, tous héros confondus.'};
+const LB_COL={tour:'Étage',maisons:'Cœurs',or:'Pièces',prestige:'Prestige gagné',kills:'Monstres tués',precision:'Précision'};
+const LB_NOTE={tour:'',maisons:'Les maisons qui ont reçu le plus de cœurs. Clique sur « Visiter » pour y aller (depuis le Village ou ta maison).',or:'Pièces actuellement possédées.',prestige:'Tout le prestige gagné depuis le début par les morts définitives, tous héros confondus.',precision:'Tirs qui touchent un monstre, depuis la création du héros actuel (remis à zéro à la mort définitive). 300 tirs minimum pour être classé.',kills:'Monstres tués depuis le début, tous héros confondus.'};
 function sendScore(){if(!room||!room.raw||!save.current)return;const ch=C();room.raw({t:'score',id:PID,n:pseudo,c:save.current,l:ch.lvl,gold:save.gold,pres:save.stats.presTot||0,kills:save.stats.kills||0,shots:ch.shots||0,hits:ch.hits||0});}
-function openLb(){lbEl.hidden=false;keys.clear();mouse.down=false;renderLb();if(room&&room.raw){sendScore();setTimeout(()=>room&&room.raw&&room.raw({t:'top',id:PID}),150);$('#lbState').textContent='Chargement…';}}
+function openLb(){lbEl.hidden=false;keys.clear();mouse.down=false;renderLb();if(room&&room.raw){sendScore();setTimeout(()=>room&&room.raw&&room.raw({t:'top',id:PID}),150);setTimeout(()=>room&&room.raw&&room.raw({t:'tour',a:'classement'}),250);$('#lbState').textContent='Chargement…';}}
 function closeLb(){lbEl.hidden=true;cv.focus();}
 function renderLb(){
   document.querySelectorAll('#lbTabs button').forEach(b=>b.classList.toggle('on',b.dataset.lb===lbTab));
   $('#lbCol').textContent=LB_COL[lbTab];$('#lbNote').textContent=LB_NOTE[lbTab];
   const tb=$('#lbBody');tb.textContent='';
   if(!room||!room.raw){$('#lbState').textContent='Classement disponible seulement sur le serveur du jeu.';return;}
-  const rows=lbData&&lbData[lbTab]||[];
+  {const ct=$('#lbTourCls');ct.hidden=lbTab!=='tour';if(lbTab==='tour'){if(!TOURCL_CLS||!CLASSES[TOURCL_CLS])TOURCL_CLS=save.current&&CLASSES[save.current]?save.current:'guerrier';ct.innerHTML=Object.keys(CLASSES).map(k=>'<button type="button" data-tc="'+k+'" class="'+(k===TOURCL_CLS?'on':'')+'">'+CLASSES[k].nom+'</button>').join('');
+    const fin=TOURCL?new Date(TOURCL.fin):null,j=fin?Math.max(0,Math.ceil((fin-Date.now())/86400000)):0;$('#lbNote').textContent='Saison '+(TOURCL?TOURCL.saison:'…')+(fin?' · se termine dans '+j+' jour'+(j>1?'s':''):'')+' · étage le plus haut atteint dans la Tour des Chevaliers, par classe. Fin de saison : TOP 1 = titre + 500 Cursite · TOP 2 = titre + 250 · TOP 3 = titre + 100.'+(TOURCL&&TOURCL.avant&&TOURCL.avant[TOURCL_CLS]&&TOURCL.avant[TOURCL_CLS].length?' Saison passée : '+TOURCL.avant[TOURCL_CLS].map((e,i)=>(i+1)+'. '+clean(e.n)+' ('+e.v+')').join(' · ')+'.':'');}}
+  const rows=lbTab==='tour'?((TOURCL&&TOURCL.cls&&TOURCL.cls[TOURCL_CLS])||[]).map(e=>Object.assign({c:TOURCL_CLS},e)):lbData&&lbData[lbTab]||[];
   if(!rows.length){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=4;td.textContent=lbData?'Personne pour l\'instant.':'…';tr.append(td);tb.append(tr);return;}
   rows.forEach((r,i)=>{const tr=document.createElement('tr');if(r.moi)tr.className='me';
     const a=document.createElement('td');a.textContent=i+1;if(i<3)a.className='r'+(i+1);
@@ -5978,6 +6001,10 @@ $('#lbBtn').addEventListener('click',openLb);
 $('#lbClose').addEventListener('click',closeLb);
 lbEl.addEventListener('click',e=>{if(e.target===lbEl)closeLb();});
 $('#lbTabs').addEventListener('click',e=>{const b=e.target.closest('[data-lb]');if(!b)return;lbTab=b.dataset.lb;renderLb();});
+$('#lbTourCls').addEventListener('click',e=>{const b=e.target.closest('[data-tc]');if(!b)return;TOURCL_CLS=b.dataset.tc;renderLb();});
+// classement de la Tour : envoyé par le serveur (saison en cours, saison passée, mes titres)
+let TOURCL=null,TOURCL_CLS=null;
+function onTourCl(m){TOURCL={saison:String(m.saison||''),fin:+m.fin||0,cls:m.cls&&typeof m.cls==='object'?m.cls:{},avant:m.avant&&typeof m.avant==='object'?m.avant:{}};if(!lbEl.hidden&&lbTab==='tour')renderLb();}
 
 /* ================= skins, pupitre, Cursite ================= */
 function mySkin(){const c=save.current;const k=save.skinSel&&save.skinSel[c];return k&&SKINS[c]&&SKINS[c][k]&&save.skins[c+':'+k]?k:null;}
@@ -6250,6 +6277,7 @@ function renderQuests(){const Q=dailyQuests(),st=questState(),box=$('#qList');bo
 $('#qClose').addEventListener('click',closeQuests);qEl.addEventListener('click',e=>{if(e.target===qEl)closeQuests();});
 /* ================= récompenses de connexion (7 jours consécutifs) ================= */
 let SRVT=new Set();const TITLES={alpha:{t:'✦ ALPHA TESTEUR ✦',c:'#ff8ad8'},beta:{t:'★ BETA TESTEUR ★',c:'#ffd23f'},admin:{t:'⚙ ADMIN ⚙',c:'#ff5a5a'},pecheur:{t:'🎣 PÊCHEUR MAUDIT 🎣',c:'#ffd23f'},roipeche:{t:'👑 ROI DE LA PÊCHE 👑',c:'#8fd0ff'},etoiles:{t:'✦ TUEUR D\'ÉTOILES ✦',c:'#c8a0ff'},maitre:{t:'⚔ MAÎTRE DES HÉROS ⚔',c:'#7df0e0'},fleau:{t:'☠ FLÉAU DES MONSTRES ☠',c:'#ff7a5a'},temps:{t:'⌛ MAÎTRE DU TEMPS ⌛',c:'#3ff0ff'},talis:{t:'✧ CHERCHEUR DE TALISMANS ✧',c:'#c8a0ff'}};for(const k in CLASSES)TITLES['m_'+k]={t:'⚜ '+CLASSES[k].nom.toUpperCase()+' MAÎTRISÉ ⚜',c:'#ffd23f'};
+for(const k in CLASSES){TITLES['tour1_'+k]={t:'🏆 TOP 1 '+CLASSES[k].nom.toUpperCase()+' 🏆',c:'#ffd23f'};TITLES['tour2_'+k]={t:'🥈 TOP 2 '+CLASSES[k].nom.toUpperCase()+' 🥈',c:'#d8dce8'};TITLES['tour3_'+k]={t:'🥉 TOP 3 '+CLASSES[k].nom.toUpperCase()+' 🥉',c:'#e8a060'};}
 // Succès : chacun débloque un titre (à choisir dans les Options)
 const SUCCES=[
   {id:'pecheur',ic:'🎣',nom:'Pêcheur maudit',desc:'Pêcher au moins une fois chaque poisson des deux mondes (lac et mer), légendaires compris.',prog:()=>[FISH_BASE().filter(f=>(save.fish||{})[f.id]).length,FISH_BASE().length]},
@@ -6338,7 +6366,7 @@ let dailyVis=null;
 function dailyTick(){const v=scene==='nexus'&&!!save.current&&$('#select').hidden;if(v!==dailyVis){dailyVis=v;$('#dailyBtn').hidden=!v;}if(v){const a=dailyIdx()>=0;$('#dailyDot').hidden=!a;}{const d=v&&DISC.lie===0&&AUTH.ok,el=$('#discordBtn');if(el.hidden===d)el.hidden=!d;}}
 setInterval(dailyTick,500);
 function dailyAuto(){if(!save.current||scene!=='nexus')return;const L=loginState();if(L.seen!==dayNum()&&dailyIdx()>=0&&dlEl.hidden)openDaily();}
-function myTitle(){if(save.title==='admin')return (AUTH.admin||devMode)?'admin':null;if(save.title==='roipeche')return TOUR&&TOUR.roiMoi?'roipeche':null;if(save.title==='alpha')return SRVT.has('alpha')?'alpha':null;return save.title&&TITLES[save.title]&&(save.titles||[]).includes(save.title)?save.title:null;}
+function myTitle(){if(save.title==='admin')return (AUTH.admin||devMode)?'admin':null;if(save.title==='roipeche')return TOUR&&TOUR.roiMoi?'roipeche':null;if(save.title==='alpha')return SRVT.has('alpha')?'alpha':null;if(/^tour[123]_/.test(save.title||''))return SRVT.has(save.title)?save.title:null;return save.title&&TITLES[save.title]&&(save.titles||[]).includes(save.title)?save.title:null;}
 /* ================= familiers ================= */
 // Animation des familiers. Les images d'origine regardent à droite ; on fabrique 3 images de plus par familier :
 // 1 = tête baissée d'un pixel (repos) · 2 et 3 = marche, un groupe de pattes levé sur deux (et la tête qui suit).
@@ -6519,7 +6547,7 @@ function renderPresWin(){const cls=save.current,cap=maxLvl(),box=$('#presList'),
   for(let l=21;l<=25;l++){const row=document.createElement('div');row.className='presrow'+(l<=cap?' ok':'');const b=document.createElement('b');b.textContent='Niveau '+l;const sp=document.createElement('span');sp.textContent=l<=cap?'Débloqué':CAP_COST[l].toLocaleString('fr-FR')+' prestige';row.append(b,sp);
     if(l===cap+1){const bt=document.createElement('button');bt.type='button';bt.className='act main';bt.textContent='Débloquer';bt.disabled=(save.prestige||0)<CAP_COST[l];bt.onclick=()=>{if((save.prestige||0)<CAP_COST[l]){$('#presMsg').textContent='Pas assez de prestige';sfx('deny');return;}save.prestige-=CAP_COST[l];save.caps=save.caps||{};save.caps[cls]=l;persist();pushSave(true);statsDirty=true;invDirty=true;sfx('relic');showBanner('Niveau maximum : '+l,'Ton '+nom+' peut monter jusqu\'au niveau '+l,'#ffd23f');burst(P.x,P.y,'#ffd23f',30,3);renderPresWin();};row.append(bt);}
     box.append(row);}
-  {const p=document.createElement('p');p.className='hint';const reste=Object.keys(CAP_COST).filter(l=>+l>cap).reduce((a,l)=>a+CAP_COST[l],0);p.textContent=cap>=25?(aMaitrise(cls)?nom+' maîtrisé : le titre est à toi.':'Niveau 25 atteint : remplis la jauge de maîtrise ('+MAITRISE_XP.toLocaleString('fr-FR')+' points d\'expérience, sans mourir) pour gagner le titre « '+nom+' Maîtrisé ».'):'Il reste '+reste.toLocaleString('fr-FR')+' points de prestige à dépenser pour amener ton '+nom+' au niveau 25. Les autres classes gardent leur propre niveau maximum.';box.append(p);}}
+  {const p=document.createElement('p');p.className='hint';const reste=Object.keys(CAP_COST).filter(l=>+l>cap).reduce((a,l)=>a+CAP_COST[l],0);p.textContent=cap>=25?(aMaitrise(cls)?nom+' maîtrisé : les niveaux 26 à 30 sont ouverts. Au-delà du niveau 25, seule l\'expérience de l\'Île aux Colosses fait monter.':'Niveau 25 atteint : remplis la jauge de maîtrise ('+MAITRISE_XP.toLocaleString('fr-FR')+' points d\'expérience, sans mourir). Elle donne le titre « '+nom+' Maîtrisé » et ouvre les niveaux 26 à 30.'):'Il reste '+reste.toLocaleString('fr-FR')+' points de prestige à dépenser pour amener ton '+nom+' au niveau 25. Les autres classes gardent leur propre niveau maximum.';box.append(p);}}
 $('#inspClose').addEventListener('click',closeInspect);$('#inspWin').addEventListener('click',e=>{if(e.target.id==='inspWin')closeInspect();});
 $('#presClose').addEventListener('click',closePresWin);presEl.addEventListener('click',e=>{if(e.target===presEl)closePresWin();});
 function openHouseWin(){houseEl.hidden=false;paused=true;keys.clear();mouse.down=false;renderHouseWin();sfx('item');}
@@ -6598,6 +6626,7 @@ function platDispo(p){const inv=save.fishInv||{};return platIngr(p).reduce((a,f)
 function cuisiner(id){const p=platDe(id);if(!p||!save.current)return;if(pecheNiv().n<p.niv){note('Il faut être pêcheur niveau '+p.niv);sfx('deny');return;}if(platDispo(p)<p.n){note('Pas assez de poissons dans ta bourriche');sfx('deny');return;}
   const inv=save.fishInv;let reste=p.n;const L=platIngr(p).sort((a,b)=>(inv[b.id]|0)-(inv[a.id]|0));for(const f of L){const q=Math.min(reste,inv[f.id]|0);inv[f.id]-=q;if(!inv[f.id])delete inv[f.id];reste-=q;if(!reste)break;}
   C().plat={k:p.id,fin:Date.now()+p.min*60000};statsDirty=true;persist();pushSave(true);sfx('relic');showBanner(p.nom,'+'+p.st+' à toutes les caractéristiques'+(p.bon?' · +5 '+SL[Object.keys(p.bon)[0]]:'')+' pendant '+p.min+' min','#ffd96a');renderFishWin();}
+setInterval(()=>{try{const e=document.getElementById('pilT');const on=P.pilK&&P.pilFin>time;if(!on){if(!e.hidden){e.hidden=true;statsDirty=true;}}else{e.hidden=false;e.textContent=PIL_K[P.pilK].ic+' '+PIL_K[P.pilK].nom+' · '+Math.ceil(P.pilFin-time)+' s';}}catch(e){}},500);
 setInterval(()=>{try{const e=document.getElementById('platT');const p=save.current&&C()?platActif():null;if(!p){if(!e.hidden){e.hidden=true;statsDirty=true;}return;}const r=Math.max(0,C().plat.fin-Date.now());e.hidden=false;e.textContent='🍲 '+p.nom+' · '+Math.floor(r/60000)+':'+String(Math.floor(r/1000)%60).padStart(2,'0');}catch(e){}},1000);
 function renderCuisine(g){const inv=save.fishInv||{},N=pecheNiv().n,ileV=fishIleVue();
   const h=document.createElement('div');h.style.cssText='grid-column:1/-1;display:grid;gap:8px';
@@ -7489,7 +7518,7 @@ function update(dt){
         if(b.cosm){b.life=0;break;}
         if(b.vol){if(b.vol.has(m))continue;b.vol.add(m);}
         if(!b.counted){b.counted=true;const ch=C();ch.hits=(ch.hits||0)+1;}
-        if(b.ab)breakArmor(m,b.ab);if(b.vu){if(!(m.vuln>time))ft(m.x,m.y-m.d.sz*0.9,'Vulnérable','#ffd23f');m.vuln=time+b.vu;}let dg=b.dmg*armK(m);if(b.pct)dg+=m.d.boss?m.hp*0.05:m.max*0.5;if(m.vuln>time)dg*=1.5;dg=Math.max(1,Math.round(dg)); // l'armure ne réduit pas la part « % de la vie »
+        if(b.ab)breakArmor(m,b.ab);if(b.vu){if(!(m.vuln>time))ft(m.x,m.y-m.d.sz*0.9,'Vulnérable','#ffd23f');m.vuln=time+b.vu;}let dg=b.dmg*armK(m);if(b.pct)dg+=m.d.boss?m.hp*0.05:m.max*0.2;if(m.vuln>time)dg*=1.5;dg=Math.max(1,Math.round(dg)); // l'armure ne réduit pas la part « % de la vie »
         m.hp-=dg;if(b.arme)volVie(dg);if(b.par&&!b.cosm)paralyze(m,b.par);if(b.poi)poisonMon(m,b.poi);if(m.key==='dragon'){raidAcc+=dg;m.hp=m.max;}m.flash=0.1;sfx('hit');ft(m.x+rnd(-.2,.2),m.y-m.d.sz*0.5,String(dg)+(b.crit?' !':''),b.crit?'#ff3b4a':m.vuln>time||b.pct?'#ffd23f':'#ffffff',!!b.crit);
         const rec=dmgTot.get(m.id)||{tot:0,t:0};rec.tot+=dg;rec.t=time;dmgTot.set(m.id,rec);aggAdd(m,dg,b.kind==='vague'?AGG_BOUCLIER:b.arme?aggArme():1);
         if(m.key==='mannequin'){m.lastHit=time;TU.hit=1;if(m.hp<1)m.hp=1;dpsHit(dg);}
@@ -7539,6 +7568,7 @@ function update(dt){
       if(m.key==='spectre_vide'){const mini=amHost?m.miniT>time:(m.sf||'').includes('M');if(mini!==!!m.mini){m.mini=mini;m.d=mini?MON_MINI:MON.spectre_vide;m.zT=time;if(Math.hypot(P.x-m.x,P.y-m.y)<16){burst(m.x,m.y,'#b45aff',mini?14:8,2.5);vfx.push({k:'ring',x:m.x,y:m.y,col:'#3ff0ff',t:0,life:0.3,r:mini?0.9:0.5});if(mini)sfx('zap',0.5);}}}
       const aggro=scene==='tour'?99:m.d.boss?16:scene==='dungeon'?11.5:10.4,myD=Math.hypot(P.x-m.x,P.y-m.y);
       // tirs : simulés localement par chaque joueur proche
+      if(m.d.cac&&P.hp>0&&!P.god&&canFight()&&myD<m.d.sz*0.42+0.45&&!(m.cacT>time)){m.cacT=time+1;m.atkT=time;burst(P.x,P.y,'#ff5a3a',8,2.2);hurtP(m.d.dmg,m.d.nom);}
       if(tg&&d<aggro&&myD<20){
         const lead=AI_LEAD[m.d.ai||0]*(Math.random()<0.78?1:0),tt=d/Math.max(1,m.d.bs),aimA=Math.atan2(tg.y+(tg.vy||0)*tt*lead-m.y,tg.x+(tg.vx||0)*tt*lead-m.x);
         m.cd-=dt;if(m.cd<=0){m.cd=m.d.cd*rnd(0.85,1.15);PAT[m.d.pat](m,aimA,tg);if(BOSS_ATK[m.key])m.atkT=time;if(myD<16)vfx.push({k:'ring',x:m.x,y:m.y,col:m.d.bc,t:0,life:0.2,r:m.d.sz*0.35});}
@@ -8184,7 +8214,7 @@ function drawNexus(x0,x1,y0,y1){
   drawGateP(NPORT.x,NPORT.y);drawGateM(VPORT.x,VPORT.y);
   drawPortal(NPORT.x,NPORT.y,'#a45be8','#ff7bf2','Plaines Sauvages','',{frame:false});
   drawPortal(VPORT.x,VPORT.y,'#b8862b','#ffd96a','Maison','',{frame:false});
-  drawPortal(KPORT.x,KPORT.y,'#3a3c48','#d8dce8','Tour des Chevaliers',save.tour&&save.tour.v?'record : étage '+save.tour.v:'scellée · clef requise',{scale:0.85});
+  drawPortal(KPORT.x,KPORT.y,'#3a3c48','#d8dce8','Tour des Chevaliers',save.tour&&save.tour.v?'classement · record : étage '+save.tour.v:'classement de la saison',{scale:0.85});
   drawPortal(GPORT.x,GPORT.y,'#6a3ab0','#ffd23f','Guilde',GUILD?'['+GUILD.tag+']':'créer ou rejoindre',{scale:0.85});
 }
 const ICON_IMG={};
@@ -8873,7 +8903,7 @@ function render(){
   for(const k of keyPortals()){const rem=Math.max(0,Math.ceil((k.fin-Date.now())/1000))+' s';if(k.ty==='v')drawPortal(k.x,k.y,'#0a4a5a','#ffd23f','La Vengeance sous-marine','Donjon rare · '+rem,{scale:1.35,fast:true});else drawPortal(k.x,k.y,'#141034','#3ff0ff',"L'Horloge Brisée",'Donjon à clef · '+rem,{scale:1.35,fast:true,clock:true});}
   if(scene==='realm'){for(const d of dportals){const T=DTYPES[d.t||'c'];drawPortal(d.x,d.y,T.col[0],T.col[1],T.nom,(d.t==='a'?'World boss · ':'')+Math.ceil(d.life)+' s',d.t==='a'?{scale:1.45,world:true,fast:true,th:'a'}:{th:d.t});}}
   for(const b of bags)up(b.x,b.y,()=>{const s=TS*0.62,X=sx(b.x),Y=sy(b.y)+Math.sin(time*3+b.x)*2;if(b.kind==='blanc'||b.kind==='relique'){ctx.fillStyle=b.kind==='relique'?`hsla(${(time*120)%360},100%,65%,.35)`:'rgba(255,240,180,.25)';ctx.beginPath();ctx.arc(X,Y,s*(0.8+0.1*Math.sin(time*5)),0,TAU);ctx.fill();}ctx.drawImage(BAGS[b.kind],X-s/2,Y-s/2,s,s);});
-  drawMeca();
+  drawMeca();drawPiliers();
   for(const k of strikes){if(k.hit)continue;const X=sx(k.x),Y=sy(k.y),bl=Math.sin(time*(14+(1.1-k.t)*25))>0;ctx.globalAlpha=bl?0.55:0.25;ctx.fillStyle=k.rock?'#c8a060':k.fire?'#ff7a1a':'#ff2a2a';ctx.beginPath();ctx.arc(X,Y,TS*k.r*(1-Math.max(0,k.t)/2.2),0,TAU);ctx.fill();ctx.globalAlpha=0.9;ctx.strokeStyle='#ff5a5a';ctx.lineWidth=2;ctx.beginPath();ctx.arc(X,Y,TS*k.r,0,TAU);ctx.stroke();ctx.globalAlpha=1;if(k.rock){const fy=Math.max(0,k.t)*TS*4,u=TS/16;R(X-5*u,Y-fy-5*u,10*u,9*u,'#3a3028');R(X-4*u,Y-fy-4*u,8*u,7*u,'#6a5a4a');R(X-3*u,Y-fy-4*u,3*u,2*u,'#8a7a6a');}}
   const sk=sceneKey();
   const cA=Math.cos(camA),sA=Math.sin(camA),ry=(x,y)=>(x-P.x)*sA+(y-P.y)*cA;const ents=monsters.filter(m=>m.hp>0&&!m.pend&&Math.abs(m.x-P.x)<rw+3&&Math.abs(m.y-P.y)<rh+3).map(m=>({y:ry(m.x,m.y),m}));if(save.current)ents.push({y:0,p:true});
@@ -8898,7 +8928,7 @@ function render(){
       swimDraw(r.x,r.y,()=>drawHero(p.c,typeof p.sk==='string'&&SKINS[p.c]&&SKINS[p.c][p.sk]?p.sk:null,r.x,r.y,p.f,0,p.mv?Math.abs(Math.sin(r.walk))*TS*0.05:Math.sin(time*2.4+r.x)*TS*0.015,WB[p.w]?p.w:null,num(p.wt,0),typeof p.sh==='number'&&!safe()?p.sh/100:null,r.thrust||0,!!p.mv,r.walk,p.iv?0.3:1,parseAura(p.au),typeof p.mo==='string'&&MON[p.mo]?p.mo:null));
       drawBar(r.x,r.y+0.55,TS*0.8,num(p.hp,100)/100,'#4fb8e8');if(typeof p.fi==='string'){const [fx,fy]=p.fi.split(',').map(v=>(+v||0)/10);if(Math.hypot(fx-r.x,fy-r.y)<4){const u=TS/16,hx=sx(r.x+(fx>r.x?0.35:-0.35)),hy=sy(r.y-0.55),bx=sx(fx),by=sy(fy)+Math.sin(time*3+r.x)*u*0.6;ctx.strokeStyle='#6a4424';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(sx(r.x),sy(r.y-0.2));ctx.lineTo(hx,hy-TS*0.4);ctx.stroke();ctx.strokeStyle='rgba(240,240,240,.7)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(hx,hy-TS*0.4);ctx.quadraticCurveTo((hx+bx)/2,(hy+by)/2,bx,by);ctx.stroke();R(bx-2*u,by-2*u,4*u,2*u,'#ff3b4a');R(bx-2*u,by,4*u,2*u,'#ffffff');}}
       if(typeof p.sf==='string')drawStates(p.sf.slice(0,8),r.x,r.y-(typeof p.ti==='string'&&TITLES[p.ti]?1.22:0.98));
-      {const ti=typeof p.ti==='string'&&TITLES[p.ti]?p.ti:null;label((typeof p.gt==='string'&&p.gt?'['+clean(p.gt).slice(0,4)+'] ':'')+(clean(p.n).slice(0,16)||'Joueur')+' · '+clamp(num(p.l,1)|0,1,25),sx(r.x),sy(r.y-(ti?0.98:0.72)),ncSur(p.nc)||(myGid&&p.gi===myGid?'#9fe07a':'#dff3ff'),Math.round(TS*0.3));if(ti)titleLabel(ti,r.x,r.y);if(p.md===1)mauditSigne(r.x,r.y-(ti?1.55:1.25));}
+      {const ti=typeof p.ti==='string'&&TITLES[p.ti]?p.ti:null;label((typeof p.gt==='string'&&p.gt?'['+clean(p.gt).slice(0,4)+'] ':'')+(clean(p.n).slice(0,16)||'Joueur')+' · '+clamp(num(p.l,1)|0,1,30),sx(r.x),sy(r.y-(ti?0.98:0.72)),ncSur(p.nc)||(myGid&&p.gi===myGid?'#9fe07a':'#dff3ff'),Math.round(TS*0.3));if(ti)titleLabel(ti,r.x,r.y);if(p.md===1)mauditSigne(r.x,r.y-(ti?1.55:1.25));}
       if(r.bubble)bubble(r.bubble.t,r.x,r.y);
     }else{
       const m=e.m,t=time+m.seed;
@@ -8996,7 +9026,7 @@ function render(){
   if(scene==='tuto')drawTutoHud();if(scene==='tour')drawTourHud();
   let prompt=null;
   if(nearKeyPortal())prompt=nearKeyPortal().ty==='v'?'E · Plonger dans La Vengeance sous-marine':'E · Entrer dans l\'Horloge Brisée (donjon à clef)';
-  else if(scene==='nexus'&&Math.hypot(P.x-KPORT.x,P.y-KPORT.y)<1.5)prompt=C().inv.some(it=>it&&it.kind==='cle_tour')?'E · Tour des Chevaliers : utiliser une Clef de la Tour':'Tour des Chevaliers · scellée (il faut une Clef de la Tour)';
+  else if(scene==='nexus'&&Math.hypot(P.x-KPORT.x,P.y-KPORT.y)<1.5)prompt=save.tourRun&&save.tourRun.pause&&save.tourRun.c===save.current?'E · Tour des Chevaliers : reprendre au palier '+save.tourRun.p:'E · Tour des Chevaliers (classement de la saison)';
   else if(scene==='nexus'&&Math.hypot(P.x-GPORT.x,P.y-GPORT.y)<1.5)prompt=GUILD?'E · Hall de guilde ['+GUILD.tag+']':'E · Guildes : créer ou rejoindre';
   else if(scene==='nexus'){if(Math.hypot(P.x-NPORT.x,P.y-NPORT.y)<1.6)prompt='E · Portails des Plaines Sauvages';else if(nearAltarObj())prompt={maudit:'E · Parler au Passeur',breche:'E · Parler au Veilleur de la Brèche',navig:'E · Parler au capitaine Morvan, le vieux navigateur',pup:'E · Changer de pseudo',statue:'E · Choisir un skin',altar:'E · Changement de classe',guide:'E · Parler à Maître Albéric (refaire le tutoriel)',quest:'E · Quêtes du jour',eleveur:'E · Éleveur de familiers (faire éclore les œufs)',srv:'E · Fontaine : changer de serveur',pecheur:'E · Parler au pêcheur (quête : tous les poissons)',table:'E · Table à dessin (1 pixel par minute)',craft:'E · Table enchantée (fabriquer un talisman)',hv:'E · Hôtel des ventes (acheter et vendre entre joueurs)',herbo:'E · Atelier de l\'herboriste (fabriquer des potions avec tes plantes)',forge:'E · Forgeron (améliorer ton équipement)'}[nearAltarObj()];else if(Math.hypot(P.x-SHOP.x,P.y-SHOP.y)<1.9)prompt='E · Parler au marchand';else if(Math.hypot(P.x-VPORT.x,P.y-VPORT.y)<1.5)prompt='E · Salle des coffres';else if(groundBag)prompt='G · Tout ramasser';else if(!FISH&&nearWater())prompt='E · Pêcher dans l\'étang';}
   else if(scene==='vault'&&VIS){if(Math.hypot(P.x-VBACK.x,P.y-VBACK.y)<1.4)prompt='E · Retour au Village';else if(Math.hypot(P.x-HDECO.x,P.y-HDECO.y)<1.6)prompt=VIS.aime?'Tu as déjà laissé un cœur ici ♥':'E · Laisser un cœur ♥ à '+VIS.n;else if(!FISH&&nearWater())prompt='E · Pêcher dans le lac';}
@@ -9035,7 +9065,7 @@ function toggleMap(){if(!save.current)return;mapEl.hidden=!mapEl.hidden;if(!mapE
 function drawBigMap(){const m0=mini,c0=mctx,z0=miniZoom;mini=bigCv;mctx=bigCtx;miniZoom=1;try{drawMini();}catch(e){}mini=m0;mctx=c0;miniZoom=z0;}
 function openWiki(){try{keys.clear();mouse.down=false;}catch(e){}window.open('/wiki','_blank','noopener');}
 function realmView(){const Wm=mini.width,y0=surIle2(P.y)?ILE2_TOP+12:0,y1=surIle2(P.y)?RH:ILE1_H,v=(y1-y0)/miniZoom,k=Wm/v;return{v,k,ox:v>=RW?(RW-v)/2:clamp(P.x-v/2,0,RW-v),oy:clamp(P.y-v/2,y0,y1-v)};}
-function miniView(w,h){const Wm=mini.width,vw=w/miniZoom,vh=h/miniZoom;return{ox:clamp(P.x-vw/2,0,w-vw),oy:clamp(P.y-vh/2,0,h-vh),k:Wm/vw};}
+function miniView(w,h){const Wm=mini.width,big=Math.max(w,h),small=Math.min(w,h),v=(big/small>2?Math.min(big,small*2):big)/miniZoom,ox=v>=w?(w-v)/2:clamp(P.x-v/2,0,w-v),oy=v>=h?(h-v)/2:clamp(P.y-v/2,0,h-v);return{ox,oy,k:Wm/v,v};}
 mini.addEventListener('wheel',e=>{if(scene!=='realm'&&scene!=='dungeon')return;e.preventDefault();miniZoom=clamp(miniZoom*(e.deltaY<0?2:0.5),1,8);},{passive:false});
 mini.addEventListener('click',()=>{if(scene!=='realm'&&scene!=='dungeon')return;miniZoom=miniZoom>=8?1:miniZoom*2;});
 mini.title='Molette : zoomer sur la carte (clic : zoom suivant)';
@@ -9057,7 +9087,7 @@ function drawMini(){
     if(!d.miniCv||d.miniDirty){if(!d.miniCv){d.miniCv=document.createElement('canvas');d.miniCv.width=d.w;d.miniCv.height=d.h;}const g=d.miniCv.getContext('2d'),img=g.createImageData(d.w,d.h);const c=d.dtype==='a'?[40,34,110]:DTYPES[d.dtype].mini;
       for(let i=0;i<d.w*d.h;i++){if(d.sol[i]&&!(d.doors&&d.doors.some(q=>q.y*d.w+q.x===i)))continue;if(d.fog&&!d.seen[i])continue;img.data[i*4]=c[0];img.data[i*4+1]=c[1];img.data[i*4+2]=c[2];img.data[i*4+3]=255;}g.putImageData(img,0,0);d.miniDirty=false;}
     const V=miniView(d.w,d.h),mx=x=>(x-V.ox)*V.k,my=y=>(y-V.oy)*V.k;
-    mctx.drawImage(d.miniCv,V.ox,V.oy,d.w/miniZoom,d.h/miniZoom,0,0,Wm,Wm);
+    {const sx0=Math.max(0,V.ox),sy0=Math.max(0,V.oy),sw=Math.min(d.w,V.ox+V.v)-sx0,sh=Math.min(d.h,V.oy+V.v)-sy0;if(sw>0&&sh>0)mctx.drawImage(d.miniCv,sx0,sy0,sw,sh,(sx0-V.ox)*V.k,(sy0-V.oy)*V.k,sw*V.k,sh*V.k);}
     if(d.minis){const cols=['#ff6a4a','#2ed8c8','#6ad86a','#ffb04a'];for(const g of d.minis){if(d.fog&&!d.seen[Math.floor(g.y)*d.w+Math.floor(g.x)])continue;mctx.fillStyle=stars&(1<<g.i)?'#555':cols[g.i];mctx.fillRect(mx(g.x)-3,my(g.y)-3,6,6);}}
     for(const m of monsters){if(d.fog&&!d.seen[Math.floor(m.y)*d.w+Math.floor(m.x)])continue;if(m.d.star!=null)continue;mctx.fillStyle=m.d.boss?'#3ff0ff':'#ff4d5e';const s=m.d.boss?5:miniZoom>=4?4:2;mctx.fillRect(mx(m.x)-s/2,my(m.y)-s/2,s,s);}
     if(d.breche&&!d.pilier){const c=d.down||d.brBoss;if(c){const X=clamp(mx(c.x),4,Wm-4),Y=clamp(my(c.y),4,Wm-4),p=0.5+0.5*Math.sin(time*5),s2=5+Math.round(p*3);mctx.fillStyle='#0b0a12';mctx.fillRect(X-s2/2-1,Y-s2/2-1,s2+2,s2+2);mctx.fillStyle=d.down?'#7df0e0':'#ff5a6a';mctx.fillRect(X-s2/2,Y-s2/2,s2,s2);}}
@@ -9110,7 +9140,7 @@ function frame(now){
 /* ================= La Brèche : runes, arbre, donjon à étages ================= */
 // Tout est rangé par classe dans save.breche[classe] (comme les sacs, rien n'est perdu à la mort définitive) :
 //   runes : { clef: niveau 1 à 20 } · eq : la rune sertie au centre de l'arbre · arbre : les nœuds pris, dans l'ordre · diff : plus haute difficulté terminée
-var BRECHE_ETAGES=3,BRECHE_BUT=130,BRECHE_RESET=300,BR=null,BRI=null,BRP=null,PATCOL=null;
+var BRECHE_ETAGES=2,BRECHE_BUT=130,BRECHE_RESET=300,BR=null,BRI=null,BRP=null,PATCOL=null;
 var VEIL={x:11.5,y:25.5};
 var RUNES={
   longue:{nom:'Longue-vue',col:'#7df0e0',max:'+1 case de portée pour ton arme',txt:n=>'+'+(n*0.05).toFixed(2).replace('.',',')+' case de portée'},
@@ -9295,12 +9325,28 @@ function drawBrecheMonde(d){if(!d.breche)return;
   if(d.down)drawPortal(d.down.x,d.down.y,'#7df0e0','#ffffff','Étage '+((d.etage||1)+1),'descendre');
   if(d.pilier){const X=sx(d.pilier.x),Y=sy(d.pilier.y),u=TS/16,p=0.5+0.5*Math.sin(time*3);up(d.pilier.x,d.pilier.y,()=>{ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(X,Y+6*u,8*u,3*u,0,0,TAU);ctx.fill();ctx.fillStyle='rgba(125,240,224,'+(0.15+0.15*p)+')';ctx.beginPath();ctx.arc(X,Y-8*u,16*u,0,TAU);ctx.fill();R(X-6*u,Y+2*u,12*u,4*u,'#3a4656');R(X-4*u,Y-18*u,8*u,20*u,'#5a6878');R(X-4*u,Y-18*u,2*u,20*u,'#8494a8');R(X-5*u,Y-21*u,10*u,3*u,'#8494a8');
       for(let i=0;i<4;i++)R(X-u,Y-15*u+i*4*u,2*u,2*u,i%2?'#ffffff':'#7df0e0');const a=time*2;R(X+Math.cos(a)*9*u-u,Y-10*u+Math.sin(a)*4*u,2*u,2*u,'#7df0e0');R(X-Math.cos(a)*9*u-u,Y-10*u-Math.sin(a)*4*u,2*u,2*u,'#ffffff');label('Pilier des runes',X,Y-25*u,'#7df0e0',Math.round(TS*0.28),700);});}}
+// ---------- piliers de puissance (0.0.94) : 1 à 3 par étage, placés au hasard ; chacun donne un gros bonus, une fois par joueur ----------
+const PIL_K={vit:{nom:'+50 % de vitesse',ic:'⚡',col:'#7df0e0',d:60},deg:{nom:'+30 % de dégâts',ic:'⚔',col:'#ff5a5a',d:60},cad:{nom:'+30 % de vitesse d\'attaque',ic:'➶',col:'#ffd23f',d:60},inv:{nom:'Invincible',ic:'🛡',col:'#f4f1e8',d:20}};
+const PIL_PRIS=new Set();
+function brPiliers(d,seed){const R=mulberry(seed*53+9),n=1+Math.floor(R()*3),l=d.rooms.slice(1).filter(r=>!(d.brBoss&&Math.hypot(r.x-d.brBoss.x,r.y-d.brBoss.y)<12)&&!(d.down&&Math.hypot(r.x-d.down.x,r.y-d.down.y)<5)),out=[],ks=Object.keys(PIL_K);
+  for(let i=0;i<n&&l.length;i++){const r=l.splice(Math.floor(R()*l.length),1)[0],x=Math.floor(r.x)+.5,y=Math.floor(r.y)+.5;if(d.sol[Math.floor(y)*d.w+Math.floor(x)])continue;out.push({x,y,k:ks[Math.floor(R()*ks.length)],i});}return out;}
+const pilProche=()=>{const d=MAP;if(scene!=='dungeon'||!d||!d.piliers)return null;return d.piliers.find(p=>!PIL_PRIS.has(dungeonId+':'+p.i)&&Math.hypot(P.x-p.x,P.y-p.y)<1.6)||null;};
+function pilPrendre(p){const K=PIL_K[p.k];PIL_PRIS.add(dungeonId+':'+p.i);if(p.k==='inv'){P.invul=Math.max(P.invul||0,K.d);}else{P.pilK=p.k;P.pilFin=time+K.d;}statsDirty=true;showBanner(K.ic+' '+K.nom,'Pendant '+K.d+' secondes','#7df0e0');sfx('relic');burst(p.x,p.y,K.col,40,4);}
+const pilActif=k=>P.pilK===k&&P.pilFin>time;
+function drawPiliers(){const d=MAP;if(scene!=='dungeon'||!d||!d.piliers)return;const u=TS/16;for(const p of d.piliers){if(Math.abs(p.x-P.x)>20||Math.abs(p.y-P.y)>14)continue;const pris=PIL_PRIS.has(dungeonId+':'+p.i),K=PIL_K[p.k];
+  up(p.x,p.y,()=>{const X=Math.floor(sx(p.x)),Y=Math.floor(sy(p.y)),g=0.5+0.5*Math.sin(time*3+p.i);ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(X,Y+u*3,u*7,u*2.2,0,0,TAU);ctx.fill();
+    R(X-u*5,Y-u*1,u*10,u*4,'#4a4658');R(X-u*4,Y-u*22,u*8,u*21,pris?'#3a3648':'#6a6c7a');R(X-u*4,Y-u*22,u*2,u*21,pris?'#2a2636':'#8a8c9a');R(X-u*5,Y-u*24,u*10,u*3,'#4a4658');
+    if(!pris){ctx.globalAlpha=0.25+0.2*g;ctx.fillStyle=K.col;ctx.beginPath();ctx.arc(X,Y-u*29,TS*0.9,0,TAU);ctx.fill();ctx.globalAlpha=1;R(X-u*3,Y-u*33,u*6,u*8,K.col);R(X-u*1.5,Y-u*35,u*3,u*2,'#ffffff');
+      label(K.ic,X,Y-u*29,'#0b0a12',Math.round(TS*0.42),700);label(K.nom,X,Y-u*40,K.col,Math.round(TS*0.26),700);}
+    else label('épuisé',X,Y-u*28,'#8a8494',Math.round(TS*0.24));});}}
 function brecheE(){const d=MAP;if(!d||!d.breche)return false;const pr=(o,r)=>o&&Math.hypot(P.x-o.x,P.y-o.y)<r;
+  {const pl=pilProche();if(pl){pilPrendre(pl);return true;}}
   if(pr(d.pilier,2)){openArbre();return true;}
   if(pr(d.down,1.6)){brecheEtage((d.etage||1)+1);return true;}
   if(pr(d.exitPortal,1.4)){if((d.etage||1)>1)brecheEtage(d.etage-1,true);else{BR=null;sendPresence();enterNexus();}return true;}
   return false;}
 function brechePrompt(){const d=MAP;if(!d||!d.breche)return null;const pr=(o,r)=>o&&Math.hypot(P.x-o.x,P.y-o.y)<r;
+  {const pl=pilProche();if(pl)return 'E · Pilier de puissance : '+PIL_K[pl.k].nom+' ('+PIL_K[pl.k].d+' s)';}
   if(pr(d.pilier,2))return 'E · Pilier des runes (améliorer, sertir, arbre)';if(pr(d.down,1.6))return 'E · Descendre à l\'étage '+((d.etage||1)+1);
   if(pr(d.exitPortal,1.4))return (d.etage||1)>1?'E · Remonter à l\'étage '+(d.etage-1):'E · Quitter la Brèche (retour au Village)';return null;}
 Object.assign(PAT,{br_boss:(m,a,tg)=>{const l=m.d.bp||[0,4,2],rage=m.hp<m.max*0.35,n0=strikes.length;m.phase=(m.phase||0)+1;PATCOL=m.d.bc;try{MAUDIT_PATS[l[m.phase%l.length]](m,a,tg);if(rage&&m.phase%2===0)MAUDIT_PATS[l[(m.phase+1)%l.length]](m,a+0.3,tg);}finally{PATCOL=null;}const k=brDmgNow();if(k!==1)for(let i=n0;i<strikes.length;i++)strikes[i].dmg*=k;}});
@@ -9369,11 +9415,11 @@ function drawPnj(id,x,y,nom,col,mark){const X=sx(x),Y=sy(y),u=TS/16,A=PNJ_ART[id
 function drawNavig(){if(!navigLa()||scene!=='nexus')return;const st=colEtape(),alerte=!save.navigLu||(st===1&&colBosses().every(x=>COLQ().b[x.k]));drawPnj('morvan',NAVIG.x,NAVIG.y,'Capitaine Morvan · vieux navigateur','#8fd0f0',alerte?(st===1?'!':'?'):null);}
 // ---------- le point qui brille, puis le trou, au nord des Terres Désolées (chaque héros voit le sien) ----------
 function trouProche(r){return scene==='realm'&&Math.hypot(P.x-TROU.x,P.y-TROU.y)<(r||2.6);}
-function trouPrompt(){const s=colEtape();if(s<2||!trouProche())return null;return s===2?'E · Creuser là où le sol brille':'E · Descendre dans la grotte de glace';}
-function trouE(){const s=colEtape();if(s<2||!trouProche())return false;const q=COLQ();
+function trouPrompt(){const s=colEtape();if(s<2&&trouProche()&&grotteAmis())return 'E · Suivre ton groupe dans la grotte de glace';if(s<2||!trouProche())return null;return s===2?'E · Creuser là où le sol brille':'E · Descendre dans la grotte de glace';}
+function trouE(){const s=colEtape();if(s<2&&trouProche()&&grotteAmis()){enterGrotte();return true;}if(s<2||!trouProche())return false;const q=COLQ();
   if(s===2){q.s=3;persist();pushSave(true);try{secousse(6,0.9);}catch(e){}sfx('boss',0.6);for(let i=0;i<3;i++)burst(TROU.x,TROU.y,['#8fd0f0','#ffffff','#5a5668'][i],34,5);vfx.push({k:'boom',x:TROU.x,y:TROU.y,r:3.2,t:0,life:0.7,col:'#8fd0f0'});showBanner('Le sol s\'effondre !','Un souffle glacé monte du trou','#8fd0f0');P.x=TROU.x;P.y=TROU.y+2.1;return true;}
   enterGrotte();return true;}
-function drawTrou(){if(scene!=='realm')return;const s=colEtape();if(s<2||Math.abs(P.x-TROU.x)>22||Math.abs(P.y-TROU.y)>15)return;const X=sx(TROU.x),Y=sy(TROU.y),u=TS/16;
+function drawTrou(){if(scene!=='realm')return;const s0=colEtape(),s=s0<2&&grotteAmis()?3:s0;if(s<2||Math.abs(P.x-TROU.x)>22||Math.abs(P.y-TROU.y)>15)return;const X=sx(TROU.x),Y=sy(TROU.y),u=TS/16;
   if(s===2){const p=0.5+0.5*Math.sin(time*4),g=ctx.createRadialGradient(X,Y,0,X,Y,TS*1.6);g.addColorStop(0,'rgba(191,232,255,'+(0.5+0.3*p)+')');g.addColorStop(1,'rgba(191,232,255,0)');ctx.fillStyle=g;ctx.fillRect(X-TS*1.6,Y-TS*1.6,TS*3.2,TS*3.2);
     ctx.globalAlpha=0.16+0.1*p;ctx.fillStyle='#bfe8ff';ctx.fillRect(X-2*u,Y-TS*5,4*u,TS*5);ctx.globalAlpha=1;
     const L=(5+3*p)*u;R(X-L,Y-u*0.7,L*2,u*1.4,'#ffffff');R(X-u*0.7,Y-L,u*1.4,L*2,'#ffffff');R(X-L*0.5,Y-u*0.4,L,u*0.8,'#bfe8ff');
@@ -9386,7 +9432,7 @@ function drawTrou(){if(scene!=='realm')return;const s=colEtape();if(s<2||Math.ab
   for(let i=0;i<7;i++){const ph=(time*0.35+i/7)%1,a=i*1.9;ctx.globalAlpha=0.6*(1-ph);R(X+Math.cos(a)*TS*0.8-u,Y-ph*TS*1.8+Math.sin(a)*TS*0.4,2*u,2*u,'#e8f8ff');}ctx.globalAlpha=1;
   label('Grotte de glace',X,Y-TS*1.5,'#8fd0f0',Math.round(TS*0.3),700);}
 // ---------- la grotte de glace : un long tunnel, des parois tout près, la sortie tout au bout ----------
-function genGrotte(seed){const w=300,h=64,sol=new Uint8Array(w*h).fill(1),sd=((seed%977)+977)%977*0.37;
+function genGrotte(seed){const w=210,h=64,sol=new Uint8Array(w*h).fill(1),sd=((seed%977)+977)%977*0.37;
   const cy=x=>32+(vn(x/26+sd,1.7)-.5)*34+(vn(x/9+sd,5.1)-.5)*6,hw=x=>2.4+vn(x/13+sd,9.3)*1.7+Math.pow(Math.max(0,Math.sin((x+sd*40)/21)),6)*3.4;
   for(let x=6;x<w-6;x++){const c=cy(x),r=hw(x);for(let y=Math.floor(c-r)-1;y<=Math.ceil(c+r)+1;y++){if(y<2||y>=h-2)continue;if(Math.abs(y+.5-c)<=r)sol[y*w+x]=0;}}
   const disc=(X,Y,r)=>{for(let y=Math.floor(Y-r)-1;y<=Y+r+1;y++)for(let x=Math.floor(X-r)-1;x<=X+r+1;x++)if(x>1&&y>1&&x<w-2&&y<h-2&&Math.hypot(x+.5-X,y+.5-Y)<=r)sol[y*w+x]=0;};
@@ -9395,9 +9441,12 @@ function genGrotte(seed){const w=300,h=64,sol=new Uint8Array(w*h).fill(1),sd=((s
   const rooms=[{x:Math.floor(sx0),y:Math.floor(sy0),w:7,h:7,tag:'start'}];for(let x=30;x<w-24;x+=9)rooms.push({x,y:Math.floor(cy(x)),w:9,h:Math.max(3,Math.floor(hw(x)*2)-1)});rooms.push({x:Math.floor(ex),y:Math.floor(ey),w:7,h:7,tag:'boss'});
   return{kind:'dungeon',dtype:'i',grotte:true,bossKey:null,bossKey2:null,w,h,sol,rooms,start:{x:sx0,y:sy0},boss:{x:Math.floor(ex),y:Math.floor(ey),w:0,h:0},arena:null,doors:[],altar:{x:-999,y:-999},exitPortal:{x:sx0-2.4,y:sy0},sortie:{x:ex+2,y:ey},mech:new Uint8Array(w*h),lights:[],bubbles:[]};}
 // une grotte commune par quart d'heure : ceux qui descendent au même moment s'y retrouvent, et les monstres reviennent pour les suivants
-function enterGrotte(){if(!save.current)return;enterDungeon(1+Math.floor((Date.now()+CLK)/900000)%1000000,'i');}
+// une grotte commune par quart d'heure ; un membre du groupe déjà dans la grotte y emmène les autres (même s'ils n'ont pas fait la quête du navigateur)
+function grotteGroupe(){if(!myGid)return null;for(const r of groupMates()){const s0=r.p&&typeof r.p.s==='string'?r.p.s:'';if(s0.startsWith('di'))return parseInt(s0.slice(2),36)||null;}return null;}
+const grotteAmis=()=>!!myGid&&groupMates().some(r=>{const s0=r.p&&typeof r.p.s==='string'?r.p.s:'';return s0.startsWith('di')||(s0==='r'&&Math.hypot(r.x-TROU.x,r.y-TROU.y)<10&&r.p.ce>=3);});
+function enterGrotte(){if(!save.current)return;enterDungeon(grotteGroupe()||1+Math.floor((Date.now()+CLK)/900000)%1000000,'i');}
 function grottePrompt(){const d=MAP;if(scene!=='dungeon'||!d||!d.grotte)return null;if(Math.hypot(P.x-d.sortie.x,P.y-d.sortie.y)<2)return 'E · Sortir vers la lumière';return null;}
-function grotteE(){const d=MAP;if(scene!=='dungeon'||!d||!d.grotte)return false;if(Math.hypot(P.x-d.sortie.x,P.y-d.sortie.y)<2){const q=COLQ(),neuf=q.s<4;if(neuf){q.s=4;persist();pushSave(true);}
+function grotteE(){const d=MAP;if(scene!=='dungeon'||!d||!d.grotte)return false;if(Math.hypot(P.x-d.sortie.x,P.y-d.sortie.y)<2){const q=COLQ(),neuf=q.s===3;if(neuf){q.s=4;persist();pushSave(true);}
     enterRealm('colosses');P.invul=5;P.backProt=1;showBanner('L\'ÎLE AUX COLOSSES',neuf?'Trouve le Camp des Colosses, au cœur de l\'île : il ouvre le portail du Village':'Ici, tout est plus grand que toi',T8_COL);ileqAdd('grotte',1);sfx('boss',0.6);return true;}
   return false;}
 function drawGrotteMonde(d){if(!d||!d.grotte)return;const X=sx(d.sortie.x),Y=sy(d.sortie.y),u=TS/16,p=0.5+0.5*Math.sin(time*2);

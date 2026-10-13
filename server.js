@@ -43,7 +43,7 @@ function enregistrerScore(moi, m) {
   m = Object.assign({}, m, { gold: Math.min(+m.gold || 0, B.gold), pres: Math.min(+m.pres || 0, B.pres), kills: Math.min(+m.kills || 0, B.kills), l: Math.min(+m.l || 1, B.niv[m.c] || 1) });
   const nom = filtrer(String(m.n || 'Joueur').replace(/[\u0000-\u001f\u007f]/g, '')).slice(0, 16) || 'Joueur';
   scores[id] = {
-    n: nom, c: CLASSES_OK.includes(m.c) ? m.c : 'guerrier', l: entier(m.l, 25),
+    n: nom, c: CLASSES_OK.includes(m.c) ? m.c : 'guerrier', l: entier(m.l, 30),
     gold: entier(m.gold, 1e9), pres: entier(m.pres, 1e9), kills: entier(m.kills, 1e9),
     shots: entier(m.shots, 1e10), hits: Math.min(entier(m.hits, 1e10), entier(m.shots, 1e10)),
     t: Date.now(), cp: moi.compte.id
@@ -155,7 +155,7 @@ sql.anoIns = db.prepare('INSERT INTO anomalies (compte, nom, quand, raisons, per
 sql.anoListe = db.prepare('SELECT nom, quand, raisons, perso FROM anomalies ORDER BY id DESC LIMIT 60');
 const persoDe = moi => { try { const e = moi && moi.etat; return e && e.n ? String(e.n).slice(0, 16) + '|' + String(e.c || '').slice(0, 16) : ''; } catch { return ''; } };
 for (const r of db.prepare('SELECT save FROM comptes WHERE save IS NOT NULL').all()) { try { arbitre.apprendre(JSON.parse(r.save)); } catch {} }
-const DONS0 = () => ({ cursite: 0, or: 0, prestige: 0, objets: 0, xp: 0, kills: 0, boss: 0, liste: {}, sol: [], res: {}, boosts: 0, breche: [] });
+const DONS0 = () => ({ cursite: 0, or: 0, prestige: 0, objets: 0, xp: 0, xpI: 0, kills: 0, boss: 0, liste: {}, sol: [], res: {}, boosts: 0, breche: [] });
 // état anti-triche par compte (survit aux reconnexions tant que le serveur tourne)
 const etatsComptes = new Map();
 function etatCompte(id) { let e = etatsComptes.get(id); if (!e) { e = { dons: DONS0(), seaux: arbitre.nouveauxSeaux(), rythme: {}, aPerdre: [] }; etatsComptes.set(id, e); } return e; }
@@ -181,7 +181,7 @@ function connecter(moi, c, ws) {
   envoyer(ws, { t: 'authres', ok: true, token, nom: c.nom, id: c.id, admin: moi.compte.admin, save, cgu });
   if (save) { envoyerCapGardien(moi, save); moi.cpt.boost = +save.boostXP || 0; moi.cpt.rune = runeDe(save); moi.cpt.maudits = mauditsDe(save); moi.cpt.bornes = bornesScore(save); }
   if (concoursVisible()) envoyer(ws, etatConcours());
-  envoyer(ws, etatObjectif()); tournoiCloture(); envoyer(ws, etatTournoi(moi)); envoyer(ws, etatGuerre()); if (ALPHAS.has(cleAlpha(c.nom))) envoyer(ws, { t: 'titres', l: ['alpha'] }); try { envoyer(ws, etatDiscord(moi)); } catch {}
+  envoyer(ws, etatObjectif()); tournoiCloture(); envoyer(ws, etatTournoi(moi)); envoyer(ws, etatGuerre()); { const lt = titresTour(c.id).concat(ALPHAS.has(cleAlpha(c.nom)) ? ['alpha'] : []); if (lt.length) envoyer(ws, { t: 'titres', l: lt }); } try { envoyer(ws, etatDiscord(moi)); } catch {}
   console.log(`[compte] ${c.nom} connecté${moi.compte.admin ? ' (admin)' : ''}`);
 }
 function actionCompte(moi, ws, m) {
@@ -237,7 +237,7 @@ function sauverCompte(moi, m) {
     }
     // ce qui n'a pas encore servi reste disponible (butin pas encore ramassé…), modifié sur place
     const D = cpt.dons, r = v.reste || DONS0();
-    D.or = r.or; D.cursite = r.cursite; D.prestige = r.prestige; D.objets = r.objets; D.xp = r.xp; D.kills = r.kills; D.boss = r.boss; D.liste = r.liste || {}; D.sol = r.sol || []; D.res = r.res || {}; D.boosts = r.boosts || 0;
+    D.or = r.or; D.cursite = r.cursite; D.prestige = r.prestige; D.objets = r.objets; D.xp = r.xp; D.xpI = r.xpI || 0; D.kills = r.kills; D.boss = r.boss; D.liste = r.liste || {}; D.sol = r.sol || []; D.res = r.res || {}; D.boosts = r.boosts || 0;
     cpt.aPerdre = cpt.aPerdre.filter(e => Date.now() - e.t < 3000); // les plus récents seront vérifiés à la sauvegarde suivante
     if (cpt.achats) cpt.achats = cpt.achats.filter(a => !a.vu); if (cpt.frais) cpt.frais = cpt.frais.filter(f => !f.vu && Date.now() - f.t < 600000);                // achats de l'hôtel des ventes payés
   } else { Object.assign(cpt.dons, DONS0()); cpt.aPerdre = []; }
@@ -713,6 +713,7 @@ wss.on('connection', (ws, req) => {
       if (k === 'ti' && v === 'admin' && !(moi.compte && moi.compte.admin)) v = null; // titre ADMIN réservé aux comptes admin
       if (k === 'gd' && !moi.gardien) v = null; // seul le vrai Gardien peut s'annoncer
       if (k === 'ti' && v === 'alpha' && !(moi.compte && ALPHAS.has(cleAlpha(moi.compte.nom)))) v = null; // titre réservé aux premiers testeurs
+      if (k === 'ti' && typeof v === 'string' && /^tour[123]_/.test(v) && !(moi.compte && titresTour(moi.compte.id).includes(v))) v = null; // titres du classement de la Tour
       if (k === 'ti' && v === 'roipeche' && !(moi.compte && roiPeche() && roiPeche().compte === moi.compte.nom)) v = null; // titre du vainqueur du tournoi de pêche
       if (k === 'm' && typeof v === 'string') { if (modo.mutes[moi.ip]) { if (!moi.averti) { moi.averti = true; envoyer(ws, { t: 'dev', cmd: 'mute', arg: 0 }); } continue; } v = filtrer(v).slice(0, 140); }
       if (k === 'n' && typeof v === 'string') { if (v === moi.nBrut) v = moi.nFiltre; else { moi.nBrut = v; v = moi.nFiltre = filtrer(v).slice(0, 16); } } // le filtre ne tourne que si le pseudo change
@@ -1004,7 +1005,7 @@ const etatPack = (moi, neuf) => { const l = PACK.de.all(moi.compte.id); let abo 
 // ---------- boutique : packs de Cursite et abonnements (livrés par le coffre de livraison, comme le pack de démarrage) ----------
 const LOTS_CURSITE = { 1: 200, 3: 650, 5: 1150, 10: 2500 };
 const ABOS = { 2: { jour: 50, nom: 'Abonnement Aventurier' }, 9: { jour: 250, nom: 'Abonnement Héros' } };
-const MOTIFS = { tour: 'Tour des Chevaliers', cursite: 'Achat de Cursite', abo: 'Abonnement' };
+const MOTIFS = { tour_saison: 'Classement de la Tour', tour: 'Tour des Chevaliers', cursite: 'Achat de Cursite', abo: 'Abonnement' };
 PACK.insLot = db.prepare('INSERT INTO packs (compte, pack, etat, quand, contenu) VALUES (?, ?, 1, ?, ?)');
 db.exec('CREATE TABLE IF NOT EXISTS abos (compte INTEGER PRIMARY KEY, palier INTEGER NOT NULL, fin INTEGER NOT NULL, jour INTEGER NOT NULL DEFAULT 0)');
 const ABO = { get: db.prepare('SELECT palier, fin, jour FROM abos WHERE compte = ?'), set: db.prepare('INSERT INTO abos (compte, palier, fin, jour) VALUES (?, ?, ?, ?) ON CONFLICT(compte) DO UPDATE SET palier = excluded.palier, fin = excluded.fin, jour = excluded.jour'),
@@ -1102,38 +1103,55 @@ PACK.insTour = db.prepare("INSERT INTO packs (compte, pack, etat, quand, contenu
 // course en cours : gardée en base, pour qu'une déconnexion ou un redémarrage du serveur ne fasse pas perdre les récompenses
 db.exec('CREATE TABLE IF NOT EXISTS tours (compte INTEGER PRIMARY KEY, quand INTEGER NOT NULL)');
 const TOURS = { get: db.prepare('SELECT quand FROM tours WHERE compte = ?'), set: db.prepare('INSERT INTO tours (compte, quand) VALUES (?, ?) ON CONFLICT(compte) DO UPDATE SET quand = excluded.quand'), del: db.prepare('DELETE FROM tours WHERE compte = ?') };
+// ---------- Tour des Chevaliers (0.0.94) : plus de récompenses, un classement par classe et par saison (un mois, heure de Paris) ----------
+// le serveur suit la course (étage atteint, cadence plausible) ; en fin de saison, les 3 premiers de chaque classe gagnent un titre et de la Cursite
+db.exec(`CREATE TABLE IF NOT EXISTS tour_course (compte INTEGER PRIMARY KEY, debut INTEGER NOT NULL, cls TEXT NOT NULL, n INTEGER NOT NULL, t INTEGER NOT NULL);
+  CREATE TABLE IF NOT EXISTS tour_rangs (saison TEXT NOT NULL, compte INTEGER NOT NULL, cls TEXT NOT NULL, n INTEGER NOT NULL, nom TEXT NOT NULL, quand INTEGER NOT NULL, PRIMARY KEY (saison, compte, cls));
+  CREATE TABLE IF NOT EXISTS tour_titres (compte INTEGER NOT NULL, titre TEXT NOT NULL, saison TEXT NOT NULL, PRIMARY KEY (compte, titre));
+  CREATE TABLE IF NOT EXISTS tour_saisons (saison TEXT PRIMARY KEY, close INTEGER NOT NULL);`);
+const TR = { get: db.prepare('SELECT * FROM tour_course WHERE compte = ?'), set: db.prepare('INSERT INTO tour_course (compte, debut, cls, n, t) VALUES (?, ?, ?, ?, ?) ON CONFLICT(compte) DO UPDATE SET debut = excluded.debut, cls = excluded.cls, n = excluded.n, t = excluded.t'),
+  maj: db.prepare('UPDATE tour_course SET n = ?, t = ? WHERE compte = ?'), del: db.prepare('DELETE FROM tour_course WHERE compte = ?'),
+  rang: db.prepare('SELECT n FROM tour_rangs WHERE saison = ? AND compte = ? AND cls = ?'), rangSet: db.prepare('INSERT INTO tour_rangs (saison, compte, cls, n, nom, quand) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(saison, compte, cls) DO UPDATE SET n = excluded.n, nom = excluded.nom, quand = excluded.quand'),
+  top: db.prepare('SELECT compte, n, nom FROM tour_rangs WHERE saison = ? AND cls = ? ORDER BY n DESC, quand ASC LIMIT ?'), saisons: db.prepare('SELECT DISTINCT saison FROM tour_rangs WHERE saison < ?'),
+  close: db.prepare('SELECT close FROM tour_saisons WHERE saison = ?'), closeSet: db.prepare('INSERT OR IGNORE INTO tour_saisons (saison, close) VALUES (?, ?)'), derniere: db.prepare('SELECT saison FROM tour_saisons ORDER BY saison DESC LIMIT 1'),
+  titres: db.prepare('SELECT titre, saison FROM tour_titres WHERE compte = ?'), titreSet: db.prepare('INSERT INTO tour_titres (compte, titre, saison) VALUES (?, ?, ?) ON CONFLICT(compte, titre) DO UPDATE SET saison = excluded.saison') };
+const TOUR_PRIX = [500, 250, 100];
+const saisonTour = () => paris().jour.slice(0, 7);
+const finSaison = () => { const [y, mo] = saisonTour().split('-').map(Number); return Date.UTC(mo === 12 ? y + 1 : y, mo === 12 ? 0 : mo, 1) - 2 * 3600000; }; // début du mois suivant à Paris (à une heure près)
+const saisonApres = s => { const [y, mo] = s.split('-').map(Number); return (mo === 12 ? y + 1 : y) + '-' + String(mo === 12 ? 1 : mo + 1).padStart(2, '0'); };
+// un titre vaut jusqu'à la fin de la saison qui suit celle où il a été gagné
+function titresTour(compte) { try { const cur = saisonTour(); return TR.titres.all(compte).filter(r => saisonApres(r.saison) >= cur).map(r => r.titre); } catch { return []; } }
+function tourCloture() {
+  const cur = saisonTour(); let R = null; try { R = arbitre.regles(); } catch {} if (!R) return;
+  for (const { saison } of TR.saisons.all(cur)) { if (TR.close.get(saison)) continue; TR.closeSet.run(saison, Date.now()); const lignes = [];
+    for (const cls of Object.keys(R.CLASSES)) TR.top.all(saison, cls, 3).forEach((r, i) => {
+      TR.titreSet.run(r.compte, 'tour' + (i + 1) + '_' + cls, saison);
+      const id = PACK.insLot.run(r.compte, 'tour_saison', Date.now(), JSON.stringify({ items: [], cursite: TOUR_PRIX[i], boost: 0 })).lastInsertRowid;
+      const lig = enLigne.get(r.compte); if (lig) { try { packEnvoyer(lig, PACK.un.get(Number(id))); envoyer(lig.ws, { t: 'titres', l: titresTour(r.compte) }); } catch {} }
+      if (i === 0) lignes.push('🏆 ' + R.CLASSES[cls].nom + ' : **' + r.nom + '** (étage ' + r.n + ')'); });
+    console.log(`[tour] saison ${saison} close`);
+    if (lignes.length) try { discord.annoncer('🏰 **Fin de la saison ' + saison + ' de la Tour des Chevaliers !**\n' + lignes.join('\n'), 'tour', 60000); } catch {} }
+}
+setInterval(() => { try { tourCloture(); } catch (e) { console.error('[tour]', e.message); } }, 10 * 60000).unref();
+setTimeout(() => { try { tourCloture(); } catch {} }, 20000).unref();
+function etatTourCl(moi) { let R = null; try { R = arbitre.regles(); } catch {} const cur = saisonTour(), cls = {}, avant = {}, der = TR.derniere.get(), prev = der && der.saison !== cur ? der.saison : null;
+  for (const k of Object.keys((R && R.CLASSES) || {})) { cls[k] = TR.top.all(cur, k, 20).map(r => ({ n: r.nom, v: r.n, moi: !!(moi.compte && r.compte === moi.compte.id) })); if (prev) avant[k] = TR.top.all(prev, k, 3).map(r => ({ n: r.nom, v: r.n })); }
+  return { t: 'tourcl', saison: cur, fin: finSaison(), cls, avant }; }
 function tour(moi, m) {
-  if (!moi.compte) return;
-  if (m.a === 'entrer') {
-    let ok = !!moi.compte.admin;
-    if (!ok) { // comme la Clef du Temps : la clef doit être dans la sauvegarde connue, et le serveur exige qu'elle en disparaisse
-      let sv = null; try { const r = sql.parId.get(moi.compte.id); sv = r && r.save ? JSON.parse(r.save) : null; } catch { sv = null; }
-      const R = arbitre.regles();
-      if (sv && R && R.KINDS.cle_tour) { const sig = butin.signature(R.mkItem('cle_tour', 0)), cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)), e = cpt.aPerdre.find(x => x.sig === sig), dispo = e ? e.max : butin.compterSig(sv, sig);
-        if (dispo >= 1) { ok = true; if (e) { e.max = dispo - 1; e.t = Date.now(); } else cpt.aPerdre.push({ sig, max: dispo - 1, t: Date.now() }); } }
-    }
-    if (ok) TOURS.set.run(moi.compte.id, Date.now()); else TOURS.del.run(moi.compte.id); return;
-  }
-  if (m.a === 'fin') { TOURS.del.run(moi.compte.id); return; }
-  if (m.a !== 'sortir') return;
-  const course = TOURS.get.get(moi.compte.id); if (!course) return; TOURS.del.run(moi.compte.id);
-  const n = m.n | 0, duree = (Date.now() - course.quand) / 1000;
-  if (![5, 10, 15, 20, 25].includes(n) || duree < n * 5) { console.log(`[tour] sortie refusée pour ${moi.compte.nom} (palier ${n}, ${Math.round(duree)} s)`); return; }
-  const R = arbitre.regles(); if (!R) return; const items = [], sp = Object.keys(R.SP_DEF);
-  if (n >= 5) items.push(R.mkItem('pvie', 0), R.mkItem('pmana', 0));
-  if (n >= 10) for (const k of sp) items.push(R.mkItem('sp_' + k, 0));
-  if (n >= 15) { items.push(R.mkItem('cle', 0)); for (const k of sp) items.push(R.mkItem('sp_' + k, 0)); }
-  if (n >= 20) items.push(R.mkItem('cle_tour', 0), R.mkItem('sp_' + sp[Math.floor(Math.random() * sp.length)], 0));
-  // Relique de la Tour : 20 % au palier 15, garantie à partir du palier 20 ; une chance sur deux qu'elle soit pour le héros qui a fait la Tour
-  let relique = null;
-  if (n >= 20 || (n >= 15 && Math.random() < 0.2)) {
-    const cls = String(m.c || ''), tous = Object.keys(R.KINDS).filter(k => R.KINDS[k].art), miens = tous.filter(k => R.KINDS[k].slot === 'anneau' || (R.KINDS[k].cls || []).includes(cls));
-    const lot = miens.length && Math.random() < 0.5 ? miens : tous; if (lot.length) { relique = R.mkItem(lot[Math.floor(Math.random() * lot.length)], 7); items.push(relique); }
-  }
-  const id = PACK.insTour.run(moi.compte.id, Date.now(), JSON.stringify({ items, cursite: 0, boost: 0 })).lastInsertRowid;
-  console.log(`[tour] ${moi.compte.nom} sort au palier ${n} (${Math.round(duree)} s)${relique ? ' · relique : ' + relique.name : ''}`);
-  if (relique) { try { discord.annoncer('🏰 **' + nomDiscord(moi) + '** sort vivant de la Tour des Chevaliers (palier ' + n + ') avec une Relique de la Tour : **' + relique.name + '** !', null, 0, process.env.DISCORD_SALON_RELIQUES); } catch {} }
-  packEnvoyer(moi, PACK.un.get(Number(id)));
+  if (!moi.compte) return; const cls = String(m.c || ''), now = Date.now();
+  if (m.a === 'classement') { if (now - (moi.tourClT || 0) < 1500) return; moi.tourClT = now; tourCloture(); return envoyer(moi.ws, etatTourCl(moi)); }
+  let R = null; try { R = arbitre.regles(); } catch {} if (!R) return;
+  if (m.a === 'entrer') { if (!R.CLASSES[cls]) return; TR.set.run(moi.compte.id, now, cls, 0, now); return; }
+  if (m.a === 'fin') { TR.del.run(moi.compte.id); return; }
+  if (m.a === 'pause' || m.a === 'reprendre') return; // la course reste en base telle quelle
+  if (m.a !== 'etage') return;
+  const c = TR.get.get(moi.compte.id); if (!c || c.cls !== cls) return;
+  const n = m.n | 0; if (n <= c.n) return;
+  // au plus 2 étages d'un coup, et 2,5 s au moins par étage depuis le dernier signalé (le temps de pause compte, ce n'est qu'une borne basse)
+  if (n > c.n + 2 || now - c.t < 2500 * (n - c.n)) { console.log(`[tour] étage ${n} refusé pour ${moi.compte.nom} (dernier ${c.n})`); return; }
+  TR.maj.run(n, now, moi.compte.id);
+  const s0 = saisonTour(), b = TR.rang.get(s0, moi.compte.id, cls);
+  if (!b || n > b.n) TR.rangSet.run(s0, moi.compte.id, cls, n, String((moi.etat && moi.etat.n) || moi.compte.nom).slice(0, 16), now);
 }
 // le jeu confirme la réception ; la livraison n'est close que si la sauvegarde enregistrée la contient bien
 function colisRecu(moi, m) {
@@ -1202,7 +1220,7 @@ const PARR = { PALIERS: [], // récompenses de niveau retirées : le parrain gag
   get: db.prepare('SELECT * FROM parrainage WHERE filleul = ?'), de: db.prepare('SELECT p.filleul, p.palier, c.nom, c.save FROM parrainage p JOIN comptes c ON c.id = p.filleul WHERE p.parrain = ? ORDER BY p.quand'),
   ins: db.prepare('INSERT INTO parrainage (filleul, parrain, quand) VALUES (?, ?, ?)'), maj: db.prepare('UPDATE parrainage SET palier = ? WHERE filleul = ?'),
   duIns: db.prepare('INSERT INTO parrainage_dus (compte, cursite, nom, niv) VALUES (?, ?, ?, ?)'), duDe: db.prepare('SELECT * FROM parrainage_dus WHERE compte = ?'), duDel: db.prepare('DELETE FROM parrainage_dus WHERE id = ?') };
-const nivMax = sv => { let n = 0; try { for (const ch of Object.values((sv && sv.chars) || {})) n = Math.max(n, (ch && ch.lvl) | 0); } catch {} return Math.min(25, n); };
+const nivMax = sv => { let n = 0; try { for (const ch of Object.values((sv && sv.chars) || {})) n = Math.max(n, (ch && ch.lvl) | 0); } catch {} return Math.min(30, n); };
 function etatParrainage(moi) {
   const c = sql.parId.get(moi.compte.id), lien = PARR.get.get(moi.compte.id), par = lien ? sql.parId.get(lien.parrain) : null;
   const fl = PARR.de.all(moi.compte.id).map(f => { let sv = null; try { sv = f.save ? JSON.parse(f.save) : null; } catch {} return { n: f.nom, niv: nivMax(sv), p: f.palier }; });

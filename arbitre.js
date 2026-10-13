@@ -45,6 +45,7 @@ function chargerRegles(html) {
   { const m = html.match(/ILEQ_BONUS=(\d+)/); R.ILEQ_BONUS = m ? +m[1] : 75; }
   { const m = html.match(/PET_LEG_XP=(\d+)/); R.PET_LEG_XP = m ? +m[1] : 5000; }
   { const m = html.match(/TALIS_COUT=(\d+)/); R.TALIS_COUT = m ? +m[1] : 10; }
+  { const m = html.match(/MAITRISE_XP=(\d+)/); R.MAITRISE_XP = m ? +m[1] : 300000; }
   return R;
 }
 
@@ -67,8 +68,9 @@ const presObjet = it => { if (!it || !R || !R.KINDS[it.kind] || R.KINDS[it.kind]
 // le héros a pu changer d'équipement depuis la dernière sauvegarde : on prend le meilleur objet de chaque emplacement parmi ce qu'il portait ou avait dans son sac
 const presEquip = ch => { const best = {}; for (const it of [...(ch.equip || []), ...(ch.inv || [])]) if (it && ['arme', 'capa', 'armure', 'anneau'].includes(it.slot)) best[it.slot] = Math.max(best[it.slot] || 0, presObjet(it)); return Object.values(best).reduce((a, v) => a + v, 0); };
 // niveau maximum d'une classe : le sien (caps), ou l'ancien niveau maximum du compte s'il est plus haut
-const maitriseXP = () => { let x = 0; for (let l = 1; l < 25; l++) x += R.need(l); return x * 10; };
-const capDe = (sv, cls) => Math.max(20, Math.min(25, Math.max(sv.capLvl | 0 || 20, (sv.caps && typeof sv.caps === 'object' && sv.caps[cls]) | 0 || 20)));
+const maitriseXP = () => R.MAITRISE_XP || 300000;
+const capDe0 = (sv, cls) => Math.max(20, Math.min(25, Math.max(sv.capLvl | 0 || 20, (sv.caps && typeof sv.caps === 'object' && sv.caps[cls]) | 0 || 20)));
+const capDe = (sv, cls) => { const c = capDe0(sv, cls); return c >= 25 && Array.isArray(sv.titles) && sv.titles.includes('m_' + cls) ? 30 : c; }; // 26 à 30 : classe maîtrisée
 const prestigeGain = ch => { const spT = Object.values(ch.sp || {}).reduce((a, v) => a + (v | 0), 0); return Math.round(((ch.lvl | 0) + Math.floor((ch.kills | 0) / 25) + 2 * spT + 3 * (ch.bosses | 0) + 2 * (ch.gp | 0)) * (1 + presEquip(ch) / 100)); };
 
 // objet valide ? (comparé à ce que le jeu fabrique pour le même type et le même tier)
@@ -234,7 +236,7 @@ function verifier(ancien, nouveau, ctx) {
   for (const [cls, ch0] of Object.entries(ancien.chars)) { const ch1 = nouveau.chars[cls]; if (!ch1 || ((ch1.lvl | 0) === 1 && (ch1.kills | 0) < (ch0.kills | 0))) presOk += prestigeGain(ch0); }
   // niveaux max achetés au Gardien du Prestige
   let presDepense = 0;
-  for (const cls of Object.keys(R.CLASSES)) for (let l = capDe(ancien, cls) + 1; l <= capDe(nouveau, cls); l++) presDepense += R.CAP_COST[l] || 99999;
+  for (const cls of Object.keys(R.CLASSES)) for (let l = capDe0(ancien, cls) + 1; l <= capDe0(nouveau, cls); l++) presDepense += R.CAP_COST[l] || 99999;
   if (d('prestige') > presOk - presDepense + 0.5) pb.push(presDepense > 0 ? 'niveau maximum non payé' : 'prestige injustifié (+' + Math.round(d('prestige')) + ')');
 
   // --- Cursite : jamais créée par le joueur ---
@@ -319,7 +321,9 @@ function verifier(ancien, nouveau, ctx) {
       if (n.arbre != null) { if (!Array.isArray(n.arbre) || n.arbre.length > 15 || new Set(n.arbre).size !== n.arbre.length || n.arbre.some(id => typeof id !== 'string' || !/^-?[0-4],-?[0-4]$/.test(id))) pb.push('arbre impossible'); }
     } } }
   // --- progression des héros ---
-  let gainNiv = 0, gainKills = 0, gainBoss = 0, gainGloire = 0, gainXP = 0, kits = 0;
+  let gainNiv = 0, gainKills = 0, gainBoss = 0, gainGloire = 0, gainXP = 0, gainXPI = 0, kits = 0;
+  // au-delà du niveau 25 : seule l'expérience de l'Île aux Colosses fait monter (dons.xpI)
+  const xpHaut = ch => { if ((ch.lvl | 0) < 25) return 0; let x = 0; for (let l = 25; l < (ch.lvl | 0); l++) x += R.need(l); return x + Math.max(0, +ch.xp || 0); };
   const xpTot = ch => { let x = 0; for (let l = 1; l < (ch.lvl | 0); l++) x += R.need(l); return x + Math.max(0, +ch.xp || 0) + Math.max(0, +ch.gxp || 0) + (ch.gp | 0) * R.GLORY_XP; };
   for (const [cls, ch1] of Object.entries(nouveau.chars)) {
     let ch0 = ancien.chars[cls];
@@ -332,7 +336,7 @@ function verifier(ancien, nouveau, ctx) {
     if (!ch0 || ((ch1.lvl | 0) <= (ch0.lvl | 0) && (ch1.kills | 0) < (ch0.kills | 0))) { kits++; ch0 = { lvl: 1, xp: 0, gxp: 0, gp: 0, kills: 0, bosses: 0 }; }
     if ((ch1.lvl | 0) > (ch0.lvl | 0)) gainNiv += ch1.lvl - ch0.lvl;
     gainKills += Math.max(0, (ch1.kills | 0) - (ch0.kills | 0)); gainBoss += Math.max(0, (ch1.bosses | 0) - (ch0.bosses | 0)); gainGloire += Math.max(0, (ch1.gp | 0) - (ch0.gp | 0));
-    gainXP += Math.max(0, xpTot(ch1) - xpTot(ch0));
+    gainXP += Math.max(0, xpTot(ch1) - xpTot(ch0)); gainXPI += Math.max(0, xpHaut(ch1) - xpHaut(ch0));
     { const m0 = Math.max(0, +ch0.mxp || 0), m1 = +ch1.mxp || 0, gl = c => Math.max(0, +c.gxp || 0) + (c.gp | 0) * R.GLORY_XP;
       if (!(m1 >= 0) || m1 > maitriseXP() + 0.5) pb.push('maîtrise impossible (' + cls + ')');
       else if (m1 > m0 + 0.5) { if ((ch1.lvl | 0) < 25) pb.push('maîtrise avant le niveau 25 (' + cls + ')'); else if (m1 - m0 > gl(ch1) - gl(ch0) + 1) pb.push('maîtrise gagnée trop vite (' + cls + ')'); } }
@@ -349,6 +353,7 @@ function verifier(ancien, nouveau, ctx) {
   } else {
     // XP, monstres et boss : seulement ce que le serveur a compté
     if (gainXP > (dons.xp || 0) + 2) pb.push('XP non donnée par le serveur (+' + Math.round(gainXP - (dons.xp || 0)) + ')');
+    if (gainXPI > (dons.xpI || 0) + 2) pb.push('niveau au-delà de 25 sans l\'expérience de l\'île (+' + Math.round(gainXPI - (dons.xpI || 0)) + ')');
     if (gainKills > (dons.kills || 0)) pb.push('monstres non comptés par le serveur (+' + (gainKills - (dons.kills || 0)) + ')');
     if (gainBoss > (dons.boss || 0)) pb.push('boss non comptés par le serveur (+' + (gainBoss - (dons.boss || 0)) + ')');
   }
@@ -510,7 +515,7 @@ function verifier(ancien, nouveau, ctx) {
   // cadeaux pas encore dans le sac (sac plein : l'objet attend au sol) : le crédit reste valable
   // la Cursite donnée par le serveur mais pas encore ajoutée par le jeu (livraison en cours) reste due
   const reste = { sol, cursite: Math.max(0, (dons.cursite || 0) - Math.max(0, d('cursite') + cursiteDepenseMin - bonusCursite)), prestige: 0, objets: Math.min(12, donsObj + libT6 + libRel), or: Math.max(0, (dons.or || 0) - orServeur),
-    xp: Math.max(0, (dons.xp || 0) - gainXP), kills: Math.max(0, (dons.kills || 0) - gainKills), boss: Math.max(0, (dons.boss || 0) - gainBoss), liste, res: resReste, boosts: boostsRestants };
+    xp: Math.max(0, (dons.xp || 0) - gainXP), xpI: Math.max(0, (dons.xpI || 0) - gainXPI), kills: Math.max(0, (dons.kills || 0) - gainKills), boss: Math.max(0, (dons.boss || 0) - gainBoss), liste, res: resReste, boosts: boostsRestants };
   return { ok: true, reste, aPerdre: [] };
 }
 
@@ -523,7 +528,7 @@ function degatsMax(s) {
   const pe = (s.pets || []).find(p => p && p.id === s.petEq), petB = k => pe && pe.k === k ? Math.ceil({ puissance: 10, vatt: 9 }[k] * [1, 1.6, 2.4, 3.5, 5][Math.min(4, pe.t | 0)] * 1.25) : 0;
   const stat = k => petB(k) + c.base[k] + c.gain[k] * (lvl - 1) + (((ch.sp || {})[k] | 0) * ((R.SP_DEF[k] || {}).step || 1)) + (((ch.sp2 || {})[k] | 0) * 5) + (ch.equip || []).reduce((a, it) => a + ((it && it.stats && it.stats[k]) || 0), 0) + 30 + prisme(k) + Object.keys(s.talis || {}).reduce((a, t) => a + ((s.talis[t] && R.TALIS && R.TALIS[t] && R.TALIS[t].st[k]) || 0), 0) + ((s.chars && s.chars[s.current] && s.chars[s.current].plat && (s.chars[s.current].plat.fin || 0) > Date.now() - 60000) ? 25 : 0);
   if (!w || !Array.isArray(w.dmg) || !R.WB || !R.WB[w.kind]) return 25000;
-  const mult = (0.5 + stat('puissance') / 50) * 1.45 * 1.3, cadence = (1.5 + 6.5 * stat('vatt') / 75) * 1.5 * Math.max(1, R.WB[w.kind].rk || 1) * 2 /* frénésie */;
+  const mult = (0.5 + stat('puissance') / 50) * 1.45 * 1.3 * 1.3 /* pilier de la Brèche */, cadence = (1.5 + 6.5 * stat('vatt') / 75) * 1.5 * 1.3 * Math.max(1, R.WB[w.kind].rk || 1) * 2 /* frénésie */;
   // Démoniste : ce sont ses démons qui frappent, jusqu'à 5 à la fois (le sien et 4 du pacte, forgés), plus le démon de hâte ; la Gemme de la Nova tire 12 projectiles par attaque
   const W = R.WB[w.kind], demons = W.invoc ? 6.5 * (W.nova ? 6 : 1) : 1;
   const tirs = (R.WB[w.kind].shots + (w.extra || 0)) * (R.WB[w.kind].dm || 1) * (R.WB[w.kind].am || 1) * demons; // am : nombre de monstres touchés par une aura

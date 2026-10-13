@@ -1,5 +1,18 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.94 (index.html, server.js, arbitre.js, butin.js ; wiki.html régénéré)
+- **La Tour des Chevaliers devient un classement.** Plus d'objets ni de récompenses directes, et plus besoin de clef. Les étages montent sans fin et la difficulté est bien plus douce (l'étage 35 vaut l'ancien étage 20). Tous les 5 étages, au palier, tu choisis : continuer, mettre la course en pause (tu la reprends plus tard à la porte) ou la terminer.
+- **Classement de la Tour par saison** (un mois) : nouvel onglet « 🏰 TOUR » dans le Classement, avec un sous-onglet par classe. À la fin de chaque saison, les 3 premiers de chaque classe gagnent un titre (TOP 1, TOP 2, TOP 3 <Classe>) et de la Cursite : 500, 250 et 100.
+- **Classes de mêlée** : épées +40 % de dégâts, dagues +20 %.
+- **Un monstre de mêlée dans chaque donjon** : il fonce au corps à corps et frappe au contact, plus ou moins fort selon le donjon.
+- **Brèche** : 2 étages au lieu de 3 (un seul palier, puis le gardien). Nouveaux **piliers de puissance**, 1 à 3 par étage, chacun avec son symbole : ⚡ +50 % de vitesse (60 s), ⚔ +30 % de dégâts (60 s), ➶ +30 % de vitesse d'attaque (60 s) ou 🛡 invincible (20 s).
+- **Équilibrage** : Carquois des comètes ramené à 20 % de la vie des monstres (5 % sur les boss, inchangé) · Horloge Brisée et Observatoire Céleste : monstres -20 % de vie et -10 % de dégâts · familier Fourmi (armure) -15 %.
+- **Tier 8** : il faut être niveau 25 pour le porter.
+- **Maîtrise de classe** : la jauge passe à 300 000 points d'expérience. Maîtriser sa classe ouvre désormais la route vers le niveau 30… mais cette expérience-là ne se trouve pas par ici.
+- (interne) Niveaux 26 à 30 : classe maîtrisée requise ; au-delà de 25, seule l'expérience des monstres de l'Île aux Colosses fait monter (le reste nourrit la gloire) ; paliers 100 000 / 150 000 / 200 000 / 250 000 / 300 000. Le serveur compte cette expérience à part (dons.xpI) et l'arbitre la vérifie.
+- (interne) Grotte de glace : 30 % plus courte ; un membre du groupe déjà dans la grotte (ou au bord du trou avec la quête) y emmène les autres, même sans la quête du navigateur ; seule l'étape 3 de la quête débloque le portail. Mini-carte des donjons : proportions respectées (la grotte était écrasée).
+- (interne) Tour : course suivie par le serveur (2 étages d'un coup au plus, 2,5 s par étage au moins), saisons mensuelles closes automatiquement (titres valables jusqu'à la fin de la saison suivante, Cursite livrée au coffre de livraison, annonce Discord).
+
 ## ver.0.0.93 (index.html, butin.js ; wiki.html régénéré)
 - **Talismans** : on garde le rythme d'avant, 20 % de chance de ressource sur le boss et 10 ressources par talisman. Le bonus permanent sur tout le compte et le titre restent.
 
