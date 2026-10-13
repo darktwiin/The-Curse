@@ -2911,7 +2911,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000096;let newerWarned=false;
+const NETV=2,BUILD=2600000097;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -4715,12 +4715,15 @@ function randomItem(t){
 const GLORY_XP=4000,GLORY_PRES=2;
 // Maîtrise de classe : au niveau 25, l'expérience remplit aussi une jauge qui vaut dix fois le chemin du niveau 1 au niveau 25. Mourir la vide. Pleine, elle donne le titre « <Classe> Maîtrisé », acquis pour toujours.
 const MAITRISE_XP=300000; // 0.0.94 : jauge de maîtrise ramenée à 300 000 ; la maîtrise ouvre les niveaux 26 à 30
+const MAIT_ANNONCE=new Set(); // une seule annonce par classe et par session, même si la sauvegarde était refusée
 const aMaitrise=cls=>(save.titles||[]).includes('m_'+cls);
-function maitriseGain(ch,n){if(ch.lvl<25||aMaitrise(save.current))return;ch.mxp=Math.min(MAITRISE_XP,(ch.mxp||0)+n);if(ch.mxp>=MAITRISE_XP){const k='m_'+save.current,nom=CLASSES[save.current].nom;save.titles=save.titles||[];if(!save.titles.includes(k))save.titles.push(k);save.title=k;showBanner('⚜ '+nom+' Maîtrisé ⚜','Le titre est à toi, pour toujours','#ffd23f');sfx('relic');burst(P.x,P.y,'#ffd23f',80,6);try{sendChat('⚜ a maîtrisé sa classe : '+nom+' !');}catch(e){}pushSave(true);sendPresence();}}
+function maitriseGain(ch,n){if(ch.lvl<25||aMaitrise(save.current))return;ch.mxp=Math.min(MAITRISE_XP,(ch.mxp||0)+n);if(ch.mxp>=MAITRISE_XP){const k='m_'+save.current,nom=CLASSES[save.current].nom;save.titles=save.titles||[];if(!save.titles.includes(k))save.titles.push(k);save.title=k;showBanner('⚜ '+nom+' Maîtrisé ⚜','Le titre est à toi, pour toujours','#ffd23f');sfx('relic');burst(P.x,P.y,'#ffd23f',80,6);if(!MAIT_ANNONCE.has(save.current)){MAIT_ANNONCE.add(save.current);try{sendChat('⚜ a maîtrisé sa classe : '+nom+' !');}catch(e){}}pushSave(true);sendPresence();}}
 function gainXP(n,x,y,nm,ile){
   const ch=C();ft(x,y-0.6,'+'+n+' XP','#7ed957');
   // au-delà du niveau 25, seule l'expérience de l'Île aux Colosses fait monter de niveau ; le reste nourrit la gloire
-  if(ch.lvl>=maxLvl()||(ch.lvl>=25&&!ile)){maitriseGain(ch,nm>=0?Math.min(n,nm|0):n);ch.gxp=(ch.gxp||0)+n;while(ch.gxp>=GLORY_XP){ch.gxp-=GLORY_XP;ch.gp=(ch.gp||0)+1;ft(P.x,P.y-1.1,'+1 point de gloire ★','#ffd23f',true);sfx('level');burst(P.x,P.y,'#ffd23f',24,3);}statsDirty=true;persist();return;}
+  if(ch.lvl>=maxLvl()||(ch.lvl>=25&&!ile)){ch.gxp=(ch.gxp||0)+n;while(ch.gxp>=GLORY_XP){ch.gxp-=GLORY_XP;ch.gp=(ch.gp||0)+1;ft(P.x,P.y-1.1,'+1 point de gloire ★','#ffd23f',true);sfx('level');burst(P.x,P.y,'#ffd23f',24,3);}
+    maitriseGain(ch,nm>=0?Math.min(n,nm|0):n); // après la gloire : la maîtrise envoie la sauvegarde tout de suite, et l'arbitre veut que la gloire de ce monstre y soit déjà (sinon « maîtrise gagnée trop vite » et la sauvegarde est refusée en boucle)
+    statsDirty=true;persist();return;}
   ch.xp+=n;
   while(ch.lvl<maxLvl()&&ch.xp>=need(ch.lvl)){ch.xp-=need(ch.lvl);ch.lvl++;const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;ft(P.x,P.y-1.1,'Niveau '+ch.lvl+' !','#ffd23f',true);sfx('level');burst(P.x,P.y,'#ffd23f',30,4);if(ch.lvl>=UNLOCK_LVL)syncUnlock(true);}
   if(ch.lvl>=maxLvl())ch.xp=0;

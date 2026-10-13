@@ -1,5 +1,9 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.97 (index.html ; wiki.html régénéré)
+- **Correction de la maîtrise de classe** : en atteignant le bout de la jauge, la sauvegarde partait une fraction de seconde trop tôt et le serveur la refusait. Le titre se perdait aussitôt, et le message « a maîtrisé sa classe » revenait dans le chat à chaque monstre tué. Le titre reste maintenant, l'annonce ne part qu'une fois, et les niveaux 26 à 30 s'ouvrent comme prévu.
+- (interne) gainXP ajoute la gloire avant d'appeler maitriseGain (qui envoie la sauvegarde tout de suite) : l'arbitre exige que la maîtrise ne monte pas plus que la gloire. Une seule annonce de maîtrise par classe et par session.
+
 ## ver.0.0.96 (index.html, butin.js ; wiki.html régénéré)
 - **Wiki : tous les objets du jeu.** Les anneaux ont maintenant une ligne par caractéristique (vitalité, sagesse, force, dextérité, vent) au lieu d'un seul modèle tiré au hasard, et le wiki montre aussi les talismans (bonus, ressource, boss), les plantes et les potions de l'herboriste (recettes), les plats du pêcheur et tous les meubles de la maison avec leur prix.
 - **Fiches d'objets vérifiées et corrigées** :
