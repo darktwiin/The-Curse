@@ -19,16 +19,31 @@ const racine = path.join(__dirname, '..');
     const ver=(document.body.textContent.match(/ver\\.0\\.0\\.\\d+/)||[''])[0];
     const classes=Object.keys(CLASSES).map(k=>{const c=CLASSES[k];return{k,nom:c.nom,role:c.role,arme:KINDS[c.arme].type,capa:KINDS[c.capa].type,armure:KINDS[c.armure].type,base:c.base,gain:c.gain,req:c.req?CLASSES[c.req].nom:null,ic:url(heroSprite(k,null,c.arme,3,'idle'))};});
     const objets=[];
-    for(const k of Object.keys(KINDS)){if(KINDS[k].slot==='meuble'||KINDS[k].secret)continue;const K=KINDS[k],tiers=K.slot==='conso'?[0]:K.alt?[7]:K.t7?[6]:[0,1,2,3,4,5,6,7];
+    for(const k of Object.keys(KINDS)){if(KINDS[k].slot==='meuble'||KINDS[k].secret||KINDS[k].legacy||k==='anneau7')continue;if(k==='anneau'){const it=mkItem('anneau',7);objets.push({k,type:'Anneaux uniques',slot:'anneau',fam:'base',base:'anneau',cls:[],l:[{n:it.name,ic:icon(it),tip:itemTipHTML(it),col:itemCol(it),tag:'Relique'}]});continue;}const K=KINDS[k],tiers=K.slot==='conso'?[0]:K.alt?[7]:K.t7?[6]:[0,1,2,3,4,5,6,7];
       const l=tiers.map(t=>{const it=mkItem(k,t);return{n:it.name,ic:icon(it),tip:itemTipHTML(it),col:K.slot==='conso'?'#dcd8e4':itemCol(it),tag:K.slot==='conso'?'':K.art?'Tour':K.alt?'Chronos':K.t7?'T7':t>=7?'Relique':'T'+t};});
       objets.push({k,type:K.type||'Consommable',slot:K.slot,fam:K.art?'tour':K.alt?'alt':K.t7?'t7':K.slot==='conso'?'conso':'base',base:K.base||k.replace(/7$/,''),cls:K.cls&&K.slot!=='anneau'?K.cls.map(c=>CLASSES[c].nom):[],l});}
+    // anneaux : une ligne par caractéristique principale (Tier 0 à 6, puis l'obsidienne) ; la seconde caractéristique est tirée au hasard
+    const R0=Math.random;for(const m of SK){const i=SK.indexOf(m),l=[];for(const [k,t] of [[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[7,6]].map(([a,t])=>[a?'anneau7':'anneau',t])){let n=0;Math.random=()=>{const v=n?(i+n)%5:i;n++;return (v+0.5)/5;};const it=mkItem(k,t);Math.random=R0;
+      const T=KINDS[k].t7?7:t;for(const q in it.stats)if(q!==m)delete it.stats[q];const note=T>=3?'<div><span style="color:#9a96aa">+ une seconde caractéristique tirée au hasard, à moitié de la valeur</span></div>':'';
+      l.push({n:it.name,ic:icon(it),tip:itemTipHTML(it)+note,col:itemCol(it),tag:KINDS[k].t7?'T7':'T'+t});}
+      objets.push({k:'anneau_'+m,type:'Anneau '+RING_S[m],slot:'anneau',fam:'base',base:'anneau_'+m,cls:[],l});}
+    {const u=objets.find(o=>o.k==='anneau');objets.splice(objets.indexOf(u),1);objets.push(u);}
+    // talismans, plantes, plats, meubles
+    const bu=n=>{try{return url(BULLET_ART[n].c);}catch(e){return '';}};
+    const talismans=TALIS_ORDRE.split('').filter(t=>TALIS[t]&&!(DTYPES[t]&&DTYPES[t].secret)).map(t=>{const T=TALIS[t];return{nom:T.nom,res:T.res,bonus:talisTxt(t),ou:DTYPES[t]?DTYPES[t].nom+' · '+DTYPES[t].boss:t==='j'?'Plaines Sauvages · '+MON.dieu_fou.nom:'Plaines Sauvages · '+MON.colosse.nom,ic:bu(T.ic)};});
+    const herbeIc=H=>{const c=document.createElement('canvas');c.width=c.height=16;const g=c.getContext('2d'),R=(x,y,w,h,col)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};R(7,6,2,8,'#3f8a3a');R(4,9,3,2,'#4fa548');R(9,8,3,2,'#4fa548');
+      if(H.f===2){R(4,3,4,4,H.col);R(8,3,4,4,H.col);R(6,0,4,4,H.col2);R(7,4,2,2,'#fff1a0');}else if(H.f===1){R(6,1,4,3,H.col2);R(5,3,6,4,H.col);R(4,4,2,2,H.col2);R(10,4,2,2,H.col2);R(7,4,2,2,'#ffffff');}else{R(5,2,6,5,H.col);R(6,1,4,7,H.col);R(7,3,2,2,H.col2);}return url(c);};
+    const plantes=Object.keys(HERBES).map(h=>({nom:HERBES[h].nom,col:HERBES[h].col2,ic:herbeIc(HERBES[h]),ou:h==='d'?'1 ou 2 par grand donjon des Terres Brûlées et Désolées':'Plaines d’Émeraude et Forêt des Murmures',pour:Object.keys(RECETTES).filter(k=>RECETTES[k].includes(h)).map(k=>KINDS[k].noms[0]+(REC_NIV[k]?' (herboriste niveau '+REC_NIV[k]+')':''))}));
+    const potions=Object.keys(RECETTES).map(k=>{const it=mkItem(k,0);return{nom:it.name,ic:icon(it),tip:itemTipHTML(it),rec:RECETTES[k].map(h=>HERBES[h].nom),niv:REC_NIV[k]|0};});
+    const plats=PLATS.filter(p=>!p.ile).map(p=>{const ing=platIngr(p);return{nom:p.nom,niv:p.niv,n:p.n,ingr:p.fish?ing[0].nom:'poisson '+FISH_RAR[p.r].nom.toLowerCase()+' (n’importe lequel)',col:p.fish?FISH_RAR[ing[0].r].col:FISH_RAR[p.r].col,st:p.st,bon:p.bon?Object.keys(p.bon).map(k=>'+'+p.bon[k]+' '+SL[k]).join(', '):'',min:p.min,ic:fishURL(ing[0].id)};});
+    const meubles=MB_ORDRE.map(id=>{const M=MEUBLES[id];return{nom:M.nom,prix:M.prix,cu:!!M.cu,ic:url(meubleImg(id,0,0)),h:M.h,desc:id==='cristal'?KINDS.cristal.desc:''};});
     const ou=k=>{const o=[];ZONES.forEach((z,i)=>{if(!z.secret&&z.pool.includes(k))o.push(z.nom);});for(const t in DTYPES){const T=DTYPES[t];if(T.secret)continue;if((T.pool||[]).includes(k)||T.bk===k||T.bk2===k)o.push(T.nom);}
       if(CENTRAL.includes(k))o.push('Centre des Plaines (boss)');if(DUNGEON_POOL.includes(k))o.push('Donjons (renforts)');if(typeof ASTRAL_POOL!=='undefined'&&(ASTRAL_POOL.includes(k)||GARDIENS.includes(k)))o.push(DTYPES.a.nom);if(k==='devoreur')o.push(DTYPES.a.nom);if(k==='maudit')o.push('Plaines Sauvages (monstre maudit)');if(MON[k].tuto)o.push('Tutoriel');if(k==='dragon')o.push('Raid de guilde');return o;};
     const monstres=Object.keys(MON).filter(k=>!MON[k].secret).map(k=>{const d=MON[k];return{k,nom:d.nom,hp:d.hp,xp:d.xp,dmg:d.dmg,arm:d.arm||0,boss:!!d.boss,loot:d.loot||null,drop:d.drop||0,n:d.n||1,rel:d.rel||0,or:d.or||null,ou:ou(k),ic:url(MSPR[k]),fr:(typeof MFR!=='undefined'&&MFR[k])?[url(MFR[k][1]),url(MFR[k][2])]:null,tir:(()=>{const b=MON[k].bspr,l=Array.isArray(b)?b:b?[b]:[];return l.filter(n=>BULLET_ART[n]).map(n=>url(BULLET_ART[n].c));})(),dun2:d.dun2||0,mid:!!d.midBoss,star:d.star!=null,tuto:!!d.tuto,z:ZONES.findIndex(z=>z.pool.includes(k))};});
     const zones=ZONES.filter(z=>!z.secret).map((z,i)=>({nom:z.nom,niv:z.niv,pool:z.pool,col:z.col[0],dun:i>=5?DUN_RATE[i]:0}));
     const donjons=Object.keys(DTYPES).filter(t=>!DTYPES[t].secret).map(t=>{const T=DTYPES[t];return{t,nom:T.nom,boss:T.boss,niv:T.niv,mech:T.mech||'',pool:T.pool||[],bk:T.bk,bk2:T.bk2||null,col:T.col[1]};});
     const poissons=FISHES.filter(f=>f.site!=='ile').map(f=>({nom:f.nom,site:f.site,r:FISH_RAR[f.r].nom,col:FISH_RAR[f.r].col,min:f.min,max:f.max,ic:fishURL(f.id)}));
-    return JSON.stringify({ver,classes,objets,monstres,zones,donjons,poissons,REG_DUN,MID_DUN,stats:SL});})()`));
+    return JSON.stringify({talismans,plantes,potions,plats,meubles,ver,classes,objets,monstres,zones,donjons,poissons,REG_DUN,MID_DUN,stats:SL});})()`));
   await b.close();
   const data = JSON.parse(D);
   // règles de butin : lues dans butin.js pour rester fidèles au serveur

@@ -1,5 +1,25 @@
 # The Curse — notes de mise à jour
 
+## ver.0.0.96 (index.html, butin.js ; wiki.html régénéré)
+- **Wiki : tous les objets du jeu.** Les anneaux ont maintenant une ligne par caractéristique (vitalité, sagesse, force, dextérité, vent) au lieu d'un seul modèle tiré au hasard, et le wiki montre aussi les talismans (bonus, ressource, boss), les plantes et les potions de l'herboriste (recettes), les plats du pêcheur et tous les meubles de la maison avec leur prix.
+- **Fiches d'objets vérifiées et corrigées** :
+  - Carquois des Comètes : la fiche annonçait encore 50 % de la vie des monstres, c'est bien 20 % (5 % de la vie restante sur les boss), et ses flèches paralysent 3,5 s.
+  - Grimoire de la Genèse : rayon de soin réel 8,5 cases (la fiche disait 7,9).
+  - Casques : la Rage donne aussi +20 % de vitesse de déplacement, c'est maintenant écrit.
+  - Carquois : la durée de paralysie de la Flèche perçante est indiquée.
+  - Lame de l'Aura : l'aura touche jusqu'à 8 monstres à la fois (et non « tous »).
+  - Potions de caractéristique : le maximum par héros est indiqué.
+  - Œuf de familier au marchand : il s'ouvre chez l'éleveur du Village (et non dans le sac).
+- **Clef de la Tour** : depuis que la Tour n'a plus besoin de clef, Chronos n'en lâche plus. Les clefs déjà possédées restent dans le sac, avec une fiche qui explique qu'elles ne servent plus.
+- **Wiki, corrections** : grandes potions de vie (300 PV + 25 %), Reliques de la Tour (plus obtenables depuis la nouvelle Tour), Clef de la Tour retirée du butin de Chronos.
+
+## ver.0.0.95 (index.html, arbitre.js, butin.js ; wiki.html régénéré)
+- **Au-delà de la mer, les choses se calment un peu…** et de nouvelles portes se sont ouvertes. Des légendes très anciennes y attendent les plus braves, avec une musique qu'on n'avait encore jamais entendue.
+- (interne) Île aux Colosses et grotte de glace : vie et dégâts des monstres ×0,4 (×4 par rapport à la fin de la première île au lieu de ×10).
+- (interne) Tier 8 ramené à ×4 : armes dégâts ×5 et cadence ×0,8 (= 4 fois les dégâts par seconde du Tier 7, au lieu de ×10 et ÷2) · armures et anneaux ×4 (au lieu de ×5) · capacités ×4 (au lieu de ×10), Flèche perçante 2 300. Les objets déjà possédés sont remis aux nouveaux chiffres (dans le jeu et par l'arbitre).
+- (interne) 3 donjons de l'île, un par zone, thème mythologie grecque : Repaire de Scylla (grève · le ressac fait tomber des vagues), Labyrinthe du Minotaure (steppe · labyrinthe dans le brouillard), Tartare de Typhon (cimes · la foudre frappe où l'on se tient). Portail : 1,2 % sur les monstres de la zone. Chaque boss a ses sprites, ses tirs, ses mécaniques au sol et son monstre de mêlée ; nouvelle musique de donjon et de boss (ré phrygien dominant).
+- (interne) Boss : élixir 70 / 85 / 100 % et objet Tier 8 30 / 50 / 70 % ; les monstres de ces donjons gardent leur chance de Tier 8 et d'élixir.
+
 ## ver.0.0.94 (index.html, server.js, arbitre.js, butin.js ; wiki.html régénéré)
 - **La Tour des Chevaliers devient un classement.** Plus d'objets ni de récompenses directes, et plus besoin de clef. Les étages montent sans fin et la difficulté est bien plus douce (l'étage 35 vaut l'ancien étage 20). Tous les 5 étages, au palier, tu choisis : continuer, mettre la course en pause (tu la reprends plus tard à la porte) ou la terminer.
 - **Classement de la Tour par saison** (un mois) : nouvel onglet « 🏰 TOUR » dans le Classement, avec un sous-onglet par classe. À la fin de chaque saison, les 3 premiers de chaque classe gagnent un titre (TOP 1, TOP 2, TOP 3 <Classe>) et de la Cursite : 500, 250 et 100.

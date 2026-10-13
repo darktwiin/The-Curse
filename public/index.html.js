@@ -543,7 +543,7 @@ KINDS.egg={slot:'conso',type:'Œuf de familier',egg:true,noms:['Œuf de familier
 for(const k in PET_DEF)KINDS['egg_'+k]={slot:'conso',type:'Œuf de familier',egg:true,legacy:true,noms:['Œuf de familier']};
 KINDS.croquette={slot:'conso',type:'Nourriture de familier',food:true,noms:['Croquette de familier']};
 KINDS.cle={slot:'conso',type:'Clef de donjon',key:true,noms:['Clef du Temps']};
-KINDS.cle_tour={slot:'conso',type:'Clef',base:'cle',cleTour:true,noms:['Clef de la Tour']}; // ouvre la Tour des Chevaliers : une chance sur deux sur Chronos
+KINDS.cle_tour={slot:'conso',type:'Clef',base:'cle',cleTour:true,noms:['Clef de la Tour']}; // ne sert plus depuis 0.0.94 (la Tour n'a plus besoin de clef) et ne tombe plus ; gardée pour les sacs qui en ont encore
 const RING_N=['Anneau de cuivre',"Anneau d'argent","Anneau d'or",'Anneau de saphir',"Anneau d'améthyste",'Anneau solaire','Anneau du Roi Bouffon',"Anneau de l'Infini"];
 const RING_S={vie:'de vitalité',mana:'de sagesse',puissance:'de force',vatt:'de dextérité',vdep:'du vent'};
 const SLOT_IDX={arme:0,capa:1,armure:2,anneau:3};
@@ -595,11 +595,11 @@ const ALT_COL='#ffd23f',T7_COL='#8d8d9b',ART_COL='#b45aff',T8_COL='#ff7a2a'; // 
   const N7={epee:"Épée d'obsidienne",baton:"Bâton d'obsidienne",arc:"Arc d'obsidienne",baguette:"Baguette d'obsidienne",dague:"Dague d'obsidienne",mandoline:"Gemme d'obsidienne",bouclier:"Écu d'obsidienne",totem:"Parchemin d'obsidienne",casque:"Heaume d'obsidienne",sort:"Sort d'obsidienne",carquois:"Carquois d'obsidienne",tome:"Grimoire d'obsidienne",prisme:"Miroir d'obsidienne",voile:"Voile d'obsidienne",lourde:"Armure d'obsidienne",cuir:"Cuir d'obsidienne",robe:"Robe d'obsidienne",anneau:"Anneau d'obsidienne"};
   for(const k in N7){KINDS[k+'7']=Object.assign({},KINDS[k],{base:k,t7:true,noms:Array(8).fill(N7[k])});if(WB[k])WB[k+'7']=WB[k];}
   /* Tier 8 (des Colosses) : comme le Tier 7, sans effet spécial, mais d'un autre ordre de grandeur. Ne tombe que sur l'Île aux Colosses.
-     Armes : dégâts ×10, cadence ÷2 · armures et anneaux : caractéristiques ×5 (pal) · capacités : voir T8_CAPA. L'objet garde tier = 6 et t7 (tout le jeu le traite comme un Tier 7) ; t8 ajoute le reste. */
+     Armes (0.0.95) : dégâts ×5, cadence ×0,8 = 4 fois les dégâts par seconde du Tier 7 · armures et anneaux : caractéristiques ×4 (pal) · capacités : voir T8_CAPA. L'objet garde tier = 6 et t7 (tout le jeu le traite comme un Tier 7) ; t8 ajoute le reste. */
   const N8={epee:'Épée des Colosses',baton:'Bâton des Colosses',arc:'Arc des Colosses',baguette:'Baguette des Colosses',dague:'Dague des Colosses',mandoline:'Gemme des Colosses',bouclier:'Écu des Colosses',totem:'Pacte des Colosses',casque:'Heaume des Colosses',sort:'Sort des Colosses',carquois:'Carquois des Colosses',tome:'Grimoire des Colosses',prisme:'Miroir des Colosses',voile:'Voile des Colosses',lourde:'Armure des Colosses',cuir:'Cuir des Colosses',robe:'Robe des Colosses',anneau:'Anneau des Colosses'};
-  for(const k in N8){const B=KINDS[k],o={base:k,t7:true,t8:true,secret:true,noms:Array(8).fill(N8[k])};if(B.slot==='armure'||B.slot==='anneau')o.pal=5;KINDS[k+'8']=Object.assign({},B,o);if(WB[k])WB[k+'8']=Object.assign({},WB[k],{rk:(WB[k].rk||1)*0.5});}
+  for(const k in N8){const B=KINDS[k],o={base:k,t7:true,t8:true,secret:true,noms:Array(8).fill(N8[k])};if(B.slot==='armure'||B.slot==='anneau')o.pal=4;KINDS[k+'8']=Object.assign({},B,o);if(WB[k])WB[k+'8']=Object.assign({},WB[k],{rk:(WB[k].rk||1)*0.8});}
   /* Lame de l'Aura (Relique de la Tour, la première de la famille) : ne tire pas, blesse chaque seconde tout ce qui t'entoure. */
-  KINDS.epee_aura=Object.assign({},KINDS.epee,{base:'epee',alt:true,art:true,dt:6,noms:Array(8).fill('Lame de l\'Aura'),type:'Épée de la Tour',desc:'Ne tire pas : une aura de 2,5 cases blesse chaque seconde tous les monstres autour de toi · dégâts × ta vitesse d\'attaque'});
+  KINDS.epee_aura=Object.assign({},KINDS.epee,{base:'epee',alt:true,art:true,dt:6,noms:Array(8).fill('Lame de l\'Aura'),type:'Épée de la Tour',desc:'Ne tire pas : une aura de 2,5 cases blesse chaque seconde jusqu\'à 8 monstres autour de toi · dégâts × ta vitesse d\'attaque'});
   WB.epee_aura={shots:1,spd:0,range:2.5,r:0.3,col:'#b45aff',aura:true,am:8};
   /* meuble qu'on peut mettre dans le sac (pour le vendre à l'hôtel des ventes) */
   KINDS.cristal={slot:'meuble',cls:[],type:'Meuble',noms:['Cristal de Cursite'],desc:'À poser dans ta maison : 10 Cursite par jour'};}
@@ -608,6 +608,9 @@ const itemCol=it=>{const K=KINDS[it.kind];return it.slot==='conso'?'#ebe6f6':it.
 const tierNom=it=>{const K=KINDS[it.kind];return K.slot==='meuble'?'Maison':K.art?'Relique de la Tour':K.alt?'Relique de Chronos':K.t8?'Tier 8':K.t7?'Tier 7':TIER_NOM[it.tier];};
 const tierTag=it=>{const K=KINDS[it.kind];return it.slot==='conso'||it.slot==='meuble'?'':K.art?'◈':K.alt?'⌛':K.t8?'T8':K.t7?'T7':it.tier>=7?'✦':'T'+it.tier;};
 const baseKind=k=>(KINDS[k]&&KINDS[k].base)||k;
+// 0.0.95 : un objet Tier 8 d'avant (armes ×10, armures et anneaux ×5) est ramené aux chiffres actuels ; sans effet sur un objet déjà à jour
+function migrT8(it){if(!it||!KINDS[it.kind]||!KINDS[it.kind].t8)return it;const K=KINDS[it.kind],ref=mkItem(it.kind,6);if(K.slot==='arme'&&ref.dmg)it.dmg=ref.dmg.slice();else if(K.slot==='armure'||K.slot==='capa')it.stats=Object.assign({},ref.stats);else if(K.slot==='anneau'){const amt=k=>((k==='vie'||k==='mana')?15+15*7:1+7)*K.pal;if(Object.keys(it.stats||{}).some(k=>it.stats[k]>amt(k)+1))for(const k in it.stats)it.stats[k]=Math.round(it.stats[k]*0.8);}return it;}
+function migrSaveT8(sv){try{for(const ch of Object.values(sv.chars||{}))for(const l of [ch.equip||[],ch.inv||[]])l.forEach(migrT8);for(const c of ((sv.vault&&sv.vault.c)||[]))(c||[]).forEach(migrT8);(sv.colis||[]).forEach(migrT8);}catch(e){}return sv;}
 function mkItem(kind,tier){
   const K=KINDS[kind];if(K.alt)tier=7;if(K.t7)tier=6;if(K.slot==='meuble')tier=0;const T=K.t7?7:tier; // T : tier utilisé pour les chiffres
   const it={kind,tier,slot:K.slot,name:K.noms?K.noms[Math.min(tier,K.noms.length-1)]:'',stats:{}};
@@ -617,7 +620,7 @@ function mkItem(kind,tier){
   else if(K.slot==='armure'){it.stats=K.st(T);if(rel){for(const k in it.stats)it.stats[k]=Math.round(it.stats[k]*1.3);it.stats.vatt=(it.stats.vatt||0)+4;}}
   else if(K.slot==='anneau'){const amt=k=>(k==='vie'||k==='mana')?15+15*T:1+T;const m=pick(SK);it.stats[m]=amt(m);if(T>=3){let s;do{s=pick(SK);}while(s===m);it.stats[s]=Math.max(1,Math.round(amt(s)*0.5));}if(rel){for(const k of SK)it.stats[k]=(it.stats[k]||0)+((k==='vie'||k==='mana')?40:3);}it.name=K.alt?K.noms[0]:K.t7?K.noms[0]+' '+RING_S[m]:rel?RING_N[7]:RING_N[tier]+' '+RING_S[m];}
   if(K.pal&&(K.slot==='armure'||K.slot==='anneau'))for(const k in it.stats)it.stats[k]=Math.round(it.stats[k]*K.pal);
-  if(K.t8){if(K.slot==='arme')it.dmg=it.dmg.map(v=>v*10);if(K.base==='totem')it.stats={};} // Tier 8 : armes ×10 · le Pacte des Colosses ne donne plus de caractéristiques
+  if(K.t8){if(K.slot==='arme')it.dmg=it.dmg.map(v=>v*5);if(K.base==='totem')it.stats={};} // Tier 8 : armes ×5 (cadence ×0,8) · le Pacte des Colosses ne donne plus de caractéristiques
   if(K.alt){if(K.slot==='arme'){it.dmg=K.dt!=null?mkItem(K.base,K.dt).dmg:it.dmg.map(v=>Math.round(v*K.dk));if(K.ex)it.extra=K.ex;else delete it.extra;}else if(K.fix)it.cost=K.fix;}
   for(const k in it.stats)if(!it.stats[k])delete it.stats[k];
   return it;
@@ -817,10 +820,10 @@ MON.maudit={nom:'Monstre maudit',hp:MON.devoreur.hp,xp:MON.devoreur.xp,spd:MON.d
     br_larve:M('Larve corrompue',1200,140,3,42,1.4,'burst',7,0.95,3,'#b6f04a',{n:3,mv:'erratic'}),br_oeil:M('Œil rampant',1600,180,2.2,46,1.5,'trio',6.5,1.05,6,'#b6f04a'),br_gueule:M('Gueule béante',2800,240,1.5,56,2,'ring',5,1.4,3.5,'#c8324a',{n:10}),br_mere:B('La Mère Corrompue','#b6f04a',[5,7,3]),
     br_etincelle:M('Étincelle vive',1000,130,3.4,40,1.1,'single',9.5,0.85,4,'#ffe27a',{mv:'erratic'}),br_nuee:M('Nuée d\'orage',1900,200,1.8,50,1.7,'wave',6,1.25,6,'#ffe27a',{n:3}),br_heraut:M('Héraut de la foudre',2400,230,2.4,54,2.2,'mines',6.5,1.25,5,'#8a9ae0',{n:7,ai:2}),br_tisse:B('Le Tisse-Foudre','#ffe27a',[6,4,9])});}
 // Grotte de glace (le passage vers l'Île aux Colosses) et Île aux Colosses : des monstres d'un autre gabarit. secret : pas dans le wiki pour l'instant.
-// ile:2 : butin de l'Île (Tier 8, élixirs). pr : rayon de leurs projectiles. Expérience +50 % (0.0.92), grotte comprise.
+// ile:2 : butin de l'Île (Tier 8, élixirs). pr : rayon de leurs projectiles. Expérience +50 % (0.0.92), grotte comprise. 0.0.95 : vie et dégâts ×0,4 (les monstres de l'île valent 4 fois ceux de la fin de la première île, plus 10 fois).
 // bspr : dessin de leurs projectiles (jamais de simple boule) · eff : l'effet négatif que chacun de leurs tirs inflige · t8 : chance d'objet Tier 8 (seul équipement qu'ils lâchent)
-{const G=(nom,hp,xp,spd,dmg,cd,pat,bs,sz,pref,bc,bspr,x)=>Object.assign({nom,hp,xp:Math.round(xp*1.5),spd,dmg,cd,pat,bs,br:8,sz,loot:[5,6],drop:0.28,pref,bc,or:[0.25,1,3],rel:0,ai:2,arm:0.1,secret:1,glace:1,bspr,eff:'slow/2',pr:0.2},x||{}),
-  C=(nom,hp,xp,spd,dmg,cd,pat,bs,sz,pref,bc,or,t8,bspr,eff,x)=>Object.assign({nom,hp,xp:Math.round(xp*1.5),spd,dmg,cd,pat,bs,br:9,sz,loot:[0,0],drop:0,pref,bc,or:[0.3,or,or*2],rel:0,ai:2,arm:0.1,secret:1,ile:2,pr:0.3,t8,bspr,eff},x||{});
+{const G=(nom,hp,xp,spd,dmg,cd,pat,bs,sz,pref,bc,bspr,x)=>Object.assign({nom,hp:Math.round(hp*0.4),xp:Math.round(xp*1.5),spd,dmg:Math.round(dmg*0.4),cd,pat,bs,br:8,sz,loot:[5,6],drop:0.28,pref,bc,or:[0.25,1,3],rel:0,ai:2,arm:0.1,secret:1,glace:1,bspr,eff:'slow/2',pr:0.2},x||{}),
+  C=(nom,hp,xp,spd,dmg,cd,pat,bs,sz,pref,bc,or,t8,bspr,eff,x)=>Object.assign({nom,hp:Math.round(hp*0.4),xp:Math.round(xp*1.5),spd,dmg:Math.round(dmg*0.4),cd,pat,bs,br:9,sz,loot:[0,0],drop:0,pref,bc,or:[0.3,or,or*2],rel:0,ai:2,arm:0.1,secret:1,ile:2,pr:0.3,t8,bspr,eff},x||{});
   Object.assign(MON,{
     gl_golem:G('Golem de givre',52000,210,1.4,105,2,'golem',4,1.5,3.5,'#8fd0f0','stalactite'),gl_chauve:G('Chauve-souris des glaces',26000,180,4.4,80,1,'burst',9,1.1,5,'#3ff0ff','croc_glace',{n:4,mv:'erratic'}),gl_spectre:G('Spectre gelé',38000,195,2.6,95,1.4,'ring',6,1.25,6,'#cfe8f5','flocon',{n:14}),
     // Grève d'Obsidienne : 1 % de Tier 8
@@ -837,11 +840,18 @@ MON.maudit={nom:'Monstre maudit',hp:MON.devoreur.hp,xp:MON.devoreur.xp,spd:MON.d
     c_orage:C("Colosse d'orage",440000,660,3,780,1.5,'sniper',14,2.5,8.5,'#ffe27a',8,0.03,'col_foudre','burn/3',{n:3,br:12,mv:'erratic'})});}                // foudre : brûlure
 for(const k in MON)MON[k].pref=Math.round(MON[k].pref*80)/100; // tous les monstres cherchent à se tenir 20 % plus près du joueur
 for(const k in MON)MON[k].sz=Math.round(MON[k].sz*(MON[k].boss?1.1:1.25)*100)/100; // monstres un peu plus grands à l'écran
+// 0.0.95 : premiers donjons de l'Île aux Colosses (mythologie grecque), un par zone. secret : pas dans le wiki.
+{const B=(nom,hp,xp,dmg,cd,pat,sz,bc,bspr,eff,x)=>Object.assign({nom,hp,xp,spd:1.4,dmg,cd,pat,bs:6,br:11,sz,loot:[0,0],drop:0,pref:5,bc,or:[1,8,16],rel:0,ai:2,arm:0.1,secret:1,ile:2,pr:0.3,t8:0,boss:true,bspr,eff},x||{});
+  Object.assign(MON,{
+    b_scylla:B('Scylla aux six têtes',500000,6000,180,1.1,'b_scylla',3.3,'#3ff0ff',['gr_tete','gr_ecume'],'slow/2'),
+    b_minotaure:B('Le Minotaure',800000,9000,220,1.2,'b_minotaure',3.4,'#ffd23f',['gr_labrys','gr_corne'],'par/0.5',{mv:'charge',spd:2.2}),
+    b_typhon:B('Typhon, père des monstres',1200000,13000,260,1.0,'b_typhon',3.6,'#ffe27a',['gr_foudre','gr_braise'],'burn/3')});
+  for(const k of ['b_scylla','b_minotaure','b_typhon'])MON_SPR[k]=MON_SPR.c_titan;}
 // 0.0.94 : Horloge Brisée et Observatoire Céleste : vie -20 %, dégâts -10 %
 for(const k of ['rouage','pendule','sablier','coucou','chronos','g_belier','g_scorpion','g_serpent','g_lion','devoreur'])if(MON[k]){MON[k].hp=Math.round(MON[k].hp*0.8);MON[k].dmg=Math.round(MON[k].dmg*0.9);}
 // 0.0.94 : dans chaque donjon, un monstre de mêlée : il fonce au corps à corps et frappe au contact (dégâts selon le donjon), sans tirer
-const CAC_DEF={c:['armure','Armure possédée'],s:['momie','Momie furieuse'],o:['requin','Requin vorace'],p:['griffon','Griffon chargeur'],e:['cerbere','Molosse infernal'],b:['gob_eclaireur','Gobelin cogneur'],r:['loup_ronce','Loup sauvage des ronces'],k:['hibou','Hibou rapace'],m:['mineur','Mineur fou'],f:['automate','Automate broyeur'],g:['yeti','Yéti enragé'],v:['v_rouget','Rouget cogneur'],h:['pendule','Balancier fou'],i:['gl_golem','Golem broyeur'],u:['br_sentinelle','Sentinelle runique'],w:['br_larve','Larve vorace'],z:['br_etincelle','Étincelle folle']};
-for(const t in CAC_DEF){const [src,nom]=CAC_DEF[t],S0=MON[src];if(!S0)continue;MON['cac_'+t]=Object.assign({},S0,{nom,hp:Math.round(S0.hp*0.9),dmg:Math.round(S0.dmg*1.6),spd:Math.round(Math.max(S0.spd||2,3)*1.25*10)/10,pref:0,pat:'cac',cd:1,mv:null,cac:1,ai:1,boss:false,eff:null,n:1,bc:'#ff5a3a'});if(MON_SPR[src])MON_SPR['cac_'+t]=MON_SPR[src];}
+const CAC_DEF={c:['armure','Armure possédée'],s:['momie','Momie furieuse'],o:['requin','Requin vorace'],p:['griffon','Griffon chargeur'],e:['cerbere','Molosse infernal'],b:['gob_eclaireur','Gobelin cogneur'],r:['loup_ronce','Loup sauvage des ronces'],k:['hibou','Hibou rapace'],m:['mineur','Mineur fou'],f:['automate','Automate broyeur'],g:['yeti','Yéti enragé'],v:['v_rouget','Rouget cogneur'],h:['pendule','Balancier fou'],i:['gl_golem','Golem broyeur'],l:['c_crabe','Crabe broyeur'],q:['c_mammouth','Mammouth furieux'],t:['c_titan','Titan cogneur'],u:['br_sentinelle','Sentinelle runique'],w:['br_larve','Larve vorace'],z:['br_etincelle','Étincelle folle']};
+for(const t in CAC_DEF){const [src,nom]=CAC_DEF[t],S0=MON[src];if(!S0)continue;MON['cac_'+t]=Object.assign({},S0,{nom,hp:Math.round(S0.hp*0.9),dmg:Math.round(S0.dmg*1.4),spd:Math.round(Math.max(S0.spd||2,3)*1.25*10)/10,pref:0,pat:'cac',cd:1,mv:null,cac:1,ai:1,boss:false,eff:null,n:1,bc:'#ff5a3a'});if(MON_SPR[src])MON_SPR['cac_'+t]=MON_SPR[src];}
 // 0.0.94 : les classes de mêlée frappent plus fort : épées +40 %, dagues +20 % (toutes les versions, reliques et Tier 7/8 comprises)
 for(const k in WB){const K=KINDS[k];if(!K)continue;const b=K.base||k.replace(/[78]$/,'');if(b==='epee')WB[k].dm=(WB[k].dm||1)*1.4;else if(b==='dague')WB[k].dm=(WB[k].dm||1)*1.2;}
 const MKEYS=Object.keys(MON);
@@ -1372,6 +1382,56 @@ Object.assign(BULLET_ART,{
   col_venin:{dir:true,tr:'#7ed957',c:bulletArt16(p=>{p(6,4,'#3a8a3a',6,8);p(4,6,'#3a8a3a',10,4);p(7,5,'#7ed957',5,5);p(11,6,'#b8ff6a',2,3);p(8,6,'#e8ffc0',2,1);p(1,7,'#3a8a3a',3,2);p(2,4,'#7ed957',2,1);p(0,10,'#7ed957',2,1);p(3,11,'#3a8a3a',2,2);p(6,12,'#1e4a1e',5,1);})},
   col_foudre:{dir:true,tr:'#ffe27a',c:bulletArt16(p=>{p(0,7,'#ffe27a',4,2);p(3,5,'#ffe27a',3,2);p(5,7,'#fff6c0',3,3);p(7,9,'#ffe27a',3,2);p(9,6,'#fff6c0',3,3);p(11,5,'#ffffff',3,2);p(13,7,'#ffffff',3,2);p(5,7,'#ffffff',2,1);p(2,10,'#ffb020',2,1);p(8,3,'#ffb020',2,1);})}
 });
+Object.assign(BOSS_BULLET,{b_scylla:['gr_tete','gr_ecume'],b_minotaure:['gr_labrys','gr_corne'],b_typhon:['gr_foudre','gr_braise']});
+// Boss des donjons de l'Île aux Colosses (mythologie grecque) : 32×32, image 0 au repos, image 1 en attaque
+Object.assign(BOSS_ART,{
+  // Scylla : une sorcière des mers au-dessus d'une meute de six têtes de serpent sur de longs cous
+  b_scylla(f){const {c,g,poly,ell,line,px}=bc32(),cx=16,o=f?2.5:0;
+    ell(cx,28,13,4,'#1a2a3a');ell(cx,27,11,3,'#2a4a5a');for(const x of [5,10,16,22,27])px(x,25,'#dff4ff',2,1);
+    const tetes=[[-1,0.2],[1,0.2],[-1,0.55],[1,0.55],[-1,0.9],[1,0.9]];
+    tetes.forEach(([s,k],i)=>{const bx=cx+s*(4+k*3),by=22-k*4,hx=cx+s*(9+k*5+o),hy=8+k*10-o*0.4;line(bx,by,hx,hy,2.4,i%2?'#2e6a5a':'#3a7a66');
+      ell(hx,hy,2.6,2,'#4a8a72');px(hx+s*1.5,hy-1,'#ffe27a');if(f){px(hx+s*2.2,hy+0.5,'#2a0a0a',2,2);px(hx+s*2.4,hy,'#ffffff');}});
+    poly([[cx-5,14],[cx+5,14],[cx+7,26],[cx-7,26]],'#1e4a4a');poly([[cx-4,15],[cx+4,15],[cx+5,25],[cx-5,25]],'#2e6a6a');
+    for(let y=17;y<25;y+=2)px(cx-4,y,'#5ab0a0',8,1);
+    ell(cx,10,3.6,4,'#9ad0c0');poly([[cx-4,7],[cx-6,14],[cx-3,12],[cx-2,6]],'#142430');poly([[cx+4,7],[cx+6,14],[cx+3,12],[cx+2,6]],'#142430');ell(cx,6.5,4,2.4,'#142430');
+    px(cx-2,10,f?'#ff3b4a':'#3ff0ff');px(cx+1,10,f?'#ff3b4a':'#3ff0ff');px(cx-1,12,'#2a4a4a',2,1);
+    line(cx+5,15,cx+9,f?10:18,2,'#9ad0c0');line(cx-5,15,cx-9,f?10:18,2,'#9ad0c0');px(cx-2,4,'#ffd23f',4,1);px(cx-1,3,'#ffd23f',2,1);
+    return pix32(c,[8,14,20]);},
+  // le Minotaure : tête de taureau à grandes cornes, corps musclé, pagne de cuir, hache double (labrys) dorée
+  b_minotaure(f){const {c,g,poly,ell,line,px}=bc32(),cx=16;
+    for(const s of [-1,1]){poly([[cx+s*3,22],[cx+s*7,22],[cx+s*7,30],[cx+s*3,30]],'#6a3a1e');px(cx+s*5-2,29,'#2a1a10',4,2);}
+    poly([[cx-8,11],[cx+8,11],[cx+6,23],[cx-6,23]],'#7a4424');ell(cx-3,15,3,2.4,'#8a5230');ell(cx+3,15,3,2.4,'#8a5230');px(cx-1,18,'#5a2e14',2,4);
+    poly([[cx-7,21],[cx+7,21],[cx+6,26],[cx-6,26]],'#4a2a14');px(cx-1,21,'#c9973c',2,5);
+    ell(cx,8,5,4.5,'#6a3a1e');ell(cx,11,3.4,2.4,'#8a5a3a');px(cx-2,11,'#2a1a10');px(cx+1,11,'#2a1a10');px(cx-1,13,'#c9973c',2,1);
+    px(cx-3,7,f?'#ff3b4a':'#ffd23f');px(cx+2,7,f?'#ff3b4a':'#ffd23f');
+    poly([[cx-4,5],[cx-11,1],[cx-12,4],[cx-5,7]],'#e8e0c8');poly([[cx+4,5],[cx+11,1],[cx+12,4],[cx+5,7]],'#e8e0c8');px(cx-12,2,'#8a8270',2,2);px(cx+10,2,'#8a8270',2,2);
+    line(cx-8,12,cx-11,20,3,'#7a4424');
+    if(f){line(cx+8,12,cx+12,4,3,'#7a4424');line(cx+12,1,cx+12,22,1.6,'#6a4424');poly([[cx+12,2],[cx+5,0],[cx+5,8],[cx+12,6]],'#ffd23f');poly([[cx+12,2],[cx+19,0],[cx+19,8],[cx+12,6]],'#ffd23f');px(cx+11,3,'#fff3b0',2,2);}
+    else{line(cx+8,12,cx+12,20,3,'#7a4424');line(cx+13,10,cx+13,30,1.6,'#6a4424');poly([[cx+13,11],[cx+7,9],[cx+7,16],[cx+13,14]],'#ffd23f');poly([[cx+13,11],[cx+19,9],[cx+19,16],[cx+13,14]],'#ffd23f');px(cx+12,12,'#fff3b0',2,2);}
+    return pix32(c,[20,10,4]);},
+  // Typhon : titan de lave sombre aux cornes d'or et à la couronne de flammes, grandes ailes d'orage, deux serpents qui sortent de sa queue en anneaux, foudre à la main
+  b_typhon(f){const {c,px}=bc32();
+    const G=['................','..........H.....','W.........H..F..','Ww........HHFfF.','Www.......kHBBBB','WwwW.......BBBBB','WwvwW......BEBBB','WwwvwW.....BBBBB','WwwwvwW.....BYYB','WwwwwvwwwBBBBBBB','WwwwwwvwBBBbbBBB','WwwvwwwvBBBbbbBB','Wwvwwwww.BB.BBLB','WvwwwwwW.BB.BLBB','.WwwwwW..BB.BBBL','.Ww.wW...BB.BLBB','..W..W...cc.BBBY','sss......cc.BBLY','SSes.........BBB','SSSSs.......BBBB','SgSSSs....hhhhhh','cs.sSSs.hSSSSSSS','.....sSSggggggSS','....shhhhsssssss','...hSSSSSSShhhhh','..hSSSSSSSSSSSSS','..sggggggggSSSSS','.shhhhssssssssss','.hSSSSSSSShhhhhh','.SSggggggggggSSS','..ssssssssssssss','................'];
+    const C={H:'#d8a83c',F:'#ff5a1a',f:'#ffd23f',k:'#2a1820',B:'#3e2c36',b:'#5a4450',E:f?'#ffffff':'#ffb020',Y:'#ff9a3c',L:'#ff6a1a',W:'#24142e',w:'#3e2458',v:f?'#ffe27a':'#8a5ad0',c:'#c9b8a0',s:'#163a1e',S:'#3f8a4a',h:'#6ac070',e:'#ff3b1a',g:'#c9a04a'};
+    const P=[];G.forEach((r,y)=>{const R=r+r.split('').reverse().join('');for(let x=0;x<32;x++)P.push(R[x]);});
+    const set=(x,y,ch)=>{if(x>=0&&x<32&&y>=0&&y<32)P[y*32+x]=ch;};
+    
+    if(f){for(let y=12;y<=17;y++)for(let x=20;x<=22;x++)set(x,y,'.');set(20,12,'B');set(20,13,'B');set(20,14,'L');set(20,15,'B');set(20,16,'B');set(20,17,'L');
+      for(const [x,y] of [[22,9],[23,8],[24,7],[25,6],[23,9],[24,8],[25,7],[26,6]])set(x,y,'b');set(26,5,'c');set(27,5,'c');set(26,4,'c');
+      for(const [x,y] of [[28,0],[27,1],[28,1],[26,2],[27,2],[29,2],[28,3],[29,3],[30,4],[29,4],[28,5],[29,6],[30,6],[29,7],[30,8]])set(x,y,y%3?'f':'W2');
+      set(19,18,'e');set(12,18,'e');}
+    else{for(const [x,y] of [[23,14],[24,15],[24,16],[25,17],[24,18],[25,19],[26,20],[25,21]])set(x,y,'f');set(24,17,'W2');}
+    C.W2='#ffffff';
+    P.forEach((ch,i)=>{if(C[ch])px(i%32,(i/32)|0,C[ch]);});
+    return pix32(c,[10,6,14]);}});
+Object.assign(BULLET_ART,{
+  gr_tete:{dir:true,tr:'#3a7a66',c:bulletArt16(p=>{p(1,6,'#2e6a5a',6,4);p(6,4,'#4a8a72',6,7);p(11,5,'#4a8a72',3,5);p(9,5,'#ffe27a');p(12,8,'#2a0a0a',3,2);p(13,7,'#ffffff');p(13,10,'#ffffff');p(2,7,'#5ab0a0',4,1);})},
+  gr_ecume:{dir:true,tr:'#dff4ff',c:bulletArt16(p=>{p(2,8,'#2a6a8a',10,4);p(4,6,'#3a8aaa',8,3);p(7,4,'#5ab0d0',5,3);p(10,3,'#dff4ff',3,2);p(12,5,'#dff4ff',2,2);p(3,11,'#1a4a6a',9,2);})},
+  gr_labrys:{fix:false,tr:'#ffd23f',c:bulletArt16(p=>{p(7,1,'#6a4424',2,14);p(2,3,'#ffd23f',5,9);p(9,3,'#ffd23f',5,9);p(1,5,'#c9973c',1,5);p(14,5,'#c9973c',1,5);p(3,4,'#fff3b0',1,3);p(10,4,'#fff3b0',1,3);})},
+  gr_corne:{dir:true,tr:'#e8e0c8',c:bulletArt16(p=>{p(1,9,'#8a8270',4,3);p(4,7,'#c8c0a8',4,4);p(7,5,'#e8e0c8',4,4);p(10,3,'#e8e0c8',3,3);p(12,2,'#ffffff',2,2);})},
+  gr_foudre:{dir:true,tr:'#ffe27a',c:bulletArt16(p=>{p(1,7,'#ffe27a',4,2);p(4,5,'#ffe27a',3,3);p(6,7,'#ffe27a',4,2);p(9,4,'#ffe27a',3,4);p(11,6,'#ffffff',4,2);p(5,6,'#ffffff');p(10,5,'#ffffff');})},
+  gr_braise:{dir:true,tr:'#ff5a1a',c:bulletArt16(p=>{p(3,6,'#8a1a0a',6,5);p(6,4,'#ff5a1a',6,7);p(9,5,'#ffb04a',4,5);p(11,6,'#fff3b0',2,3);p(2,8,'#ff5a1a',2,2);})}});
+
 const BOSS_ATK={};for(const k in BOSS_ART)if(MON[k]){MSPR[k]=BOSS_ART[k](0);BOSS_ATK[k]=BOSS_ART[k](1);MON[k].bspr=BOSS_BULLET[k];}
 /*ART2_DEBUT*/
 // ---------- monstres redessinés : 32 pixels logiques, trois images (repos A, repos B, attaque) ----------
@@ -2361,6 +2421,7 @@ try{runesSync();}catch(e){}
 if(!save.vault||!Array.isArray(save.vault.c))save.vault={n:1,c:[]};
 while(save.vault.c.length<10)save.vault.c.push([null,null,null,null,null,null,null,null]);
 for(const ch of Object.values(save.chars||{})){for(const it of [...(ch.equip||[]),...(ch.inv||[])])if(it&&it.slot==='capa'&&KINDS[it.kind]){const f=mkItem(it.kind,it.tier);it.stats=f.stats;it.cost=f.cost;}}
+migrSaveT8(save);
 for(const c of save.vault.c)for(const it of c)if(it&&it.slot==='capa'&&KINDS[it.kind])it.stats=mkItem(it.kind,it.tier).stats;
 for(const ch of Object.values(save.chars||{}))for(const l of [ch.equip||[],ch.inv||[]])l.forEach((it,i)=>{if(it&&it.kind==='epee_aura'&&it.tier!==7){const up=it.up;l[i]=mkItem('epee_aura',7);if(up)l[i].up=up;}});
 function persist(){try{for(const ch of Object.values(save.chars||{}))for(const it of [...(ch.equip||[]),...(ch.inv||[])])if(it&&(it.kind==='mandoline'||it.kind==='totem')&&KINDS[it.kind].noms[it.tier]){it.name=KINDS[it.kind].noms[it.tier];if(it.kind==='totem')it.cost=mkItem('totem',it.tier).cost;}}catch(e){}try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}pushSave(false);}
@@ -2377,7 +2438,7 @@ function hideAuth(){const el=document.getElementById('authWin');if(el)el.hidden=
 function onNetHello(){if(!ONLINE)return;const tk=lsGet(TOKEN_KEY);if(tk){AUTH.ok=false;room.raw({t:'auth',a:'token',token:tk});showAuth('Connexion à ton compte…');}else if(!AUTH.ok)showAuth('');}
 // le serveur a refusé une sauvegarde incohérente : on reprend sa version
 function onSaveFix(m){if(!m.save||!m.save.chars)return;
-  {const msg=(m.raisons||[]).join(' · ').slice(0,160);if(save.current&&m.save.current===save.current&&m.save.chars[save.current]&&scene!=='tuto'){for(const k of Object.keys(save))delete save[k];Object.assign(save,m.save);try{maisonV2();}catch(e){}try{runesSync();}catch(e){}try{lsSet(SAVE_KEY,JSON.stringify(save));}catch(e){}statsDirty=true;invDirty=true;try{updWho();}catch(e){}try{const st=S();P.hp=Math.min(P.hp,st.tot.vie);P.mp=Math.min(P.mp,st.tot.mana);}catch(e){}note('Le serveur a corrigé ta sauvegarde'+(msg?' : '+msg:''));sfx('deny');return;}}AUTH.ok=false;lsSet(SAVE_KEY,JSON.stringify(m.save));sessionStorage.setItem('rm-reload','1');sessionStorage.setItem('rm-fix',(m.raisons||[]).join(' · ').slice(0,200));location.reload();}
+  {const msg=(m.raisons||[]).join(' · ').slice(0,160);if(save.current&&m.save.current===save.current&&m.save.chars[save.current]&&scene!=='tuto'){for(const k of Object.keys(save))delete save[k];Object.assign(save,m.save);try{maisonV2();}catch(e){}try{runesSync();}catch(e){}migrSaveT8(save);try{lsSet(SAVE_KEY,JSON.stringify(save));}catch(e){}statsDirty=true;invDirty=true;try{updWho();}catch(e){}try{const st=S();P.hp=Math.min(P.hp,st.tot.vie);P.mp=Math.min(P.mp,st.tot.mana);}catch(e){}note('Le serveur a corrigé ta sauvegarde'+(msg?' : '+msg:''));sfx('deny');return;}}AUTH.ok=false;lsSet(SAVE_KEY,JSON.stringify(m.save));sessionStorage.setItem('rm-reload','1');sessionStorage.setItem('rm-fix',(m.raisons||[]).join(' · ').slice(0,200));location.reload();}
 setTimeout(()=>{const f=sessionStorage.getItem('rm-fix');if(f){sessionStorage.removeItem('rm-fix');showBanner('Sauvegarde resynchronisée','Le serveur a refusé une modification incohérente ('+f+')','#ff9a3c');}},2500);
 function authKicked(){AUTH.ok=false;lsSet(TOKEN_KEY,null);showAuth('Ton compte vient de se connecter sur un autre appareil.',true);}
 // Conditions d'utilisation : à accepter une fois par version du texte (les joueurs déjà inscrits aussi). Le serveur garde la date d'acceptation.
@@ -2542,7 +2603,7 @@ function genDungeon(seed,t){
   t=DTYPES[t]&&t!=='a'?t:'c';const ck=t+seed;if(dungeonCache.has(ck))return dungeonCache.get(ck);
   if(t==='i'){const d=genGrotte(seed);dungeonCache.set(ck,d);return d;}
   if(DTYPES[t].breche){let d=null;for(let k=0;k<200&&!d;k++)d=genMazeTry(seed*31+k,{GW:6,GH:4,vides:2,salles:15,dist:5,culs:2,boucles:3});if(d){d=themeDungeon(d,t,seed);d.breche=true;d.etage=((seed%8)+8)%8||1;d.down=d.etage<BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.brBoss=d.etage>=BRECHE_ETAGES?{x:d.altar.x,y:d.altar.y}:null;d.brSalle=d.brBoss&&d.boss&&d.boss.w>0?{x:d.boss.x+.5,y:d.boss.y+.5,w:d.boss.w,h:d.boss.h}:null;d.altar={x:-999,y:-999};d.doors=[];d.arena=null;d.piliers=brPiliers(d,seed);dungeonCache.set(ck,d);return d;}}
-  if(t==='h'){let d=null;for(let k=0;k<80&&!d;k++)d=genMazeTry(seed*31+k);if(d){d=themeDungeon(d,t,seed);dungeonCache.set(ck,d);return d;}} // Horloge Brisée : un vrai labyrinthe
+  if(t==='h'||t==='q'){let d=null;for(let k=0;k<80&&!d;k++)d=genMazeTry(seed*31+k);if(d){d=themeDungeon(d,t,seed);if(t==='q'){d.fog=true;d.seen=new Uint8Array(d.w*d.h);}dungeonCache.set(ck,d);return d;}} // Horloge Brisée et Labyrinthe du Minotaure : de vrais labyrinthes // Horloge Brisée : un vrai labyrinthe
   let d=null;for(let k=0;k<120;k++){d=genDungeonTry(seed*31+k);if(d.rooms.length>=10&&d.boss.w>=21&&Math.hypot(d.boss.x-d.start.x,d.boss.y-d.start.y)>=48)break;} // on exige toutes les salles et une grande arène
   d=themeDungeon(d,t,seed);dungeonCache.set(ck,d);return d;
 }
@@ -2737,6 +2798,10 @@ const TALIS={b:{res:'Dent du Roi Gobelin',nom:'Talisman du Terrier',st:{vie:20},
   p:{res:'Plume déchue',nom:'Talisman Céleste',st:{vatt:5},ic:'plume'},e:{res:'Braise éternelle',nom:'Talisman de la Fournaise',st:{vie:80},ic:'braise'},g:{res:'Cristal de givre',nom:'Talisman de Givre',st:{armure:6},ic:'glace'},
   a:{res:'Poussière d\'étoile',nom:'Talisman des Étoiles',st:{puissance:5,vatt:5},ic:'etoile'},h:{res:'Sable du temps',nom:'Talisman de Chronos',st:{puissance:6,vatt:6,vie:60},ic:'grain_sablier'},
   j:{res:'Grelot du Bouffon',nom:'Talisman du Roi Bouffon',st:{vatt:6,vdep:4},ic:'grelot'},x:{res:'Cœur d\'obsidienne',nom:'Talisman du Béhémoth',st:{vie:100,puissance:4},ic:'obsidienne'}},TALIS_COUT=10,TALIS_ORDRE='brkmfvcsopegjxah';
+Object.assign(DTYPES,{
+  l:{nom:'Repaire de Scylla',boss:'Scylla aux six têtes',col:['#0a1a24','#3ff0ff'],niv:'Île aux Colosses · donjon · niveaux 25 à 26',pool:['c_crabe','c_tortue','c_albatros'],bk:'b_scylla',mini:[30,90,110],mech:'Le ressac : des vagues s\'abattent autour de toi, ne reste pas immobile',secret:1,ile:2},
+  q:{nom:'Labyrinthe du Minotaure',boss:'le Minotaure',col:['#2a1a0a','#ffd23f'],niv:'Île aux Colosses · donjon · niveaux 27 à 28',pool:['c_mammouth','c_cyclope','c_roc'],bk:'b_minotaure',mini:[150,110,50],mech:'Un labyrinthe dans le brouillard : la carte ne se dessine qu\'en avançant',secret:1,ile:2},
+  t:{nom:'Tartare de Typhon',boss:'Typhon, père des monstres',col:['#0a0a18','#ffe27a'],niv:'Île aux Colosses · donjon · niveaux 29 à 30',pool:['c_titan','c_hydre','c_orage'],bk:'b_typhon',mini:[70,70,110],mech:'L\'orage du Tartare : la foudre frappe là où tu te tiens',secret:1,ile:2}});
 for(const t in CAC_DEF)if(DTYPES[t]&&Array.isArray(DTYPES[t].pool)&&MON['cac_'+t]&&!DTYPES[t].pool.includes('cac_'+t))DTYPES[t].pool.push('cac_'+t);
 const REG_DUN='csopeg',MID_DUN='rkmf';
 for(const t of REG_DUN){for(const k of DTYPES[t].pool)MON[k].ai=2;MON[DTYPES[t].bk].ai=2;}
@@ -2846,7 +2911,7 @@ let TU={},tutoMap=null;
 let openChest=null,unlockArm=-1,unlockT=0;
 
 /* ================= réseau ================= */
-const NETV=2,BUILD=2600000094;let newerWarned=false;
+const NETV=2,BUILD=2600000096;let newerWarned=false;
 let room=null,netOn=false,myPeer=null,amHost=true,sceneT=0,monId=0;
 const remotes=new Map();
 const applied=new Map();
@@ -2903,6 +2968,9 @@ const BMECA={
   br_mere:{cd:5.5,col:'#b6f04a',rot:[MK('pluie','Ponte'),MK('cone','Morsure corrompue'),MK('donut','Nid',{r:3,r2:9})],p2:[MK('nova','Éclosion')]},
   br_tisse:{cd:5.5,col:'#ffe27a',rot:[MK('ligne','Arc électrique'),MK('croix','Toile d\'orage'),MK('pluie','Foudre')],p2:[MK('donut','Cage d\'éclairs',{r:3,r2:10})]},
   dragon:{cd:6,col:'#ff7a1a',rot:[MK('cone','Souffle du dragon',{arc:1.4,r:14}),MK('tb','Griffe',{r:2.4}),MK('pluie','Météores',{r:2.2})],p2:[MK('nova','Battement d\'ailes',{r:7})]},
+  b_scylla:{cd:5.5,col:'#3ff0ff',rot:[MK('cone','Morsure des six têtes',{arc:1.6,r:9}),MK('pluie','Tourbillon de Charybde',{r:2}),MK('donut','Marée montante',{r:3,r2:10})],p2:[MK('croix','Six cous déchaînés',{len:14})]},
+  b_minotaure:{cd:5.5,col:'#ffd23f',rot:[MK('ligne','Charge du taureau',{w:2.6,len:20}),MK('cone','Coup de labrys',{arc:1.3,r:8}),MK('tb','Coup de cornes',{r:2.2})],p2:[MK('nova','Fureur du labyrinthe',{r:6})]},
+  b_typhon:{cd:5,col:'#ffe27a',rot:[MK('pluie','Foudre du Tartare',{r:2.2}),MK('croix','Ailes d\'orage',{len:15}),MK('cone','Souffle de cendres',{arc:1.5,r:10}),MK('tb','Poing du géant',{r:2.4})],p2:[MK('donut','Œil du cyclone',{r:3.5,r2:12})]},
   tb_capitaine:{cd:6,col:'#c0c6d6',rot:[MK('cone','Taille du capitaine'),MK('tb','Estoc')],p2:[MK('pluie','Volée d\'arbalètes')]},
   tb_bourreau:{cd:6,col:'#8a1f2e',rot:[MK('tb','Hache du bourreau',{r:2.5}),MK('ligne','Exécution')],p2:[MK('nova','Échafaud')]},
   tb_croise:{cd:6,col:'#ffd23f',rot:[MK('croix','Croisade'),MK('cone','Fer de lance',{arc:0.9,r:11})],p2:[MK('pluie','Bénédiction brûlante')]},
@@ -3277,6 +3345,12 @@ const SONGS={
   crypte:mkSong(100,'sombre',[['A3','C4','E4'],['F3','A3','C4'],['D3','F3','A3'],['E3','G#3','B3']],
     [[0,'E5',8],[8,'C5',8],[16,'F5',8],[24,'A5',8],[32,'D5',8],[40,'F5',8],[48,'G#5',8],[56,'B5',8]])
 };
+SONGS.olympe=mkSong(148,'boss',[['D3','F#3','A3'],['Eb3','G3','Bb3'],['D3','F#3','A3'],['C3','Eb3','G3'],['D3','F#3','A3'],['G2','Bb2','D3'],['Eb3','G3','Bb3'],['D3','F#3','A3']],
+  [[0,'D5',2],[2,'Eb5',2],[4,'F#5',4],[8,'G5',2],[10,'F#5',2],[12,'Eb5',4],[16,'D5',2],[18,'F#5',2],[20,'A5',4],[24,'Bb5',6],[30,'A5',2],[32,'G5',4],[36,'F#5',2],[38,'Eb5',2],[40,'D5',6],[46,'C5',2],[48,'D5',4],[52,'F#5',4],[56,'A5',8],
+   [64,'D6',4],[68,'C6',2],[70,'Bb5',2],[72,'A5',4],[76,'G5',4],[80,'F#5',4],[84,'Eb5',4],[88,'D5',8],[96,'G5',4],[100,'Bb5',4],[104,'D6',6],[110,'C6',2],[112,'Bb5',2],[114,'A5',2],[116,'G5',2],[118,'F#5',2],[120,'Eb5',4],[124,'D5',4]]);
+SONGS.olympe_dj=mkSong(108,'epique',[['D3','F#3','A3'],['Eb3','G3','Bb3'],['C3','Eb3','G3'],['D3','F#3','A3'],['G2','Bb2','D3'],['Eb3','G3','Bb3'],['D3','F#3','A3'],['D3','F#3','A3']],
+  [[0,'A4',4],[4,'D5',4],[8,'Eb5',6],[14,'D5',2],[16,'C5',8],[24,'Bb4',4],[28,'A4',4],[32,'G4',6],[38,'A4',2],[40,'Bb4',4],[44,'C5',4],[48,'D5',8],[56,'F#5',8],
+   [64,'G5',4],[68,'F#5',4],[72,'Eb5',6],[78,'D5',2],[80,'C5',8],[88,'Bb4',4],[92,'A4',4],[96,'D5',6],[102,'Eb5',2],[104,'F#5',4],[108,'Eb5',4],[112,'D5',8],[120,'A4',8]]);
 SONGS.breche=mkSong(126,'epique',[['E3','G3','B3'],['E3','G3','B3'],['C3','E3','G3'],['D3','F#3','A3'],['E3','G3','B3'],['A2','C3','E3'],['C3','E3','G3'],['B2','D#3','F#3']],
   [[0,'E5',2],[2,'B4',2],[4,'E5',2],[6,'G5',2],[8,'F#5',4],[12,'E5',4],[16,'G5',2],[18,'E5',2],[20,'G5',2],[22,'B5',2],[24,'A5',4],[28,'G5',4],[32,'G5',2],[34,'E5',2],[36,'C6',4],[40,'B5',4],[44,'G5',4],[48,'A5',2],[50,'F#5',2],[52,'D6',4],[56,'C6',4],[60,'A5',4],
    [64,'B5',6],[70,'G5',2],[72,'E6',6],[78,'D6',2],[80,'C6',4],[84,'A5',4],[88,'E5',8],[96,'E6',2],[98,'C6',2],[100,'G5',2],[102,'C6',2],[104,'E6',4],[108,'G6',4],[112,'F#6',2],[114,'D#6',2],[116,'B5',2],[118,'D#6',2],[120,'F#6',4],[124,'B5',4]]);
@@ -3360,6 +3434,7 @@ function wantSong(){const w=wantSong0();if(w==='boss'||w==='final'){bossSong={w,
   bossSong=null;return w;}
 function wantSong0(){if(PARTY)return 'fun';
   if(scene==='dungeon'&&MAP&&MAP.breche)return monsters.some(m=>m.d.boss&&m.hp>0)?'boss':'breche';
+  if(scene==='dungeon'&&'lqt'.includes(dungeonT||'-'))return (fight===1&&inArena(P.x,P.y))||monsters.some(m=>m.d.boss&&m.hp>0&&Math.hypot(m.x-P.x,m.y-P.y)<16)?'olympe':'olympe_dj';
   if(scene==='raid')return dragonUp()?'dragon':raidOn()?'wardrums':'crypte';
   if(scene==='tour')return TOURS&&TOURS.vague>=10?'final':'boss';
   if(scene==='arena')return 'boss';
@@ -3845,7 +3920,7 @@ function populateRealm(){MAUD.next=time+MAUDIT_T();monsters=[];for(let r=0;r<ZON
 // sortie du donjon : retour dans les Plaines Sauvages, à l'endroit du portail (ou sur la plage), pour retrouver ses amis
 let dunFrom='realm',realmRet=null;
 function exitDungeon(){if(dunFrom!=='realm'){enterNexus();return;}const r=realmRet;enterRealm();if(r&&!solidAt(r.x,r.y)){P.x=r.x;P.y=r.y;}realmRet=null;P.invul=5;P.backProt=1;note('Protégé 5 s · ton premier tir annule la protection');sendPresence();}
-function populateDungeon(){const R0=Math.random;Math.random=mulberry((dungeonId|0)*7919+13);try{populateDungeon0();}finally{Math.random=R0;}
+function populateDungeon(){const R0=Math.random;Math.random=mulberry((dungeonId|0)*7919+13);try{populateDungeon0();if(MAP.dtype==='q'){let i=0;monsters=monsters.filter(m=>m.d.boss||(i++%3===0));}}finally{Math.random=R0;} // Labyrinthe du Minotaure : un monstre sur trois (le labyrinthe est immense)
   monsters.forEach((m,i)=>m.id=i+1);MAP.nInit=monsters.length;monId=Math.max(monId,5000);}
 function populateDungeon0(){
   monsters=[];const d=MAP;
@@ -4251,11 +4326,11 @@ function castSort(cx,cy,dm){for(let i=0;i<16;i++){const an=i/16*TAU;pb.push({x:c
 function tpTarget(){const a=aimWorld(),t=C().equip[1].tier,max=tpMax(C().equip[1]);let dx=a.x-P.x,dy=a.y-P.y;const d=Math.hypot(dx,dy)||1;const L=Math.min(d,max);
   const lockedDoors=MAP&&MAP.doors&&MAP.doors.length&&MAP.sol[MAP.doors[0].y*MAP.w+MAP.doors[0].x]===1;
   for(let k=L;k>=0.5;k-=0.25){const x=P.x+dx/d*k,y=P.y+dy/d*k;if(blocked(x,y,0.3))continue;if(lockedDoors&&MAP.arena&&inArena(x,y)!==inArena(P.x,P.y))continue;return{x,y};}return null;}
-function abilityInfo(it){const t=it.tier,rel=t>=7,m=save.current?S().mult:1,t8=estT8(it),x8=t8?10:1; /* sans héros (wiki) : chiffres pour 25 de puissance */return{
-  casque:`Rage ${t8?10:3+0.5*t} s : +50 % vitesse d'attaque, +${20+5*t} % dégâts${rel?' · invulnérable 2 s':''}`,
+function abilityInfo(it){const t=it.tier,rel=t>=7,m=save.current?S().mult:1,t8=estT8(it),x8=t8?4:1; /* sans héros (wiki) : chiffres pour 25 de puissance */return{
+  casque:`Rage ${t8?10:3+0.5*t} s : +50 % vitesse d'attaque, +${20+5*t} % dégâts, +20 % vitesse de déplacement${rel?' · invulnérable 2 s':''}`,
   sort:`Explosion : 16 × ${Math.round((35+22*t)*0.8*m*(rel?0.6:1)*x8)} dégâts${rel?' · lancée 3 fois au même endroit':''}`,
-  carquois:rel?`Flèches dans toutes les directions : ${Math.round((110+65*6)*m)} dégâts + 50 % de la vie du monstre (pour un boss : 5 % de la vie qu'il lui reste)`:`Flèche perçante : ${Math.round((t8?6000:110+65*t)*m)} dégâts`,
-  tome:`Soigne ${t8?350:70+35*t} PV dans un rayon de ${((3+0.7*t)*(t8?1.15:1)).toFixed(1)} cases${rel?' · les monstres à l\'écran subissent +50 % de dégâts pendant 6 s':''}`,
+  carquois:rel?`Flèches dans toutes les directions : ${Math.round((110+65*6)*m)} dégâts + 20 % de la vie du monstre (pour un boss : 5 % de la vie qu'il lui reste) · paralyse 3,5 s`:`Flèche perçante : ${Math.round((t8?2300:110+65*t)*m)} dégâts · paralyse ${String(Math.round((1+0.3*t)*10)/10).replace('.',',')} s`,
+  tome:`Soigne ${t8?350:70+35*t} PV dans un rayon de ${(rel?8.5:(3+0.7*t)*(t8?1.15:1)).toFixed(1)} cases${rel?' · les monstres à l\'écran subissent +50 % de dégâts pendant 6 s':''}`,
   prisme:rel?`Téléportation jusqu'à ${(7+t*0.4).toFixed(1)} cases · aucune recharge : se relance aussitôt · ne donne aucune caractéristique`:`Téléportation jusqu'à ${tpMax(it).toFixed(1)} cases · recharge ${String(tpCd(it)).replace('.',',')} s · équipé : +${prisOff(it).puissance} puissance, +${prisOff(it).vatt} vitesse d'attaque`,
   voile:`Invisible pour les monstres pendant ${(t8?9:rel?7:2.5+0.6*t).toFixed(1)} s${rel?' · invulnérable pendant ce temps':''}`,
   bouclier:`En garde ${4+0.5*t} s : +${Math.round((t8?50:8+4*t)*upK(it))} armure · vague de ${Math.round((40+20*t)*m*upK(it)*x8)} dégâts qui brise l'armure des ennemis pendant ${4+0.5*t} s${rel?' · invulnérable 1 s':''}`,
@@ -4328,7 +4403,7 @@ function useAbility(){
   if(art){const fin=(P.cdArt&&P.cdArt[it.kind])||0;if(fin>time){note('Recharge : '+(fin-time).toFixed(1)+' s');sfx('deny');return;}if(P.mp<it.cost){note('Pas assez de mana');return;}useArt(it,S(),upK(it));return;}
   if(bk==='prisme'&&P.tpcd>0){note('Téléportation dans '+P.tpcd.toFixed(1)+' s');return;}
   if(P.mp<it.cost){note('Pas assez de mana');return;}
-  const st=S(),t=it.tier,rel=t>=7,uk=upK(it),t8=estT8(it),x8=t8?10:1;
+  const st=S(),t=it.tier,rel=t>=7,uk=upK(it),t8=estT8(it),x8=t8?4:1;
   if(bk==='prisme'){const g=tpTarget();if(!g){note('Impossible de se téléporter ici');return;}
     P.mp-=it.cost;P.tpcd=tpCd(it);P.acd=Math.min(0.3,P.tpcd);TU.abil=1;const ox=P.x,oy=P.y;burst(ox,oy,'#2ab8a8',16,3);
     if(alt){P.frenzy=1;ft(g.x,g.y-0.9,'Frénésie !',ALT_COL,true);}
@@ -4340,7 +4415,7 @@ function useAbility(){
     castSort(cx,cy,dm);if(rel){P.castQ.push({t:0.35,x:cx,y:cy,dm},{t:0.7,x:cx,y:cy,dm});}sendEv(rel?'S':'s',cx,cy);}
   else if(bk==='carquois'){const a=aimWorld(),an=Math.atan2(a.y-P.y,a.x-P.x);
     if(rel){const dm=Math.round((110+65*6)*st.mult*uk),vol=new Set();for(let i=0;i<24;i++){const aa=an+i*TAU/24;pb.push({x:P.x,y:P.y,vx:Math.cos(aa)*16,vy:Math.sin(aa)*16,life:10/16,dmg:dm,pct:true,vol,r:0.22,col:'#3ff0ff',kind:'fleche',pierce:true,hit:new Set(),trail:'#3ff0ff',par:3.5});}burst(P.x,P.y,'#3ff0ff',24,5);}
-    else pb.push({x:P.x,y:P.y,vx:Math.cos(an)*16,vy:Math.sin(an)*16,life:10/16,dmg:Math.round((t8?6000:110+65*t)*st.mult*uk),r:0.22,col:t8?T8_COL:'#ffe14a',kind:'fleche',pierce:true,hit:new Set(),par:1+0.3*t,trail:'#ffe14a'});}
+    else pb.push({x:P.x,y:P.y,vx:Math.cos(an)*16,vy:Math.sin(an)*16,life:10/16,dmg:Math.round((t8?2300:110+65*t)*st.mult*uk),r:0.22,col:t8?T8_COL:'#ffe14a',kind:'fleche',pierce:true,hit:new Set(),par:1+0.3*t,trail:'#ffe14a'});}
   else if(bk==='tome'){const h=Math.round((t8?350:70+35*t)*uk),R0=rel?8.5:(3+0.7*t)*(t8?1.15:1),max=st.tot.vie;const got=Math.min(h,max-P.hp);P.hp=Math.min(max,P.hp+h);ft(P.x,P.y-0.8,'+'+Math.round(got),'#7ed957',true);burst(P.x,P.y,'#bff5a0',22,2.5);
     vfx.push({k:'healring',x:P.x,y:P.y,r:R0,t:0,life:0.6,col:'#bff5a0'});myHeal=(++healSeq)+'|'+h+'|'+R0.toFixed(1);
     if(rel&&!safe()){const n=markVuln(P.x,P.y);vfx.push({k:'healring',x:P.x,y:P.y,r:10,t:0,life:0.8,col:'#ffd23f'});ft(P.x,P.y-1.3,'Jugement divin · '+n+' monstre'+(n>1?'s':''),'#ffd23f',true);myEv=(++evSeq)+'|v|'+Math.round(P.x*10)+'|'+Math.round(P.y*10);}
@@ -4368,7 +4443,12 @@ function mineTick(dt){if(scene!=='dungeon'||dungeonT!=='m')return;rockT-=dt;if(r
 function strikeTick(dt){mineTick(dt);braiseTick(dt);for(const k of strikes){k.t-=dt;if(k.t<=0&&!k.hit){k.hit=true;k.fl=0.35;if(k.rock){vfx.push({k:'ring',x:k.x,y:k.y,t:0,life:0.35,col:'#c8b89a',r:k.r*0.8});burst(k.x,k.y,'#8a7a6a',18,3);burst(k.x,k.y,'#c8b89a',10,2);}else if(k.fire){vfx.push({k:'flamep',x:k.x,y:k.y,t:0,life:0.7,col:'#ff7a1a'});vfx.push({k:'ring',x:k.x,y:k.y,t:0,life:0.35,col:'#ffb020',r:k.r*0.8});burst(k.x,k.y,'#ffb020',16,4);burst(k.x,k.y,'#ff4a1a',10,3);}else{vfx.push({k:'bolt',x:k.x,y:k.y,t:0,life:0.35,col:'#fff6c0'});burst(k.x,k.y,'#fff6c0',18,4);}if(Math.hypot(P.x-k.x,P.y-k.y)<k.r+0.2)sfx('boss',0.4);
     if(!P.god&&!(P.invul>0)&&Math.hypot(P.x-k.x,P.y-k.y)<k.r){const dm=armorRed(Math.round(k.dmg));reflet(dm);P.hp-=dm;P.hitT=time;ft(P.x,P.y-0.6,'-'+dm,'#ff5a6a');if(k.fire)applyEff('burn/3',S().tot.vie);if(P.hp<=0){die(k.src);return;}}}}
   strikes=strikes.filter(k=>k.t>-0.4);}
-function abilityTick(dt){strikeTick(dt);mecaTick(dt);
+// Repaire de Scylla : le ressac (des vagues tombent autour de toi) · Tartare : la foudre frappe où tu te tiens
+let ileDjT=3;
+function ileDjTick(dt){if(scene!=='dungeon'||!canFight()||P.hp<=0||!'lt'.includes(dungeonT||'-'))return;if(MAP.start&&Math.hypot(P.x-MAP.start.x,P.y-MAP.start.y)<8)return;ileDjT-=dt;if(ileDjT>0)return;
+  if(dungeonT==='l'){ileDjT=rnd(2.8,4);const n=2+Math.floor(Math.random()*2);for(let k=0;k<n;k++)strikes.push({x:P.x+(P.vx||0)*0.6+rnd(-3,3),y:P.y+(P.vy||0)*0.6+rnd(-3,3),t:1.1,r:1.5,dmg:120,src:'le ressac'});}
+  else{ileDjT=rnd(2.2,3.2);strikes.push({x:P.x+(P.vx||0)*0.8,y:P.y+(P.vy||0)*0.8,t:1.0,r:1.3,dmg:160,src:'la foudre du Tartare',fire:1});}}
+function abilityTick(dt){strikeTick(dt);mecaTick(dt);ileDjTick(dt);
   if(P.invis>0){P.invis-=dt;if(Math.random()<dt*10)parts.push({x:P.x+rnd(-.3,.3),y:P.y+rnd(-.1,.4),vx:0,vy:-0.6,life:.5,col:Math.random()<.5?'#2a2a3a':'#6a3a9a',s:.09});if(P.invis<=0){note('Tu redeviens visible');sendPresence();}}
   if(P.shrineT>0){P.shrineT-=dt;if(Math.random()<dt*8)parts.push({x:P.x+rnd(-.3,.3),y:P.y-0.3,vx:0,vy:-0.8,life:.6,col:'#ffe27a',s:.07});if(P.shrineT<=0)note('La bénédiction s\'estompe');}
   if(P.invul>0)P.invul-=dt;if(P.tpcd>0)P.tpcd-=dt;if(P.guard>0){P.guard-=dt;if(P.guard<=0)statsDirty=true;}if(P.frenzy>0)P.frenzy-=dt;if(P.surge>0)P.surge-=dt;if(P.regenT>0){P.regenT-=dt;const mx=S().tot.vie;if(P.hp>0&&P.hp<mx)P.hp=Math.min(mx,P.hp+mx*(P.regenPct||0)/100*dt);}poisonTick();summonTick(dt);
@@ -4424,6 +4504,21 @@ function mauditAura(m){const X=sx(m.x),Y=sy(m.y),r=TS*m.d.sz*0.62,t=time+(m.seed
   for(let i=0;i<6;i++){const a=t*1.3+i*TAU/6,px=X+Math.cos(a)*r*1.0,py=Y+r*0.25+Math.sin(a)*r*0.42,z=Math.max(2,TS*0.07);ctx.fillStyle=i%2?'#ff4fd8':'#d8a8ff';ctx.fillRect(px-z/2,py-z/2-Math.abs(Math.sin(t*3+i))*TS*0.12,z,z);}ctx.restore();
   if(Math.random()<0.55)parts.push({x:m.x+rnd(-.5,.5)*m.d.sz,y:m.y+rnd(-.15,.5)*m.d.sz,vx:rnd(-.25,.25),vy:-rnd(.9,2),life:rnd(.5,.9),col:pick(['#b45aff','#ff4fd8','#6a3ab0','#d8a8ff']),s:rnd(.07,.11)});}
 const PAT={
+  // Scylla : six têtes qui crachent en tournant, un anneau d'écume avec une brèche, puis un éventail de têtes vers sa cible
+  b_scylla:(m,a)=>{m.phase=(m.phase||0)+1;const p=m.phase%3,rage=m.hp<m.max*0.4;
+    if(p===0){m.spin=(m.spin||0)+0.35;for(let i=0;i<6;i++){shoot(m,m.spin+i*TAU/6,{spr:'gr_tete',bs:6.5});if(rage)shoot(m,-m.spin+i*TAU/6,{spr:'gr_tete',bs:5});}}
+    else if(p===1){const gap=Math.random()*TAU;for(let i=0;i<26;i++){const an=i*TAU/26;if(Math.abs(((an-gap+Math.PI*3)%TAU)-Math.PI)<0.45)continue;shoot(m,an,{spr:'gr_ecume',bs:4,r:0.3,eff:'slow/2'});}}
+    else{for(let i=-3;i<=3;i++)shoot(m,a+i*0.14,{spr:'gr_tete',bs:8});}},
+  // le Minotaure : haches doubles en arc vers sa cible, onde de cornes au sol, et il charge (déplacement « charge »)
+  b_minotaure:(m,a)=>{m.phase=(m.phase||0)+1;const p=m.phase%3,rage=m.hp<m.max*0.4;
+    if(p===0){for(let i=-2;i<=2;i++)shoot(m,a+i*0.2,{spr:'gr_labrys',bs:7,r:0.36,wave:0.8,wf:5});}
+    else if(p===1){for(let i=0;i<16;i++)shoot(m,i*TAU/16,{spr:'gr_corne',bs:4.5,r:0.3});if(rage)for(let i=0;i<16;i++)shoot(m,(i+0.5)*TAU/16,{spr:'gr_corne',bs:6.5});}
+    else{for(let i=0;i<3;i++)shoot(m,a+(i-1)*0.06,{spr:'gr_labrys',bs:11,r:0.4,eff:'par/0.5'});}},
+  // Typhon : éclairs rapides, spirale de braises avec deux serpents qui suivent, et l'orage qui tombe là où tu te tiens
+  b_typhon:(m,a,tg)=>{m.phase=(m.phase||0)+1;const p=m.phase%3,rage=m.hp<m.max*0.4;
+    if(p===0){for(let i=-1;i<=1;i++)shoot(m,a+i*0.07,{spr:'gr_foudre',bs:15,r:0.2,eff:'burn/2'});}
+    else if(p===1){m.spin=(m.spin||0)+0.3;for(let i=0;i<(rage?5:3);i++)shoot(m,m.spin+i*TAU/(rage?5:3),{spr:'gr_braise',bs:5,eff:'burn/3'});for(const s0 of [-1,1])shoot(m,a+s0*0.8,{spr:'gr_tete',bs:4.5,hom:1.4,life:4});}
+    else if(Math.hypot(P.x-m.x,P.y-m.y)<18){strikes.push({x:P.x+(P.vx||0)*0.7,y:P.y+(P.vy||0)*0.7,t:1.0,r:1.6,dmg:m.d.dmg*1.2,src:m.d.nom,fire:1});for(let k=0;k<(rage?6:4);k++)strikes.push({x:P.x+rnd(-5,5),y:P.y+rnd(-5,5),t:1.1+k*0.12,r:1.4,dmg:m.d.dmg,src:m.d.nom,fire:1});}},
   cac:()=>{}, // monstre de mêlée : il ne tire pas, il frappe au contact
   maudit:(m,a,tg)=>{const l=m.pats&&m.pats.length?m.pats:[0,4,2];m.phase=(m.phase||0)+1;MAUDIT_PATS[l[m.phase%l.length]](m,a,tg);},
   vipere:(m,a)=>{m.phase=(m.phase||0)+1;if(m.phase%3===0){for(let i=-2;i<=2;i++)shoot(m,a+i*0.2,{bs:6});}else{shoot(m,a,{bs:9.5,r:0.2});shoot(m,a+0.14,{bs:8,wave:0.5});shoot(m,a-0.14,{bs:8,wave:0.5});}},
@@ -4548,6 +4643,7 @@ function hostKill(m){
   if(scene==='realm'&&!m.d.boss&&!m.adm&&Math.random()<dunChance(m)){const t=REG_DUN[Math.floor(Math.random()*REG_DUN.length)];dportals.push({id:m.id,x:m.x,y:m.y,life:60,t});showBanner('Un portail s\'ouvre !',DTYPES[t].nom+' · 60 secondes',DTYPES[t].col[1]);}
   if(scene==='realm'&&!m.d.boss&&!m.adm&&(m.r===3||m.r===4)&&Math.random()<0.015){const t=pick(MID_DUN);dportals.push({id:m.id,x:m.x,y:m.y,life:60,t});showBanner('Un portail s\'ouvre !',DTYPES[t].nom+' · donjon intermédiaire · 60 s',DTYPES[t].col[1]);}
   if(scene==='realm'&&!m.d.boss&&(m.r===0||m.r===1)&&Math.random()<0.036){dportals.push({id:m.id,x:m.x,y:m.y,life:60,t:'b'});showBanner('Un portail s\'ouvre !','Terrier des Gobelins · donjon débutant · 60 s','#9fd06a');}
+  if(scene==='realm'&&!m.d.boss&&!m.adm&&m.d.ile===2&&m.r>=7&&m.r<=9&&Math.random()<0.012){const t='lqt'[m.r-7];dportals.push({id:m.id,x:m.x,y:m.y,life:60,t});showBanner('Un portail s\'ouvre !',DTYPES[t].nom+' · 60 secondes',DTYPES[t].col[1]);}
   if(scene==='realm'&&m.d.dun2&&Math.random()<m.d.dun2){dportals.push({id:++monId,x:m.x,y:m.y+2.5,life:90,t:'a'});showBanner('Un portail doré s\'ouvre !','Observatoire Céleste · 90 secondes','#ffd23f');}
   if(scene==='dungeon'&&m.d.star!=null)setStars(stars|(1<<m.d.star));
   handleDeath(m.id,m.key,m.x,m.y);
@@ -4742,7 +4838,7 @@ function dropLoc(l){
   lset(l,null);addToBag(P.x,P.y,[it],true);SEL=null;done();
 }
 function drink(i){
-  {const it0=C().inv[i];if(it0&&KINDS[it0.kind]&&KINDS[it0.kind].key){useKey();return;}if(it0&&it0.kind==='cle_tour'){note('Cette clef s\'utilise au portail de la Tour des Chevaliers, au Village');return;}}
+  {const it0=C().inv[i];if(it0&&KINDS[it0.kind]&&KINDS[it0.kind].key){useKey();return;}if(it0&&it0.kind==='cle_tour'){note('La Tour des Chevaliers n\'a plus besoin de clef : celle-ci ne sert plus');return;}}
   const ch=C(),it=ch.inv[i];if(!it||it.slot!=='conso')return;if(KINDS[it.kind].egg){note('Apporte cet œuf à l\'éleveur du Village pour le faire éclore');return;}if(KINDS[it.kind].food){note('La croquette sert à faire évoluer un familier, dans le parc de ta maison');return;}const st=S();
   const spk=KINDS[it.kind].sp,sp2k=KINDS[it.kind].sp2;
   if(sp2k){ch.sp2=ch.sp2||{};if((ch.sp2[sp2k]||0)>=SP2_MAX){note(SL[sp2k]+' : maximum atteint ('+SP2_MAX+' élixirs)');sfx('deny');return;}ch.sp2[sp2k]=(ch.sp2[sp2k]||0)+1;ft(P.x,P.y-0.9,'+'+SP2_STEP[sp2k]+' '+SL[sp2k]+' (définitif)',sp2k==='armure'?'#c8c8d8':SP2_COL[sp2k],true);burst(P.x,P.y,T8_COL,30,3.5);sfx('level');statsDirty=true;const s2=S();if(sp2k==='vie')P.hp=Math.min(s2.tot.vie,P.hp+SP2_STEP.vie);if(sp2k==='mana')P.mp=Math.min(s2.tot.mana,P.mp+SP2_STEP.mana);}
@@ -4996,7 +5092,7 @@ const SHOP_ITEMS=[
   {id:'spjour',sec:'pot',get nom(){return KINDS['sp_'+spOfDay()].noms[0]+' · du jour';},desc:'Potion de caractéristique (change chaque jour). 1 par jour.',prix:50,get img(){return icon(mkItem('sp_'+spOfDay(),0));},owned:()=>save.spDay===dayKey(),ownTxt:'Demain',buy:()=>{if(buyPotion('sp_'+spOfDay())===false)return false;save.spDay=dayKey();return true;}},
   {id:'pvie',sec:'pot',nom:'Potion de vie',desc:'Rend 100 PV + 10 % de ta vie (touche F).',prix:5,img:icon(mkItem('pvie',0)),owned:()=>false,buy:()=>buyPotion('pvie')},
   {id:'pmana',sec:'pot',nom:'Potion de mana',desc:'Rend 120 PM (touche V).',prix:5,img:icon(mkItem('pmana',0)),owned:()=>false,buy:()=>buyPotion('pmana')},
-  {id:'egg',sec:'pet',nom:'Œuf de familier',desc:'À ouvrir dans le sac : un familier au hasard.',prix:300,img:icon(mkItem('egg',0)),owned:()=>false,buy:()=>buyPotion('egg')},
+  {id:'egg',sec:'pet',nom:'Œuf de familier',desc:'À faire éclore chez l\'éleveur du Village : un familier au hasard.',prix:300,img:icon(mkItem('egg',0)),owned:()=>false,buy:()=>buyPotion('egg')},
   {id:'croquette',sec:'pet',nom:'Croquette',desc:'3 familiers identiques + 1 croquette = tier supérieur (parc de la maison).',prix:500,img:icon(mkItem('croquette',0)),owned:()=>false,buy:()=>buyPotion('croquette')},
   {id:'sac2',sec:'sac',nom:'2e sac à dos',desc:'Onglet « Sac 2 » : 8 places de plus pour ce héros.',prix:250,img:backpackURL,owned:()=>C().inv.length>8,buy:()=>{const ch=C();while(ch.inv.length<16)ch.inv.push(null);bagTab=1;return true;}},
   {id:'sac3',sec:'sac',nom:'3e sac à dos',desc:'Onglet « Sac 3 » : 8 places de plus (après le 2e sac).',prix:1500,img:backpackURL,owned:()=>C().inv.length>16,buy:()=>{const ch=C();if(ch.inv.length<=8){note('Achète d\'abord le 2e sac');return false;}while(ch.inv.length<24)ch.inv.push(null);bagTab=2;return true;}},
@@ -6066,7 +6162,7 @@ function itemTipHTML(it){const K=KINDS[it.kind],col=itemCol(it);let h='<b style=
   if(it.slot==='arme'){L('Dégâts',armeDmg(it).join('–'));L('Projectiles',WB[it.kind].shots+(it.extra||0));L('Portée',WB[it.kind].range+' cases');if(WB[it.kind].rk)L('Vitesse d\'attaque','× '+WB[it.kind].rk);if(K.desc)L(K.desc);}
   if(it.slot==='armure')L('Armure','+'+armorOf(it));
   if(it.slot==='capa'){let d='';try{d=abilityInfo(it);}catch(e){}if(d)L(d);if(d&&!save.current&&/\d dégâts/.test(d))L('(dégâts indiqués pour 25 de puissance)');L('Coût',it.cost+' mana');}
-  if(it.slot==='conso'){const sp=K.sp;L(K.sp2?'+'+SP2_STEP[K.sp2]+' '+SL[K.sp2]+' définitif, au-delà des plafonds ('+SP2_MAX+' au plus)':sp?'+'+SP_DEF[sp].step+' '+SL[sp]+' définitif':K.key?'Ouvre un portail vers l\'Horloge Brisée':K.egg?'À faire éclore chez l\'éleveur':K.food?'Fait évoluer un familier':it.kind==='pvie'?'Rend 100 PV + 10 % de ta vie maximum':it.kind==='gvie'?'Rend 300 PV + 25 % de ta vie maximum':it.kind==='gmana'?'Rend '+GRANDE_POTION+' points de mana':'Rend 120 points de mana');}
+  if(it.slot==='conso'){const sp=K.sp;L(K.sp2?'+'+SP2_STEP[K.sp2]+' '+SL[K.sp2]+' définitif, au-delà des plafonds ('+SP2_MAX+' au plus)':sp?'+'+SP_DEF[sp].step+' '+SL[sp]+' définitif ('+SP_DEF[sp].n+' au plus par héros)':K.cleTour?'Souvenir de l\'ancienne Tour des Chevaliers : elle n\'a plus besoin de clef, celle-ci ne sert plus':K.key?'Ouvre un portail vers l\'Horloge Brisée':K.egg?'À faire éclore chez l\'éleveur':K.food?'Fait évoluer un familier':it.kind==='pvie'?'Rend 100 PV + 10 % de ta vie maximum':it.kind==='gvie'?'Rend 300 PV + 25 % de ta vie maximum':it.kind==='gmana'?'Rend '+GRANDE_POTION+' points de mana':'Rend 120 points de mana');}
   for(const k of Object.keys(it.stats||{}))if(it.stats[k])L(SL[k]||(k==='mreg'?'Régénération de mana':k),'+'+it.stats[k]+(k==='mreg'?'/s':''));
   {const fx=relFx(it);if(fx)h+='<div><span style="color:'+col+'">✦ '+fx+'</span></div>';}
   return h;}
@@ -6653,7 +6749,7 @@ function update(dt){
       if(m.key==='spectre_vide'){const mini=amHost?m.miniT>time:(m.sf||'').includes('M');if(mini!==!!m.mini){m.mini=mini;m.d=mini?MON_MINI:MON.spectre_vide;m.zT=time;if(Math.hypot(P.x-m.x,P.y-m.y)<16){burst(m.x,m.y,'#b45aff',mini?14:8,2.5);vfx.push({k:'ring',x:m.x,y:m.y,col:'#3ff0ff',t:0,life:0.3,r:mini?0.9:0.5});if(mini)sfx('zap',0.5);}}}
       const aggro=scene==='tour'?99:m.d.boss?16:scene==='dungeon'?11.5:10.4,myD=Math.hypot(P.x-m.x,P.y-m.y);
       // tirs : simulés localement par chaque joueur proche
-      if(m.d.cac&&P.hp>0&&!P.god&&canFight()&&myD<m.d.sz*0.42+0.45&&!(m.cacT>time)){m.cacT=time+0.9;m.atkT=time;burst(P.x,P.y,'#ff5a3a',8,2.2);hurtP(m.d.dmg,m.d.nom);}
+      if(m.d.cac&&P.hp>0&&!P.god&&canFight()&&myD<m.d.sz*0.42+0.45&&!(m.cacT>time)){m.cacT=time+1;m.atkT=time;burst(P.x,P.y,'#ff5a3a',8,2.2);hurtP(m.d.dmg,m.d.nom);}
       if(tg&&d<aggro&&myD<20){
         const lead=AI_LEAD[m.d.ai||0]*(Math.random()<0.78?1:0),tt=d/Math.max(1,m.d.bs),aimA=Math.atan2(tg.y+(tg.vy||0)*tt*lead-m.y,tg.x+(tg.vx||0)*tt*lead-m.x);
         m.cd-=dt;if(m.cd<=0){m.cd=m.d.cd*rnd(0.85,1.15);PAT[m.d.pat](m,aimA,tg);if(BOSS_ATK[m.key])m.atkT=time;if(myD<16)vfx.push({k:'ring',x:m.x,y:m.y,col:m.d.bc,t:0,life:0.2,r:m.d.sz*0.35});}
@@ -6882,7 +6978,10 @@ THX.v=THX.o;
   THX.u=th('bu','#04080e','#1c2c3a','#213444','#101c26','#7df0e0','#2a3e50','#33495e','#101c26');
   THX.w=th('bw','#0a0410','#2a1836','#321d40','#180c20','#b6f04a','#3e2450','#4a2c5e','#180c20');
   THX.z=th('bz','#04050e','#1a2044','#1f264e','#0e1228','#ffe27a','#2a3470','#333e80','#0e1228');
-  THX.i=th('gi','#040a14','#274866','#2d5274','#143049','#dff4ff','#2a4a6a','#356080','#0c1c2e');}
+  THX.i=th('gi','#040a14','#274866','#2d5274','#143049','#dff4ff','#2a4a6a','#356080','#0c1c2e');
+  THX.l=th('gl2','#02080c','#14262e','#182c36','#0a141a','#3ff0ff','#1e3440','#26404e','#0a141a'); // Repaire de Scylla : obsidienne et écume
+  THX.q=th('gq','#0e0804','#4a3418','#523a1c','#2a1c0c','#ffd23f','#6a4a24','#7a5a2c','#2a1c0c'); // Labyrinthe : pierre ocre et méandres d'or
+  THX.t=th('gt','#020206','#1c1c2c','#202034','#0c0c16','#ffe27a','#2a2a40','#34344e','#0c0c16');} // Tartare : nuit d'orage
 function drawLamp(t,X,Y,ph){const u=TS/16;if(t==='v')t='o';
   if(t==='c'){R(X-3*u,Y+2*u,6*u,u,'#9a7640');R(X-0.5*u,Y+u,u,3*u,'#9a7640');for(const o of [-3,0,3]){R(X+(o-0.5)*u,Y-1.5*u,u,3*u,'#f4f1e8');const f=Math.sin(time*11+ph+o)*u*0.4;R(X+(o-0.5)*u,Y-3.2*u+f,u,1.6*u,'#ffd23f');R(X+(o-0.25)*u,Y-2.6*u+f,u*0.5,u,'#fff6c0');}return;}
   if(t==='o'){const g=0.5+0.5*Math.sin(time*2+ph);R(X-u,Y-u,2*u,5*u,'#1a6a6a');for(let i=0;i<4;i++){const a=-Math.PI/2+(i-1.5)*0.5+Math.sin(time*2+ph+i)*0.15;R(X+Math.cos(a)*3*u-u*0.5,Y-u+Math.sin(a)*3*u-u*0.5,u,u,'#3ff0ff');}ctx.globalAlpha=0.25*g;ctx.fillStyle='#3ff0ff';ctx.beginPath();ctx.arc(X,Y-2*u,TS*0.45,0,TAU);ctx.fill();ctx.globalAlpha=1;return;}
@@ -7299,7 +7398,7 @@ function drawNexus(x0,x1,y0,y1){
   drawGateP(NPORT.x,NPORT.y);drawGateM(VPORT.x,VPORT.y);
   drawPortal(NPORT.x,NPORT.y,'#a45be8','#ff7bf2','Plaines Sauvages','',{frame:false});
   drawPortal(VPORT.x,VPORT.y,'#b8862b','#ffd96a','Maison','',{frame:false});
-  drawPortal(KPORT.x,KPORT.y,'#3a3c48','#d8dce8','Tour des Chevaliers',save.tour&&save.tour.v?'record : étage '+save.tour.v:'scellée · clef requise',{scale:0.85});
+  drawPortal(KPORT.x,KPORT.y,'#3a3c48','#d8dce8','Tour des Chevaliers',save.tour&&save.tour.v?'classement · record : étage '+save.tour.v:'classement de la saison',{scale:0.85});
   drawPortal(GPORT.x,GPORT.y,'#6a3ab0','#ffd23f','Guilde',GUILD?'['+GUILD.tag+']':'créer ou rejoindre',{scale:0.85});
 }
 const ICON_IMG={};
@@ -8111,7 +8210,7 @@ function render(){
   if(scene==='tuto')drawTutoHud();if(scene==='tour')drawTourHud();
   let prompt=null;
   if(nearKeyPortal())prompt=nearKeyPortal().ty==='v'?'E · Plonger dans La Vengeance sous-marine':'E · Entrer dans l\'Horloge Brisée (donjon à clef)';
-  else if(scene==='nexus'&&Math.hypot(P.x-KPORT.x,P.y-KPORT.y)<1.5)prompt=C().inv.some(it=>it&&it.kind==='cle_tour')?'E · Tour des Chevaliers : utiliser une Clef de la Tour':'Tour des Chevaliers · scellée (il faut une Clef de la Tour)';
+  else if(scene==='nexus'&&Math.hypot(P.x-KPORT.x,P.y-KPORT.y)<1.5)prompt=save.tourRun&&save.tourRun.pause&&save.tourRun.c===save.current?'E · Tour des Chevaliers : reprendre au palier '+save.tourRun.p:'E · Tour des Chevaliers (classement de la saison)';
   else if(scene==='nexus'&&Math.hypot(P.x-GPORT.x,P.y-GPORT.y)<1.5)prompt=GUILD?'E · Hall de guilde ['+GUILD.tag+']':'E · Guildes : créer ou rejoindre';
   else if(scene==='nexus'){if(Math.hypot(P.x-NPORT.x,P.y-NPORT.y)<1.6)prompt='E · Portails des Plaines Sauvages';else if(nearAltarObj())prompt={maudit:'E · Parler au Passeur',breche:'E · Parler au Veilleur de la Brèche',navig:'E · Parler au capitaine Morvan, le vieux navigateur',pup:'E · Changer de pseudo',statue:'E · Choisir un skin',altar:'E · Changement de classe',guide:'E · Parler à Maître Albéric (refaire le tutoriel)',quest:'E · Quêtes du jour',eleveur:'E · Éleveur de familiers (faire éclore les œufs)',srv:'E · Fontaine : changer de serveur',pecheur:'E · Parler au pêcheur (quête : tous les poissons)',table:'E · Table à dessin (1 pixel par minute)',craft:'E · Table enchantée (fabriquer un talisman)',hv:'E · Hôtel des ventes (acheter et vendre entre joueurs)',herbo:'E · Atelier de l\'herboriste (fabriquer des potions avec tes plantes)',forge:'E · Forgeron (améliorer ton équipement)'}[nearAltarObj()];else if(Math.hypot(P.x-SHOP.x,P.y-SHOP.y)<1.9)prompt='E · Parler au marchand';else if(Math.hypot(P.x-VPORT.x,P.y-VPORT.y)<1.5)prompt='E · Salle des coffres';else if(groundBag)prompt='G · Tout ramasser';else if(!FISH&&nearWater())prompt='E · Pêcher dans l\'étang';}
   else if(scene==='vault'&&VIS){if(Math.hypot(P.x-VBACK.x,P.y-VBACK.y)<1.4)prompt='E · Retour au Village';else if(Math.hypot(P.x-HDECO.x,P.y-HDECO.y)<1.6)prompt=VIS.aime?'Tu as déjà laissé un cœur ici ♥':'E · Laisser un cœur ♥ à '+VIS.n;else if(!FISH&&nearWater())prompt='E · Pêcher dans le lac';}
@@ -8566,7 +8665,6 @@ try{nexusMap=genNexus();MAP=nexusMap;}catch(err){console.error(err);if(window.__
 try{if(save.current&&save.chars[save.current]){updWho();enterNexus();const st=S();P.hp=st.tot.vie;P.mp=st.tot.mana;}
 else{save.current=null;P.x=13;P.y=11;openSelect();}}catch(err){console.error(err);if(window.__errDem)window.__errDem('héros',err);try{P.x=13;P.y=11;scene='nexus';MAP=nexusMap;openSelect();}catch(e){}}
 for(const [quoi,f] of [['inventaire',()=>setTab('inv')],['joueurs',()=>renderPlayers()],['curseur',()=>applyCursor()],['musique',()=>setSong('lobby')],['réseau',()=>initRoom()]]){try{f();}catch(err){console.error(err);if(window.__errDem)window.__errDem(quoi,err);}}
-window.__T=src=>eval(src);/*TESTT*/
 function installDebug(){if(window.__rm)return;window.__rm={P,save,tp:(x,y)=>{P.x=x;P.y=y;},realm:()=>{enterRealm();},dungeon:(id,t)=>enterDungeon(id||12345,t),astral:()=>({stars,minis:MAP.minis,start:MAP.start,hub:MAP.hub}),toMini:i=>{const g=MAP.minis[i];P.x=g.x;P.y=g.y+3;},toHub:()=>{P.x=MAP.hub.x+.5;P.y=MAP.hub.y+4;},toGate:()=>{const g=MAP.doors[1];P.x=g.x+.5;P.y=g.y+3;},setStars:v=>{if(amHost)setStars(v);},state:()=>({scene,host:amHost,mons:monsters.length,near:monsters.filter(m=>Math.hypot(m.x-P.x,m.y-P.y)<12).map(m=>m.key),eb:eb.length,gold:save.gold,inv:C()&&C().inv.length,portals:dportals.length,zone:curZone}),gold:n=>{save.gold+=n;},kill:()=>{for(const m of monsters)if(Math.hypot(m.x-P.x,m.y-P.y)<14){if(amHost)hostKill(m);}},portal:()=>{dportals.push({id:++monId,x:P.x+2,y:P.y,life:60});},give:k=>{const f=freeInv();if(f>=0)C().inv[f]=mkItem(k,0);invDirty=true;},arena:()=>({fight,altar:MAP.altar,doors:MAP.doors&&MAP.doors.length,inside:inArena(P.x,P.y),arena:MAP.arena}),toAltar:()=>{P.x=MAP.altar.x;P.y=MAP.altar.y+2;},toDoor:()=>{const d=MAP.doors[0],a=MAP.altar;const vx=(d.x+.5)-a.x,vy=(d.y+.5)-a.y,l=Math.hypot(vx,vy);P.x=d.x+.5+vx/l*1.5;P.y=d.y+.5+vy/l*1.5;return{x:d.x,y:d.y};},lowBoss:()=>{for(const m of monsters)if(m.d.boss)m.hp=Math.min(m.hp,300);},die:()=>die('Test'),god:()=>{P.god=true;}};}
 requestAnimationFrame(frame);
 /* ================= écran titre : l'Horloge Brisée, violette, tourne à l'envers ================= */

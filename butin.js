@@ -36,6 +36,7 @@ function objetT7(R, cls) {
 const MAUDIT_POTION = 0.01, MAUDIT_POTION_BOSS = 0.05, MAUDIT_RELIQUE = 0.01; // mode maudit
 const TAUX_RESSOURCE = 0.2; // ressource de talisman sur un boss de donjon (20 %, 10 ressources par talisman)
 const DONJONS_T7 = 'ah', TAUX_T7 = 0.05;
+const ILE_DJ = { l: [0.7, 0.3], q: [0.85, 0.5], t: [1, 0.7] }; // élixir, Tier 8 sur le boss de chaque donjon de l'île
 const TAUX_ELIXIR = 0.01; // Île aux Colosses : le Tier 8 est le seul équipement qui tombe (1 % sur la grève, 2 % sur la steppe, 3 % sur les cimes : MON[k].t8), plus 1 % d'élixir
 function objetT8(R, cls) {
   const c = R.CLASSES[cls] || R.CLASSES[Object.keys(R.CLASSES)[0]], r = Math.random(), mien = Math.random() < 0.55;
@@ -85,13 +86,16 @@ function tirer(R, key, cls, scene, sc, opt) {
   // Chronos : une Relique de Chronos à chaque fois (une chance sur deux qu'elle soit pour la classe du joueur)
   if (key === 'chronos') { const tous = Object.keys(R.KINDS).filter(k => R.KINDS[k].alt && !R.KINDS[k].art), miens = tous.filter(k => (R.KINDS[k].cls || []).includes(cls));
     if (tous.length) out.it.push(R.mkItem(pick(miens.length && Math.random() < 0.5 ? miens : tous), 7)); }
-  // Chronos : une chance sur deux de lâcher une Clef de la Tour
-  if (key === 'chronos' && R.KINDS.cle_tour && Math.random() < 0.5) { out.cleTour = 1; out.it.push(R.mkItem('cle_tour', 0)); }
+  // (la Clef de la Tour ne tombe plus depuis 0.0.94 : la Tour n'a plus besoin de clef)
   // ressource de boss (talismans) : 20 % sur le boss du donjon où l'on se trouve
   if (d.boss && typeof sc === 'string' && sc[0] === 'd' && R.TALIS && R.TALIS[sc[1]]) { const T = R.DTYPES[sc[1]]; if (T && (T.bk === key || T.bk2 === key) && Math.random() < TAUX_RESSOURCE) out.res = sc[1]; }
   if ((key === 'dieu_fou' || key === 'colosse') && R.TALIS && Math.random() < TAUX_RESSOURCE) out.res = key === 'dieu_fou' ? 'j' : 'x';
   if (key === 'devoreur' && typeof sc === 'string' && sc[1] === 'a' && R.TALIS && R.TALIS.a && Math.random() < TAUX_RESSOURCE) out.res = 'a'; // l'Observatoire n'a pas de « bk » : sa ressource tombe sur le Dévoreur // ressource des deux boss du centre de l'île
-  if (d.ile === 2 && scene === 'realm') {
+  // donjons de l'Île aux Colosses (0.0.95) : le boss lâche un élixir (70 / 85 / 100 %) et un objet Tier 8 (30 / 50 / 70 %)
+  if (donjon && ILE_DJ[sc[1]] && R.DTYPES[sc[1]] && R.DTYPES[sc[1]].bk === key) { const [pe, p8] = ILE_DJ[sc[1]];
+    if (Math.random() < pe) { const k = pick([...R.SK, 'armure']); if (R.KINDS['sp2_' + k]) { out.elixir = 1; out.it.push(R.mkItem('sp2_' + k, 0)); } }
+    if (Math.random() < p8) { const o8 = objetT8(R, cls); if (o8) { out.t8 = 1; out.it.push(o8); } } }
+  if (d.ile === 2 && (scene === 'realm' || (donjon && ILE_DJ[sc[1]]))) {
     if (Math.random() < (+d.t8 || 0)) { const o8 = objetT8(R, cls); if (o8) { out.t8 = 1; out.it.push(o8); } }
     if (Math.random() < TAUX_ELIXIR) { const k = pick([...R.SK, 'armure']); if (R.KINDS['sp2_' + k]) { out.elixir = 1; out.it.push(R.mkItem('sp2_' + k, 0)); } }
   }

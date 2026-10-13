@@ -26,7 +26,7 @@ function chargerRegles(html) {
     const c = html.indexOf('const MKEYS=Object.keys(MON);'), z0 = html.indexOf('const ZONES=['), z1 = html.indexOf('const DUNGEON_POOL='), d0 = html.indexOf('const DTYPES={'), d1 = html.indexOf('const REG_DUN=');
     if (c < 0 || z0 < 0 || z1 < 0 || d0 < 0 || d1 < 0) throw new Error('monstres introuvables');
     const code2 = code + '\n' + html.slice(b, c) + '\nconst MKEYS=Object.keys(MON);\n' + html.slice(z0, z1) + '\n' + html.slice(d0, d1);
-    R = new Function('__G', 'with(__G){' + code2 + '\n;return {KINDS,CLASSES,SK,SP_DEF,mkItem,MON,MKEYS,ZONES,DTYPES,WB,TALIS,prisOff:typeof prisOff==="function"?prisOff:null};}')(bac());
+    R = new Function('__G', 'with(__G){' + code2 + '\n;return {migrSaveT8:typeof migrSaveT8==="function"?migrSaveT8:null,KINDS,CLASSES,SK,SP_DEF,mkItem,MON,MKEYS,ZONES,DTYPES,WB,TALIS,prisOff:typeof prisOff==="function"?prisOff:null};}')(bac());
   } catch (e) {
     console.error('[arbitre] monstres non chargés (butin serveur désactivé) :', e.message);
     R = new Function('__G', 'with(__G){' + code + '\n;return {KINDS,CLASSES,SK,SP_DEF,mkItem,WB,prisOff:typeof prisOff==="function"?prisOff:null};}')(bac());
@@ -147,6 +147,8 @@ const jourDe = d => d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate();
 function verifier(ancien, nouveau, ctx) {
   const pb = [];
   if (!R) return { ok: true };
+  // 0.0.95 : les objets Tier 8 de l'ancienne sauvegarde sont ramenés aux chiffres actuels, comme le fait le jeu
+  if (R.migrSaveT8 && ancien && typeof ancien === 'object' && JSON.stringify(ancien).includes('8"')) { try { ancien = R.migrSaveT8(JSON.parse(JSON.stringify(ancien))); } catch {} }
   const deja = ancien && ancien.chars ? new Set(objets(ancien).map(signature)) : null;
   const ctrl = it => { if (it === null) return null; if (it && typeof it === 'object' && it.kind && (deja && deja.has(signature(it)) || CONNUS.has(signature(it)))) return null; return deja ? objetValide(it) : objetBorne(it); };
   if (!nouveau || typeof nouveau !== 'object' || !nouveau.chars || typeof nouveau.chars !== 'object') return { ok: false, raisons: ['sauvegarde illisible'] };
