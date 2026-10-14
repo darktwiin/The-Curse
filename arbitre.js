@@ -46,6 +46,13 @@ function chargerRegles(html) {
   { const m = html.match(/PET_LEG_XP=(\d+)/); R.PET_LEG_XP = m ? +m[1] : 5000; }
   { const m = html.match(/TALIS_COUT=(\d+)/); R.TALIS_COUT = m ? +m[1] : 10; }
   { const m = html.match(/MAITRISE_XP=(\d+)/); R.MAITRISE_XP = m ? +m[1] : 300000; }
+  // 0.0.99 : prestige gagné en jouant et dépensé à l'Oracle · niveau maximum ouvert par des paliers
+  const objet = (re, def) => { const m = html.match(re); if (!m) return def; try { return Function('return (' + m[1] + ')')(); } catch { return def; } };
+  R.ORACLE_PRIX = objet(/const ORACLE_PRIX=(\{[^}]*\})/, { sac: 1500, breche: 8000, pskin: 800, hskin: 1200, talis: 600, pierre: 400 });
+  R.PRES_GAIN = objet(/PRES_GAIN=(\{[^}]*\})/, { boss: 5, jour: 25, cent: 10, quete: 20 });
+  R.PRES_DJ = objet(/PRES_DJ=(\{[^}]*\})/, {}); // 0.0.99 : prestige du boss final de chaque donjon (Vengeance : par poisson)
+  R.PALIERS = objet(/const PALIERS=(\{[\s\S]*?\}\});/, null);
+  R.PRES_PS = objet(/PRES_PS=(\[[^\]]*\])/, ['phenix', 'golemor', 'meduse']);
   return R;
 }
 
@@ -69,8 +76,16 @@ const presObjet = it => { if (!it || !R || !R.KINDS[it.kind] || R.KINDS[it.kind]
 const presEquip = ch => { const best = {}; for (const it of [...(ch.equip || []), ...(ch.inv || [])]) if (it && ['arme', 'capa', 'armure', 'anneau'].includes(it.slot)) best[it.slot] = Math.max(best[it.slot] || 0, presObjet(it)); return Object.values(best).reduce((a, v) => a + v, 0); };
 // niveau maximum d'une classe : le sien (caps), ou l'ancien niveau maximum du compte s'il est plus haut
 const maitriseXP = () => R.MAITRISE_XP || 300000;
-const capDe0 = (sv, cls) => Math.max(20, Math.min(25, Math.max(sv.capLvl | 0 || 20, (sv.caps && typeof sv.caps === 'object' && sv.caps[cls]) | 0 || 20)));
-const capDe = (sv, cls) => { const c = capDe0(sv, cls); return c >= 25 && Array.isArray(sv.titles) && sv.titles.includes('m_' + cls) ? 30 : c; }; // 26 à 30 : classe maîtrisée
+// 0.0.99 : chaque classe a son niveau maximum (20 à 30), ouvert palier par palier (save.caps)
+const capDe = (sv, cls) => Math.max(20, Math.min(30, (sv && sv.caps && typeof sv.caps === 'object' && sv.caps[cls]) | 0 || 20)), capDe0 = capDe;
+// ce qu'il faut pour franchir le palier L (le niveau L) avec la classe cls : chasse par zone, record de la Tour (vu par le serveur), maîtrise, boss
+function palierOk(sv, cls, L, tourMax) { const P0 = R.PALIERS && R.PALIERS[L]; if (!P0) return false; const c = (sv.chasse && sv.chasse[cls]) || {};
+  for (const [z, n] of (P0.z || [])) { const Z = R.ZONES && R.ZONES[z]; if (!Z) return false; for (const k of Z.pool) if (R.MON[k] && !R.MON[k].boss && ((c[k] | 0) < n)) return false; }
+  if (P0.maitrise && !(Array.isArray(sv.titles) && sv.titles.includes('m_' + cls))) return false;
+  if (P0.boss && (c[P0.boss] | 0) < 1) return false;
+  return (tourMax | 0) >= (P0.tour | 0); }
+// classes dont le héros est à son niveau maximum (le prestige ne se gagne que là)
+const auMaxDe = sv => { const o = {}; try { for (const [c, ch] of Object.entries((sv && sv.chars) || {})) if (ch && (ch.lvl | 0) >= capDe(sv, c)) o[c] = 1; } catch {} return o; };
 const prestigeGain = ch => { const spT = Object.values(ch.sp || {}).reduce((a, v) => a + (v | 0), 0); return Math.round(((ch.lvl | 0) + Math.floor((ch.kills | 0) / 25) + 2 * spT + 3 * (ch.bosses | 0) + 2 * (ch.gp | 0)) * (1 + presEquip(ch) / 100)); };
 
 // objet valide ? (comparé à ce que le jeu fabrique pour le même type et le même tier)
@@ -84,7 +99,7 @@ function objetValide(it) {
   if (K.t7 && it.tier !== 6) return 'objet Tier 7 mal formé';
   if (it.slot !== K.slot) return 'emplacement incohérent';
   if (it.stats && typeof it.stats !== 'object') return 'statistiques illisibles';
-  if (it.up != null && it.up !== 0 && (K.slot === 'conso' || !estEntier(it.up, 0, 2))) return 'niveau de forge impossible';
+  if (it.up != null && it.up !== 0 && (K.slot === 'conso' || !estEntier(it.up, 0, 3))) return 'niveau de forge impossible';
   if (K.slot === 'conso') { if (Object.keys(it.stats || {}).some(k => it.stats[k])) return 'consommable avec statistiques'; return null; }
   const ref = R.mkItem(it.kind, it.tier);
   if (K.slot === 'anneau') {
@@ -145,6 +160,7 @@ const jourDe = d => d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate();
 // ---------- la vérification ----------
 // ctx : { seaux, dons:{cursite,or,prestige,objets}, premiere (migration depuis le navigateur) }
 function verifier(ancien, nouveau, ctx) {
+  let presQuetes = 0, presDepense = 0, pierresAchetees = 0;
   const pb = [];
   if (!R) return { ok: true };
   // 0.0.95 : les objets Tier 8 de l'ancienne sauvegarde sont ramenés aux chiffres actuels, comme le fait le jeu
@@ -159,20 +175,23 @@ function verifier(ancien, nouveau, ctx) {
     const cap = capDe(nouveau, cls);
     if (!estEntier(ch.lvl, 1, cap)) pb.push('niveau impossible (' + ch.lvl + ')');
     if (!Array.isArray(ch.equip) || ch.equip.length !== 4) pb.push('équipement illisible');
-    if (!Array.isArray(ch.inv) || ![8, 16, 24].includes(ch.inv.length)) pb.push('sac illisible');
+    if (!Array.isArray(ch.inv) || ![8, 16, 24, 32].includes(ch.inv.length)) pb.push('sac illisible');
+    if (ch.inv.length === 32 && !(ancien.chars[cls] && ancien.chars[cls].inv && ancien.chars[cls].inv.length >= 24) && !(ancien.chars[cls] && ancien.chars[cls].inv && ancien.chars[cls].inv.length >= 32)) { if (!(ancien.chars[cls])) pb.push('4e sac sans les autres'); }
     for (const k of Object.keys(ch.sp || {})) { if (!R.SP_DEF[k] || !estEntier(ch.sp[k], 0, R.SP_DEF[k].n)) pb.push('potions de caractéristique impossibles'); }
     for (const it of [...(ch.equip || []), ...(ch.inv || [])]) { const e = ctrl(it); if (e) pb.push(e); }
   }
   if (nouveau.vault) {
-    if (!estEntier(nouveau.vault.n, 1, 10) || !Array.isArray(nouveau.vault.c) || nouveau.vault.c.length > 10) pb.push('coffres illisibles');
+    if (!estEntier(nouveau.vault.n, 1, 10) || !estEntier(nouveau.vault.cu ?? 0, 0, 5) || !Array.isArray(nouveau.vault.c) || nouveau.vault.c.length > 10) pb.push('coffres illisibles');
     else for (const c of nouveau.vault.c) { if (!Array.isArray(c) || c.length > 8) { pb.push('coffre illisible'); continue; } for (const it of c) { const e = ctrl(it); if (e) pb.push(e); } }
   }
   if (nouveau.colis != null) { if (!Array.isArray(nouveau.colis) || nouveau.colis.length > 200) pb.push('coffre de livraison illisible'); else for (const it of nouveau.colis) { const e = ctrl(it); if (e) pb.push(e); } }
   for (const k of ['gold', 'cursite', 'prestige']) if (!estNombre(nouveau[k] ?? 0, 0, 1e9)) pb.push(k + ' impossible');
   if (nouveau.capLvl != null && !estEntier(nouveau.capLvl, 20, 25)) pb.push('niveau maximum impossible');
-  // niveau maximum par classe (save.caps) : l'ancien niveau maximum du compte (capLvl) reste acquis mais ne peut plus monter
   if ((nouveau.capLvl | 0 || 20) > (ancien.capLvl | 0 || 20)) pb.push('niveau maximum du compte modifié');
-  if (nouveau.caps != null) { if (typeof nouveau.caps !== 'object' || Array.isArray(nouveau.caps)) pb.push('niveaux maximum illisibles'); else for (const k of Object.keys(nouveau.caps)) if (!R.CLASSES[k] || !estEntier(nouveau.caps[k], 20, 25)) pb.push('niveau maximum de classe impossible'); }
+  if ((nouveau.presEpoch | 0) < (ancien.presEpoch | 0)) pb.push('sauvegarde d\'avant la remise à zéro du prestige');
+  if (nouveau.caps != null) { if (typeof nouveau.caps !== 'object' || Array.isArray(nouveau.caps)) pb.push('niveaux maximum illisibles'); else for (const k of Object.keys(nouveau.caps)) if (!R.CLASSES[k] || !estEntier(nouveau.caps[k], 20, 30)) pb.push('niveau maximum de classe impossible'); }
+  // paliers franchis : chacun doit être rempli (chasse, Tour, maîtrise, boss)
+  for (const cls of Object.keys(R.CLASSES)) for (let L = capDe(ancien, cls) + 1; L <= capDe(nouveau, cls); L++) if (!palierOk(nouveau, cls, L, (ctx.tourMax || {})[cls])) { pb.push('palier de niveau non rempli (' + cls + ' ' + L + ')'); break; }
   for (const p of (nouveau.pets || [])) if (!p || !R.PET_KEYS.includes(p.k) || !estEntier(p.t | 0, 0, 4) || !estEntier(p.x ?? 0, 0, 1e6)) pb.push('familier impossible');
   // familiers déjà là : le rang ne monte jamais tout seul, sauf l'éveil (Épique ou Ultime -> Légendaire) une fois la jauge pleine ; la jauge suit les monstres tués
   { const avant = new Map((ancien.pets || []).map(p => [p.id, p])), dk = Object.entries(nouveau.chars || {}).reduce((a, [cls, c]) => a + Math.max(0, ((c && c.kills) | 0) - (((ancien.chars || {})[cls] || {}).kills | 0)), 0);
@@ -233,21 +252,26 @@ function verifier(ancien, nouveau, ctx) {
     if (Math.abs((nouveau.iquests.day | 0) - today) > 1) pb.push('quêtes de l\'île d\'un autre jour'); else bonusCursite += R.ILEQ_BONUS;
   }
 
-  // --- prestige : seulement par une mort définitive (calcul exact) ou un don du serveur ---
-  let presOk = (dons.prestige || 0);
-  for (const [cls, ch0] of Object.entries(ancien.chars)) { const ch1 = nouveau.chars[cls]; if (!ch1 || ((ch1.lvl | 0) === 1 && (ch1.kills | 0) < (ch0.kills | 0))) presOk += prestigeGain(ch0); }
-  // niveaux max achetés au Gardien du Prestige
-  let presDepense = 0;
-  for (const cls of Object.keys(R.CLASSES)) for (let l = capDe0(ancien, cls) + 1; l <= capDe0(nouveau, cls); l++) presDepense += R.CAP_COST[l] || 99999;
-  if (d('prestige') > presOk - presDepense + 0.5) pb.push(presDepense > 0 ? 'niveau maximum non payé' : 'prestige injustifié (+' + Math.round(d('prestige')) + ')');
+  // --- prestige (0.0.99) : il vient du serveur (monstres, boss, donjons : dons.prestige) et des quêtes du jour faites au niveau maximum ; il se dépense à l'Oracle ---
+  const OP = R.ORACLE_PRIX || {}, PG = R.PRES_GAIN || {}, PSP = R.PRES_PS || [];
+  presQuetes = 0; { const q0 = ancien.quests || {}, q1 = nouveau.quests || {}, cur = nouveau.current && nouveau.chars[nouveau.current]; if (cur && (cur.lvl | 0) >= capDe(nouveau, nouveau.current) && Array.isArray(q1.got)) q1.got.forEach((g, i) => { if (g && !(q0.day === q1.day && Array.isArray(q0.got) && q0.got[i])) presQuetes += PG.quete || 20; }); }
+  presDepense = +ctx.donGuilde || 0;
+  if (nouveau.pAch && nouveau.pAch.breche && !(ancien.pAch && ancien.pAch.breche)) presDepense += OP.breche || 8000;
+  pierresAchetees = Math.max(0, ((nouveau.pAch && nouveau.pAch.pierre) | 0) - ((ancien.pAch && ancien.pAch.pierre) | 0)); presDepense += pierresAchetees * (OP.pierre || 400);
+  { const tn = o => Object.values((o && typeof o === 'object' && !Array.isArray(o)) ? o : {}).reduce((a, v) => a + Math.max(0, Math.min(5, v | 0)), 0); presDepense += Math.max(0, tn(nouveau.talisNiv) - tn(ancien.talisNiv)) * (OP.talis || 600);
+    if (nouveau.talisNiv != null) { if (typeof nouveau.talisNiv !== 'object' || Array.isArray(nouveau.talisNiv)) pb.push('talismans renforcés illisibles'); else for (const [t, v] of Object.entries(nouveau.talisNiv)) if (!R.TALIS || !R.TALIS[t] || !estEntier(v, 0, 5) || ((v | 0) > 0 && !(nouveau.talis && nouveau.talis[t]))) { pb.push('talisman renforcé impossible'); break; } } }
+  for (const [cls, ch1] of Object.entries(nouveau.chars)) { const ch0 = ancien.chars[cls]; if (ch1.inv.length >= 32 && !(ch0 && ch0.inv.length >= 32)) presDepense += OP.sac || 1500; }
+  for (const k of Object.keys(nouveau.skins || {})) if (/:oracle$/.test(k) && !(ancien.skins || {})[k]) presDepense += OP.hskin || 1200;
+  for (const id of PSP) if (nouveau.cosm && nouveau.cosm.own && nouveau.cosm.own['ps:' + id] && !(ancien.cosm && ancien.cosm.own && ancien.cosm.own['ps:' + id])) presDepense += OP.pskin || 800;
+  if (d('prestige') > (dons.prestige || 0) + presQuetes - presDepense + 0.5) pb.push(presDepense > 0 ? 'achat de l\'Oracle non payé' : 'prestige injustifié (+' + Math.round(d('prestige')) + ')');
 
   // --- Cursite : jamais créée par le joueur ---
-  const skins0 = Object.keys(ancien.skins || {}).length, skins1 = Object.keys(nouveau.skins || {}).length;
+  const skins0 = Object.keys(ancien.skins || {}).filter(k => !/:oracle$/.test(k)).length, skins1 = Object.keys(nouveau.skins || {}).filter(k => !/:oracle$/.test(k)).length;
   let cursiteDepenseMin = Math.max(0, skins1 - skins0) * 100;
   // apparences du compte (skins de familier, pierres tombales, coffres de livraison, couleur du pseudo) : chaque nouvelle clef se paie en Cursite
   { const PRIX_COSM = { ps: 1000, tb: 150, cl: 250, nc: 300 }, own0 = (ancien.cosm && ancien.cosm.own) || {}, own1 = (nouveau.cosm && nouveau.cosm.own) || {}, clefs = Object.keys(own1);
     if (nouveau.cosm != null && (typeof nouveau.cosm !== 'object' || Array.isArray(nouveau.cosm) || clefs.length > 80)) pb.push('apparences impossibles');
-    else for (const k of clefs) { const m = /^(ps|tb|cl):[a-z0-9]{2,14}$/.exec(k) || (k === 'nc' ? ['nc', 'nc'] : null); if (!m) { pb.push('apparence inconnue'); break; } if (!own0[k]) cursiteDepenseMin += PRIX_COSM[m[1]]; } }
+    else for (const k of clefs) { const m = /^(ps|tb|cl):[a-z0-9]{2,14}$/.exec(k) || (k === 'nc' ? ['nc', 'nc'] : null); if (!m) { pb.push('apparence inconnue'); break; } if (!own0[k] && !(m[1] === 'ps' && (R.PRES_PS || []).includes(k.slice(3)))) cursiteDepenseMin += PRIX_COSM[m[1]]; } }
   // boost d'expérience acheté en Cursite (1 h)
   // boosts en réserve (offerts par un pack) : ils viennent du serveur, et en utiliser un ne coûte rien
   const bs0 = ancien.boostStock | 0, bs1 = nouveau.boostStock | 0; let boostsRestants = dons.boosts | 0;
@@ -292,6 +316,7 @@ function verifier(ancien, nouveau, ctx) {
   const etape2 = !!R.MON;
   let orDepenseMin = 0;
   for (let n = (ancien.vault && ancien.vault.n) || 1; n < ((nouveau.vault && nouveau.vault.n) || 1); n++) { if (n >= 5) cursiteDepenseMin += R.VAULT_CU[n - 5] || 0; else orDepenseMin += R.VAULT_PRICES[n] || 0; }
+  for (let n = (ancien.vault && ancien.vault.cu) | 0; n < ((nouveau.vault && nouveau.vault.cu) | 0); n++) cursiteDepenseMin += R.VAULT_CU[n] || 0; // 0.0.99 : coffres Cursite achetables sans les autres
   // styles de maison : chacun (sauf le Chalet) coûte de la Cursite ; celui qui était déjà porté avant la mise à jour reste acquis
   { const h0 = (ancien.house && typeof ancien.house === 'object') ? ancien.house : {}, h1 = (nouveau.house && typeof nouveau.house === 'object') ? nouveau.house : {}, s0 = (h0.skins && typeof h0.skins === 'object') ? h0.skins : null, s1 = (h1.skins && typeof h1.skins === 'object' && !Array.isArray(h1.skins)) ? h1.skins : {};
     const leg = k => !s0 && (h0.skin === k || (h0.skin === 'sylve' && k === 'sombre') || (h0.skin === 'astral' && k === 'paradis'));
@@ -320,7 +345,7 @@ function verifier(ancien, nouveau, ctx) {
       for (const k of Object.keys(r1)) { if (!RK.includes(k) || !estEntier(r1[k], 0, 20)) { pb.push('rune impossible'); continue; } for (let L = Math.max(r0[k] | 0, runeMax0[k] | 0) + 1; L <= (r1[k] | 0); L++) if (!accordR.has(k + '|' + L)) { pb.push('rune non accordée par le serveur (' + k + ' ' + L + ')'); break; } }
       if (n.eq != null && !(RK.includes(n.eq) && (r1[n.eq] | 0) > 0)) pb.push('rune sertie sans la posséder');
       if (!estEntier(n.diff ?? 0, 0, 20)) pb.push('difficulté impossible'); else for (let d = (a0.diff | 0) + 1; d <= (n.diff | 0); d++) if (!accord.has(cls + '|d|' + d) && d === (n.diff | 0)) pb.push('difficulté de Brèche non terminée (' + d + ')');
-      if (n.arbre != null) { if (!Array.isArray(n.arbre) || n.arbre.length > 15 || new Set(n.arbre).size !== n.arbre.length || n.arbre.some(id => typeof id !== 'string' || !/^-?[0-4],-?[0-4]$/.test(id))) pb.push('arbre impossible'); }
+      if (n.arbre != null) { if (!Array.isArray(n.arbre) || n.arbre.length > 30 || new Set(n.arbre).size !== n.arbre.length || n.arbre.some(id => typeof id !== 'string' || !/^-?[0-4],-?[0-4]$/.test(id))) pb.push('arbre impossible'); else if (n.arbre.some(id => /,-/.test(id)) && !(nouveau.pAch && nouveau.pAch.breche)) pb.push('page 2 de l\'arbre sans l\'avoir ouverte'); }
     } } }
   // --- progression des héros ---
   let gainNiv = 0, gainKills = 0, gainBoss = 0, gainGloire = 0, gainXP = 0, gainXPI = 0, kits = 0;
@@ -331,8 +356,10 @@ function verifier(ancien, nouveau, ctx) {
     let ch0 = ancien.chars[cls];
     // mode maudit : un héros maudit ne peut pas « continuer » en perdant des niveaux
     if (ch0 && ch0.maudit) { const zero = (ch1.lvl | 0) <= 1 && (ch1.kills | 0) === 0;
-      // le pacte peut être rompu auprès du Passeur, mais un héros maudit qui meurt repart de zéro : jamais de niveaux perdus « à la place »
-      if (!zero && (ch1.lvl | 0) < (ch0.lvl | 0)) pb.push('héros maudit : mort non définitive (' + cls + ')'); }
+      // un héros maudit qui meurt repart de zéro : jamais de niveaux perdus « à la place »
+      if (!zero && (ch1.lvl | 0) < (ch0.lvl | 0)) pb.push('héros maudit : mort non définitive (' + cls + ')');
+      // 0.0.99 : le pacte ne se rompt plus — seule la mort (retour au niveau 1) l'efface
+      if (!zero && !ch1.maudit) pb.push('pacte du Passeur rompu sans mort (' + cls + ')'); }
     if (ch1.maudit && !(ch0 && ch0.maudit) && (ch1.lvl | 0) < 20) pb.push('malédiction avant le niveau 20 (' + cls + ')');
     // héros neuf ou mort définitive : il repart de zéro avec son équipement de départ
     if (!ch0 || ((ch1.lvl | 0) <= (ch0.lvl | 0) && (ch1.kills | 0) < (ch0.kills | 0))) { kits++; ch0 = { lvl: 1, xp: 0, gxp: 0, gp: 0, kills: 0, bosses: 0 }; }
@@ -341,11 +368,15 @@ function verifier(ancien, nouveau, ctx) {
     gainXP += Math.max(0, xpTot(ch1) - xpTot(ch0)); gainXPI += Math.max(0, xpHaut(ch1) - xpHaut(ch0));
     { const m0 = Math.max(0, +ch0.mxp || 0), m1 = +ch1.mxp || 0, gl = c => Math.max(0, +c.gxp || 0) + (c.gp | 0) * R.GLORY_XP;
       if (!(m1 >= 0) || m1 > maitriseXP() + 0.5) pb.push('maîtrise impossible (' + cls + ')');
-      else if (m1 > m0 + 0.5) { if ((ch1.lvl | 0) < 25) pb.push('maîtrise avant le niveau 25 (' + cls + ')'); else if (m1 - m0 > gl(ch1) - gl(ch0) + 1) pb.push('maîtrise gagnée trop vite (' + cls + ')'); } }
+      else if (m1 > m0 + 0.5) { if ((ch1.lvl | 0) < 25) pb.push('maîtrise avant le niveau 25 (' + cls + ')'); else gainXP += m1 - m0; } } // 0.0.99 : la maîtrise consomme l'expérience donnée par le serveur
   }
+  // chasse (0.0.99) : un monstre compté par le serveur = +1 pour son espèce, dans la classe jouée
+  { const c0 = ancien.chasse || {}, c1 = nouveau.chasse; let plus = 0;
+    if (c1 != null) { if (typeof c1 !== 'object' || Array.isArray(c1)) pb.push('chasse illisible'); else for (const [cls, o] of Object.entries(c1)) { if (!R.CLASSES[cls] || !o || typeof o !== 'object') { pb.push('chasse illisible'); break; } for (const [k, v] of Object.entries(o)) { if (!R.MON[k] || !estEntier(v, 0, 9999)) { pb.push('chasse impossible'); break; } plus += Math.max(0, (v | 0) - (((c0[cls] || {})[k]) | 0)); } } }
+    if (etape2 && plus > gainKills + 2) pb.push('chasse gonflée (+' + (plus - gainKills) + ')'); }
   // compteurs du classement (prestige total gagné, monstres tués) : ils ne montent pas plus vite que ce qui les nourrit
   { const s0 = ancien.stats || {}, s1 = nouveau.stats || {};
-    if ((+s1.presTot || 0) - (+s0.presTot || 0) > Math.max(0, d('prestige')) + 0.5 && (+s1.presTot || 0) > (nouveau.prestige || 0)) pb.push('prestige total gonflé');
+    if ((+s1.presTot || 0) - (+s0.presTot || 0) > (dons.prestige || 0) + presQuetes + 0.5) pb.push('prestige total gonflé');
     if ((+s1.kills || 0) - (+s0.kills || 0) > gainKills + 0.5 && (+s1.kills || 0) > Object.values(nouveau.chars).reduce((a, c) => a + (c.kills | 0), 0)) pb.push('monstres tués gonflés (classement)'); }
   if (!etape2) { // étape 1 seulement : sans butin serveur, on limite le rythme
     if (gainNiv > sx.niveaux + 0.01) pb.push('niveaux gagnés trop vite (+' + gainNiv + ')'); else sx.niveaux -= gainNiv;
@@ -380,11 +411,11 @@ function verifier(ancien, nouveau, ctx) {
     { const pp = k.split('|'), upN = pp.length > 3 && pp[pp.length - 1][0] === '+' ? +pp[pp.length - 1].slice(1) : 0;
       if (upN) { const base = pp.slice(0, -1).join('|'), prec = upN > 1 ? base + '|+' + (upN - 1) : base;
         // objets à fondre : 2 objets identiques non améliorés ; pour un anneau (bonus tirés au hasard), 2 anneaux du même tier
-        const groupe = R.KINDS[pp[0]] && R.KINDS[pp[0]].slot === 'anneau' ? [...c0.keys()].filter(q => q.startsWith(pp[0] + '|' + pp[1] + '|') && !/\|\+\d$/.test(q)) : [base];
+        const PIERRE = 'pierre_asc|0|[]', groupe = upN === 3 ? [PIERRE] : R.KINDS[pp[0]] && R.KINDS[pp[0]].slot === 'anneau' ? [...c0.keys()].filter(q => q.startsWith(pp[0] + '|' + pp[1] + '|') && !/\|\+\d$/.test(q)) : [base], besoin = upN === 3 ? 1 : 2; // +3 : une pierre d'ascension au lieu de 2 objets
         while (plus > 0 && perdu(prec) >= 1) {
           fondre(prec, 1); const pris = [];
-          for (const q of groupe) { while (pris.length < 2 && perdu(q) >= 1) { fondre(q, 1); pris.push(q); } }
-          if (pris.length < 2) { fondre(prec, -1); for (const q of pris) fondre(q, -1); break; }
+          for (const q of groupe) { while (pris.length < besoin && perdu(q) >= 1) { fondre(q, 1); pris.push(q); } }
+          if (pris.length < besoin) { fondre(prec, -1); for (const q of pris) fondre(q, -1); break; }
           plus--; nouveaux--; }
         if (!plus) continue; } }
     // formule d'un objet changée par une mise à jour (le jeu recalcule ses capacités au chargement) : l'ancien exemplaire — même type, même tier,
@@ -396,7 +427,8 @@ function verifier(ancien, nouveau, ctx) {
         if (!plus) continue; } }
     const kind = k.split('|')[0], t = +k.split('|')[1], conso = R.KINDS[kind] && R.KINDS[kind].slot === 'conso';
     for (; plus > 0; plus--) {
-      if (kind === 'cle' || kind === 'cle_tour') { if (donsObj > 0) donsObj--; else horsListe++; continue; } // une clef vient toujours du serveur
+      if (kind === 'pierre_asc') { if (pierresAchetees > 0) pierresAchetees--; else horsListe++; continue; } // achetée à l'Oracle
+      if (kind === 'cle' || kind === 'cle_tour' || (R.KINDS[kind] && R.KINDS[kind].enfers)) { if (donsObj > 0) donsObj--; else horsListe++; continue; } // une clef vient toujours du serveur (clefs des Enfers comprises)
       if (libHerbe[kind] > 0 && libHerbe.t > 0) { libHerbe[kind]--; libHerbe.t--; continue; }   // potion fabriquée avec ses plantes
       if (GRANDES[kind] && libHerbe[GRANDES[kind]] > 0 && libHerbe.d > 0) { if (((ancien.herbo && ancien.herbo.xp) | 0) < 3150) pb.push('grande potion avant le niveau 15 du métier'); libHerbe[GRANDES[kind]]--; libHerbe.d--; continue; } // grande potion : niveau 15 (3 150 points), Lys des abîmes à la place du Trèfle
       if (conso) { // un consommable vient du serveur, d'un cadeau, du kit d'un nouveau héros, des plantes, ou d'un achat payé
@@ -516,7 +548,7 @@ function verifier(ancien, nouveau, ctx) {
     if (sol.length > 40) sol.splice(0, sol.length - 40); }
   // cadeaux pas encore dans le sac (sac plein : l'objet attend au sol) : le crédit reste valable
   // la Cursite donnée par le serveur mais pas encore ajoutée par le jeu (livraison en cours) reste due
-  const reste = { sol, cursite: Math.max(0, (dons.cursite || 0) - Math.max(0, d('cursite') + cursiteDepenseMin - bonusCursite)), prestige: 0, objets: Math.min(12, donsObj + libT6 + libRel), or: Math.max(0, (dons.or || 0) - orServeur),
+  const reste = { sol, cursite: Math.max(0, (dons.cursite || 0) - Math.max(0, d('cursite') + cursiteDepenseMin - bonusCursite)), prestige: Math.max(0, (dons.prestige || 0) - Math.max(0, d('prestige') + presDepense - presQuetes)), objets: Math.min(12, donsObj + libT6 + libRel), or: Math.max(0, (dons.or || 0) - orServeur),
     xp: Math.max(0, (dons.xp || 0) - gainXP), xpI: Math.max(0, (dons.xpI || 0) - gainXPI), kills: Math.max(0, (dons.kills || 0) - gainKills), boss: Math.max(0, (dons.boss || 0) - gainBoss), liste, res: resReste, boosts: boostsRestants };
   return { ok: true, reste, aPerdre: [] };
 }
@@ -536,7 +568,7 @@ function degatsMax(s) {
   const tirs = (R.WB[w.kind].shots + (w.extra || 0)) * (R.WB[w.kind].dm || 1) * (R.WB[w.kind].am || 1) * demons; // am : nombre de monstres touchés par une aura
   // capacité Tier 8 (dégâts ×10) portée avec une arme plus faible : le plafond suit la capacité
   const capa8 = pc && R.KINDS[pc.kind] && R.KINDS[pc.kind].t8 ? 4 : 1;
-  return Math.round(Math.max(3000, w.dmg[1] * (1 + 0.1 * Math.min(2, w.up | 0)) * mult * tirs * cadence * 3) * capa8);
+  return Math.round(Math.max(3000, w.dmg[1] * (1 + 0.1 * Math.min(3, w.up | 0)) * mult * tirs * cadence * 3) * capa8);
 }
 
-module.exports = { degatsMax, verifier, nouveauxSeaux, regles: () => R, objetValide, apprendre };
+module.exports = { degatsMax, verifier, nouveauxSeaux, regles: () => R, objetValide, apprendre, auMaxDe, capDe };

@@ -148,6 +148,13 @@ const discord = require('./bot-discord'); // bot Discord du jeu (éteint tant qu
 db.exec(`CREATE TABLE IF NOT EXISTS anomalies (id INTEGER PRIMARY KEY AUTOINCREMENT, compte INTEGER, nom TEXT, quand INTEGER, raisons TEXT)`);
 // acceptation des conditions d'utilisation : une ligne par compte et par version du texte
 db.exec(`CREATE TABLE IF NOT EXISTS consentements (compte INTEGER NOT NULL, version TEXT NOT NULL, quand INTEGER NOT NULL, PRIMARY KEY (compte, version))`);
+// 0.0.99 : remise à zéro du prestige, une fois par sauvegarde (prestige et compteurs à 0, niveaux maximum à 20, héros au-delà du niveau 20 ramenés au 20) ; coffres Cursite comptés à part
+function migrPrestigeSrv(sv) { if (!sv || typeof sv !== 'object') return false; let ch = false;
+  if ((sv.presEpoch | 0) < 2) { sv.prestige = 0; sv.stats = sv.stats || {}; sv.stats.presTot = 0; sv.caps = {}; sv.capLvl = 20; for (const c of Object.values(sv.chars || {})) { if (!c) continue; if ((c.lvl | 0) > 20) { c.lvl = 20; c.xp = 0; } c.gxp = 0; c.gp = 0; } sv.presEpoch = 2; ch = true; }
+  if (sv.vault && (sv.vault.n | 0) > 5 && sv.vault.cu == null) { sv.vault.cu = (sv.vault.n | 0) - 5; sv.vault.n = 5; ch = true; }
+  return ch; }
+{ let n = 0; try { for (const r of db.prepare('SELECT id, save FROM comptes WHERE save IS NOT NULL').all()) { let sv = null; try { sv = JSON.parse(r.save); } catch { continue; } if (migrPrestigeSrv(sv)) { db.prepare('UPDATE comptes SET save = ? WHERE id = ?').run(JSON.stringify(sv), r.id); n++; } } } catch (e) { console.error('[migration] prestige', e.message); }
+  if (n) { console.log('[migration] prestige remis à zéro sur ' + n + ' sauvegarde(s)'); for (const e of Object.values(scores)) if (e) { e.pres = 0; if ((e.l | 0) > 20) e.l = 20; } scoresModifies = true; } }
 sql.cguIns = db.prepare('INSERT OR IGNORE INTO consentements (compte, version, quand) VALUES (?, ?, ?)');
 sql.cguDernier = db.prepare('SELECT version FROM consentements WHERE compte = ? ORDER BY quand DESC LIMIT 1');
 try { db.exec('ALTER TABLE anomalies ADD COLUMN perso TEXT'); } catch {} // personnage en jeu au moment du refus : « pseudo|classe »
@@ -179,9 +186,9 @@ function connecter(moi, c, ws) {
   let save = null; try { save = c.save ? JSON.parse(c.save) : null; } catch { save = null; }
   let cgu = null; try { const r = sql.cguDernier.get(c.id); cgu = r ? r.version : null; } catch {}
   envoyer(ws, { t: 'authres', ok: true, token, nom: c.nom, id: c.id, admin: moi.compte.admin, save, cgu });
-  if (save) { envoyerCapGardien(moi, save); moi.cpt.boost = +save.boostXP || 0; moi.cpt.rune = runeDe(save); moi.cpt.maudits = mauditsDe(save); moi.cpt.bornes = bornesScore(save); }
+  if (save) { envoyerCapGardien(moi, save); moi.cpt.boost = +save.boostXP || 0; moi.cpt.rune = runeDe(save); moi.cpt.maudits = mauditsDe(save); moi.cpt.bornes = bornesScore(save); moi.cpt.auMax = arbitre.auMaxDe(save); }
   if (concoursVisible()) envoyer(ws, etatConcours());
-  envoyer(ws, etatObjectif()); tournoiCloture(); envoyer(ws, etatTournoi(moi)); envoyer(ws, etatGuerre()); { const lt = titresTour(c.id).concat(ALPHAS.has(cleAlpha(c.nom)) ? ['alpha'] : []); if (lt.length) envoyer(ws, { t: 'titres', l: lt }); } try { envoyer(ws, etatDiscord(moi)); } catch {}
+  envoyer(ws, etatObjectif()); tournoiCloture(); envoyer(ws, etatTournoi(moi)); envoyer(ws, etatGuerre()); { const lt = titresTour(c.id).concat(ALPHAS.has(cleAlpha(c.nom)) ? ['alpha'] : []); envoyer(ws, { t: 'titres', l: lt, rec: tourMaxDe(c.id) }); } try { envoyer(ws, etatDiscord(moi)); } catch {}
   console.log(`[compte] ${c.nom} connecté${moi.compte.admin ? ' (admin)' : ''}`);
 }
 function actionCompte(moi, ws, m) {
@@ -220,7 +227,7 @@ function sauverCompte(moi, m) {
   // les admins ne sont pas contrôlés (outils de test)
   const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)); moi.dons = cpt.dons; moi.seaux = cpt.seaux;
   if (!moi.compte.admin) {
-    let v; try { v = arbitre.verifier(ancien, m.data, { seaux: cpt.seaux, dons: cpt.dons, aPerdre: cpt.aPerdre, aPayer: hvAPayer(cpt, ancien, m.data) }); } catch (e) { console.error('[arbitre] erreur', e); v = { ok: true }; }
+    let v; try { v = arbitre.verifier(ancien, m.data, { seaux: cpt.seaux, dons: cpt.dons, aPerdre: cpt.aPerdre, aPayer: hvAPayer(cpt, ancien, m.data), tourMax: tourMaxDe(moi.compte.id), donGuilde: cpt.donGuilde || 0 }); } catch (e) { console.error('[arbitre] erreur', e); v = { ok: true }; }
     if (!v.ok) {
       moi.refus = (moi.refus || 0) + 1;
       sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(v.raisons), persoDe(moi));
@@ -242,7 +249,7 @@ function sauverCompte(moi, m) {
     if (cpt.achats) cpt.achats = cpt.achats.filter(a => !a.vu); if (cpt.frais) cpt.frais = cpt.frais.filter(f => !f.vu && Date.now() - f.t < 600000);                // achats de l'hôtel des ventes payés
   } else { Object.assign(cpt.dons, DONS0()); cpt.aPerdre = []; }
   arbitre.apprendre(m.data);
-  cpt.boost = +m.data.boostXP || 0; cpt.rune = runeDe(m.data); cpt.maudits = mauditsDe(m.data); cpt.bornes = bornesScore(m.data);
+  cpt.boost = +m.data.boostXP || 0; cpt.rune = runeDe(m.data); cpt.maudits = mauditsDe(m.data); cpt.bornes = bornesScore(m.data); cpt.auMax = arbitre.auMaxDe(m.data); cpt.donGuilde = 0;
   sql.save.run(txt, Date.now(), moi.compte.id);
   envoyerCapGardien(moi, m.data); parrPaliers(moi, m.data);
 }
@@ -360,10 +367,12 @@ function vueRaid(gid, pid) {
   return { actif: !!raidEv.actif, reste: raidEv.actif ? Math.max(0, raidEv.fin - Date.now()) : 0, spawn: raidEv.actif ? Math.max(0, (raidEv.spawn || 0) - Date.now()) : 0, top, guilde: x.dmg, part: x.c[pid] || 0, dernier };
 }
 const cle = pid => cyrb53('m' + pid).slice(0, 8);
+const GBON_K = ['xp', 'or', 'vie', 'mana'], GB_COUT = [2000, 4000, 7000, 11000, 16000]; // comptoir de guilde (0.0.99)
+const guildeBonusDe = moi => { try { if (!moi.idJoueur) return null; const [, g] = guildeDe(moi.idJoueur); return g && g.bon ? g.bon : null; } catch { return null; } };
 function guildeDe(pid) { for (const [gid, g] of Object.entries(guildes)) if (g.membres[pid]) return [gid, g]; return [null, null]; }
 function vueGuilde(gid, g, pid) {
   const x = raidEv && raidEv.g[gid] ? raidEv.g[gid].c : {};
-  return { id: gid, nom: g.nom, tag: g.tag, niv: g.niv || 1, chef: g.chef === pid,
+  return { id: gid, nom: g.nom, tag: g.tag, niv: g.niv || 1, chef: g.chef === pid, bon: g.bon || {}, jauge: g.jauge || {},
     membres: Object.entries(g.membres).map(([id, m]) => ({ k: cle(id), n: m.n, c: m.c, l: m.l, chef: id === g.chef, moi: id === pid, dmg: x[id] || 0 })),
     raid: vueRaid(gid, pid) };
 }
@@ -381,7 +390,7 @@ function actionGuilde(moi, salle, m) {
   moi.idJoueur = pid;
   const rep = (o) => envoyer(moi.ws, Object.assign({ t: 'g' }, o));
   const [gid, g] = guildeDe(pid);
-  const infosMembre = () => ({ n: filtrer(String(m.n || 'Joueur').replace(/[\u0000-\u001f]/g, '')).slice(0, 16) || 'Joueur', c: String(m.c || '').slice(0, 12), l: Math.max(1, Math.min(20, Math.floor(Number(m.l) || 1))) });
+  const infosMembre = () => ({ n: filtrer(String(m.n || 'Joueur').replace(/[\u0000-\u001f]/g, '')).slice(0, 16) || 'Joueur', c: String(m.c || '').slice(0, 12), l: Math.max(1, Math.min(30, Math.floor(Number(m.l) || 1))) });
   const a = String(m.a || '');
   if (a === 'info') { if (g) { g.membres[pid] = infosMembre(); guildesModif = true; rep({ a: 'info', g: vueGuilde(gid, g, pid) }); } else rep({ a: 'info', g: null }); return; }
   if (a === 'create') {
@@ -412,6 +421,22 @@ function actionGuilde(moi, salle, m) {
     invitesGuilde.delete(moi.peer); cg.membres[pid] = infosMembre(); guildesModif = true; diffuserGuilde(inv.gid, true); return;
   }
   if (!g) return;
+  // 0.0.99 : comptoir de guilde — le prestige donné fait monter les bonus de la guilde (5 niveaux chacun)
+  if (a === 'don') {
+    if (!moi.compte) return rep({ a: 'don', ok: 0, msg: 'Connecte-toi à ton compte' });
+    const b = String(m.b || ''); let n = Math.floor(Number(m.n) || 0);
+    if (!GBON_K.includes(b) || !(n >= 1 && n <= 20000)) return rep({ a: 'don', ok: 0, msg: 'Don impossible' });
+    g.bon = g.bon || {}; g.jauge = g.jauge || {}; const nv = g.bon[b] | 0; if (nv >= 5) return rep({ a: 'don', ok: 0, msg: 'Ce bonus est déjà au maximum' });
+    const reste = GB_COUT.slice(nv).reduce((x, v) => x + v, 0) - (g.jauge[b] | 0); n = Math.min(n, reste);
+    const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)); let sv = null; try { const r = sql.parId.get(moi.compte.id); sv = r && r.save ? JSON.parse(r.save) : null; } catch {}
+    const dispo = Math.floor(((sv && +sv.prestige) || 0) + ((cpt.dons && cpt.dons.prestige) || 0) - (cpt.donGuilde || 0));
+    if (n > dispo) return rep({ a: 'don', ok: 0, msg: 'Pas assez de prestige enregistré (' + Math.max(0, dispo) + ') : réessaie dans un instant' });
+    cpt.donGuilde = (cpt.donGuilde || 0) + n; g.jauge[b] = (g.jauge[b] | 0) + n; let up = 0;
+    while ((g.bon[b] | 0) < 5 && g.jauge[b] >= GB_COUT[g.bon[b] | 0]) { g.jauge[b] -= GB_COUT[g.bon[b] | 0]; g.bon[b] = (g.bon[b] | 0) + 1; up = g.bon[b]; }
+    if ((g.bon[b] | 0) >= 5) g.jauge[b] = 0;
+    guildesModif = true; console.log(`[guilde] ${moi.compte.nom} donne ${n} prestige à [${g.tag}] (${b} ${g.bon[b] | 0})`);
+    rep({ a: 'don', ok: 1, b, n, up }); diffuserGuilde(gid, true); return;
+  }
   if (a === 'leave') {
     delete g.membres[pid];
     if (!Object.keys(g.membres).length) delete guildes[gid];
@@ -552,7 +577,7 @@ wss.on('connection', (ws, req) => {
     if (m && m.t === 'top') { envoyer(ws, top(moi.idJoueur || String(m.id || ''), moi.compte && moi.compte.id)); return; }
     if (m && m.t === 'g') { actionGuilde(moi, salle, m); return; }
     if (m && m.t === 'serveurs') { envoyer(ws, { t: 'serveurs', ici: nom, max: MAX_JOUEURS_PAR_SALLE, l: SERVEURS.map(([id, n]) => ({ id, n, j: salles.get(id) ? [...salles.get(id).values()].filter(j => !j.gardien).length : 0 })) }); return; }
-    if (m && m.t === 'cle') { utiliserCle(moi, nom); return; }
+    if (m && m.t === 'cle') { utiliserCle(moi, nom, m.k === 'y' ? 'y' : 'h'); return; }
     if (m && m.t === 'peche') { pecher(moi, nom, m); return; }
     if (m && (m.t === 'dessin' || m.t === 'px')) { dessiner(moi, m); return; }
     if (m && m.t === 'tournoi') { tournoiPrise(moi, m); return; }
@@ -848,7 +873,7 @@ const donjonsGardes = new Map(); // 'salle|scène' -> { t: demande, vu: dernier 
 const ticketsCle = new Map(); // 'salle|scène' -> fin de validité
 setInterval(() => { const n = Date.now(); for (const [k, t] of ticketsCle) if (t < n) ticketsCle.delete(k); }, 60000);
 // donjons qui demandent un ticket du serveur : Horloge Brisée (clef) et Vengeance sous-marine (pêche)
-const ticketOk = (salle, sc) => (sc[1] !== 'h' && sc[1] !== 'v') || (ticketsCle.get(salle + '|' + sc) || 0) > Date.now();
+const ticketOk = (salle, sc) => (sc[1] !== 'h' && sc[1] !== 'v' && sc[1] !== 'y') || (ticketsCle.get(salle + '|' + sc) || 0) > Date.now(); // y : les Enfers d'Hadès (trois clefs)
 // pêche dans les Plaines : très rarement, un portail vers La Vengeance sous-marine (tirage côté serveur)
 const VENGEANCE_TAUX = 1 / 250;
 // pêcher à plusieurs au même endroit : ×3 à deux, ×6 à trois, ×10 à quatre et plus (1 chance sur 25) ; le portail s'ouvre alors pour tout le groupe
@@ -1120,6 +1145,7 @@ const saisonTour = () => paris().jour.slice(0, 7);
 const finSaison = () => { const [y, mo] = saisonTour().split('-').map(Number); return Date.UTC(mo === 12 ? y + 1 : y, mo === 12 ? 0 : mo, 1) - 2 * 3600000; }; // début du mois suivant à Paris (à une heure près)
 const saisonApres = s => { const [y, mo] = s.split('-').map(Number); return (mo === 12 ? y + 1 : y) + '-' + String(mo === 12 ? 1 : mo + 1).padStart(2, '0'); };
 // un titre vaut jusqu'à la fin de la saison qui suit celle où il a été gagné
+function tourMaxDe(compte) { const o = {}; try { for (const r of db.prepare('SELECT cls, MAX(n) AS n FROM tour_rangs WHERE compte = ? GROUP BY cls').all(compte)) o[r.cls] = r.n | 0; } catch {} return o; } // record de la Tour par classe, toutes saisons (paliers de niveau)
 function titresTour(compte) { try { const cur = saisonTour(); return TR.titres.all(compte).filter(r => saisonApres(r.saison) >= cur).map(r => r.titre); } catch { return []; } }
 function tourCloture() {
   const cur = saisonTour(); let R = null; try { R = arbitre.regles(); } catch {} if (!R) return;
@@ -1269,7 +1295,7 @@ function planMaison(c, moi) {
   for (const e of (Array.isArray(h.m) ? h.m : []).slice(0, salle ? 140 : 80)) { if (!Array.isArray(e)) continue; const id = String(e[0] || ''), x = e[1] | 0, y = (e[2] | 0) + dy; if (!/^[a-zA-Z0-9]{1,12}$/.test(id) || x < (salle ? -15 : 1) || x > 25 || y < 1 || y > 22 || vus.has(x + ',' + y)) continue; vus.add(x + ',' + y); m.push([id, x, y, e[3] & 3]); }
   const pets = (Array.isArray(sv.pets) ? sv.pets : []).filter(q => q && q.id !== sv.petEq).slice(0, 12).map(q => ({ k: String(q.k || '').slice(0, 16), t: Math.max(0, Math.min(4, q.t | 0)) }));
   const lig = enLigne.get(c.id);
-  return { t: 'maison', a: 'plan', ok: 1, id: c.id, n: String((lig && lig.etat && lig.etat.n) || c.nom).slice(0, 16), skin: (() => { const k = h.skin === 'sylve' ? 'sombre' : h.skin === 'astral' ? 'paradis' : String(h.skin || 'bois'); return (h.skins && typeof h.skins === 'object' && k !== 'bois' && !h.skins[k] ? 'bois' : k).slice(0, 12); })(), salle, m, coffres: Math.max(1, Math.min(10, (sv.vault && sv.vault.n) | 0 || 1)), colis: String((sv.cosm && sv.cosm.own && sv.cosm.own['cl:' + sv.cosm.colis] && sv.cosm.colis) || '').slice(0, 14), pets,
+  return { t: 'maison', a: 'plan', ok: 1, id: c.id, n: String((lig && lig.etat && lig.etat.n) || c.nom).slice(0, 16), skin: (() => { const k = h.skin === 'sylve' ? 'sombre' : h.skin === 'astral' ? 'paradis' : String(h.skin || 'bois'); return (h.skins && typeof h.skins === 'object' && k !== 'bois' && !h.skins[k] ? 'bois' : k).slice(0, 12); })(), salle, m, coffres: Math.max(1, Math.min(10, (sv.vault && sv.vault.n) | 0 || 1)), cu: Math.max(0, Math.min(5, (sv.vault && sv.vault.cu) | 0)), colis: String((sv.cosm && sv.cosm.own && sv.cosm.own['cl:' + sv.cosm.colis] && sv.cosm.colis) || '').slice(0, 14), pets,
     coeurs: MAISON.nb.get(c.id).n, aime: MAISON.a.get(c.id, moi.compte.id) ? 1 : 0, moi: c.id === moi.compte.id ? 1 : 0 };
 }
 function maison(moi, m, salle) {
@@ -1324,7 +1350,7 @@ function paris0() { const t = new Date().toLocaleString('sv-SE', { timeZone: 'Eu
   return { jour: d, js, semaine: lundi.toISOString().slice(0, 10), heure: +h.slice(0, 2) }; }
 
 // ---------- objectif commun de la semaine : tous les monstres tués sur le serveur ; une fois atteint, +10 % d'expérience pour tout le monde jusqu'à dimanche soir ----------
-const OBJECTIF = { semaine: paris().semaine, n: 0, but: Math.max(100, +process.env.OBJECTIF_SEMAINE || 5000), atteint: 0 }, OBJECTIF_BONUS = 1.10;
+const OBJECTIF = { semaine: paris().semaine, n: 0, but: Math.max(100, +process.env.OBJECTIF_SEMAINE || 15000), atteint: 0 }, OBJECTIF_BONUS = 1.10;
 const FICHIER_OBJECTIF = path.join(DATA_DIR, 'objectif.json');
 try { const o = JSON.parse(fs.readFileSync(FICHIER_OBJECTIF, 'utf8')); if (o && o.semaine === OBJECTIF.semaine) { OBJECTIF.n = o.n | 0; OBJECTIF.atteint = +o.atteint || 0; } } catch {}
 let objectifSale = false, objectifVu = -1;
@@ -1372,22 +1398,23 @@ function tournoiPrise(moi, m) {
 }
 setInterval(tournoiCloture, 60000).unref();
 
-function utiliserCle(moi, salle) {
+// h : Clef du Temps (Horloge Brisée) · y : les trois clefs des Enfers, consommées ensemble
+function utiliserCle(moi, salle, ty) {
   if (!moi.compte) return;
-  const rep = (ok, msg, id) => envoyer(moi.ws, { t: 'cle', ok, msg, id });
+  ty = ty === 'y' ? 'y' : 'h';
+  const rep = (ok, msg, id) => envoyer(moi.ws, { t: 'cle', ok, msg, id, k: ty });
   if (Date.now() - (moi.cleT || 0) < 2000) return rep(false, 'Patiente un instant');
   moi.cleT = Date.now();
   if (!moi.compte.admin) {
     let sv = null; try { const row = sql.parId.get(moi.compte.id); sv = row && row.save ? JSON.parse(row.save) : null; } catch { sv = null; }
-    const R = arbitre.regles(); if (!sv || !R || !R.KINDS.cle) return rep(false, 'Clef indisponible');
-    const sig = butin.signature(R.mkItem('cle', 0)), cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id));
-    const e = cpt.aPerdre.find(x => x.sig === sig), dispo = e ? e.max : butin.compterSig(sv, sig);
-    if (dispo < 1) return rep(false, 'Clef pas encore enregistrée : réessaie dans deux secondes');
-    if (e) { e.max = dispo - 1; e.t = Date.now(); } else cpt.aPerdre.push({ sig, max: dispo - 1, t: Date.now() });
+    const R = arbitre.regles(), kinds = ty === 'y' ? ['cle_ecume', 'cle_corne', 'cle_foudre'] : ['cle']; if (!sv || !R || kinds.some(k => !R.KINDS[k])) return rep(false, 'Clef indisponible');
+    const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)), L = kinds.map(k => { const sig = butin.signature(R.mkItem(k, 0)), e = cpt.aPerdre.find(x => x.sig === sig); return { sig, e, dispo: e ? e.max : butin.compterSig(sv, sig) }; });
+    if (L.some(q => q.dispo < 1)) return rep(false, ty === 'y' ? 'Il faut les trois clefs des Enfers (enregistrées) : réessaie dans deux secondes' : 'Clef pas encore enregistrée : réessaie dans deux secondes');
+    for (const q of L) { if (q.e) { q.e.max = q.dispo - 1; q.e.t = Date.now(); } else cpt.aPerdre.push({ sig: q.sig, max: q.dispo - 1, t: Date.now() }); }
   }
   const id = 1 + crypto.randomInt(2000000000);
-  ticketsCle.set(salle + '|dh' + id.toString(36), Date.now() + 2 * 3600000);
-  console.log(`[clef] ${moi.compte.nom} ouvre l'Horloge Brisée (${salle})`);
+  ticketsCle.set(salle + '|d' + ty + id.toString(36), Date.now() + 2 * 3600000);
+  console.log(`[clef] ${moi.compte.nom} ouvre ${ty === 'y' ? "les Enfers d'Hadès" : "l'Horloge Brisée"} (${salle})`);
   rep(true, '', id);
 }
 function demanderDonjon(salle, sc) {
@@ -1412,5 +1439,5 @@ function reclamerKill(moi, m, nom, salle, essai) {
   const sc = String(m.s || ''), d = donjonsGardes.get(nom + '|' + sc);
   const G = gardienDe(salle, sc || 'r');
   if (!G && d && Date.now() - d.t < 8000 && essai < 25) { setTimeout(() => { if (moi.ws.readyState === 1) reclamerKill(moi, m, nom, salle, essai + 1); }, 400); return; }
-  butin.reclamer(moi, m, { salle: nom, membres: salle, gardien: G, sansClef: sc[0] === 'd' && !ticketOk(nom, sc) && !moi.compte.admin, boost: moi.cpt.boost || 0, rune: moi.cpt.rune || null, maudit: c => (moi.cpt.maudits || []).includes(c), onRefus: r => noterSuspect(moi, 'kill', 1, 'Monstre refusé : ' + r), dons: moi.dons, rythme: moi.cpt.rythme, envoyer, boostServeur: bonusObjectif(), guerre: guerreBonus(moi, String(m.k || ''), sc), onTue: (key, s, r) => { concoursTue(moi, key, s); objectifTue(); guerreTue(moi, key, s); bossTue(moi, key, s); reliqueTrouvee(moi, key, r); }, signaler: r => { try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(r)); } catch {} } });
+  butin.reclamer(moi, m, { salle: nom, membres: salle, gardien: G, sansClef: sc[0] === 'd' && !ticketOk(nom, sc) && !moi.compte.admin, boost: moi.cpt.boost || 0, rune: moi.cpt.rune || null, maudit: c => (moi.cpt.maudits || []).includes(c), auMax: c => !!((moi.cpt.auMax || {})[c]), cpt: moi.cpt, gBon: guildeBonusDe(moi), onRefus: r => noterSuspect(moi, 'kill', 1, 'Monstre refusé : ' + r), dons: moi.dons, rythme: moi.cpt.rythme, envoyer, boostServeur: bonusObjectif(), guerre: guerreBonus(moi, String(m.k || ''), sc), onTue: (key, s, r) => { concoursTue(moi, key, s); objectifTue(); guerreTue(moi, key, s); bossTue(moi, key, s); reliqueTrouvee(moi, key, r); }, signaler: r => { try { sql.anoIns.run(moi.compte.id, moi.compte.nom, Date.now(), JSON.stringify(r)); } catch {} } });
 }

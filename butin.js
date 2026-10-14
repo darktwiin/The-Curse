@@ -36,7 +36,9 @@ function objetT7(R, cls) {
 const MAUDIT_POTION = 0.01, MAUDIT_POTION_BOSS = 0.05, MAUDIT_RELIQUE = 0.01; // mode maudit
 const TAUX_RESSOURCE = 0.2; // ressource de talisman sur un boss de donjon (20 %, 10 ressources par talisman)
 const DONJONS_T7 = 'ah', TAUX_T7 = 0.05;
-const ILE_DJ = { l: [0.7, 0.3], q: [0.85, 0.5], t: [1, 0.7] }; // élixir, Tier 8 sur le boss de chaque donjon de l'île
+const ILE_DJ = { l: [0.7, 0.3], q: [0.85, 0.5], t: [1, 0.7], y: [1, 1] }; // élixir, Tier 8 sur le boss de chaque donjon de l'île (y : Hadès, dans les Enfers)
+// 0.0.98 : chaque boss des trois premiers donjons de l'île lâche sa clef des Enfers (25 %) ; Hadès donne en plus un 2e élixir et 30 % d'un 2e Tier 8 ; Cerbère : un élixir et 40 % de Tier 8
+const ILE_CLEFS = { l: 'cle_ecume', q: 'cle_corne', t: 'cle_foudre' }, TAUX_CLEF_ENFERS = 0.25;
 const TAUX_ELIXIR = 0.01; // Île aux Colosses : le Tier 8 est le seul équipement qui tombe (1 % sur la grève, 2 % sur la steppe, 3 % sur les cimes : MON[k].t8), plus 1 % d'élixir
 function objetT8(R, cls) {
   const c = R.CLASSES[cls] || R.CLASSES[Object.keys(R.CLASSES)[0]], r = Math.random(), mien = Math.random() < 0.55;
@@ -69,35 +71,39 @@ function tauxOeuf(R, key, sc) {
 }
 function tirer(R, key, cls, scene, sc, opt) {
   const maudit = !!(opt && opt.maudit), donjon = typeof sc === 'string' && sc[0] === 'd';
+  const kD = maudit ? 2 : 1, ch = p => Math.random() < Math.min(1, p * kD); // 0.0.99 : héros maudit, toutes les chances de butin ×2
   const d = R.MON[key], out = { xp: d.xp | 0, b: d.boss ? 1 : 0, it: [], rel: -1, oeuf: 0, spg: [], sp: [], or: 0 };
   if (d.tuto) { out.xp *= 2; out.tuto = 1; return out; }
   // monstre maudit des Plaines : une potion de caractéristique au hasard et 200 pièces, rien d'autre
   if (key === 'maudit') { out.sp = [R.mkItem('sp_' + pick(R.SK), 0)]; out.or = 200; return out; }
-  if (Math.random() < d.drop) { const n = d.n && d.boss ? d.n : 1; for (let i = 0; i < n; i++) { let t = ri(d.loot[0], d.loot[1]); if (Math.random() < 0.08) t = Math.min(6, t + 1); out.it.push(objetAuHasard(R, t, cls)); } }
-  if (d.rel && (key === 'devoreur' || Math.random() < d.rel)) { out.rel = out.it.length; out.it.push(objetAuHasard(R, 7, cls)); }
+  if (ch(d.drop)) { const n = d.n && d.boss ? d.n : 1; for (let i = 0; i < n; i++) { let t = ri(d.loot[0], d.loot[1]); if (Math.random() < 0.08) t = Math.min(6, t + 1); out.it.push(objetAuHasard(R, t, cls)); } }
+  if (d.rel && (key === 'devoreur' || ch(d.rel))) { out.rel = out.it.length; out.it.push(objetAuHasard(R, 7, cls)); }
   // les potions de vie et de mana ne tombent plus : elles se fabriquent à l'atelier de l'herboriste avec les plantes des Plaines
-  if (Math.random() < tauxOeuf(R, key, sc)) { out.oeuf = 1; out.it.push(R.mkItem('egg', 0)); }
+  if (ch(tauxOeuf(R, key, sc))) { out.oeuf = 1; out.it.push(R.mkItem('egg', 0)); }
   // Clef du Temps : 1 % sur le boss des 6 grands donjons, 10 % sur chacun des 4 gardiens de l'Observatoire (jamais sur le Dévoreur)
   if (R.KINDS.cle && typeof sc === 'string' && sc[0] === 'd') {
     const t = sc[1], grand = DONJONS_A_CLEF.includes(t) && R.DTYPES[t] && R.DTYPES[t].bk === key;
-    if ((grand && Math.random() < 0.01) || (d.star != null && Math.random() < 0.10)) { out.cle = 1; out.it.push(R.mkItem('cle', 0)); }
+    if ((grand && ch(0.01)) || (d.star != null && ch(0.10))) { out.cle = 1; out.it.push(R.mkItem('cle', 0)); }
   }
-  if (typeof sc === 'string' && sc[0] === 'd' && DONJONS_T7.includes(sc[1]) && Math.random() < TAUX_T7) { const o7 = objetT7(R, cls); if (o7) { out.t7 = 1; out.it.push(o7); } }
+  if (typeof sc === 'string' && sc[0] === 'd' && DONJONS_T7.includes(sc[1]) && ch(TAUX_T7)) { const o7 = objetT7(R, cls); if (o7) { out.t7 = 1; out.it.push(o7); } }
   // Chronos : une Relique de Chronos à chaque fois (une chance sur deux qu'elle soit pour la classe du joueur)
   if (key === 'chronos') { const tous = Object.keys(R.KINDS).filter(k => R.KINDS[k].alt && !R.KINDS[k].art), miens = tous.filter(k => (R.KINDS[k].cls || []).includes(cls));
     if (tous.length) out.it.push(R.mkItem(pick(miens.length && Math.random() < 0.5 ? miens : tous), 7)); }
   // (la Clef de la Tour ne tombe plus depuis 0.0.94 : la Tour n'a plus besoin de clef)
   // ressource de boss (talismans) : 20 % sur le boss du donjon où l'on se trouve
-  if (d.boss && typeof sc === 'string' && sc[0] === 'd' && R.TALIS && R.TALIS[sc[1]]) { const T = R.DTYPES[sc[1]]; if (T && (T.bk === key || T.bk2 === key) && Math.random() < TAUX_RESSOURCE) out.res = sc[1]; }
-  if ((key === 'dieu_fou' || key === 'colosse') && R.TALIS && Math.random() < TAUX_RESSOURCE) out.res = key === 'dieu_fou' ? 'j' : 'x';
-  if (key === 'devoreur' && typeof sc === 'string' && sc[1] === 'a' && R.TALIS && R.TALIS.a && Math.random() < TAUX_RESSOURCE) out.res = 'a'; // l'Observatoire n'a pas de « bk » : sa ressource tombe sur le Dévoreur // ressource des deux boss du centre de l'île
+  if (d.boss && typeof sc === 'string' && sc[0] === 'd' && R.TALIS && R.TALIS[sc[1]]) { const T = R.DTYPES[sc[1]]; if (T && (T.bk === key || T.bk2 === key) && ch(TAUX_RESSOURCE)) out.res = sc[1]; }
+  if ((key === 'dieu_fou' || key === 'colosse') && R.TALIS && ch(TAUX_RESSOURCE)) out.res = key === 'dieu_fou' ? 'j' : 'x';
+  if (key === 'devoreur' && typeof sc === 'string' && sc[1] === 'a' && R.TALIS && R.TALIS.a && ch(TAUX_RESSOURCE)) out.res = 'a'; // l'Observatoire n'a pas de « bk » : sa ressource tombe sur le Dévoreur // ressource des deux boss du centre de l'île
   // donjons de l'Île aux Colosses (0.0.95) : le boss lâche un élixir (70 / 85 / 100 %) et un objet Tier 8 (30 / 50 / 70 %)
+  if (donjon && sc[1] === 'y' && key === 'b_cerbere') { const k = pick([...R.SK, 'armure']); if (R.KINDS['sp2_' + k]) { out.elixir = 1; out.it.push(R.mkItem('sp2_' + k, 0)); } if (ch(0.4)) { const o8 = objetT8(R, cls); if (o8) { out.t8 = 1; out.it.push(o8); } } }
+  if (donjon && ILE_CLEFS[sc[1]] && R.DTYPES[sc[1]] && R.DTYPES[sc[1]].bk === key && R.KINDS[ILE_CLEFS[sc[1]]] && ch(TAUX_CLEF_ENFERS)) { out.clefEnfers = 1; out.it.push(R.mkItem(ILE_CLEFS[sc[1]], 0)); }
+  if (donjon && sc[1] === 'y' && key === 'b_hades') { const k = pick([...R.SK, 'armure']); if (R.KINDS['sp2_' + k]) out.it.push(R.mkItem('sp2_' + k, 0)); if (ch(0.3)) { const o8 = objetT8(R, cls); if (o8) out.it.push(o8); } }
   if (donjon && ILE_DJ[sc[1]] && R.DTYPES[sc[1]] && R.DTYPES[sc[1]].bk === key) { const [pe, p8] = ILE_DJ[sc[1]];
-    if (Math.random() < pe) { const k = pick([...R.SK, 'armure']); if (R.KINDS['sp2_' + k]) { out.elixir = 1; out.it.push(R.mkItem('sp2_' + k, 0)); } }
-    if (Math.random() < p8) { const o8 = objetT8(R, cls); if (o8) { out.t8 = 1; out.it.push(o8); } } }
+    if (ch(pe)) { const k = pick([...R.SK, 'armure']); if (R.KINDS['sp2_' + k]) { out.elixir = 1; out.it.push(R.mkItem('sp2_' + k, 0)); } }
+    if (ch(p8)) { const o8 = objetT8(R, cls); if (o8) { out.t8 = 1; out.it.push(o8); } } }
   if (d.ile === 2 && (scene === 'realm' || (donjon && ILE_DJ[sc[1]]))) {
-    if (Math.random() < (+d.t8 || 0)) { const o8 = objetT8(R, cls); if (o8) { out.t8 = 1; out.it.push(o8); } }
-    if (Math.random() < TAUX_ELIXIR) { const k = pick([...R.SK, 'armure']); if (R.KINDS['sp2_' + k]) { out.elixir = 1; out.it.push(R.mkItem('sp2_' + k, 0)); } }
+    if (ch(+d.t8 || 0)) { const o8 = objetT8(R, cls); if (o8) { out.t8 = 1; out.it.push(o8); } }
+    if (ch(TAUX_ELIXIR)) { const k = pick([...R.SK, 'armure']); if (R.KINDS['sp2_' + k]) { out.elixir = 1; out.it.push(R.mkItem('sp2_' + k, 0)); } }
   }
   if (d.midBoss || GARANTIS.includes(key)) out.spg.push(R.mkItem('sp_' + pick(R.SK), 0));
   out.sp = potionsCarac(R, key, d, scene, maudit ? 2 : 1).map(k => R.mkItem('sp_' + k, 0));
@@ -220,6 +226,8 @@ function reclamer(moi, m, ctx) {
   const enJeu = String((moi.etat && moi.etat.c) || cls), maudit = !!(ctx.maudit && ctx.maudit(enJeu));
   const r = tirer(R, key, cls, s === 'r' ? 'realm' : 'dungeon', s, { maudit });
   r.xm = r.xp; // expérience de base : la seule qui compte pour la maîtrise de classe (aucun bonus ne s'y applique)
+  if (maudit) r.xp *= 3; // 0.0.99 : héros maudit, expérience ×3
+  if (ctx.gBon) { const gx = (ctx.gBon.xp | 0) * 0.02, go = (ctx.gBon.or | 0) * 0.03; if (gx > 0) r.xp = Math.round(r.xp * (1 + Math.min(0.1, gx))); if (go > 0 && r.or) { const v = r.or * (1 + Math.min(0.15, go)); r.or = Math.floor(v) + (Math.random() < v - Math.floor(v) ? 1 : 0); } } // comptoir de guilde
   if (ctx.boost && Date.now() < ctx.boost) r.xp = Math.round(r.xp * 1.3); // boost d'expérience (Cursite)
   if (ctx.boostServeur > 1) r.xp = Math.round(r.xp * ctx.boostServeur);     // objectif commun de la semaine atteint
   if (ctx.guerre > 1) { r.xp = Math.round(r.xp * ctx.guerre); if (r.or) { const v = r.or * ctx.guerre; r.or = Math.floor(v) + (Math.random() < v - Math.floor(v) ? 1 : 0); } } // guerre des guildes : zone tenue par sa guilde
@@ -227,6 +235,14 @@ function reclamer(moi, m, ctx) {
   if (ctx.rune && ctx.rune.k === 'savant') r.xp = Math.round(r.xp * (1 + 0.0125 * ctx.rune.n));
   if (ctx.rune && ctx.rune.k === 'duc' && r.or) { const v = r.or * (1 + 0.0125 * ctx.rune.n); r.or = Math.floor(v) + (Math.random() < v - Math.floor(v) ? 1 : 0); }
   const dons = ctx.dons; nettoyer(dons);
+  // prestige (0.0.99) : seulement quand le héros est à son niveau maximum. Boss hors donjon : PRES_GAIN.boss ; dans un donjon, seul le boss final
+  // en donne, selon la difficulté (PRES_DJ), à ceux qui sont dans l'arène ; + premier de chaque donjon dans la journée ; + tous les 100 monstres
+  if (ctx.auMax && ctx.auMax(cls) && ctx.cpt) { const PG = R.PRES_GAIN || {}, PD = R.PRES_DJ || {}, cp = ctx.cpt; let p = 0;
+    const T = s[0] === 'd' ? R.DTYPES[s[1]] : null, fin = T && (T.bk === key || T.bk2 === key || (s[1] === 'a' && key === 'devoreur'));
+    if (fin && PD[s[1]]) { p += PD[s[1]] | 0; const j = new Date().toISOString().slice(0, 10); if (!cp.djJour || cp.djJour.j !== j) cp.djJour = { j, vu: {} }; if (!cp.djJour.vu[s[1]]) { cp.djJour.vu[s[1]] = 1; p += PG.jour || 25; } }
+    else if (d.boss && !T) p += PG.boss || 5;
+    cp.presK = (cp.presK | 0) + 1; if (cp.presK >= 100) { cp.presK -= 100; p += PG.cent || 10; }
+    if (p) { r.pres = p; dons.prestige = (dons.prestige || 0) + p; } }
   dons.xp += r.xp; if (R.MON[key] && R.MON[key].ile === 2) dons.xpI = (dons.xpI || 0) + r.xp; dons.kills += 1; dons.boss += r.b; dons.or += r.or;
   for (const it of [...r.it, ...r.spg, ...r.sp]) noter(dons, it);
   if (r.res) { dons.res = dons.res || {}; dons.res[r.res] = (dons.res[r.res] || 0) + 1; }
