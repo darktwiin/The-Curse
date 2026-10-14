@@ -267,7 +267,7 @@ details.help dt{color:var(--gold)} details.help dd{margin:0}
 .qrow.done{border-color:#7ed957}.qrow.got{opacity:.55}.qrow img{width:44px;height:44px;image-rendering:pixelated;object-fit:contain}.qrow b{display:block}.qrow .qbar{height:10px;background:#0b0a12;border:1px solid var(--line);margin-top:4px;position:relative}.qrow .qbar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(#9be86d,#4e9e2e)}
 .qrow .qr{font-size:12px;color:var(--muted)}.qicon{width:44px;height:44px;display:grid;place-items:center;font-size:26px}
 .pets-inner{max-width:760px}.peteq{display:flex;gap:12px;align-items:center;background:var(--panel2);border:2px solid #7df0e0;padding:8px 12px}.peteq img{width:64px;height:64px;image-rendering:pixelated;flex:none}.peteq div{flex:1;display:grid;gap:2px}.peteq b{font-family:var(--display);font-size:16px}.peteq span{font-size:12px;color:var(--muted)}.prow{grid-column:1/3;display:flex;gap:4px;align-items:center}.prow button{flex:1;font-size:12px;padding:3px}.prow .pm{flex:none;width:26px}.prow i{font-style:normal;font-size:12px;min-width:62px;text-align:center;color:var(--muted)}.pskins{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}.pskin{background:var(--panel2);border:2px solid var(--line);padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}.pskin.on{border-color:var(--gold);box-shadow:0 0 10px rgba(255,210,63,.3)}.pskin img{width:96px;height:96px;image-rendering:pixelated;background:#2a2640}.pskin b{font-family:var(--display);font-size:14px}.pskin span{font-size:12px;color:var(--muted);min-height:44px}.pskin button{width:100%}.cosm-sec{margin:10px 0}.cosm-sec h3{margin:0 0 6px}.ncsw{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ncsw button{width:30px;height:30px;border:2px solid #0b0a12;cursor:pointer;padding:0}.ncsw button.on{outline:3px solid #fff}.ncsw input{width:44px;height:34px;padding:0;border:2px solid var(--line);background:none;cursor:pointer}
-.guild-inner{max-width:640px}
+.guild-inner{max-width:720px;max-height:94vh;overflow:auto}.gcap{display:flex;justify-content:space-between;align-items:center;background:#2a1a40;border:2px solid #b45aff;padding:8px 12px;margin:6px 0;font-size:16px}.gcap b{color:#e0b8ff;font-size:20px}.gdon{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}.gdon input{width:130px;font:inherit;background:#0b0a12;color:#e0b8ff;border:2px solid var(--line);padding:4px 8px}
 #raidRes{z-index:9}.rrlist{display:flex;flex-direction:column;gap:4px;margin:10px 0}.rrrow{display:grid;grid-template-columns:40px 1fr auto;gap:8px;align-items:center;background:var(--panel2);border:2px solid var(--line);padding:8px}.rrrow.moi{border-color:var(--gold)}.rrrow b{font-size:20px;text-align:center}.rrrow em{color:#ffd23f;font-style:normal}.gform{display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:center;margin:10px 0}.gform input{background:#0b0a12;border:2px solid var(--line2);color:#f4f1e8;font:inherit;padding:6px}
 .graid{background:var(--panel2);border:2px solid var(--line);padding:10px;margin:8px 0}.graid .bar{height:18px;background:#0b0a12;border:1px solid var(--line);position:relative;margin:6px 0}.graid .bar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(#ffe27a,#c9860a)}
 .glist{display:flex;flex-direction:column;gap:3px;max-height:260px;overflow:auto}.grow{display:grid;grid-template-columns:28px 1fr auto auto;gap:8px;align-items:center;background:var(--panel2);border:1px solid var(--line);padding:4px 8px}.grow img{width:24px;height:24px;image-rendering:pixelated}.grow.moi{border-color:var(--gold)}.grow em{color:#ffd23f;font-style:normal;font-size:12px}.grow button{font-size:11px;padding:2px 6px}
@@ -6964,8 +6964,8 @@ function oracleAchat(k,a){const cls=save.current,ch=C();
   persist();pushSave(true);statsDirty=true;invDirty=true;sfx('relic');burst(P.x,P.y,'#e0b8ff',30,3);renderPresWin();}
 // ---- la fenêtre ----
 let presTab='epreuves';
-const PRES_TABS=[['epreuves','Épreuves'],['progression','Progression'],['skins','Apparences'],['utilitaire','Utilitaire'],['guilde','Guilde']];
-function openPresWin(t){if(t)presTab=t;presEl.hidden=false;paused=true;keys.clear();mouse.down=false;$('#presMsg').textContent='';renderPresWin();sfx('item');if(presTab==='guilde')try{guildReq();}catch(e){}}
+const PRES_TABS=[['epreuves','Épreuves'],['progression','Progression'],['skins','Apparences'],['utilitaire','Utilitaire']];
+function openPresWin(t){if(t)presTab=t;presEl.hidden=false;paused=true;keys.clear();mouse.down=false;$('#presMsg').textContent='';renderPresWin();sfx('item');}
 function closePresWin(){presEl.hidden=true;paused=false;cv.focus();}
 const presBtn=(k,a,prix,ok,txt)=>'<button type="button" class="act presb" data-pa="'+k+'"'+(a?' data-pv="'+a+'"':'')+(ok&&(save.prestige||0)>=prix?'':' disabled')+'>'+(txt||(prix.toLocaleString('fr-FR')+' ✦'))+'</button>';
 const presCarte=(img,titre,txt,btn,etat)=>'<div class="prescard'+(etat?' '+etat:'')+'">'+(img?'<img src="'+img+'" alt="">':'')+'<div><b>'+titre+'</b><span>'+txt+'</span></div>'+(btn||'')+'</div>';
@@ -6994,28 +6994,38 @@ function renderPresWin(){const cls=save.current,cap=maxLvl(),nom=CLASSES[cls].no
   else if(presTab==='utilitaire'){const n=C().inv.length;
     h+=presCarte(backpackURL,'4e sac à dos','Onglet « Sac 4 » : 8 places de plus pour ton '+nom+' (après le 3e sac du marchand).',n>=32?'<button type="button" class="act" disabled>Acheté ✓</button>':presBtn('sac',null,ORACLE_PRIX.sac,n>=24),n>=32?'ok':'');
     h+=presCarte(icon(mkItem('pierre_asc',0)),'Pierre d\'ascension','À la forge, tente de faire passer un objet +2 à <b>+3</b> (+30 % d\'efficacité). 20 % de chances de réussir ; la pierre est perdue dans tous les cas, l\'objet jamais.',presBtn('pierre',null,ORACLE_PRIX.pierre,true));}
-  else if(presTab==='guilde')h+=guildeComptoirHTML();
   box.innerHTML=h;}
-presEl.addEventListener('click',e=>{const t=e.target.closest('[data-pt]');if(t){presTab=t.dataset.pt;$('#presMsg').textContent='';renderPresWin();if(presTab==='guilde')try{guildReq();}catch(err){}return;}
+presEl.addEventListener('click',e=>{const t=e.target.closest('[data-pt]');if(t){presTab=t.dataset.pt;$('#presMsg').textContent='';renderPresWin();return;}
   const b=e.target.closest('[data-pa]');if(!b||b.disabled)return;const k=b.dataset.pa,v=b.dataset.pv;
   if(k==='franchir'){franchir();return;}
   if(k==='porter'){save.skinSel[save.current]=v;persist();sendPresence();sfx('item');renderPresWin();return;}
   if(k==='familier'){COSM().pet=v;persist();pushSave(true);sendPresence();sfx('item');renderPresWin();return;}
-  if(k==='don'){guildeDon(b.dataset.pb,+v);return;}
   oracleAchat(k,v);});
-// ---- comptoir de guilde : le prestige donné à la guilde fait monter ses bonus (pour tous ses membres) ----
+// ---- bonus de guilde (0.0.99) : les membres versent du prestige dans le capital de la guilde ; le chef le dépense pour monter les bonus ----
 const GBON={xp:{nom:'Savoir',txt:n=>'+'+2*n+' % d\'expérience',col:'#7ed957'},or:{nom:'Trésor',txt:n=>'+'+3*n+' % de pièces',col:'#ffd23f'},vie:{nom:'Vigueur',txt:n=>'+'+20*n+' vie',col:'#ff6b74'},mana:{nom:'Sagesse',txt:n=>'+'+15*n+' mana',col:'#6aa6f2'}},GB_COUT=[2000,4000,7000,11000,16000];
 function guildeBonus(k){return GUILD&&GUILD.bon?clamp(GUILD.bon[k]|0,0,5):0;}
-function guildeComptoirHTML(){if(!GUILD)return '<p class="hint">Rejoins une guilde (bouton Guilde) pour lui donner du prestige.</p>';
-  let h='<p class="hint">Chaque membre peut donner du prestige à <b>['+clean(GUILD.tag)+'] '+clean(GUILD.nom)+'</b>. Une jauge pleine fait monter le bonus d\'un niveau, pour tous les membres (5 niveaux par bonus, '+GB_COUT.reduce((a,v)=>a+v,0).toLocaleString('fr-FR')+' prestige en tout pour chacun).</p><div class="presgrid">';
-  for(const k in GBON){const B=GBON[k],n=guildeBonus(k),j=(GUILD.jauge&&GUILD.jauge[k])|0,max=n>=5,cout=GB_COUT[Math.min(4,n)];
-    h+='<div class="prescard'+(max?' ok':'')+'"><div><b style="color:'+B.col+'">'+B.nom+' · niveau '+n+' / 5</b><span>'+(n?B.txt(n):'aucun bonus')+(max?'':' → '+B.txt(n+1))+'</span>'+(max?'':'<span class="jg"><i style="width:'+Math.round(j/cout*100)+'%;background:'+B.col+'"></i></span><span class="hint">'+j.toLocaleString('fr-FR')+' / '+cout.toLocaleString('fr-FR')+'</span>')+'</div>'
-      +(max?'<button type="button" class="act" disabled>Maximum</button>':'<span style="display:grid;gap:3px">'+[100,500,2000].map(v=>'<button type="button" class="act presb" data-pa="don" data-pb="'+k+'" data-pv="'+v+'"'+((save.prestige||0)>=v?'':' disabled')+'>Donner '+v.toLocaleString('fr-FR')+'</button>').join('')+'</span>')+'</div>';}
-  return h+'</div>';}
-let donWait=0;
-function guildeDon(k,n){if(!GUILD||!GBON[k]||!(n>0))return;if((save.prestige||0)<n){sfx('deny');return;}if(!(ONLINE&&AUTH.ok&&room&&room.raw)){note('Connecte-toi pour donner à ta guilde');return;}if(Date.now()-donWait<1500)return;donWait=Date.now();
-  room.raw(Object.assign(gMsg('don'),{b:k,n}));}
-function onGuildeDon(m){donWait=0;if(!m.ok){$('#presMsg').textContent=m.msg||'Don refusé';sfx('deny');return;}save.prestige=Math.max(0,(save.prestige||0)-(m.n|0));persist();pushSave(true);statsDirty=true;sfx('relic');showBanner('Don à la guilde','-'+(m.n|0).toLocaleString('fr-FR')+' prestige · '+GBON[m.b].nom+(m.up?' passe au niveau '+m.up+' !':''),'#e0b8ff');if(!presEl.hidden)renderPresWin();}
+let donWait=0,gdTab='guilde';
+function guildeDon(n){n=Math.floor(+n||0);if(!GUILD||!(n>0))return;if((save.prestige||0)<n){$('#gdMsg')&&($('#gdMsg').textContent='Tu n\'as que '+(save.prestige||0).toLocaleString('fr-FR')+' prestige');sfx('deny');return;}
+  if(!(ONLINE&&AUTH.ok&&room&&room.raw)){note('Connecte-toi pour donner à ta guilde');return;}if(Date.now()-donWait<1500)return;donWait=Date.now();room.raw(Object.assign(gMsg('don'),{n}));}
+function onGuildeDon(m){donWait=0;if(!m.ok){if($('#gdMsg'))$('#gdMsg').textContent=m.msg||'Don refusé';sfx('deny');return;}
+  save.prestige=Math.max(0,(save.prestige||0)-(m.n|0));persist();pushSave(true);statsDirty=true;sfx('relic');showBanner('Don à la guilde','-'+(m.n|0).toLocaleString('fr-FR')+' prestige · versé au capital de la guilde','#e0b8ff');if(!guildEl.hidden)renderGuild();}
+function guildeBonusAchat(k){if(!GUILD||!GUILD.chef||!GBON[k])return;room.raw(Object.assign(gMsg('bonus'),{b:k}));}
+function renderGuildBonus(B){const G=GUILD,cap=G.cap|0,mp=save.prestige||0;
+  const d=document.createElement('div');
+  let h='<p class="hint">Chaque membre peut verser le prestige qu\'il veut dans le <b>capital de la guilde</b> (il est retiré de son compte). Le chef dépense ce capital pour monter les bonus, qui profitent à tous les membres. Le prestige d\'un joueur n\'est jamais pris directement.</p>'
+    +'<div class="gcap"><span>Capital de la guilde</span><b>✦ '+cap.toLocaleString('fr-FR')+'</b></div>'
+    +'<div class="gdon"><label for="gdDonN">Verser</label><input id="gdDonN" type="number" min="1" step="1" max="'+mp+'" placeholder="montant" inputmode="numeric"><span class="hint">sur tes ✦ '+mp.toLocaleString('fr-FR')+'</span><button type="button" class="act presb" id="gdDonTout"'+(mp>0?'':' disabled')+'>Tout</button><button type="button" class="act presb" id="gdDonGo"'+(mp>0?'':' disabled')+'>Donner</button></div>'
+    +'<p class="hint" id="gdMsg" style="min-height:1.2em;color:#ff8a94"></p><div class="presgrid">';
+  for(const k in GBON){const Bn=GBON[k],n=guildeBonus(k),max=n>=5,cout=GB_COUT[Math.min(4,n)],ok=G.chef&&!max&&cap>=cout;
+    h+='<div class="prescard'+(max?' ok':'')+'"><div><b style="color:'+Bn.col+'">'+Bn.nom+' · niveau '+n+' / 5</b><span>'+(n?Bn.txt(n):'aucun bonus')+(max?'':' → '+Bn.txt(n+1))+'</span>'
+      +(max?'':'<span class="jg"><i style="width:'+Math.min(100,Math.round(cap/cout*100))+'%;background:'+Bn.col+'"></i></span>')+'</div>'
+      +(max?'<button type="button" class="act" disabled>Maximum</button>':'<button type="button" class="act presb" data-gb="'+k+'"'+(ok?'':' disabled')+' title="'+(G.chef?'Payé avec le capital de la guilde':'Seul le chef peut améliorer la guilde')+'">'+cout.toLocaleString('fr-FR')+' ✦</button>')+'</div>';}
+  h+='</div><h3>Dons des membres</h3><div class="hint">'+[...G.membres].sort((a,b)=>(b.don|0)-(a.don|0)).map(m=>clean(m.n)+' · ✦ '+((m.don|0).toLocaleString('fr-FR'))).join('<br>')+'</div>';
+  d.innerHTML=h;B.append(d);
+  const inp=$('#gdDonN');inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')guildeDon(inp.value);});
+  $('#gdDonTout').onclick=()=>{inp.value=save.prestige||0;};$('#gdDonGo').onclick=()=>guildeDon(inp.value);
+  d.querySelectorAll('[data-gb]').forEach(b=>b.onclick=()=>guildeBonusAchat(b.dataset.gb));
+  $('#gdFoot').textContent=G.chef?'Tu es le chef : tu dépenses le capital':'Seul le chef dépense le capital de la guilde';}
 $('#inspClose').addEventListener('click',closeInspect);$('#inspWin').addEventListener('click',e=>{if(e.target.id==='inspWin')closeInspect();});
 $('#presClose').addEventListener('click',closePresWin);presEl.addEventListener('click',e=>{if(e.target===presEl)closePresWin();});window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!presEl.hidden)closePresWin();});
 function openHouseWin(){houseEl.hidden=false;paused=true;keys.clear();mouse.down=false;renderHouseWin();sfx('item');}
@@ -7217,7 +7227,8 @@ function drawDragonIntro(){if(scene!=='raid')return;const left=RAIDEV.spawn-Date
 function raidLeft(){const t=Math.max(0,RAIDEV.fin-Date.now());return Math.floor(t/60000)+':'+String(Math.floor(t/1000)%60).padStart(2,'0');}
 function guildMsg(m){
   if(m.a==='don'){onGuildeDon(m);return;}
-  if(m.a==='info'){const had=GUILD;GUILD=m.g||null;if(!presEl.hidden&&presTab==='guilde')setTimeout(renderPresWin,0);statsDirty=true;if(m.msg)showBanner('Guilde',m.msg,'#ff5a6a');if(had&&!GUILD&&(scene==='ghall'||scene==='raid'))enterNexus();
+  if(m.a==='bonus'){sfx('relic');showBanner('Guilde améliorée !',GBON[m.b].nom+' passe au niveau '+m.niv+' · '+GBON[m.b].txt(m.niv),'#e0b8ff');return;}
+  if(m.a==='info'){const had=GUILD;GUILD=m.g||null;if(!guildEl.hidden&&gdTab==='bonus'&&document.activeElement!==$('#gdDonN'))setTimeout(renderGuild,0);statsDirty=true;if(m.msg)showBanner('Guilde',m.msg,'#ff5a6a');if(had&&!GUILD&&(scene==='ghall'||scene==='raid'))enterNexus();
     if(GUILD&&GUILD.raid){if(GUILD.raid.actif){RAIDEV.fin=Date.now()+GUILD.raid.reste;RAIDEV.spawn=Date.now()+(GUILD.raid.spawn||0);}else if(RAIDEV.fin>Date.now())RAIDEV.fin=0;}
     if(!guildEl.hidden)renderGuild();plSig='';updZoneForce();sendPresence();return;}
   if(m.a==='created'){save.gold=Math.max(0,save.gold-GUILD_COST);persist();invDirty=true;showBanner('Guilde fondée !','Bienvenue dans ton hall de guilde','#ffd23f');sfx('relic');setTimeout(()=>{if(GUILD)enterGuildHall();},400);return;}
@@ -7326,6 +7337,8 @@ function renderGuild(){const B=$('#gdBody');B.textContent='';
     $('#gdCreate').onclick=()=>{if(save.gold<GUILD_COST){note('Il faut '+GUILD_COST+' pièces');sfx('deny');return;}room.raw(Object.assign(gMsg('create'),{nom:$('#gdNom').value,tag:$('#gdTag').value}));};
     $('#gdFoot').textContent='3 membres maximum par guilde';return;}
   const G=GUILD,r=G.raid||{};$('#gdTitle').textContent='['+G.tag+'] '+G.nom;
+  {const tb=document.createElement('div');tb.className='prestabs';tb.innerHTML=[['guilde','Guilde'],['bonus','Bonus']].map(([k,t])=>'<button type="button" data-gdt="'+k+'" class="'+(gdTab===k?'on':'')+'">'+t+'</button>').join('');tb.onclick=e=>{const t=e.target.closest('[data-gdt]');if(t){gdTab=t.dataset.gdt;renderGuild();}};B.append(tb);}
+  if(gdTab==='bonus'){renderGuildBonus(B);return;}
   const rd=document.createElement('div');rd.className='graid';const d=r.dernier;
   rd.innerHTML=`<b>🐉 Raid de guilde · Dragon</b><br><span class="hint">${raidOn()?`<b style="color:#ff7a1a">EN COURS · ${raidLeft()} restantes</b> · dégâts de ta guilde : <b>${r.guilde.toLocaleString('fr-FR')}</b> · les tiens : <b>${r.part.toLocaleString('fr-FR')}</b>`:'Une fois par semaine, le Dragon apparaît 5 minutes. Il est invulnérable : les guildes sont classées selon leurs dégâts.'}</span>
     ${r.top&&r.top.length?'<div class="hint" style="margin-top:6px">'+r.top.map((t,i)=>(i+1)+'. ['+t.tag+'] '+t.nom+' · '+Number(t.dmg).toLocaleString('fr-FR')).join('<br>')+'</div>':''}

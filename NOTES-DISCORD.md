@@ -25,7 +25,8 @@
 • **Apparences** : une nouvelle apparence pour chaque classe (1 200) et trois familiers : Phénix d'or, Golem d'améthyste, Méduse astrale (800 chacun).
 
 ## 🛡️ Guildes (0.0.99)
-• **Comptoir de guilde** : chaque membre peut donner du prestige à sa guilde. Quatre bonus pour tous les membres, 5 niveaux chacun : Savoir (+2 % d'expérience par niveau), Trésor (+3 % de pièces), Vigueur (+20 vie), Sagesse (+15 mana). Niveaux à 2 000, 4 000, 7 000, 11 000 et 16 000 prestige.
+• **Bonus de guilde** : nouvel onglet « Bonus » dans la fenêtre de guilde. Chaque membre verse le montant de prestige qu'il veut dans le **capital de la guilde** (retiré de son compte).
+• Le **chef** dépense ce capital pour monter quatre bonus pour tous les membres, 5 niveaux chacun : Savoir (+2 % d'expérience par niveau), Trésor (+3 % de pièces), Vigueur (+20 vie), Sagesse (+15 mana). Niveaux à 2 000, 4 000, 7 000, 11 000 et 16 000 prestige.
 
 ## ☠️ Le Passeur (0.0.99)
 • Le pacte **ne se rompt plus** : il ne prend fin qu'à la mort du héros.

@@ -372,8 +372,8 @@ const guildeBonusDe = moi => { try { if (!moi.idJoueur) return null; const [, g]
 function guildeDe(pid) { for (const [gid, g] of Object.entries(guildes)) if (g.membres[pid]) return [gid, g]; return [null, null]; }
 function vueGuilde(gid, g, pid) {
   const x = raidEv && raidEv.g[gid] ? raidEv.g[gid].c : {};
-  return { id: gid, nom: g.nom, tag: g.tag, niv: g.niv || 1, chef: g.chef === pid, bon: g.bon || {}, jauge: g.jauge || {},
-    membres: Object.entries(g.membres).map(([id, m]) => ({ k: cle(id), n: m.n, c: m.c, l: m.l, chef: id === g.chef, moi: id === pid, dmg: x[id] || 0 })),
+  return { id: gid, nom: g.nom, tag: g.tag, niv: g.niv || 1, chef: g.chef === pid, bon: g.bon || {}, cap: Math.floor(g.cap || 0) + Object.values(g.jauge || {}).reduce((a, v) => a + (v | 0), 0),
+    membres: Object.entries(g.membres).map(([id, m]) => ({ k: cle(id), n: m.n, c: m.c, l: m.l, chef: id === g.chef, moi: id === pid, dmg: x[id] || 0, don: (g.dons && g.dons[id]) | 0 })),
     raid: vueRaid(gid, pid) };
 }
 function socketsDe(pids) { const out = []; for (const s of salles.values()) for (const j of s.values()) if (j.idJoueur && pids.includes(j.idJoueur)) out.push(j); return out; }
@@ -422,20 +422,27 @@ function actionGuilde(moi, salle, m) {
   }
   if (!g) return;
   // 0.0.99 : comptoir de guilde — le prestige donné fait monter les bonus de la guilde (5 niveaux chacun)
+  // 0.0.99 : chaque membre verse le prestige qu'il veut dans le capital de la guilde (débité de son compte) ;
+  // le chef dépense ce capital pour monter les bonus (jamais le prestige d'un joueur directement)
+  if (g.jauge) { g.cap = (g.cap || 0) + Object.values(g.jauge).reduce((x, v) => x + (v | 0), 0); delete g.jauge; guildesModif = true; } // ancien comptoir (jauges) → capital
   if (a === 'don') {
     if (!moi.compte) return rep({ a: 'don', ok: 0, msg: 'Connecte-toi à ton compte' });
-    const b = String(m.b || ''); let n = Math.floor(Number(m.n) || 0);
-    if (!GBON_K.includes(b) || !(n >= 1 && n <= 20000)) return rep({ a: 'don', ok: 0, msg: 'Don impossible' });
-    g.bon = g.bon || {}; g.jauge = g.jauge || {}; const nv = g.bon[b] | 0; if (nv >= 5) return rep({ a: 'don', ok: 0, msg: 'Ce bonus est déjà au maximum' });
-    const reste = GB_COUT.slice(nv).reduce((x, v) => x + v, 0) - (g.jauge[b] | 0); n = Math.min(n, reste);
+    const n = Math.floor(Number(m.n) || 0);
+    if (!(n >= 1 && n <= 1000000)) return rep({ a: 'don', ok: 0, msg: 'Montant invalide' });
     const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)); let sv = null; try { const r = sql.parId.get(moi.compte.id); sv = r && r.save ? JSON.parse(r.save) : null; } catch {}
     const dispo = Math.floor(((sv && +sv.prestige) || 0) + ((cpt.dons && cpt.dons.prestige) || 0) - (cpt.donGuilde || 0));
-    if (n > dispo) return rep({ a: 'don', ok: 0, msg: 'Pas assez de prestige enregistré (' + Math.max(0, dispo) + ') : réessaie dans un instant' });
-    cpt.donGuilde = (cpt.donGuilde || 0) + n; g.jauge[b] = (g.jauge[b] | 0) + n; let up = 0;
-    while ((g.bon[b] | 0) < 5 && g.jauge[b] >= GB_COUT[g.bon[b] | 0]) { g.jauge[b] -= GB_COUT[g.bon[b] | 0]; g.bon[b] = (g.bon[b] | 0) + 1; up = g.bon[b]; }
-    if ((g.bon[b] | 0) >= 5) g.jauge[b] = 0;
-    guildesModif = true; console.log(`[guilde] ${moi.compte.nom} donne ${n} prestige à [${g.tag}] (${b} ${g.bon[b] | 0})`);
-    rep({ a: 'don', ok: 1, b, n, up }); diffuserGuilde(gid, true); return;
+    if (n > dispo) return rep({ a: 'don', ok: 0, msg: 'Pas assez de prestige enregistré (' + Math.max(0, dispo).toLocaleString('fr-FR') + ') : réessaie dans un instant' });
+    cpt.donGuilde = (cpt.donGuilde || 0) + n; g.cap = Math.floor(g.cap || 0) + n; g.dons = g.dons || {}; g.dons[pid] = (g.dons[pid] | 0) + n;
+    guildesModif = true; console.log(`[guilde] ${moi.compte.nom} verse ${n} prestige à [${g.tag}] (capital ${g.cap})`);
+    rep({ a: 'don', ok: 1, n }); diffuserGuilde(gid, true); return;
+  }
+  if (a === 'bonus') {
+    if (g.chef !== pid) return rep({ a: 'err', msg: 'Seul le chef peut améliorer la guilde' });
+    const b = String(m.b || ''); if (!GBON_K.includes(b)) return;
+    g.bon = g.bon || {}; const nv = g.bon[b] | 0; if (nv >= 5) return rep({ a: 'err', msg: 'Ce bonus est déjà au maximum' });
+    const cout = GB_COUT[nv]; if ((g.cap || 0) < cout) return rep({ a: 'err', msg: 'Pas assez de prestige dans le capital de la guilde (' + Math.floor(g.cap || 0).toLocaleString('fr-FR') + ' / ' + cout.toLocaleString('fr-FR') + ')' });
+    g.cap -= cout; g.bon[b] = nv + 1; guildesModif = true; console.log(`[guilde] [${g.tag}] ${b} niveau ${nv + 1} (capital restant ${g.cap})`);
+    rep({ a: 'bonus', b, niv: nv + 1 }); diffuserGuilde(gid, true); return;
   }
   if (a === 'leave') {
     delete g.membres[pid];

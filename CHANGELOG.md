@@ -5,13 +5,13 @@
 - **Remise à zéro** : tout le prestige est remis à 0 et tous les héros au-dessus du niveau 20 redescendent au niveau 20 (équipement, sacs, runes et coffres conservés). Les coffres déjà débloqués restent ouverts.
 - **Les paliers de l'Oracle** : du niveau 20 au niveau 30, chaque niveau s'ouvre pour la classe que tu joues en passant une épreuve : tuer un certain nombre de chaque monstre d'une zone (20 de chaque monstre de la Plage pour le 21, 30 des Plaines pour le 22, 40 du Marais pour le 23, 30 de la Forêt et du Canyon pour le 24, 40 des Terres Brûlées et Désolées pour le 25) et atteindre un étage de la Tour des Chevaliers (10, 15, 20, 25, 30). Ton record dans la Tour compte, même s'il date d'avant. Au-delà du niveau 25… l'Île aux Colosses a son mot à dire.
 - **La barre de gloire disparaît.** À ton niveau maximum, la barre d'expérience indique « Max » et te renvoie à l'Oracle.
-- **La boutique de l'Oracle**, en onglets (Épreuves, Progression, Apparences, Utilitaire, Guilde) :
+- **La boutique de l'Oracle**, en onglets (Épreuves, Progression, Apparences, Utilitaire) :
   - **4e sac à dos** (1 500 prestige, après le 3e sac du marchand) ;
   - **La Suite de l'arbre de la Brèche** (8 000) : une deuxième page de nœuds (Bastion, Fureur, Couronne, Frénésie, Sagesse) pour toutes tes classes, et des points d'arbre jusqu'au niveau 30 ;
   - **Renforcer un talisman** (600) : un de tes talismans, au hasard, gagne +10 % à ses bonus, jusqu'à +5, pour tout le compte ;
   - **Pierre d'ascension** (400) : à la forge, une chance sur cinq de passer un objet +2 à **+3** (+30 % d'efficacité) ;
   - **Apparences** : une nouvelle apparence par classe (1 200) et trois familiers (Phénix d'or, Golem d'améthyste, Méduse astrale, 800 chacun).
-- **Comptoir de guilde** : chaque membre peut donner du prestige à sa guilde. Quatre bonus pour tous les membres, 5 niveaux chacun : Savoir (+2 % d'expérience par niveau), Trésor (+3 % de pièces), Vigueur (+20 vie), Sagesse (+15 mana). Niveaux à 2 000, 4 000, 7 000, 11 000 et 16 000 prestige.
+- **Bonus de guilde** : nouvel onglet « Bonus » dans la fenêtre de guilde. Chaque membre verse le montant de prestige qu'il veut dans le **capital de la guilde** (retiré de son compte). Le chef dépense ce capital pour monter quatre bonus, pour tous les membres, 5 niveaux chacun : Savoir (+2 % d'expérience par niveau), Trésor (+3 % de pièces), Vigueur (+20 vie), Sagesse (+15 mana). Niveaux à 2 000, 4 000, 7 000, 11 000 et 16 000 prestige.
 - **Le Passeur** : le pacte ne se rompt plus, il ne prend fin qu'à la mort du héros. En échange, un héros maudit gagne maintenant **trois fois plus d'expérience** et **toutes ses chances de butin sont doublées**.
 - **Coffres de la maison** : les coffres en Cursite s'achètent directement, sans avoir d'abord à acheter tous les coffres en pièces.
 - **Correction** : depuis la 0.0.98, tirer bloquait le jeu (on pouvait encore bouger, mais les monstres et leurs tirs se figeaient). C'est réparé.
