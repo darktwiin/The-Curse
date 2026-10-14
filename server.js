@@ -805,16 +805,30 @@ server.listen(PORT, () => {
       lier: lierDiscord,
       guerre: () => { const R = arbitre.regles(); return etatGuerre().zones.map((z, i) => ({ zone: R && R.ZONES && R.ZONES[i] ? R.ZONES[i].nom : 'Zone ' + (i + 1), tenant: z.t ? z.t.nom : null, tag: z.t ? z.t.tag : '' })); },
     });
-    // nouvelle version en ligne : une ligne sur Discord, une seule fois par version
-    if (actif) { const f = path.join(DATA_DIR, 'discord.json'); let vu = ''; try { vu = JSON.parse(fs.readFileSync(f, 'utf8')).version || ''; } catch {}
-      if (vu !== VERSION) { try { fs.writeFileSync(f, JSON.stringify({ version: VERSION })); } catch {}
-        if (vu) setTimeout(() => {
-          discord.annoncer('✅ **The Curse ' + VERSION + '** est en ligne. Rechargez la page pour jouer sur la nouvelle version.');
-          // notes de mise à jour : toutes les versions sorties depuis la dernière annoncée (5 au plus), de la plus ancienne à la plus récente
-          try { const cl = fs.readFileSync(path.join(__dirname, 'CHANGELOG.md'), 'utf8'), num = v => (String(v).match(/\d+/g) || []).map(Number).reduce((a, x) => a * 1000 + x, 0);
-            const toutes = [...cl.matchAll(/^## (ver\.\d+\.\d+\.\d+)/gm)].map(m => m[1]).filter(v => num(v) > num(vu) && num(v) <= num(VERSION)).sort((a, b) => num(a) - num(b)).slice(-5);
-            discord.publierNotes(cl, toutes); } catch (e) { console.error('[discord] notes de version', e.message); }
-        }, 8000).unref(); } }
+    // nouvelle version en ligne : une annonce et les notes de mise à jour, une seule fois par version.
+    // discord.json n'est écrit qu'APRÈS l'envoi réussi : un redémarrage juste après une mise à jour (ou un refus de Discord)
+    // ne fait plus perdre les notes, elles repartent au démarrage suivant.
+    // NOTES-DISCORD.md (facultatif, à la racine) : un texte libre (récapitulatif de plusieurs versions…) publié une seule fois
+    // à la place des notes de version, tant que son contenu n'a pas déjà été publié.
+    if (actif) { const f = path.join(DATA_DIR, 'discord.json'); let etat = {}; try { etat = JSON.parse(fs.readFileSync(f, 'utf8')) || {}; } catch {}
+      const vu = etat.version || '', ecrire = o => { try { Object.assign(etat, o); fs.writeFileSync(f, JSON.stringify(etat)); } catch (e) { console.error('[discord] discord.json', e.message); } };
+      let recap = '', hRecap = ''; try { recap = fs.readFileSync(path.join(__dirname, 'NOTES-DISCORD.md'), 'utf8').trim(); hRecap = crypto.createHash('sha1').update(recap).digest('hex').slice(0, 16); } catch {}
+      const recapNeuf = !!recap && etat.recap !== hRecap;
+      if (vu !== VERSION || recapNeuf) setTimeout(async () => {
+        try {
+          let msgs = [], quoi = '';
+          if (recapNeuf) { msgs = discord.decouper(recap); quoi = 'récapitulatif NOTES-DISCORD.md'; }
+          else { const cl = fs.readFileSync(path.join(__dirname, 'CHANGELOG.md'), 'utf8'), num = v => (String(v).match(/\d+/g) || []).map(Number).reduce((a, x) => a * 1000 + x, 0);
+            // toutes les versions sorties depuis la dernière annoncée (5 au plus) ; sans historique : la version en ligne seulement
+            const toutes = [...cl.matchAll(/^## (ver\.\d+\.\d+\.\d+)/gm)].map(m => m[1]).filter(v => (vu ? num(v) > num(vu) : v === VERSION) && num(v) <= num(VERSION)).sort((a, b) => num(a) - num(b)).slice(-5);
+            for (const v of toutes) msgs.push(...discord.notesDeVersion(cl, v)); quoi = toutes.length ? 'notes ' + toutes.join(', ') : 'aucune section « ## ' + VERSION + ' » dans CHANGELOG.md'; }
+          if (vu !== VERSION) discord.annoncer('✅ **The Curse ' + VERSION + '** est en ligne. Rechargez la page pour jouer sur la nouvelle version.');
+          const r = msgs.length ? await discord.publierMessages(msgs) : { envoyes: 0, rates: 0 };
+          console.log(`[discord] ${quoi} : ${r.envoyes} message(s) envoyé(s)${r.rates ? ', ' + r.rates + ' refusé(s)' : ''}${r.sansSalon ? ' (DISCORD_SALON_PATCH et DISCORD_SALON absents)' : ''}`);
+          if (!r.rates) ecrire(Object.assign({ version: VERSION }, recapNeuf ? { recap: hRecap } : {}));
+          else console.error('[discord] notes non publiées : nouvel essai au prochain démarrage');
+        } catch (e) { console.error('[discord] notes de version', e.message); }
+      }, 8000).unref(); }
   } catch (e) { console.error('[discord] démarrage', e.message); }
 });
 

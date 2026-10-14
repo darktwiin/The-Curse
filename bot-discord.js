@@ -192,9 +192,15 @@ function notesDeVersion(changelog, version) {
   for (const l of corps) { if (cur.length + l.length + 1 > 1800) { messages.push(cur); cur = ''; } cur += l + '\n'; }
   messages.push(cur); return messages;
 }
-function publierNotes(changelog, versions) { if (!TOKEN || !SALON_PATCH) return 0; let n = 0;
-  for (const v of versions) for (const m of notesDeVersion(changelog, v)) { appel('POST', '/channels/' + SALON_PATCH + '/messages', { content: m, allowed_mentions: { parse: [] } }); n++; }
-  return n; }
+// Envoie les notes (dans le salon des notes, sinon dans le salon des annonces). Renvoie une promesse : { envoyes, rates }.
+async function publierMessages(messages) { const ou = SALON_PATCH || SALON; if (!TOKEN || !ou) return { envoyes: 0, rates: messages.length, sansSalon: true };
+  let envoyes = 0, rates = 0; for (const m of messages) { const r = await appel('POST', '/channels/' + ou + '/messages', { content: m, allowed_mentions: { parse: [] } }); if (r) envoyes++; else rates++; }
+  return { envoyes, rates }; }
+function publierNotes(changelog, versions) { const tout = []; for (const v of versions) tout.push(...notesDeVersion(changelog, v)); return publierMessages(tout); }
+// Un texte libre (fichier NOTES-DISCORD.md) découpé en messages de moins de 1 800 caractères
+function decouper(texte) { const out = []; let cur = '';
+  for (const l of String(texte || '').replace(/\r/g, '').split('\n')) { if (cur.length + l.length + 1 > 1800 && cur.trim()) { out.push(cur); cur = ''; } cur += l.slice(0, 1800) + '\n'; }
+  if (cur.trim()) out.push(cur); return out; }
 
 function demarrer(acces) {
   jeu = acces;
@@ -206,4 +212,4 @@ function demarrer(acces) {
   return true;
 }
 
-module.exports = { demarrer, annoncer, publierNotes, notesDeVersion, actif: () => !!TOKEN };
+module.exports = { demarrer, annoncer, publierNotes, publierMessages, decouper, notesDeVersion, actif: () => !!TOKEN };

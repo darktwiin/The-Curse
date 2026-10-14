@@ -3768,7 +3768,7 @@ function genEnfersTry(seed){const R=mulberry(seed),w=184,h=184,cx=92,cy=92,sol=n
   const centre=L=>{let x=0,y=0;for(const [a,b] of L){x+=a;y+=b;}return{x:x/L.length+.5,y:y/L.length+.5};},c1=centre(p1),c2=centre(p2);
   const braseros=[{x:cx+3.5,y:sy0-1.5},{x:cx+3.5,y:cy-55.5},{x:cx-2.5,y:cy+33.5}];for(const b of braseros)for(const [dx,dy] of [[0,0]])sol[Math.floor(b.y)*w+Math.floor(b.x)]=0;
   const lyres=[[ar.x0+3,ar.y0+3],[ar.x1-2,ar.y0+3],[ar.x0+3,ar.y1-2],[ar.x1-2,ar.y1-2]].map(([x,y])=>({x:x+.5,y:y+.5,cd:0,joue:0}));
-  return{kind:'dungeon',dtype:'y',bossKey:'b_hades',w,h,sol,rooms,start:{x:cx+.5,y:sy0+.5},boss:A,arena:ar,doors,altar:{x:cx+.5,y:cy+.5},exitPortal:{x:cx+.5,y:sy0+3.5},enfers:true,cercle:cer,cx,cy,
+  return{kind:'dungeon',dtype:'y',bossKey:'b_hades',w,h,sol,rooms,start:{x:cx+.5,y:sy0+.5},boss:A,arena:ar,doors,altar:{x:cx+.5,y:cy+.5},exitPortal:{x:cx+.5,y:sy0+3.5},enfers:true,tseed:seed,cercle:cer,cx,cy,
     portes:[{i:0,tiles:p1,x:c1.x,y:c1.y},{i:1,tiles:p2,x:c2.x,y:c2.y}],braseros,lyres};
 }
 function enfersInit(){const d=MAP;d.cerTot=[0,0,0,0,0];for(const m of monsters){if(m.d.boss)continue;const c=d.cercle[Math.floor(m.y)*d.w+Math.floor(m.x)]|0;m.cer=c;d.cerTot[c]++;}
@@ -3789,7 +3789,26 @@ function enfersOmbre(src){if(scene!=='dungeon'||!MAP||!MAP.enfers||P.ombreFin)re
 function lyreJouee(x,y){const d=MAP;if(!d||!d.lyres)return;let L=null,bd=3;for(const q of d.lyres){const dd=Math.hypot(q.x-x,q.y-y);if(dd<bd){bd=dd;L=q;}}if(!L||time<L.cd-1)return;L.cd=time+30;L.joue=0;
   let n=0;for(const m of monsters)if(m.key==='b_cerbere'&&m.hp>0){m.berce=time+6;m.vuln=time+6;n++;}
   if(n){showBanner('La lyre d\'Orphée !','Cerbère s\'endort 6 s · il prend +50 % de dégâts','#ffd23f');sfx('relic');}burst(L.x,L.y,'#ffd23f',30,4);vfx.push({k:'healring',x:L.x,y:L.y,r:3,t:0,life:0.8,col:'#ffd23f'});}
+/* 0.0.99 : les deux totems d'Hadès (mécanique secrète, rien ne l'explique en jeu). À l'apparition d'Hadès, deux totems se dressent dans deux coins
+   de l'arène tirés au hasard (même tirage chez tous les joueurs) : l'un se détruit à coups de tirs, sur l'autre il faut rester 4 s.
+   Tant que les deux ne sont pas faits, Hadès ne prend que 20 % des dégâts. Bits de « stars » : 4 = totem brisé, 8 = totem tenu. */
+const HT_PV=40000,HT_TENIR=4;
+const hadesLa=()=>monsters.some(m=>m.key==='b_hades'&&m.hp>0);
+function hadesBouclier(){return !!(MAP&&MAP.enfers)&&(stars&12)!==12;}
+function hadesTotems(){const d=MAP;if(!d||!d.enfers||!d.arena)return null;if(d.totems)return d.totems;const a=d.arena,R0=mulberry((d.tseed|0)^0x5ade5),
+  C=[[a.x0+1.5,a.y0+1.5],[a.x1-0.5,a.y0+1.5],[a.x0+1.5,a.y1-0.5],[a.x1-0.5,a.y1-0.5]],i=Math.floor(R0()*4),j=(i+1+Math.floor(R0()*3))%4;
+  return d.totems=[{k:'casse',x:C[i][0],y:C[i][1],pv:HT_PV,fl:0},{k:'garde',x:C[j][0],y:C[j][1],t:0}];}
+function hadesTotemFait(nw){const T=hadesTotems();if(!T)return;
+  if(nw&4){const t=T[0];burst(t.x,t.y,'#ff3b4a',40,5);burst(t.x,t.y,'#2a1030',30,4);secousse(4,0.3);sfx('relic');}
+  if(nw&8){const t=T[1];burst(t.x,t.y,'#7df0e0',40,4);vfx.push({k:'healring',x:t.x,y:t.y,r:3,t:0,life:0.8,col:'#7df0e0'});sfx('relic');}
+  if((stars&12)===12){const h=monsters.find(m=>m.key==='b_hades'&&m.hp>0);if(h){ft(h.x,h.y-h.d.sz*0.9,'Vulnérable','#ffd23f');burst(h.x,h.y,'#ffd23f',50,6);vfx.push({k:'boom',x:h.x,y:h.y,r:3,t:0,life:0.5,col:'#b45aff'});}secousse(6,0.5);sfx('boss',0.6);}}
+// un tir du joueur touche le totem à briser ? (renvoie vrai si le tir est absorbé)
+function hadesTotemTir(b){if(!MAP||!MAP.enfers||(stars&4)||b.cosm||!b.dmg||!hadesLa())return false;const t=hadesTotems()[0];if(Math.hypot(t.x-b.x,t.y-0.4-b.y)>0.75+b.r)return false;
+  t.pv-=b.dmg;t.fl=0.1;ft(t.x+rnd(-.2,.2),t.y-1.3,String(Math.round(b.dmg)),'#d8a8ff');sfx('hit');if(t.pv<=0){setStars(stars|4);sendEv('h',t.x,t.y);}return true;}
+function hadesTotemRemote(x,y){const T=hadesTotems();if(!T)return;let b=null,bd=3;for(const t of T){const dd=Math.hypot(t.x-x,t.y-y);if(dd<bd){bd=dd;b=t;}}if(b)setStars(stars|(b.k==='casse'?4:8));}
 function enfersTick(dt){if(scene!=='dungeon'||!MAP||!MAP.enfers)return;const d=MAP;
+  if(!(stars&8)&&!P.ombre&&hadesLa()){const t=hadesTotems()[1];if(Math.hypot(P.x-t.x,P.y-t.y)<1.2){t.t+=dt;if(t.t>=HT_TENIR){setStars(stars|8);sendEv('h',t.x,t.y);}}else t.t=Math.max(0,t.t-dt*2);}
+  if(d.totems&&d.totems[0].fl>0)d.totems[0].fl-=dt;
   // portes : chaque joueur compte les âmes ; l'hôte l'annonce aussi aux autres (S)
   {let v=stars;for(let i=0;i<2;i++)if(!(v&(1<<i))&&(i===0||(v&1))&&enfersAmes(i+1)>=d.need[i+1])v|=1<<i;if(v!==stars)setStars(v);}
   // ombre : un brasier allumé ou un allié vivant à côté pendant 2 s
@@ -3829,6 +3848,20 @@ function drawEnfers(d){const u=TS/16;
   for(const m of monsters)if(m.berce>time&&m.hp>0){const z=(time*1.5)%1;label('Z z z',sx(m.x)+TS*0.6,sy(m.y-m.d.sz*0.6)-z*TS*0.6,'#bff4ff',Math.round(TS*0.34),700);}
   ctx.globalCompositeOperation='lighter';for(const a of AMES){const k=a.t/a.dur,e=k*k*(3-2*k),x=a.x+(a.tx-a.x)*e+Math.sin(a.s+k*9)*1.2*(1-k),y=a.y+(a.ty-a.y)*e-Math.sin(k*Math.PI)*3;const X=sx(x),Y=sy(y);
     ctx.fillStyle='rgba(180,90,255,.35)';ctx.beginPath();ctx.arc(X,Y,TS*0.32,0,TAU);ctx.fill();R(X-2*u,Y-2*u,4*u,4*u,'#e0d0ff');if(Math.random()<0.5)parts.push({x,y,vx:0,vy:-0.3,life:.4,col:'#b45aff',s:.07});}ctx.globalCompositeOperation='source-over';
+  if(hadesLa()){const T=hadesTotems(),A=T[0],G=T[1];
+    {const X=sx(A.x),Y=sy(A.y);if(stars&4){R(X-6*u,Y+2*u,5*u,3*u,'#2a1a30');R(X+u,Y+3*u,5*u,2*u,'#3a2440');R(X-2*u,Y,3*u,2*u,'#4a2a50');}
+      else{const fl=A.fl>0,c1=fl?'#ffffff':'#3a1a48',c2=fl?'#ffd0ff':'#5a2a70',g=0.5+0.5*Math.sin(time*4);
+        R(X-5*u,Y+2*u,10*u,4*u,'#1a0c22');R(X-4*u,Y-14*u,8*u,17*u,c1);R(X-3*u,Y-13*u,2*u,15*u,c2);R(X-5*u,Y-16*u,10*u,3*u,c1);
+        R(X-2*u,Y-11*u,4*u,3*u,'#0a0410');R(X-2*u,Y-10*u,u,u,'rgba(255,59,74,'+(0.5+0.5*g)+')');R(X+u,Y-10*u,u,u,'rgba(255,59,74,'+(0.5+0.5*g)+')');R(X-u,Y-6*u,2*u,u,'#0a0410');
+        ctx.globalCompositeOperation='lighter';ctx.fillStyle='rgba(255,59,74,'+(0.08+0.06*g)+')';ctx.beginPath();ctx.arc(X,Y-6*u,TS*0.9,0,TAU);ctx.fill();ctx.globalCompositeOperation='source-over';
+        if(A.pv<HT_PV){const k=Math.max(0,A.pv/HT_PV);R(X-7*u,Y-20*u,14*u,2*u,'#1a0c22');R(X-7*u,Y-20*u,14*u*k,2*u,'#d23c6a');}}}
+    {const X=sx(G.x),Y=sy(G.y),ok=!!(stars&8),g=0.5+0.5*Math.sin(time*3);
+      ctx.strokeStyle=ok?'#7df0e0':'rgba(125,240,224,'+(0.35+0.3*g)+')';ctx.lineWidth=Math.max(2,u*1.2);ctx.beginPath();ctx.ellipse(X,Y+u,TS*0.9,TS*0.45,0,0,TAU);ctx.stroke();
+      for(let k=0;k<6;k++){const a=time*0.8+k*TAU/6;R(X+Math.cos(a)*TS*0.75-u,Y+u+Math.sin(a)*TS*0.37-u,2*u,2*u,ok?'#e0fffa':'#3a8a80');}
+      R(X-2*u,Y-9*u,4*u,10*u,ok?'#7df0e0':'#2a4a48');R(X-3*u,Y-11*u,6*u,2*u,ok?'#e0fffa':'#3a6a68');
+      if(!ok&&G.t>0){ctx.strokeStyle='#7df0e0';ctx.beginPath();ctx.arc(X,Y-3*u,TS*0.7,-Math.PI/2,-Math.PI/2+TAU*Math.min(1,G.t/HT_TENIR));ctx.stroke();}}
+    if(hadesBouclier()){const h=monsters.find(m=>m.key==='b_hades'&&m.hp>0);if(h){const X=sx(h.x),Y=sy(h.y)-h.d.sz*TS*0.35,r=h.d.sz*TS*0.62;ctx.globalCompositeOperation='lighter';
+      for(let k=0;k<3;k++){ctx.strokeStyle='rgba(180,90,255,'+(0.18+0.1*Math.sin(time*5+k*2))+')';ctx.lineWidth=Math.max(2,u*1.5);ctx.beginPath();ctx.arc(X,Y,r+k*u*2,time*(k+1)*0.7,time*(k+1)*0.7+TAU*0.7);ctx.stroke();}ctx.globalCompositeOperation='source-over';}}}
   if(P.ombre)label('Ombre · '+Math.max(0,Math.ceil(P.ombre-time))+' s · brasier ou allié',sx(P.x),sy(P.y)-TS*1.35,'#7df0e0',Math.round(TS*0.3),700);
 }
 function enfersFx(){const g=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*0.35,W/2,H/2,Math.max(W,H)*0.75);g.addColorStop(0,'rgba(40,0,60,0)');g.addColorStop(1,'rgba(30,0,50,.45)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
@@ -5043,7 +5076,7 @@ function inArena(x,y){const a=MAP&&MAP.arena;return!!a&&x>=a.x0&&x<a.x1+1&&y>=a.
 function applyDoors(locked){if(!MAP||!MAP.doors)return;for(const d of MAP.doors)MAP.sol[d.y*MAP.w+d.x]=locked?1:0;}
 function refreshDoors(){if(!MAP||!MAP.doors)return;applyDoors(fight===1||(!!MAP.needStars&&stars!==15&&fight!==2));}
 function starCount(v){let n=0;for(let i=0;i<4;i++)if(v&(1<<i))n++;return n;}
-function setStars(v){if(MAP&&MAP.enfers){v=(v|stars)&3;if(v===stars)return;const nw=v&~stars;stars=v;enfersPortes();for(let i=0;i<2;i++)if(nw&(1<<i))enfersPorteOuverte(i);return;} // Enfers : les portes ne se referment jamais
+function setStars(v){if(MAP&&MAP.enfers){v=(v|stars)&15;if(v===stars)return;const nw=v&~stars;stars=v;enfersPortes();for(let i=0;i<2;i++)if(nw&(1<<i))enfersPorteOuverte(i);if(nw&12)hadesTotemFait(nw);return;} // Enfers : les portes ne se referment jamais
   v&=15;if(v===stars)return;const nw=v&~stars;stars=v;refreshDoors();
   for(let i=0;i<4;i++)if(nw&(1<<i)){showBanner('Une étoile s\'allume !',MON[GARDIENS[i]].nom+' · '+starCount(stars)+'/4 étoiles',['#ff6a4a','#2ed8c8','#6ad86a','#ffb04a'][i]);sfx('relic');}
   if(stars===15)setTimeout(()=>showBanner('La porte céleste s\'ouvre',"Le Dévoreur d'Étoiles t'attend au nord de la rotonde",'#ffd23f'),1800);}
@@ -5446,7 +5479,7 @@ function comteTick(m,dt){m.cyc=(m.cyc==null?6:m.cyc)-dt;if(m.cyc>0)return;
 function comteBurst(m){for(let i=0;i<26;i++)shoot(m,i*TAU/26,{bs:6.5,col:'#ff3b4a'});const pl=scenePlayers();if(pl.length){let t=pl[0],bd=1e9;for(const p of pl){const dd=Math.hypot(p.x-m.x,p.y-m.y);if(dd<bd){bd=dd;t=p;}}const a=Math.atan2(t.y-m.y,t.x-m.x);for(let i=-2;i<=2;i++)shoot(m,a+i*0.1,{bs:9,r:0.2,col:'#ffffff'});}
   burst(m.x,m.y,'#ff3b4a',40,5);if(Math.hypot(P.x-m.x,P.y-m.y)<18)sfx('boss',0.7);vfx.push({k:'boom',x:m.x,y:m.y,r:2.5,t:0,life:0.4,col:'#ff3b4a'});}
 function hitMon(m,dmg,col,aggK){
-  if(m.hp<=0||m.pend)return;if(m.vuln>time)dmg=Math.round(dmg*1.5);dmg=Math.max(1,Math.round(dmg*armK(m)));
+  if(m.hp<=0||m.pend)return;if(m.vuln>time)dmg=Math.round(dmg*1.5);dmg=Math.max(1,Math.round(dmg*armK(m)));if(m.key==='b_hades'&&hadesBouclier())dmg=Math.max(1,Math.round(dmg*0.2));
   m.hp-=dmg;if(m.key==='dragon'){raidAcc+=dmg;m.hp=m.max;}m.flash=0.1;ft(m.x+rnd(-.2,.2),m.y-m.d.sz*0.5,String(dmg),col||'#ffffff');if(m.key==='mannequin'){m.lastHit=time;if(m.hp<1)m.hp=1;dpsHit(dmg);}
   const rec=dmgTot.get(m.id)||{tot:0,t:0};rec.tot+=dmg;rec.t=time;dmgTot.set(m.id,rec);aggAdd(m,dmg,aggK||1);
   if(m.hp<=0){if(amHost)hostKill(m);else if(m.hh>m.max*0.12)m.hp=1;else m.pend=time;}
@@ -5462,6 +5495,7 @@ function remoteEv(ev,r){const f=ev.split('|');const x=(+f[2])/10,y=(+f[3])/10;if
   if(f[1]==='d'){if(f[4]===sceneKey())addTomb(x,y,r.p&&r.p.n,f[5]);return;}
   if(f[1]==='l'&&MAP&&MAP.switches){let b=null,bd=3;for(const sw of MAP.switches){const dd=Math.hypot(sw.x-x,sw.y-y);if(dd<bd){bd=dd;b=sw;}}if(b)lightSwitch(b,true);}
   if(f[1]==='y'){lyreJouee(x,y);return;}
+  if(f[1]==='h'){hadesTotemRemote(x,y);return;}
   if(f[1]==='v'){markVuln(x,y);vfx.push({k:'healring',x,y,r:10,t:0,life:0.8,col:'#ffd23f'});}
   else if(f[1]==='b')bombs.push({x,y,t:0.9,dm:0,own:false});
   else if(f[1]==='t'){burst(x,y,'#2ab8a8',14,3);}
@@ -7946,6 +7980,7 @@ function update(dt){
       if(b.src&&!b.fait&&!safe()&&Math.hypot(P.x-b.x,P.y-b.y)<0.45+b.r){b.fait=1;const hw=P.hwT||(P.hwT={});if(!(hw[b.src]>time)){hw[b.src]=time+0.35;const mx=S().tot.vie,got=Math.min(soin(Math.round(mx*0.03)),mx-P.hp);if(got>0){P.hp+=got;ft(P.x,P.y-0.8,'+'+Math.round(got),'#7ed957');}}}
       continue;}
     if(b.split&&b.split.n>0){b.split.t-=dt;if(b.split.t<=0){b.split.t+=b.split.dt;b.split.n--;const a0=Math.atan2(b.vy,b.vx);for(const sd of [-1,1]){const aa=a0+sd*0.55;pb.push({x:b.x,y:b.y,vx:Math.cos(aa)*14,vy:Math.sin(aa)*14,life:0.36,dmg:Math.round(b.dmg*0.3),poi:b.poi,vol:b.split.vol,r:0.14,col:'#9be86d',kind:'fleche',pierce:true,hit:new Set(),trail:'#9be86d'});}}}
+    if(scene==='dungeon'&&hadesTotemTir(b)){b.life=0;continue;}
     for(const m of near){
       if(m.hp<=0||m.pend||m.inv)continue;if(b.hit&&b.hit.has(m))continue;
       if(Math.abs(m.x-b.x)>1.8||Math.abs(m.y-b.y)>1.8)continue;
@@ -7953,7 +7988,7 @@ function update(dt){
         if(b.cosm){b.life=0;break;}
         if(b.vol){if(b.vol.has(m))continue;b.vol.add(m);}
         if(!b.counted){b.counted=true;const ch=C();ch.hits=(ch.hits||0)+1;}
-        if(b.ab)breakArmor(m,b.ab);if(b.vu){if(!(m.vuln>time))ft(m.x,m.y-m.d.sz*0.9,'Vulnérable','#ffd23f');m.vuln=time+b.vu;}let dg=b.dmg*armK(m);if(b.pct)dg+=m.d.boss?m.hp*0.05:m.max*0.2;if(m.vuln>time)dg*=1.5;dg=Math.max(1,Math.round(dg)); // l'armure ne réduit pas la part « % de la vie »
+        if(b.ab)breakArmor(m,b.ab);if(b.vu){if(!(m.vuln>time))ft(m.x,m.y-m.d.sz*0.9,'Vulnérable','#ffd23f');m.vuln=time+b.vu;}let dg=b.dmg*armK(m);if(b.pct)dg+=m.d.boss?m.hp*0.05:m.max*0.2;if(m.vuln>time)dg*=1.5;if(m.key==='b_hades'&&hadesBouclier())dg*=0.2;dg=Math.max(1,Math.round(dg)); // l'armure ne réduit pas la part « % de la vie »
         m.hp-=dg;if(b.arme)volVie(dg);if(b.par&&!b.cosm)paralyze(m,b.par);if(b.poi)poisonMon(m,b.poi);if(m.key==='dragon'){raidAcc+=dg;m.hp=m.max;}m.flash=0.1;sfx('hit');ft(m.x+rnd(-.2,.2),m.y-m.d.sz*0.5,String(dg)+(b.crit?' !':''),b.crit?'#ff3b4a':m.vuln>time||b.pct?'#ffd23f':'#ffffff',!!b.crit);
         const rec=dmgTot.get(m.id)||{tot:0,t:0};rec.tot+=dg;rec.t=time;dmgTot.set(m.id,rec);aggAdd(m,dg,b.kind==='vague'?AGG_BOUCLIER:b.arme?aggArme():1);
         if(m.key==='mannequin'){m.lastHit=time;TU.hit=1;if(m.hp<1)m.hp=1;dpsHit(dg);}
