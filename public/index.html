@@ -5411,7 +5411,8 @@ function auraTick(w,b,st){const l=monsters.filter(m=>m.hp>0&&!m.inv&&Math.hypot(
   for(const m of l){burst(m.x,m.y,'#d8a0ff',7,2.5);vfx.push({k:'healring',x:m.x,y:m.y,r:0.9,t:0,life:0.35,col:'#ffffff'});hitMon(m,Math.round(rnd(w.dmg[0],w.dmg[1])*upK(w)*((WB[w.kind]&&WB[w.kind].dm)||1)*st.mult*st.rate),b.col,aggArme());}
   {const ch=C();ch.shots=(ch.shots||0)+1;ch.hits=(ch.hits||0)+1;}sfx('shoot_guerrier',0.35);if(P.backProt){P.backProt=0;P.invul=0;}}
 function fire(st){
-  const w=C().equip[0];if(!w)return;if(P.ombre||P.letheT>time)return; // une ombre ne frappe pas · dans le Léthé, on oublie son armeconst b=WBr(w.kind),a=aimWorld(),ang=Math.atan2(a.y-P.y,a.x-P.x);
+  const w=C().equip[0];if(!w)return;if(P.ombre||P.letheT>time)return; // une ombre ne frappe pas · dans le Léthé, on oublie son arme
+  const b=WBr(w.kind),a=aimWorld(),ang=Math.atan2(a.y-P.y,a.x-P.x);
   if(b.aura)return; // l'aura frappe toute seule (auraTick)
   P.face=Math.cos(ang+camA)<0?-1:1;P.thrust=1;
   if(b.invoc){summonMain(a);return;}
