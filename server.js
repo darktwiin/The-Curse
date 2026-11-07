@@ -251,7 +251,7 @@ function sauverCompte(moi, m) {
   arbitre.apprendre(m.data);
   cpt.boost = +m.data.boostXP || 0; cpt.rune = runeDe(m.data); cpt.maudits = mauditsDe(m.data); cpt.bornes = bornesScore(m.data); cpt.auMax = arbitre.auMaxDe(m.data); cpt.donGuilde = 0;
   sql.save.run(txt, Date.now(), moi.compte.id);
-  envoyerCapGardien(moi, m.data); parrPaliers(moi, m.data);
+  envoyerCapGardien(moi, m.data);
 }
 // ---- échanges : à la conclusion, le serveur note ce que chacun reçoit et ce que chacun doit perdre ----
 function conclureEchange(A, B) {
@@ -594,7 +594,6 @@ wss.on('connection', (ws, req) => {
     if (m && m.t === 'tour') { try { tour(moi, m); } catch (e) { console.error('[tour]', e.message); } return; }
     if (m && m.t === 'discord') { liaisonDiscord(moi, m); return; }
     if (m && m.t === 'colis') { colisRecu(moi, m); return; }
-    if (m && m.t === 'parr') { parrainage(moi, m); return; }
     if (m && m.t === 'maison') { maison(moi, m, salle); return; }
     if (m && m.t === 'cgu') { const v = String(m.v || ''); if (moi.compte && /^\d{4}-\d{2}-\d{2}$/.test(v)) { try { sql.cguIns.run(moi.compte.id, v, Date.now()); console.log(`[cgu] ${moi.compte.nom} accepte la version ${v}`); } catch (e) { console.error('[cgu]', e.message); } } return; }
     // nouveau compte : son premier héros vient d'être choisi, on souhaite la bienvenue à tout le monde (une seule fois)
@@ -1259,50 +1258,9 @@ function hvAPayer(cpt, ancien, nouveau) { let tot = 0;
   // frais de mise en vente : dus dans la sauvegarde où l'objet déposé quitte le sac (le jeu retire l'objet et les pièces en même temps)
   { const vus = {}; for (const f of (cpt.frais || [])) { const moins = butin.compterSig(ancien, f.sig) - butin.compterSig(nouveau, f.sig) - (vus[f.sig] || 0); f.vu = moins > 0; if (f.vu) { vus[f.sig] = (vus[f.sig] || 0) + 1; tot += f.prix; } } } for (const a of (cpt.achats || [])) { a.vu = butin.compterSig(nouveau, a.sig) > butin.compterSig(ancien, a.sig); if (a.vu) tot += a.prix; } return tot; }
 
-// ---------- parrainage : un nouveau joueur désigne son parrain, les deux sont récompensés quand le filleul progresse ----------
-db.exec(`CREATE TABLE IF NOT EXISTS parrainage (filleul INTEGER PRIMARY KEY, parrain INTEGER NOT NULL, quand INTEGER NOT NULL, palier INTEGER NOT NULL DEFAULT 0)`);
+// ---------- parrainage (retiré en 0.0.100) : on garde seulement le versement de la Cursite encore due aux anciens parrains ----------
 db.exec(`CREATE TABLE IF NOT EXISTS parrainage_dus (id INTEGER PRIMARY KEY AUTOINCREMENT, compte INTEGER NOT NULL, cursite INTEGER NOT NULL, nom TEXT, niv INTEGER)`);
-const PARR = { PALIERS: [], // récompenses de niveau retirées : le parrain gagnera de la Cursite sur les achats de ses filleuls quand la boutique sera en place
-  MAX: 10, DELAI: 7 * 86400000,
-  get: db.prepare('SELECT * FROM parrainage WHERE filleul = ?'), de: db.prepare('SELECT p.filleul, p.palier, c.nom, c.save FROM parrainage p JOIN comptes c ON c.id = p.filleul WHERE p.parrain = ? ORDER BY p.quand'),
-  ins: db.prepare('INSERT INTO parrainage (filleul, parrain, quand) VALUES (?, ?, ?)'), maj: db.prepare('UPDATE parrainage SET palier = ? WHERE filleul = ?'),
-  duIns: db.prepare('INSERT INTO parrainage_dus (compte, cursite, nom, niv) VALUES (?, ?, ?, ?)'), duDe: db.prepare('SELECT * FROM parrainage_dus WHERE compte = ?'), duDel: db.prepare('DELETE FROM parrainage_dus WHERE id = ?') };
-const nivMax = sv => { let n = 0; try { for (const ch of Object.values((sv && sv.chars) || {})) n = Math.max(n, (ch && ch.lvl) | 0); } catch {} return Math.min(30, n); };
-function etatParrainage(moi) {
-  const c = sql.parId.get(moi.compte.id), lien = PARR.get.get(moi.compte.id), par = lien ? sql.parId.get(lien.parrain) : null;
-  const fl = PARR.de.all(moi.compte.id).map(f => { let sv = null; try { sv = f.save ? JSON.parse(f.save) : null; } catch {} return { n: f.nom, niv: nivMax(sv), p: f.palier }; });
-  return { t: 'parr', a: 'etat', parrain: par ? par.nom : null, palier: lien ? lien.palier : 0, peut: !lien && !!c && Date.now() - c.cree < PARR.DELAI ? 1 : 0, filleuls: fl, paliers: PARR.PALIERS, max: PARR.MAX };
-}
-function parrainage(moi, m) {
-  if (!moi.compte) return; if (Date.now() - (moi.parrT || 0) < 500) return; moi.parrT = Date.now();
-  try {
-    if (m.a === 'etat') return envoyer(moi.ws, etatParrainage(moi));
-    if (m.a === 'choisir') {
-      const non = msg => envoyer(moi.ws, { t: 'parr', a: 'choix', ok: 0, msg }), c = sql.parId.get(moi.compte.id), p = sql.parNom.get(String(m.nom || '').trim().slice(0, 16));
-      if (PARR.get.get(moi.compte.id)) return non('Tu as déjà un parrain');
-      if (!c || Date.now() - c.cree > PARR.DELAI) return non('Le parrain se choisit pendant les 7 premiers jours du compte');
-      if (!p) return non('Aucun compte ne porte ce nom');
-      if (p.id === c.id) return non('Tu ne peux pas te parrainer toi-même');
-      if (p.cree >= c.cree) return non('Ton parrain doit avoir un compte plus ancien que le tien');
-      if (PARR.de.all(p.id).length >= PARR.MAX) return non('Ce joueur a déjà ' + PARR.MAX + ' filleuls');
-      PARR.ins.run(c.id, p.id, Date.now()); console.log(`[parrainage] ${c.nom} choisit ${p.nom} comme parrain`);
-      envoyer(moi.ws, { t: 'parr', a: 'choix', ok: 1, nom: p.nom }); envoyer(moi.ws, etatParrainage(moi));
-      const P = enLigne.get(p.id); if (P && P.ws.readyState === 1) { envoyer(P.ws, { t: 'parr', a: 'nouveau', nom: c.nom }); envoyer(P.ws, etatParrainage(P)); }
-      let sv = null; try { sv = c.save ? JSON.parse(c.save) : null; } catch {} if (sv) parrPaliers(moi, sv);
-    }
-  } catch (e) { console.error('[parrainage]', e.message); }
-}
-// à chaque sauvegarde acceptée : le filleul a-t-il franchi un palier de niveau ?
-function parrPaliers(moi, sv) {
-  try { const lien = PARR.get.get(moi.compte.id); if (!lien || lien.palier >= PARR.PALIERS.length) return; const niv = nivMax(sv); let p = lien.palier;
-    while (p < PARR.PALIERS.length && niv >= PARR.PALIERS[p][0]) { const [seuil, cu] = PARR.PALIERS[p]; p++; PARR.maj.run(p, moi.compte.id);
-      const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)); cpt.dons.cursite += cu; envoyer(moi.ws, { t: 'parr', a: 'gain', cursite: cu, niv: seuil, moi: 1 });
-      const P = enLigne.get(lien.parrain);
-      if (P && P.ws.readyState === 1) { (P.cpt || (P.cpt = etatCompte(lien.parrain))).dons.cursite += cu; envoyer(P.ws, { t: 'parr', a: 'gain', cursite: cu, niv: seuil, nom: moi.compte.nom }); envoyer(P.ws, etatParrainage(P)); }
-      else PARR.duIns.run(lien.parrain, cu, moi.compte.nom, seuil);
-      console.log(`[parrainage] ${moi.compte.nom} atteint le niveau ${seuil} : +${cu} Cursite pour lui et son parrain`); }
-  } catch (e) { console.error('[parrainage] palier', e.message); }
-}
+const PARR = { duDe: db.prepare('SELECT * FROM parrainage_dus WHERE compte = ?'), duDel: db.prepare('DELETE FROM parrainage_dus WHERE id = ?') };
 function parrConnexion(moi) { try { const cpt = moi.cpt || (moi.cpt = etatCompte(moi.compte.id)); for (const d of PARR.duDe.all(moi.compte.id)) { PARR.duDel.run(d.id); cpt.dons.cursite += d.cursite; envoyer(moi.ws, { t: 'parr', a: 'gain', cursite: d.cursite, niv: d.niv, nom: d.nom }); } } catch (e) { console.error('[parrainage] connexion', e.message); } }
 
 // ---------- maisons : on visite la maison meublée des autres joueurs et on y laisse un cœur ----------

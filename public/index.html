@@ -130,7 +130,7 @@ details.help dt{color:var(--gold)} details.help dd{margin:0}
 .shop-item.daily{border-color:#3ff0ff;background:linear-gradient(90deg,rgba(63,240,255,.12),transparent)}
 .shop-item .price .cur{display:inline-block;width:10px;height:10px;background:#3ff0ff;transform:rotate(45deg);margin-right:6px}
 .shop-sell{background:var(--panel2);border:2px solid var(--line);padding:10px;display:flex;flex-direction:column;gap:6px}.shop-sell span{font-size:12px;color:var(--muted)}
-#parrMoi{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--panel2);border:2px solid var(--line);padding:8px}#parrMoi input{background:#1a1626;color:inherit;border:2px solid var(--line2);padding:3px 6px;font:inherit;font-size:14px;width:180px}.parrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:var(--panel2);border:2px solid var(--line);padding:6px 8px}.parrow span{font-size:13px;opacity:.85}.parrow .ok{color:#7ed957}
+
 #gwBox{margin-top:6px;padding:5px 6px;background:rgba(11,10,18,.78);border:2px solid #c9973c;font-size:11px;line-height:1.35;cursor:pointer;pointer-events:auto;display:flex;flex-direction:column;gap:1px;max-width:150px}#gwBox[hidden]{display:none}#gwBox b{color:#ffd23f;font-size:11px}#gwBox i{font-style:normal}#gwBox:hover{border-color:#ffd23f}
 .hvtabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.hvtabs .on{border-color:var(--gold);color:var(--gold);background:#3a3020}
 #hvBar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}#hvBar select,#hvBar input{background:#1a1626;color:inherit;border:2px solid var(--line2);padding:3px 6px;font:inherit;font-size:14px}#hvBar input[type=number]{width:120px}
@@ -469,7 +469,7 @@ body.ton #opts{position:fixed;z-index:120}
     <div class="overlay" id="gshopWin" hidden>
       <div class="shop-inner gs" role="dialog" aria-label="Boutique">
         <div class="gs-head"><i class="cgem gs-big"></i><div class="gs-tt"><h2>Boutique</h2><span>Fais le plein de Cursite et soutiens The Curse</span></div><div class="gs-bal" title="Ta Cursite"><i class="cgem"></i><b id="gshopCur">0</b><em>Cursite</em></div></div>
-        <div class="gs-note" id="gshopHint"><b>Les paiements ne sont pas encore ouverts.</b> Voici ce qui arrive : pour l'instant, rien ne peut être acheté ici. La Cursite se gagne déjà en jeu (quêtes, bonus de connexion, concours, parrainage).</div>
+        <div class="gs-note" id="gshopHint"><b>Les paiements ne sont pas encore ouverts.</b> Voici ce qui arrive : pour l'instant, rien ne peut être acheté ici. La Cursite se gagne déjà en jeu (quêtes, bonus de connexion, concours).</div>
         <div id="gshopPack"></div>
         <h3 class="gs-h"><span>Packs de Cursite</span></h3><div class="gs-packs" id="gshopPacks"></div>
         <h3 class="gs-h"><span>Abonnements</span></h3><div class="gs-abos" id="gshopAbos"></div>
@@ -787,15 +787,6 @@ body.ton #opts{position:fixed;z-index:120}
         <div class="shop-foot"><span class="hint" id="resFoot"></span><button type="button" class="act" id="resClose">Fermer · Échap</button></div>
       </div>
     </div>
-    <div class="overlay" id="parrWin" hidden>
-      <div class="shop-inner" role="dialog" aria-label="Parrainage" style="max-width:560px">
-        <h2>Parrainage</h2>
-        <p class="hint" id="parrIntro"></p>
-        <div id="parrMoi"></div>
-        <div id="parrList" class="qlist" style="max-height:min(44vh,400px);overflow-y:auto"></div>
-        <div class="shop-foot"><span class="hint" id="parrFoot"></span><button type="button" class="act" id="parrClose">Fermer · Échap</button></div>
-      </div>
-    </div>
     <div class="overlay" id="hvWin" hidden>
       <div class="shop-inner" role="dialog" aria-label="Hôtel des ventes" style="max-width:700px">
         <h2>Hôtel des ventes <span class="hint" style="font-size:14px">· <i class="coin"></i> <b id="hvGold">0</b></span></h2>
@@ -859,7 +850,7 @@ body.ton #opts{position:fixed;z-index:120}
       <button type="button" data-tab="stats" id="tabStBtn">Statistiques<kbd>C</kbd></button>
       <button type="button" id="resBtn" style="grid-column:1/-1">💠 Ressources et talismans</button>
     </nav>
-    <div class="lbrow"><button type="button" class="lb-btn" id="lbBtn">🏆 Classement<kbd>L</kbd></button><button type="button" class="lb-btn" id="questBtn">📜 Quêtes<kbd>J</kbd><span id="questDot" hidden>!</span></button><button type="button" class="lb-btn" id="succBtn">🏅 Succès<kbd>N</kbd></button><button type="button" class="lb-btn" id="wikiBtn">📖 Wiki<kbd>B</kbd></button><button type="button" class="lb-btn" id="mapBtn">🗺 Carte<kbd>M</kbd></button><button type="button" class="lb-btn" id="parrBtn">🤝 Parrainage</button></div>
+    <div class="lbrow"><button type="button" class="lb-btn" id="lbBtn">🏆 Classement<kbd>L</kbd></button><button type="button" class="lb-btn" id="questBtn">📜 Quêtes<kbd>J</kbd><span id="questDot" hidden>!</span></button><button type="button" class="lb-btn" id="succBtn">🏅 Succès<kbd>N</kbd></button><button type="button" class="lb-btn" id="wikiBtn">📖 Wiki<kbd>B</kbd></button><button type="button" class="lb-btn" id="mapBtn">🗺 Carte<kbd>M</kbd></button></div>
     <button type="button" class="lb-btn devk" id="devKill2" hidden>💀 Tuer les monstres à l'écran (admin)</button>
     <section id="tabInv">
       <h3>Équipement</h3>
@@ -5269,27 +5260,8 @@ function renderRes(){const box=document.getElementById('resList');box.textConten
 document.getElementById('resBtn').addEventListener('click',()=>openRes(false));document.getElementById('resClose').addEventListener('click',closeRes);resEl.addEventListener('click',e=>{if(e.target===resEl)closeRes();});
 // ---------- objectif commun de la semaine et tournoi de pêche du dimanche (tenus par le serveur) ----------
 let OBJ=null,TOUR=null;
-/* ================= parrainage ================= */
-const parrEl=document.getElementById('parrWin');let PARR=null;
-function openParr(){if(!AUTH.ok||typeof room==='undefined'||!room||!room.raw){note('Connecte-toi à ton compte pour le parrainage');sfx('deny');return;}parrEl.hidden=false;paused=true;keys.clear();mouse.down=false;room.raw({t:'parr',a:'etat'});renderParr();sfx('item');}
-function closeParr(){parrEl.hidden=true;paused=false;cv.focus();}
-function renderParr(){if(parrEl.hidden)return;const P_=PARR||{paliers:[],filleuls:[],max:10,peut:0,parrain:null,palier:0},pal=P_.paliers.map(p=>'niveau '+p[0]+' : '+p[1]+' Cursite').join(' · ');
-  document.getElementById('parrIntro').textContent=P_.paliers.length?'Invite tes amis ! Quand un filleul fait progresser un héros, vous gagnez tous les deux de la Cursite ('+pal+'). Le parrain se choisit pendant les 7 premiers jours du compte.':'Invite tes amis ! Bientôt, le parrain gagnera de la Cursite à chaque achat de ses filleuls dans la boutique. Tu peux déjà indiquer ton parrain : il se choisit pendant les 7 premiers jours du compte.';
-  const me=document.getElementById('parrMoi');
-  if(P_.parrain)me.innerHTML='<span>Ton parrain : <b style="color:var(--gold)">'+hvEsc(P_.parrain)+'</b> · paliers franchis : '+P_.palier+' / '+P_.paliers.length+'</span>';
-  else if(P_.peut){me.innerHTML='<span>Quelqu\'un t\'a fait découvrir le jeu ?</span> <input type="text" id="parrNom" maxlength="16" placeholder="Nom de compte du parrain"> <button type="button" class="act main" id="parrGo">Valider</button>';const i=document.getElementById('parrNom');i.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')document.getElementById('parrGo').click();if(e.key==='Escape')closeParr();});}
-  else me.innerHTML='<span class="hint">Tu n\'as pas de parrain (le choix se fait pendant les 7 premiers jours du compte).</span>';
-  document.getElementById('parrList').innerHTML='<b>Tes filleuls</b>'+(P_.filleuls.map(f=>'<div class="parrow"><div><b>'+hvEsc(f.n)+'</b> <span>· meilleur héros niveau '+f.niv+'</span></div><span>'+P_.paliers.map((p,i)=>'<span class="'+(f.p>i?'ok':'')+'">'+(f.p>i?'✔':'○')+' niv. '+p[0]+'</span>').join(' &nbsp; ')+'</span></div>').join('')||'<i class="hint">Aucun filleul pour l\'instant. Donne ton nom de compte ('+hvEsc(AUTH.nom||'')+') à tes amis : ils le saisissent ici en arrivant.</i>');
-  document.getElementById('parrFoot').textContent=P_.filleuls.length+' / '+P_.max+' filleuls';}
-const sysChat=t=>{try{pushChat({n:'Serveur',t:'🤝 '+t,life:14,col:'#7ed957'});}catch(e){}};
-function onParr(m){
-  if(m.a==='etat'){PARR=m;renderParr();return;}
-  if(m.a==='choix'){if(!m.ok){note(m.msg||'Parrainage refusé');sfx('deny');return;}note(m.nom+' est maintenant ton parrain !');sfx('relic');return;}
-  if(m.a==='nouveau'){note(m.nom+' vient de te choisir comme parrain !');sfx('relic');sysChat(m.nom+' est devenu ton filleul !');return;}
-  if(m.a==='gain'){save.cursite+=m.cursite|0;persist();pushSave(true);invDirty=true;const t=m.moi?'Parrainage : niveau '+m.niv+' atteint, +'+m.cursite+' Cursite !':'Parrainage : ton filleul '+m.nom+' a atteint le niveau '+m.niv+', +'+m.cursite+' Cursite !';note(t);sysChat(t);sfx('relic');return;}
-}
-parrEl.addEventListener('click',e=>{if(e.target.closest('#parrGo')){const n=document.getElementById('parrNom').value.trim();if(!n){sfx('deny');return;}room.raw({t:'parr',a:'choisir',nom:n});}});
-document.getElementById('parrClose').addEventListener('click',closeParr);document.getElementById('parrBtn').addEventListener('click',openParr);
+/* ================= parrainage (retiré) : Cursite encore due aux anciens parrains ================= */
+function onParr(m){if(m.a!=='gain')return;save.cursite+=m.cursite|0;persist();pushSave(true);invDirty=true;const t='Parrainage : +'+m.cursite+' Cursite (ton filleul '+m.nom+' avait atteint le niveau '+m.niv+')';note(t);try{pushChat({n:'Serveur',t:'🤝 '+t,life:14,col:'#7ed957'});}catch(e){}sfx('relic');}
 /* ================= hôtel des ventes ================= */
 const HVNPC={x:33.5,y:13.4},AUCTIONEER=makeSprite(['..RRRR..','.RRRRRR.','.HSESEH.','..SSSS..','.NNWWNN.','S.NYYN.S','..NNNN..','..L..L..'],{R:'#8a1f2e',H:'#5a3a20',S:'#f0c8a0',E:'#1a1420',N:'#2a2a4a',W:'#f4f1e8',Y:'#ffd23f',L:'#1a1420'},6);
 const hvEl=document.getElementById('hvWin');let HVD={l:[],taxe:0.05,frais:0.15,max:10},hvTab='achat',hvSel=-1,hvTri='recent',hvFil='',hvAtt=0;
@@ -7865,7 +7837,7 @@ function doAct(a,e){
 const MOVE_ACTS=['up','down','left','right'];
 window.addEventListener('keydown',e=>{
   if(cguOuvert)return;
-  if(e.key==='Escape'){if(DECO.on){decoFin();return;}if(!plWin.hidden){togglePl();return;}if(!mapEl.hidden){toggleMap();return;}if(!concEl.hidden){closeConc();return;}if(!forgeEl.hidden){closeForge();return;}if(!succEl.hidden){closeSucces();return;}if(!resEl.hidden){closeRes();return;}if(!hvEl.hidden){closeHV();return;}if(!herbEl.hidden){closeHerb();return;}if(!gwWin.hidden){closeGw();return;}if(!parrEl.hidden){closeParr();return;}if(!pixEl.hidden){closePix();return;}if(!srvEl.hidden){closeServeurs();return;}if(!rrEl.hidden){closeRaidRes();return;}if(!pmEl.hidden){closePMenu();return;}if(!guildEl.hidden){closeGuildWin();return;}if(!caseEl.hidden){closeCase();return;}if(!fishEl.hidden){closeFishWin();return;}if(FISH&&optEl.hidden&&shopEl.hidden){FISH=null;note('Tu ranges ta canne');return;}if(!kbWin.hidden){closeKb();return;}if(!petsEl.hidden){closePets();return;}if(!presEl.hidden){closePresWin();return;}if(!$('#gshopWin').hidden){closeGShop();return;}if(!$('#inspWin').hidden){closeInspect();return;}if(!houseEl.hidden){closeHouseWin();return;}if(!discEl.hidden){closeDisc();return;}if(!dlEl.hidden){closeDaily();return;}if(!qEl.hidden){closeQuests();return;}if(!trEl.hidden){closeTrade('Échange annulé',true);return;}if(!admEl.hidden){closeAdmin();return;}if(!skinsEl.hidden){closeSkins();return;}if(!pupEl.hidden){closePupitre();return;}if(!lbEl.hidden){closeLb();return;}if(!curWin.hidden){curWin.hidden=true;renderOpts();return;}if(!optEl.hidden){closeOpts();return;}if(!shopEl.hidden){closeShop();return;}}
+  if(e.key==='Escape'){if(DECO.on){decoFin();return;}if(!plWin.hidden){togglePl();return;}if(!mapEl.hidden){toggleMap();return;}if(!concEl.hidden){closeConc();return;}if(!forgeEl.hidden){closeForge();return;}if(!succEl.hidden){closeSucces();return;}if(!resEl.hidden){closeRes();return;}if(!hvEl.hidden){closeHV();return;}if(!herbEl.hidden){closeHerb();return;}if(!gwWin.hidden){closeGw();return;}if(!pixEl.hidden){closePix();return;}if(!srvEl.hidden){closeServeurs();return;}if(!rrEl.hidden){closeRaidRes();return;}if(!pmEl.hidden){closePMenu();return;}if(!guildEl.hidden){closeGuildWin();return;}if(!caseEl.hidden){closeCase();return;}if(!fishEl.hidden){closeFishWin();return;}if(FISH&&optEl.hidden&&shopEl.hidden){FISH=null;note('Tu ranges ta canne');return;}if(!kbWin.hidden){closeKb();return;}if(!petsEl.hidden){closePets();return;}if(!presEl.hidden){closePresWin();return;}if(!$('#gshopWin').hidden){closeGShop();return;}if(!$('#inspWin').hidden){closeInspect();return;}if(!houseEl.hidden){closeHouseWin();return;}if(!discEl.hidden){closeDisc();return;}if(!dlEl.hidden){closeDaily();return;}if(!qEl.hidden){closeQuests();return;}if(!trEl.hidden){closeTrade('Échange annulé',true);return;}if(!admEl.hidden){closeAdmin();return;}if(!skinsEl.hidden){closeSkins();return;}if(!pupEl.hidden){closePupitre();return;}if(!lbEl.hidden){closeLb();return;}if(!curWin.hidden){curWin.hidden=true;renderOpts();return;}if(!optEl.hidden){closeOpts();return;}if(!shopEl.hidden){closeShop();return;}}
   if(e.target&&(e.target.tagName==='INPUT'&&e.target.type!=='range'&&e.target.type!=='checkbox'&&e.target.type!=='color'))return;
   const A=actsOf(e.code);
   if(!kbWin.hidden)return;
