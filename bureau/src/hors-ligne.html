@@ -1,0 +1,5 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>The Curse</title>
+<style>html,body{height:100%;margin:0;background:#0b0a12;color:#dcd8e4;font:16px/1.5 monospace;display:grid;place-items:center;text-align:center}
+h1{color:#ffd23f;font-size:40px;margin:0 0 10px}p{margin:6px 0;color:#9a94b0}b{color:#e0b8ff}button{font:inherit;margin-top:16px;background:#2a1a40;color:#e0b8ff;border:2px solid #b45aff;padding:8px 18px;cursor:pointer}</style></head>
+<body><div><h1>The Curse</h1><p>Le serveur du jeu ne répond pas.</p><p>Vérifie ta connexion internet. Nouvel essai dans <b id="n">10</b> s…</p><button id="go">Réessayer maintenant</button></div>
+<script>const u=new URLSearchParams(location.search).get('u');let n=10;const go=()=>{if(u)location.href=u;};document.getElementById('go').onclick=go;setInterval(()=>{n--;document.getElementById('n').textContent=Math.max(0,n);if(n<=0)go();},1000);</script></body></html>
