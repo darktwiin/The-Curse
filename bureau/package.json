@@ -1,0 +1,35 @@
+{
+  "name": "the-curse",
+  "version": "0.0.100",
+  "description": "The Curse — version de bureau pour Steam",
+  "main": "src/main.js",
+  "author": "Mano",
+  "license": "UNLICENSED",
+  "productName": "The Curse",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "fabriquer": "electron-builder --win dir"
+  },
+  "dependencies": {
+    "steamworks.js": "^0.4.0"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "fr.thecurse.jeu",
+    "productName": "The Curse",
+    "executableName": "TheCurse",
+    "directories": { "output": "dist" },
+    "electronDist": "node_modules/electron/dist",
+    "files": ["src/**", "build/icon.png"],
+    "asarUnpack": ["node_modules/steamworks.js/**"],
+    "extraFiles": [
+      "steam_appid.txt",
+      { "from": "node_modules/steamworks.js/dist/win64/steam_api64.dll", "to": "steam_api64.dll" }
+    ],
+    "win": { "icon": "build/icon.png", "signAndEditExecutable": true }
+  }
+}
